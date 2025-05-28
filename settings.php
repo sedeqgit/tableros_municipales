@@ -1,0 +1,176 @@
+<?php
+// Incluir el helper de sesiones
+require_once 'session_helper.php';
+
+// Iniciar sesión y configurar usuario de demo si es necesario
+iniciarSesionDemo();
+
+// Obtener información del usuario de la sesión
+$userFullname = isset($_SESSION['fullname']) ? $_SESSION['fullname'] : 'Usuario SEDEQ';
+$userEmail = isset($_SESSION['username']) ? $_SESSION['username'] : 'usuario@sedeq.gob.mx';
+$userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
+?>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración | SEDEQ - Sistema de Estadística Educativa</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/settings.css">
+    <link rel="stylesheet" href="./css/sidebar.css">
+    <link rel="stylesheet" href="./css/animations_global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Overlay para cerrar el menú en móviles -->
+    <div class="sidebar-overlay"></div>
+
+    <div class="sidebar">
+        <div class="logo-container">
+            <img src="./img/layout_set_logo.png" alt="Logo SEDEQ" class="logo">
+        </div>
+        <div class="sidebar-links">
+            <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
+            <a href="dashboard_restructurado.php" class="sidebar-link"><i
+                    class="fas fa-chart-bar"></i><span>Resumen</span></a>
+            <a href="escuelas_detalle.php" class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
+            <a href="estudiantes.php" class="sidebar-link"><i
+                    class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
+            <a href="#" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i> <span>Docentes</span></a>
+            <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
+            <a href="#" class="sidebar-link active"><i class="fas fa-cog"></i> <span>Configuración</span></a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div class="menu-toggle">
+                <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
+            </div>
+            <div class="page-title">
+                <h1>Configuración del Sistema</h1>
+            </div>
+            <div class="utilities">
+                <div class="date-display">
+                    <i class="far fa-calendar-alt"></i>
+                    <span id="current-date"><?php echo date('d \d\e F \d\e Y'); ?></span>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="settings-grid animate-up">
+                <!-- Navegación de configuración -->
+                <div class="settings-nav animate-fade delay-1">
+                    <div class="settings-nav-title">
+                        <i class="fas fa-cog"></i>
+                        Configuración
+                    </div>
+                    <ul class="settings-nav-items">
+                        <li class="settings-nav-item">
+                            <a href="#" class="settings-nav-link active" data-section="profile">
+                                <i class="fas fa-user"></i>
+                                Mi Perfil
+                            </a>
+                        </li>
+                        <li class="settings-nav-item">
+                            <a href="#" class="settings-nav-link" data-section="security">
+                                <i class="fas fa-shield-alt"></i>
+                                Seguridad
+                            </a>
+                        </li>
+                    </ul>
+                </div> <!-- Contenido de configuración -->
+                <div class="settings-content animate-fade delay-2">
+                    <!-- Sección: Mi Perfil -->
+                    <div class="settings-section animate-left delay-3" id="profile-section">
+                        <h2 class="settings-title">Mi Perfil</h2>
+
+                        <div class="form-group">
+                            <label for="fullname">Nombre Completo</label>
+                            <input type="text" id="fullname" class="form-control"
+                                value="<?php echo htmlspecialchars($userFullname); ?>">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Correo Electrónico</label>
+                            <input type="email" id="email" class="form-control"
+                                value="<?php echo htmlspecialchars($userEmail); ?>">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="role">Rol en el Sistema</label>
+                            <input type="text" id="role" class="form-control"
+                                value="<?php echo htmlspecialchars($userRole); ?>" disabled>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="institution">Institución</label>
+                            <input type="text" id="institution" class="form-control"
+                                value="Secretaría de Educación del Estado de Querétaro" disabled>
+                        </div>
+                    </div> <!-- Sección: Seguridad -->
+                    <div class="settings-section animate-right delay-4">
+                        <h2 class="settings-title">Seguridad y Contraseña</h2>
+
+                        <div class="form-group">
+                            <label for="current_password">Contraseña Actual</label>
+                            <input type="password" id="current_password" class="form-control"
+                                placeholder="Ingrese su contraseña actual">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new_password">Nueva Contraseña</label>
+                            <input type="password" id="new_password" class="form-control"
+                                placeholder="Ingrese su nueva contraseña">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm_password">Confirmar Nueva Contraseña</label>
+                            <input type="password" id="confirm_password" class="form-control"
+                                placeholder="Confirme su nueva contraseña">
+                        </div>
+
+                        <div class="form-group">
+                            <small class="form-text text-muted">
+                                La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números
+                                y símbolos.
+                            </small>
+                        </div>
+                    </div> <!-- Acciones de formulario -->
+                    <div class="form-actions animate-up delay-5">
+                        <button type="button" class="cancel-button">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button type="button" class="save-button">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </div>
+
+                    <!-- Zona de peligro -->
+                    <div class="danger-zone">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Zona de Peligro</h3>
+                        <p>Las siguientes acciones son irreversibles. Por favor, proceda con precaución.</p>
+                        <button type="button" class="danger-button">
+                            <i class="fas fa-user-slash"></i> Desactivar Cuenta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="dashboard-footer">
+            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
+                reservados</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="./js/sidebar.js"></script>
+    <script src="./js/settings.js"></script>
+    <script src="./js/animations_global.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,413 @@
+/* 
+ * Hoja de estilos para la página de estudiantes
+ * Sistema de Dashboard Estadístico - SEDEQ
+ */
+
+/* Estilos para los paneles de información de estudiantes */
+.matricula-panel {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+    margin-bottom: 30px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #f0f0f0;
+}
+
+.matricula-panel:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.matricula-header {
+    background: linear-gradient(135deg, #266FB6 );
+    color: white;
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.matricula-title {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: 0.3px;
+}
+
+.matricula-title i {
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+
+.matricula-body {
+    padding: 24px;
+    background-color: #fcfcfc;
+}
+
+/* Estadísticas */
+.stats-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+    justify-content: center;
+}
+
+.stat-box {
+    background: linear-gradient(135deg, #00838f 0%, #006064 100%);
+    border-radius: 10px;
+    padding: 20px 30px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 96, 100, 0.3);
+    min-width: 280px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 96, 100, 0.4);
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-label {
+    font-size: 1rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.stat-trend {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    padding: 5px 10px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: rgba(0,0,0,0.1);
+}
+
+.stat-trend.positive {
+    background-color: rgba(76, 175, 80, 0.3);
+}
+
+.stat-trend.negative {
+    background-color: rgba(244, 67, 54, 0.3);
+}
+
+.chart-container {
+    height: 450px;
+    position: relative;
+    margin-top: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eaeaea;
+    background-color: #fff;
+    padding: 5px;
+}
+
+/* Controles para la visualización */
+.chart-controls {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    background-color: #f9f9f9;
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid #eaeaea;
+}
+
+.selector-container {
+    flex: 1;
+    min-width: 250px;
+}
+
+/* Estilos para la tabla de datos */
+.data-table-container {
+    margin-top: 30px;
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border: 1px solid #eaeaea;
+    background-color: #fff;
+}
+
+.data-table-container h4 {
+    padding: 15px 20px;
+    margin: 0;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #eaeaea;
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.data-table th, .data-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.data-table th {
+    background-color: #f9f9f9;
+    font-weight: 600;
+    color: #333;
+    position: sticky;
+    top: 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    letter-spacing: 0.3px;
+}
+
+.data-table tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.data-table tr:hover {
+    background-color: #f0f7fa;
+}
+
+/* Columna de años (primera columna) */
+.data-table th:first-child,
+.data-table td:first-child {
+    text-align: left;
+    font-weight: 600;
+    background-color: #f5f5f5;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    box-shadow: 1px 0 2px rgba(0,0,0,0.05);
+}
+
+/* Estilos para los botones de exportación */
+.export-buttons {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+}
+
+.export-button {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.2s ease;
+    color: white;
+    font-weight: 500;
+}
+
+.export-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.export-button i {
+    font-size: 16px;
+}
+
+/* Leyendas de colores para el gráfico */
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 20px;
+    justify-content: center;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eaeaea;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 30px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border: 1px solid #eaeaea;
+    transition: all 0.2s ease;
+}
+
+.legend-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+}
+
+.legend-color {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 768px) {
+    .chart-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .export-buttons {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    
+    .chart-container {
+        height: 350px;
+    }
+}
+
+/* Animaciones específicas para elementos de la página de estudiantes */
+.matricula-panel.animate-fade {
+    opacity: 0;
+    animation: fadeIn 0.8s forwards;
+}
+
+.matricula-panel.delay-1 {
+    animation-delay: 0.1s;
+}
+
+.matricula-panel.delay-2 {
+    animation-delay: 0.3s;
+}
+
+@keyframes chartGrow {
+    from { 
+        height: 0;
+        opacity: 0;
+    }
+    to { 
+        height: 450px;
+        opacity: 1;
+    }
+}
+
+.chart-grow {
+    animation: chartGrow 0.8s ease-out forwards;
+}
+
+/* Contenedor de selectores */
+.selector-container {
+    margin-bottom: 15px;
+}
+
+.selector-label {
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-left: 2px;
+}
+
+.selector-label i {
+    color: #006064;
+    font-size: 16px;
+}
+
+/* Selector de años y niveles */
+.year-selector,
+.level-selector {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    margin-bottom: 15px;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: #00838f #f0f0f0;
+}
+
+.year-selector::-webkit-scrollbar,
+.level-selector::-webkit-scrollbar {
+    height: 6px;
+}
+
+.year-selector::-webkit-scrollbar-thumb,
+.level-selector::-webkit-scrollbar-thumb {
+    background-color: #00838f;
+    border-radius: 3px;
+}
+
+.year-selector::-webkit-scrollbar-track,
+.level-selector::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+}
+
+.year-option,
+.level-option {
+    padding: 10px 16px;
+    border-radius: 6px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    border: 1px solid transparent;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.year-option:hover,
+.level-option:hover {
+    background-color: #e5e5e5;
+    transform: translateY(-1px);
+}
+
+.year-option.active,
+.level-option.active {
+    background-color: #006064;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+/* Colores específicos para cada nivel educativo */
+.level-option[data-level="Inicial NE"].active {
+    background-color: #5C6BC0;
+}
+.level-option[data-level="CAM"].active {
+    background-color: #26A69A;
+}
+.level-option[data-level="Preescolar"].active {
+    background-color: #FFA726;
+}
+.level-option[data-level="Primaria"].active {
+    background-color: #EF5350;
+}
+.level-option[data-level="Secundaria"].active {
+    background-color: #7E57C2;
+}
+.level-option[data-level="Media superior"].active {
+    background-color: #66BB6A;
+}
+.level-option[data-level="Superior"].active {
+    background-color: #29B6F6;
+}

@@ -1,0 +1,116 @@
+/**
+ * Estilos específicos para el sidebar colapsable
+ * Sistema de Dashboard Estadístico - SEDEQ
+ */
+
+/* Overlay para dispositivos móviles */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 99;
+    display: none;
+    transition: opacity 0.3s;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+/* Sidebar y su comportamiento */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 240px;
+    background-color: var(--primary-blue);
+    color: var(--white);
+    transition: all var(--transition-speed);
+    z-index: 100;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /* Añadimos flexbox para organizar el contenido verticalmente */
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* Asegura que no hay padding adicional */
+    margin: 0; /* Asegura que no hay margin adicional */
+}
+
+.sidebar.collapsed {
+    left: -240px;
+}
+
+.main-content {
+    margin-left: 240px;
+    transition: all var(--transition-speed);
+    width: calc(100% - 240px);
+}
+
+.main-content.expanded {
+    margin-left: 0;
+    width: 100%;
+}
+
+/* Botón de toggle para el sidebar */
+.menu-toggle {
+    display: block; /* Siempre visible */
+    margin-right: 10px;
+}
+
+#sidebarToggle {
+    background-color: transparent;
+    border: none;
+    color: var(--primary-blue);
+    font-size: 1.4rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    background-color: rgba(0, 73, 144, 0.05); /* Fondo sutil */
+}
+
+#sidebarToggle:hover {
+    background-color: rgba(0, 73, 144, 0.1);
+    color: var(--accent-red);
+}
+
+/* Topbar con botón de menú */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background-color: var(--white);
+    border-bottom: 1px solid var(--medium-gray);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Ajustes para dispositivos móviles */
+@media (max-width: 992px) {
+    .menu-toggle {
+        display: block;
+    }
+      .sidebar {
+        left: -240px;
+    }
+    
+    /* Se cambia .sidebar.active por .sidebar:not(.collapsed) para consistencia */
+    .sidebar:not(.collapsed) {
+        left: 0;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+}
