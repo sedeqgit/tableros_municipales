@@ -3,7 +3,6 @@
 /* ===== ARCHIVO COMBINADO - INCLUYE CONTENIDO DE ===== */
 /* escuelas_detalle.css, diagram.css, escuelas_count.css y validation.css */
 
-/* ===== ESTILOS DE escuelas_detalle.css ===== */
 
 /* Estilos para los botones de filtro de sostenimiento */
 .sostenimiento-filters {
@@ -458,6 +457,8 @@
     margin-bottom: 12px;
     font-weight: 600;
     color: var(--primary-blue);
+    font-size: 1.5rem;
+    
 }
 
 .conclusion-item ul {
@@ -844,6 +845,7 @@ h4 {
     font-weight: 600;
     margin: 18px 0 12px;
     color: var(--primary-blue);
+    size: 80;
 }
 
 p {
