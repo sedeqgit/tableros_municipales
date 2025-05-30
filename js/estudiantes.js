@@ -45,9 +45,7 @@ function inicializarGraficos() {
             actualizarVisualizacion();
         });
     });
-    
-    // Botones de exportación
-    document.getElementById('export-excel').addEventListener('click', exportarExcel);
+      // Botón de exportación (solo PDF ahora)
     document.getElementById('export-pdf').addEventListener('click', exportarPDF);
 }
 
@@ -164,8 +162,7 @@ function actualizarVisualizacion() {
     }
     
     // Convertir los datos a un objeto DataTable de Google
-    const dataTable = google.visualization.arrayToDataTable(datos);
-      // Opciones para el gráfico
+    const dataTable = google.visualization.arrayToDataTable(datos);      // Opciones para el gráfico optimizadas para exportación
     let opciones = {
         title: titulo,
         titleTextStyle: {
@@ -188,16 +185,22 @@ function actualizarVisualizacion() {
         },
         legend: { position: 'none' },
         colors: getColoresGrafica(),
-        hAxis: {
+        // Configuraciones específicas para mejorar exportación
+        forceIFrame: false,
+        // Configurar para usar Canvas en lugar de SVG cuando sea posible
+        allowHtml: true,
+        enableInteractivity: true,hAxis: {
             title: getEtiquetaEjeX(),
             gridlines: {color: '#f5f5f5'},
             textStyle: {
-                fontSize: 12,
+                fontSize: 11, // Reducido ligeramente para mejor ajuste
                 color: '#555',
                 fontName: 'Arial'
             },
-            slantedText: nivelSeleccionado !== 'todos',
-            slantedTextAngle: 45
+            slantedText: false, // Mantener texto horizontal siempre
+            maxTextLines: 2, // Permitir hasta 2 líneas para años largos
+            showTextEvery: 1, // Mostrar todas las etiquetas
+            minTextSpacing: 0 // Permitir que se ajusten automáticamente
         },
         vAxis: {
             title: 'Cantidad de Alumnos',
@@ -414,9 +417,113 @@ function exportarExcel() {
 }
 
 /**
- * Exportar los datos a PDF
+ * Restaura el estado original del botón de exportar
+ */
+function restaurarBotonExport(button, originalText) {
+    button.innerHTML = originalText;
+    button.disabled = false;
+}
+
+/**
+ * Muestra un mensaje de éxito temporal
+ */
+function mostrarMensajeExito(mensaje) {
+    const alert = document.createElement('div');
+    alert.className = 'alert-success';
+    alert.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 4px;
+        z-index: 10000;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    `;
+    alert.innerHTML = `<i class="fas fa-check-circle"></i> ${mensaje}`;
+    document.body.appendChild(alert);
+    
+    setTimeout(() => {
+        alert.remove();
+    }, 3000);
+}
+
+/**
+ * Muestra un mensaje de error temporal
+ */
+function mostrarMensajeError(mensaje) {
+    const alert = document.createElement('div');
+    alert.className = 'alert-error';
+    alert.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #f44336;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 4px;
+        z-index: 10000;
+        font-family: Arial, sans-serif;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    `;
+    alert.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${mensaje}`;
+    document.body.appendChild(alert);
+    
+    setTimeout(() => {
+        alert.remove();
+    }, 5000);
+}
+
+/**
+ * Exportar los datos a PDF (función original modificada para incluir opción de gráfico)
  */
 function exportarPDF() {
+    mostrarModalExportacion(
+        () => exportarGraficoActual(),
+        exportarTablaPDF,
+        () => {
+            // Exportar a PNG
+            exportarGraficoPNG();
+        },
+        () => {
+            // Exportar a CSV
+            exportarMatriculaCSV();
+        }
+    );
+}
+
+/**
+ * Exporta el gráfico actual a PDF
+ */
+function exportarGraficoActual() {
+    // Determinar título y subtítulo según los filtros seleccionados
+    let titulo = 'Gráfico de Matrícula Escolar - SEDEQ';
+    let subtitulo;
+    let nombreArchivo;
+    
+    if (añoSeleccionado === 'todos' && nivelSeleccionado === 'todos') {
+        subtitulo = 'Todos los niveles educativos - Todos los años escolares';
+        nombreArchivo = 'Grafico_Matricula_Completo.pdf';
+    } else if (añoSeleccionado !== 'todos' && nivelSeleccionado === 'todos') {
+        subtitulo = `Todos los niveles educativos - Año escolar: ${añoSeleccionado}`;
+        nombreArchivo = `Grafico_Matricula_${añoSeleccionado}.pdf`;
+    } else if (añoSeleccionado === 'todos' && nivelSeleccionado !== 'todos') {
+        subtitulo = `Nivel: ${nivelSeleccionado} - Todos los años escolares`;
+        nombreArchivo = `Grafico_Matricula_${nivelSeleccionado.replace(/\s+/g, '_')}.pdf`;
+    } else {
+        subtitulo = `Nivel: ${nivelSeleccionado} - Año escolar: ${añoSeleccionado}`;
+        nombreArchivo = `Grafico_Matricula_${nivelSeleccionado.replace(/\s+/g, '_')}_${añoSeleccionado}.pdf`;
+    }
+      // Llamar a la función mejorada de exportación con método nativo
+    exportarGraficoConMetodoNativo('chart-matricula', titulo, subtitulo, nombreArchivo);
+}
+
+/**
+ * Exporta la tabla de datos a PDF (función original)
+ */
+function exportarTablaPDF() {
     // Inicializar jsPDF
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -429,27 +536,27 @@ function exportarPDF() {
     if (añoSeleccionado === 'todos' && nivelSeleccionado === 'todos') {
         datos = datosMatriculaAgrupados.todos;
         subtitulo = 'Todos los niveles - Todos los años escolares';
-        nombreArchivo = 'Matricula_Todos_Los_Años.pdf';
+        nombreArchivo = 'Tabla_Matricula_Todos_Los_Años.pdf';
     } else if (añoSeleccionado !== 'todos' && nivelSeleccionado === 'todos') {
         datos = datosMatriculaAgrupados.anual[añoSeleccionado];
         subtitulo = `Todos los niveles - Año escolar: ${añoSeleccionado}`;
-        nombreArchivo = `Matricula_${añoSeleccionado}.pdf`;
+        nombreArchivo = `Tabla_Matricula_${añoSeleccionado}.pdf`;
     } else if (añoSeleccionado === 'todos' && nivelSeleccionado !== 'todos') {
         datos = datosMatriculaAgrupados.nivel[nivelSeleccionado];
         subtitulo = `Nivel: ${nivelSeleccionado} - Todos los años escolares`;
-        nombreArchivo = `Matricula_${nivelSeleccionado.replace(/\s+/g, '_')}_Todos_Los_Años.pdf`;
+        nombreArchivo = `Tabla_Matricula_${nivelSeleccionado.replace(/\s+/g, '_')}_Todos_Los_Años.pdf`;
     } else {
         // Un año y un nivel específicos
         datos = [['Nivel Educativo', 'Cantidad de Alumnos']];
         const valorNivel = datosMatricula[añoSeleccionado][nivelSeleccionado] || 0;
         datos.push([nivelSeleccionado, valorNivel]);
         subtitulo = `Nivel: ${nivelSeleccionado} - Año escolar: ${añoSeleccionado}`;
-        nombreArchivo = `Matricula_${nivelSeleccionado.replace(/\s+/g, '_')}_${añoSeleccionado}.pdf`;
+        nombreArchivo = `Tabla_Matricula_${nivelSeleccionado.replace(/\s+/g, '_')}_${añoSeleccionado}.pdf`;
     }
     
     // Configurar título del documento
     doc.setFontSize(18);
-    doc.text('Matrícula Escolar - SEDEQ', 105, 15, { align: 'center' });
+    doc.text('Tabla de Matrícula Escolar - SEDEQ', 105, 15, { align: 'center' });
     
     // Subtítulo
     doc.setFontSize(14);
@@ -485,6 +592,152 @@ function exportarPDF() {
     
     // Generar el archivo y descargarlo
     doc.save(nombreArchivo);
+}
+
+/**
+ * Prepara el gráfico para exportación optimizando la compatibilidad con html2canvas
+ * Especialmente importante para gráficos de niveles individuales
+ */
+function prepararGraficoParaExportacion() {
+    return new Promise((resolve) => {
+        // Obtener los datos actuales
+        const datos = obtenerDatosFiltrados();
+        const titulo = obtenerTituloGrafico();
+        
+        // Crear una configuración especial para exportación
+        const opcionesExportacion = {
+            title: titulo,
+            titleTextStyle: {
+                fontSize: 18,
+                bold: true,
+                color: '#333',
+                fontName: 'Arial'
+            },
+            height: 450,
+            chartArea: {
+                width: '85%',
+                height: '70%',
+                left: '10%',
+                top: '10%'
+            },
+            // Desactivar animaciones para exportación
+            animation: null,
+            legend: { position: 'none' },
+            colors: getColoresGrafica(),
+            // Configuraciones específicas para exportación
+            forceIFrame: false,
+            allowHtml: true,
+            enableInteractivity: false, // Desactivar interactividad para exportación
+            hAxis: {
+                title: getEtiquetaEjeX(),
+                gridlines: {color: '#f5f5f5'},
+                textStyle: {
+                    fontSize: 11,
+                    color: '#555',
+                    fontName: 'Arial'
+                },
+                slantedText: false,
+                maxTextLines: 2,
+                showTextEvery: 1,
+                minTextSpacing: 0
+            },
+            vAxis: {
+                title: 'Cantidad de Alumnos',
+                format: '#,###',
+                gridlines: {color: '#f5f5f5'},
+                baselineColor: '#ddd',
+                textStyle: {
+                    fontSize: 12,
+                    color: '#555',
+                    fontName: 'Arial'
+                }
+            },
+            bar: { groupWidth: '75%' },
+            tooltip: { 
+                showColorCode: false, // Desactivar tooltips para exportación
+                trigger: 'none'
+            },
+            focusTarget: 'category',
+            backgroundColor: {
+                fill: '#ffffff',
+                stroke: '#f5f5f5',
+                strokeWidth: 1
+            }
+        };
+        
+        // Re-dibujar el gráfico con configuraciones de exportación
+        const dataTable = google.visualization.arrayToDataTable(datos);
+        
+        // Guardar las opciones para uso posterior
+        chartMatricula.options = opcionesExportacion;
+        
+        // Configurar listener para cuando termine de dibujar
+        google.visualization.events.addOneTimeListener(chartMatricula, 'ready', function() {
+            // Esperar un poco más para asegurar renderizado completo
+            setTimeout(resolve, 300);
+        });
+        
+        // Dibujar con las opciones optimizadas
+        chartMatricula.draw(dataTable, opcionesExportacion);
+    });
+}
+
+/**
+ * Restaura el gráfico a su configuración normal después de la exportación
+ */
+function restaurarGraficoNormal() {
+    // Volver a dibujar con las opciones normales
+    actualizarVisualizacion();
+}
+
+/**
+ * Obtiene los datos filtrados según la selección actual
+ */
+function obtenerDatosFiltrados() {
+    let datos;
+    
+    if (añoSeleccionado === 'todos' && nivelSeleccionado === 'todos') {
+        // Mostrar todos los datos por año
+        datos = datosMatriculaAgrupados['todos'];
+    } else if (añoSeleccionado !== 'todos' && nivelSeleccionado === 'todos') {
+        // Mostrar datos de un año específico por nivel
+        datos = datosMatriculaAgrupados['anual'][añoSeleccionado];
+    } else if (añoSeleccionado === 'todos' && nivelSeleccionado !== 'todos') {
+        // Mostrar evolución de un nivel específico por años
+        datos = datosMatriculaAgrupados['nivel'][nivelSeleccionado];
+    } else {
+        // Mostrar datos específicos de un año y nivel
+        datos = prepararDatosEspecificos(añoSeleccionado, nivelSeleccionado);
+    }
+    
+    return datos;
+}
+
+/**
+ * Prepara datos específicos para un año y nivel determinado
+ */
+function prepararDatosEspecificos(año, nivel) {
+    const datos = [['Nivel Educativo', 'Cantidad de Alumnos']];
+    const valorNivel = datosMatricula[año][nivel] || 0;
+    datos.push([nivel, valorNivel]);
+    return datos;
+}
+
+/**
+ * Obtiene el título del gráfico según los filtros actuales
+ */
+function obtenerTituloGrafico() {
+    let titulo = 'Matrícula en Escuelas Públicas';
+    
+    if (añoSeleccionado !== 'todos' && nivelSeleccionado !== 'todos') {
+        titulo = 'Matrícula en ' + nivelSeleccionado + ' - ' + añoSeleccionado;
+    } else if (añoSeleccionado !== 'todos') {
+        titulo = 'Matrícula por Nivel Educativo - ' + añoSeleccionado;
+    } else if (nivelSeleccionado !== 'todos') {
+        titulo = 'Evolución de Matrícula en ' + nivelSeleccionado + ' (2018-2024)';
+    }
+    
+    return titulo;
 }
 
 /**
@@ -542,3 +795,105 @@ window.addEventListener('load', function() {
         document.getElementById('chart-matricula-container').classList.add('chart-grow');
     }, 300);
 });
+
+/**
+ * Exporta el gráfico actual como PNG
+ */
+function exportarGraficoPNG() {
+    // Determinar nombre del archivo según los filtros seleccionados
+    let nombreArchivo;
+    if (añoSeleccionado === 'todos' && nivelSeleccionado === 'todos') {
+        nombreArchivo = 'Grafico_Matricula_Completo.png';
+    } else if (añoSeleccionado !== 'todos' && nivelSeleccionado === 'todos') {
+        nombreArchivo = `Grafico_Matricula_${añoSeleccionado}.png`;
+    } else if (añoSeleccionado === 'todos' && nivelSeleccionado !== 'todos') {
+        nombreArchivo = `Grafico_Matricula_${nivelSeleccionado.replace(/\s+/g, '_')}.png`;
+    } else {
+        nombreArchivo = `Grafico_Matricula_${nivelSeleccionado.replace(/\s+/g, '_')}_${añoSeleccionado}.png`;
+    }
+
+    // Usar html2canvas para capturar el gráfico
+    const chartElement = document.getElementById('chart-matricula');
+    if (!chartElement) {
+        mostrarMensajeError('No se pudo encontrar el gráfico para exportar');
+        return;
+    }
+
+    mostrarMensajeExito('Generando imagen PNG...');
+    
+    html2canvas(chartElement, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        logging: false,
+        useCORS: true
+    }).then(canvas => {
+        // Crear enlace de descarga
+        const link = document.createElement('a');
+        link.download = nombreArchivo;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        mostrarMensajeExito('Imagen PNG descargada exitosamente');
+    }).catch(error => {
+        console.error('Error al generar PNG:', error);
+        mostrarMensajeError('Error al generar la imagen PNG');
+    });
+}
+
+/**
+ * Exporta los datos de matrícula como CSV
+ */
+function exportarMatriculaCSV() {
+    try {
+        const datos = obtenerDatosFiltrados();
+        
+        // Crear encabezados CSV
+        let csvContent = '';
+        
+        if (datos.length === 0) {
+            mostrarMensajeError('No hay datos para exportar');
+            return;
+        }
+
+        // Agregar encabezados
+        const headers = datos[0];
+        csvContent += headers.join(',') + '\n';
+        
+        // Agregar filas de datos
+        for (let i = 1; i < datos.length; i++) {
+            const fila = datos[i];
+            // Convertir números a string para CSV
+            const filaCSV = fila.map(cell => {
+                if (typeof cell === 'number') {
+                    return cell.toString();
+                }
+                return `"${cell.toString().replace(/"/g, '""')}"`;
+            });
+            csvContent += filaCSV.join(',') + '\n';
+        }
+
+        // Crear nombre del archivo
+        let nombreArchivo;
+        if (añoSeleccionado === 'todos' && nivelSeleccionado === 'todos') {
+            nombreArchivo = 'Datos_Matricula_Completo.csv';
+        } else if (añoSeleccionado !== 'todos' && nivelSeleccionado === 'todos') {
+            nombreArchivo = `Datos_Matricula_${añoSeleccionado}.csv`;
+        } else if (añoSeleccionado === 'todos' && nivelSeleccionado !== 'todos') {
+            nombreArchivo = `Datos_Matricula_${nivelSeleccionado.replace(/\s+/g, '_')}.csv`;
+        } else {
+            nombreArchivo = `Datos_Matricula_${nivelSeleccionado.replace(/\s+/g, '_')}_${añoSeleccionado}.csv`;
+        }
+
+        // Crear enlace de descarga
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = nombreArchivo;
+        link.click();
+        
+        mostrarMensajeExito('Archivo CSV descargado exitosamente');
+    } catch (error) {
+        console.error('Error al generar CSV:', error);
+        mostrarMensajeError('Error al generar el archivo CSV');
+    }
+}

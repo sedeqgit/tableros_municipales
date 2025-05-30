@@ -54,11 +54,12 @@ if (count($años) >= 2) {
         /* Estos estilos se han movido al archivo sidebar.css */
     </style>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Bibliotecas para exportación -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">    <!-- Bibliotecas para exportación -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <!-- Biblioteca para capturar elementos como imagen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body> <!-- Overlay para cerrar el menú en móviles -->
@@ -85,7 +86,7 @@ if (count($años) >= 2) {
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title">
-                <h1>Estadísticas de Estudiantes en Escuelas Públicas</h1>
+                <h1>Estadísticas de Estudiantes en Escuelas Públicas ciclo 2023 - 2024</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -97,16 +98,12 @@ if (count($años) >= 2) {
 
         <div class="container-fluid">
             <!-- Panel de resumen de estudiantes -->
-            <div class="matricula-panel animate-fade delay-1">
-                <div class="matricula-header">
+            <div class="matricula-panel animate-fade delay-1">                <div class="matricula-header">
                     <h3 class="matricula-title"><i class="fas fa-user-graduate"></i> Matrícula Total en Escuelas
                         Públicas</h3>
                     <div class="export-buttons">
-                        <button id="export-excel" class="export-button">
-                            <i class="fas fa-file-excel"></i> Excel
-                        </button>
                         <button id="export-pdf" class="export-button">
-                            <i class="fas fa-file-pdf"></i> PDF
+                            <i class="fas fa-file-pdf"></i> Exportar
                         </button>
                     </div>
                 </div>
@@ -143,7 +140,7 @@ if (count($años) >= 2) {
                         </div>
                     </div>
 
-                    <div id="chart-matricula-container" class="chart-container">
+                    <div id="chart-matricula-container" class="chart-container" style="height: 520px; min-height: 400px;">
                         <div id="chart-matricula" style="width:100%; height:100%"></div>
                     </div>
 
@@ -211,8 +208,8 @@ if (count($años) >= 2) {
         // Convertir los datos de matrícula a formato JSON para usar en JavaScript
         echo "const datosMatricula = " . json_encode($datosMatricula) . ";\n";
         ?>
-    </script>
-    <script src="./js/script.js"></script>
+    </script>    <script src="./js/script.js"></script>
+    <script src="./js/export-graficos-mejorado.js"></script>
     <script src="./js/estudiantes.js"></script>
     <script src="./js/animations_global.js"></script>
     <script src="./js/sidebar.js"></script>
