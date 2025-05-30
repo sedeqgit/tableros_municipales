@@ -600,8 +600,8 @@ function exportarTablaPDF() {
  */
 function prepararGraficoParaExportacion() {
     return new Promise((resolve) => {
-        // Obtener los datos actuales
-        const datos = obtenerDatosFiltrados();
+        // Obtener los datos CON ANOTACIONES para exportación
+        const datos = obtenerDatosConAnotaciones();
         const titulo = obtenerTituloGrafico();
         
         // Crear una configuración especial para exportación
@@ -714,6 +714,136 @@ function obtenerDatosFiltrados() {
 }
 
 /**
+ * Obtiene los datos filtrados con anotaciones (valores sobre las barras) para exportación
+ * Esta función solo se debe usar para exportación, NO para visualización normal
+ */
+function obtenerDatosConAnotaciones() {
+    let datos;
+    
+    if (añoSeleccionado === 'todos' && nivelSeleccionado === 'todos') {
+        // Mostrar todos los datos por año con anotaciones
+        datos = agregarAnotacionesATodos();
+    } else if (añoSeleccionado !== 'todos' && nivelSeleccionado === 'todos') {
+        // Mostrar datos de un año específico por nivel con anotaciones
+        datos = agregarAnotacionesAAnual(añoSeleccionado);
+    } else if (añoSeleccionado === 'todos' && nivelSeleccionado !== 'todos') {
+        // Mostrar evolución de un nivel específico por años con anotaciones
+        datos = agregarAnotacionesANivel(nivelSeleccionado);
+    } else {
+        // Mostrar datos específicos de un año y nivel con anotaciones
+        datos = agregarAnotacionesAEspecificos(añoSeleccionado, nivelSeleccionado);
+    }
+    
+    return datos;
+}
+
+/**
+ * Agrega anotaciones a los datos de todos los años y niveles
+ */
+function agregarAnotacionesATodos() {
+    const datosOriginales = datosMatriculaAgrupados.todos;
+    if (!datosOriginales || datosOriginales.length === 0) return datosOriginales;
+    
+    // Crear nueva estructura con anotaciones
+    const datosConAnotaciones = [];
+    
+    // Encabezados originales + columna de anotación para cada serie
+    const encabezadosOriginales = datosOriginales[0];
+    const nuevosEncabezados = [encabezadosOriginales[0]]; // Año Escolar
+    
+    // Agregar cada nivel con su columna de anotación
+    for (let i = 1; i < encabezadosOriginales.length - 1; i++) { // Excluir el "Total"
+        nuevosEncabezados.push(encabezadosOriginales[i]);
+        nuevosEncabezados.push({ role: 'annotation' });
+    }
+    
+    datosConAnotaciones.push(nuevosEncabezados);
+    
+    // Procesar cada fila de datos
+    for (let i = 1; i < datosOriginales.length; i++) {
+        const filaOriginal = datosOriginales[i];
+        const nuevaFila = [filaOriginal[0]]; // Año Escolar
+        
+        // Agregar cada valor con su anotación
+        for (let j = 1; j < filaOriginal.length - 1; j++) { // Excluir el "Total"
+            const valor = filaOriginal[j];
+            nuevaFila.push(valor);
+            nuevaFila.push(valor > 0 ? valor.toString() : ''); // Anotación solo si hay valor
+        }
+        
+        datosConAnotaciones.push(nuevaFila);
+    }
+    
+    return datosConAnotaciones;
+}
+
+/**
+ * Agrega anotaciones a los datos de un año específico
+ */
+function agregarAnotacionesAAnual(año) {
+    const datosOriginales = datosMatriculaAgrupados.anual[año];
+    if (!datosOriginales || datosOriginales.length === 0) return datosOriginales;
+    
+    const datosConAnotaciones = [];
+    
+    // Encabezados: [Nivel, Cantidad, Anotación]
+    datosConAnotaciones.push([datosOriginales[0][0], datosOriginales[0][1], { role: 'annotation' }]);
+    
+    // Procesar cada fila
+    for (let i = 1; i < datosOriginales.length; i++) {
+        const fila = datosOriginales[i];
+        const valor = fila[1];
+        datosConAnotaciones.push([fila[0], valor, valor > 0 ? valor.toString() : '']);
+    }
+    
+    return datosConAnotaciones;
+}
+
+/**
+ * Agrega anotaciones a los datos de un nivel específico a través de los años
+ */
+function agregarAnotacionesANivel(nivel) {
+    const datosOriginales = datosMatriculaAgrupados.nivel[nivel];
+    if (!datosOriginales || datosOriginales.length === 0) return datosOriginales;
+    
+    const datosConAnotaciones = [];
+    
+    // Encabezados: [Año, Cantidad, Anotación]
+    datosConAnotaciones.push([datosOriginales[0][0], datosOriginales[0][1], { role: 'annotation' }]);
+    
+    // Procesar cada fila
+    for (let i = 1; i < datosOriginales.length; i++) {
+        const fila = datosOriginales[i];
+        const valor = fila[1];
+        datosConAnotaciones.push([fila[0], valor, valor > 0 ? valor.toString() : '']);
+    }
+    
+    return datosConAnotaciones;
+}
+
+/**
+ * Agrega anotaciones a los datos específicos de un año y nivel
+ */
+function agregarAnotacionesAEspecificos(año, nivel) {
+    const datosOriginales = prepararDatosEspecificos(año, nivel);
+    if (!datosOriginales || datosOriginales.length === 0) return datosOriginales;
+    
+    const datosConAnotaciones = [];
+    
+    // Encabezados: [Nivel, Cantidad, Anotación]
+    datosConAnotaciones.push([datosOriginales[0][0], datosOriginales[0][1], { role: 'annotation' }]);
+    
+    // Procesar cada fila
+    for (let i = 1; i < datosOriginales.length; i++) {
+        const fila = datosOriginales[i];
+        const valor = fila[1];
+        datosConAnotaciones.push([fila[0], valor, valor > 0 ? valor.toString() : '']);
+    }
+    
+    return datosConAnotaciones;
+}
+
+/**
  * Prepara datos específicos para un año y nivel determinado
  */
 function prepararDatosEspecificos(año, nivel) {
@@ -812,31 +942,43 @@ function exportarGraficoPNG() {
         nombreArchivo = `Grafico_Matricula_${nivelSeleccionado.replace(/\s+/g, '_')}_${añoSeleccionado}.png`;
     }
 
-    // Usar html2canvas para capturar el gráfico
-    const chartElement = document.getElementById('chart-matricula');
-    if (!chartElement) {
-        mostrarMensajeError('No se pudo encontrar el gráfico para exportar');
-        return;
-    }
+    // Preparar el gráfico con anotaciones para exportación
+    prepararGraficoParaExportacion().then(() => {
+        // Usar html2canvas para capturar el gráfico
+        const chartElement = document.getElementById('chart-matricula');
+        if (!chartElement) {
+            mostrarMensajeError('No se pudo encontrar el gráfico para exportar');
+            return;
+        }
 
-    mostrarMensajeExito('Generando imagen PNG...');
-    
-    html2canvas(chartElement, {
-        backgroundColor: '#ffffff',
-        scale: 2,
-        logging: false,
-        useCORS: true
-    }).then(canvas => {
-        // Crear enlace de descarga
-        const link = document.createElement('a');
-        link.download = nombreArchivo;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
+        mostrarMensajeExito('Generando imagen PNG...');
         
-        mostrarMensajeExito('Imagen PNG descargada exitosamente');
+        html2canvas(chartElement, {
+            backgroundColor: '#ffffff',
+            scale: 2,
+            logging: false,
+            useCORS: true
+        }).then(canvas => {
+            // Crear enlace de descarga
+            const link = document.createElement('a');
+            link.download = nombreArchivo;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            mostrarMensajeExito('Imagen PNG descargada exitosamente');
+            
+            // Restaurar el gráfico a su estado normal (sin anotaciones)
+            setTimeout(() => restaurarGraficoNormal(), 1000);
+        }).catch(error => {
+            console.error('Error al generar PNG:', error);
+            mostrarMensajeError('Error al generar la imagen PNG');
+            
+            // Restaurar el gráfico a su estado normal en caso de error
+            setTimeout(() => restaurarGraficoNormal(), 1000);
+        });
     }).catch(error => {
-        console.error('Error al generar PNG:', error);
-        mostrarMensajeError('Error al generar la imagen PNG');
+        console.error('Error al preparar gráfico para PNG:', error);
+        mostrarMensajeError('Error al preparar el gráfico para exportación');
     });
 }
 

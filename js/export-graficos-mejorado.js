@@ -64,9 +64,9 @@ function exportarGraficoConMetodoNativo(chartElementId, titulo, subtitulo, nombr
                 exportarConHtml2CanvasFallback(chartElementId, titulo, subtitulo, nombreArchivo, exportButton, originalText);
             }
         });
-        
-        // Forzar re-renderizado para activar el evento 'ready'
-        const datos = obtenerDatosFiltrados();
+          // Forzar re-renderizado para activar el evento 'ready'
+        // Usar datos con anotaciones para exportación PDF
+        const datos = obtenerDatosConAnotaciones();
         const dataTable = google.visualization.arrayToDataTable(datos);
         chartMatricula.draw(dataTable, chartMatricula.options);
         
@@ -88,41 +88,48 @@ function exportarConHtml2CanvasFallback(chartElementId, titulo, subtitulo, nombr
         return;
     }
     
-    // Configurar opciones para html2canvas optimizadas
-    const options = {
-        backgroundColor: '#ffffff',
-        scale: 2.5,
-        logging: false,
-        useCORS: true,
-        allowTaint: true,
-        height: chartElement.offsetHeight + 100,
-        width: chartElement.offsetWidth + 80,
-        x: -40,
-        y: -50,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: chartElement.offsetWidth + 160,
-        windowHeight: chartElement.offsetHeight + 200
-    };
-    
-    // Capturar el gráfico como imagen
-    html2canvas(chartElement, options).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        crearPDFConImagenBase64(imgData, titulo, subtitulo, nombreArchivo, exportButton, originalText);
+    // Preparar el gráfico con anotaciones también en el fallback
+    prepararGraficoParaExportacion().then(() => {
+        // Configurar opciones para html2canvas optimizadas
+        const options = {
+            backgroundColor: '#ffffff',
+            scale: 2.5,
+            logging: false,
+            useCORS: true,
+            allowTaint: true,
+            height: chartElement.offsetHeight + 100,
+            width: chartElement.offsetWidth + 80,
+            x: -40,
+            y: -50,
+            scrollX: 0,
+            scrollY: 0,
+            windowWidth: chartElement.offsetWidth + 160,
+            windowHeight: chartElement.offsetHeight + 200
+        };
         
-        // Restaurar el gráfico si la función existe
-        if (typeof restaurarGraficoNormal === 'function') {
-            setTimeout(() => restaurarGraficoNormal(), 1000);
-        }
+        // Capturar el gráfico como imagen
+        html2canvas(chartElement, options).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            crearPDFConImagenBase64(imgData, titulo, subtitulo, nombreArchivo, exportButton, originalText);
+            
+            // Restaurar el gráfico si la función existe
+            if (typeof restaurarGraficoNormal === 'function') {
+                setTimeout(() => restaurarGraficoNormal(), 1000);
+            }
+        }).catch(error => {
+            console.error('Error al capturar con html2canvas:', error);
+            restaurarBotonExport(exportButton, originalText);
+            mostrarMensajeError('Error al capturar el gráfico');
+            
+            // Restaurar el gráfico en caso de error
+            if (typeof restaurarGraficoNormal === 'function') {
+                restaurarGraficoNormal();
+            }
+        });
     }).catch(error => {
-        console.error('Error al capturar con html2canvas:', error);
+        console.error('Error al preparar gráfico para fallback:', error);
         restaurarBotonExport(exportButton, originalText);
-        mostrarMensajeError('Error al capturar el gráfico');
-        
-        // Restaurar el gráfico en caso de error
-        if (typeof restaurarGraficoNormal === 'function') {
-            restaurarGraficoNormal();
-        }
+        mostrarMensajeError('Error al preparar el gráfico');
     });
 }
 
