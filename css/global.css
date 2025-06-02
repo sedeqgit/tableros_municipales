@@ -1,0 +1,364 @@
+/* 
+ * ARCHIVO CSS GLOBAL - Sistema SEDEQ (Estadística Educativa de Querétaro)
+ * Archivo: global.css
+ * Versión: 1.0
+ * 
+ * Este archivo unifica:
+ * - Variables CSS y colores institucionales
+ * - Tipografías del sistema
+ * - Animaciones globales (de animations_global.css)
+ * - Mejoras de UI/UX (de improvements.css)
+ */
+
+/* =============================================
+   IMPORTACIÓN DE FUENTES
+   ============================================= */
+
+/* Fuente principal del sistema - Hanken Grotesk */
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap');
+
+/* Fuente de títulos institucionales - Novecento Sans Wide */
+@import url('https://fonts.cdnfonts.com/css/novecento-sans-wide');
+
+/* =============================================
+   VARIABLES CSS - SISTEMA DE DISEÑO
+   ============================================= */
+
+:root {
+    /* === PALETA DE COLORES INSTITUCIONALES === */
+    /* Basada en la identidad visual oficial de SEDEQ */
+    
+    /* Colores principales - Paleta Pantone institucional */
+    --primary-blue: #242B57; /* Azul oscuro principal - PANTONE 103-6C */
+    --secondary-blue: #4996C4; /* Azul medio - PANTONE 7688C */
+    --tertiary-gray: #707F8F; /* Gris neutro - PANTONE 174-7C */
+    --accent-aqua: #7CC6D8; /* Turquesa/Aqua - PANTONE 103-6C */
+    --accent-magenta: #FF3E8D; /* Rosa/Magenta vibrante - PANTONE 103-6C */
+    --accent-red: #9D2449; /* Rojo institucional de Querétaro */
+    --accent-gold: #D4AF37; /* Dorado institucional */
+    
+    /* Colores complementarios derivados de la paleta */
+    --light-blue: rgba(76, 150, 196, 0.1); /* Azul claro basado en secondary-blue */
+    --light-aqua: rgba(124, 198, 216, 0.15); /* Aqua suave */
+    --light-magenta: rgba(255, 62, 141, 0.1); /* Magenta suave */
+    --light-gray: #f8f9fa;
+    --medium-gray: #e9ecef;
+    --dark-gray: #495057;
+    
+    /* Colores base del sistema */
+    --white: #ffffff;
+    --black: #212529;
+    --success-green: #28a745;
+    --warning-yellow: #ffc107;
+    --danger-red: #dc3545;
+    --info-blue: #17a2b8;
+    
+    /* === SISTEMA DE TIPOGRAFÍA === */
+    
+    /* Familia de fuentes */
+    --font-primary: 'Hanken Grotesk', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Novecento sans wide', 'Hanken Grotesk', sans-serif;
+    --font-monospace: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    
+    /* Pesos de fuente */
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    
+    /* === SISTEMA DE COLORES DE TEXTO === */
+    --text-primary: #242B57; /* Usando el azul principal */
+    --text-secondary: #707F8F; /* Usando el gris de la paleta */
+    --text-accent: #4996C4; /* Usando el azul secundario */
+    --text-muted: #6c757d;
+    --text-white: #ffffff;
+    
+    /* === SISTEMA DE SOMBRAS Y EFECTOS === */
+    --shadow-sm: 0 2px 4px rgba(36, 43, 87, 0.08);
+    --shadow-md: 0 4px 8px rgba(36, 43, 87, 0.12);
+    --shadow-lg: 0 8px 16px rgba(36, 43, 87, 0.15);
+    --shadow-xl: 0 12px 24px rgba(36, 43, 87, 0.20);
+    
+    /* === SISTEMA DE BORDES Y RADIOS === */
+    --border-radius-none: 0;
+    --border-radius-sm: 4px;
+    --border-radius: 8px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 16px;
+    --border-radius-xl: 24px;
+    --border-radius-full: 9999px;
+    
+    /* Radios específicos del sistema */
+    --card-border-radius: var(--border-radius-md);
+    
+    /* === SISTEMA DE TRANSICIONES === */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.25s ease;
+    --transition-slow: 0.35s ease;
+    --transition-speed: 0.3s; /* Para compatibilidad con código existente */
+}
+
+/* =============================================
+   RESET Y ESTILOS BASE
+   ============================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-regular);
+    line-height: 1.5;
+    color: var(--text-primary);
+    background-color: var(--light-gray);
+}
+
+/* =============================================
+   SISTEMA DE TIPOGRAFÍA
+   ============================================= */
+
+/* Aplicación estratégica de Novecento Wide solo para elementos principales */
+.top-bar-title h1,
+.section-title {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Hanken Grotesk para subtítulos y elementos secundarios */
+.municipality-info h3,
+.quick-access-card h3,
+.view-more-card h3,
+.panel-title {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* =============================================
+   ANIMACIONES GLOBALES (de animations_global.css)
+   ============================================= */
+
+/* === KEYFRAMES DE ANIMACIÓN === */
+
+/* Fade In */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Slide In desde abajo */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Slide In desde la derecha */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Slide In desde la izquierda */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Efecto de pulso suave */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+    100% { transform: scale(1); }
+}
+
+/* === CLASES PARA APLICAR ANIMACIONES === */
+
+/* Fade In */
+.animate-fade {
+    opacity: 0;
+    animation: fadeIn 0.7s ease forwards;
+}
+
+/* Desde abajo */
+.animate-up {
+    opacity: 0;
+    animation: slideInUp 0.6s ease forwards;
+}
+
+/* Desde la derecha */
+.animate-right {
+    opacity: 0;
+    animation: slideInRight 0.6s ease forwards;
+}
+
+/* Desde la izquierda */
+.animate-left {
+    opacity: 0;
+    animation: slideInLeft 0.6s ease forwards;
+}
+
+/* Escalar al aparecer */
+.animate-scale {
+    opacity: 0;
+    animation: scaleIn 0.5s ease forwards;
+}
+
+/* Efecto de pulso */
+.animate-pulse {
+    animation: pulse 2s ease infinite;
+}
+
+/* === UTILIDADES DE RETRASO === */
+.delay-1 { animation-delay: 100ms; }
+.delay-2 { animation-delay: 200ms; }
+.delay-3 { animation-delay: 300ms; }
+.delay-4 { animation-delay: 400ms; }
+.delay-5 { animation-delay: 500ms; }
+
+/* === UTILIDADES ADICIONALES === */
+
+/* Para elementos que aparecen en secuencia */
+.animate-sequence > * {
+    opacity: 0;
+}
+
+/* Transiciones para hover */
+.animate-hover {
+    transition: all 0.25s ease;
+}
+
+.animate-hover:hover {
+    transform: translateY(-3px);
+}
+
+/* =============================================
+   MEJORAS DE UI/UX (de improvements.css)
+   ============================================= */
+
+/* === INDICADORES DE ESTADÍSTICAS === */
+.stat-indicator {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 18px;
+    flex-shrink: 0;
+    font-size: 1.2rem;
+    border: 2px solid;
+}
+
+.stat-indicator.up {
+    background-color: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
+    border-color: rgba(76, 175, 80, 0.5);
+}
+
+.stat-indicator.down {
+    background-color: rgba(244, 67, 54, 0.15);
+    color: #f44336;
+    border-color: rgba(244, 67, 54, 0.5);
+}
+
+.stat-indicator.neutral {
+    background-color: rgba(33, 150, 243, 0.1);
+    color: #2196f3;
+    border-color: rgba(33, 150, 243, 0.3);
+}
+
+/* === BOTONES DE ACCIÓN === */
+.action-button {
+    padding: 8px 16px;
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.action-button i {
+    margin-right: 8px;
+}
+
+.action-button:hover {
+    background-color: var(--secondary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* =============================================
+   ACCESIBILIDAD 
+   ============================================= */
+
+/* Respeta preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+    }
+}
+
+/* =============================================
+   RESPONSIVE DESIGN
+   ============================================= */
+
+/* Optimización para dispositivos móviles */
+@media screen and (max-width: 768px) {
+    .animate-fade, .animate-up, .animate-right, .animate-left, .animate-scale {
+        animation-duration: 0.4s;
+    }
+}
