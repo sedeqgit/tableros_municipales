@@ -43,7 +43,8 @@ if (count($años) >= 2) {
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Estadísticas de Estudiantes | SEDEQ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas de Estudiantes | SEDEQ</title>
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/styles.css">
     <link rel="stylesheet" href="./css/estudiantes.css">
