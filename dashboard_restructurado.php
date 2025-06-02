@@ -134,10 +134,17 @@ $totalAlumnos = $totales['alumnos'];
                         escuela.
                     </p>
                 </div>
-            </div>
-            <div class="card chart-card animate-fade delay-4">
+            </div>            <div class="card chart-card animate-fade delay-4">
                 <div class="card-header">
                     <h2><i class="fas fa-chart-bar"></i> Estadística Educativa por Tipo</h2>
+                    <div class="card-actions">
+                        <button id="exportChartPNG" class="action-button" title="Exportar gráfico como PNG">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        <button id="exportChartPDF" class="action-button" title="Exportar gráfico como PDF">
+                            <i class="fas fa-file-pdf"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div id="chart_div" class="animate-scale delay-5"></div>
@@ -225,9 +232,9 @@ $totalAlumnos = $totales['alumnos'];
         echo "const totalAlumnos = " . $totalAlumnos . ";\n";
         echo "const totalEscuelasFormateado = '" . number_format($totalEscuelas, 0, '.', ',') . "';\n";
         echo "const totalAlumnosFormateado = '" . number_format($totalAlumnos, 0, '.', ',') . "';\n";
-        ?>
-    </script> <!-- Script del dashboard -->
+        ?>    </script> <!-- Script del dashboard -->
     <script src="./js/script.js"></script>
+    <script src="./js/export-graficos-mejorado.js"></script>
     <script src="./js/animations_global.js"></script>
     <script src="./js/sidebar.js"></script>
 </body>

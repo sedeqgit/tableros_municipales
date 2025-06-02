@@ -32,15 +32,8 @@ $totalAlumnos = $totales['alumnos'];
 <body>
     <div class="app-container">
         <!-- Overlay para cerrar el menú en móviles -->
-        <div class="sidebar-overlay"></div>
-
-        <!-- Barra lateral -->
+        <div class="sidebar-overlay"></div> <!-- Barra lateral -->
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <img src="./img/layout_set_logo.png" alt="Logo SEDEQ" class="sidebar-logo">
-                <h2><?php echo isset($_SESSION['fullname']) ? explode(' ', $_SESSION['fullname'])[0] : 'Usuario'; ?>
-                </h2>
-            </div>
             <nav class="sidebar-nav">
                 <ul>
                     <li class="nav-item active">

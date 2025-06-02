@@ -1,23 +1,41 @@
+/* Importación de fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/novecento-sans-wide');
+
 /* Estilos para el Home y Settings del Sistema SEDEQ */
 
 :root {
-    --primary-blue: #004990; /* Azul institucional de Querétaro */
-    --secondary-blue: #266FB6; 
-    --accent-red: #9D2449; /* Rojo institucional de Querétaro */
-    --accent-gold: #D4AF37; /* Dorado institucional */
-    --light-gray: #f5f7fa;
+    /* Nueva paleta de colores basada en Pantone */
+    --primary-blue: #242B57; /* Azul oscuro principal - PANTONE 103-6C */
+    --secondary-blue: #4996C4; /* Azul medio - PANTONE 7688C */
+    --tertiary-gray: #707F8F; /* Gris neutro - PANTONE 174-7C */
+    --accent-aqua: #7CC6D8; /* Turquesa/Aqua - PANTONE 103-6C */
+    --accent-magenta: #FF3E8D; /* Rosa/Magenta vibrante - PANTONE 103-6C */
+    
+    /* Colores complementarios derivados de la paleta */
+    --light-blue: rgba(76, 150, 196, 0.1); /* Azul claro basado en secondary-blue */
+    --light-aqua: rgba(124, 198, 216, 0.15); /* Aqua suave */
+    --light-magenta: rgba(255, 62, 141, 0.1); /* Magenta suave */
+    --light-gray: #f8f9fa;
     --medium-gray: #e9ecef;
     --dark-gray: #495057;
+    
+    /* Colores base mantenidos */
     --white: #ffffff;
     --black: #212529;
     --success-green: #28a745;
     --warning-yellow: #ffc107;
     --danger-red: #dc3545;
-    --text-primary: #333333;
-    --text-secondary: #6c757d;
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+    
+    /* Texto usando la nueva paleta */
+    --text-primary: #242B57; /* Usando el azul principal */
+    --text-secondary: #707F8F; /* Usando el gris de la paleta */
+    --text-accent: #4996C4; /* Usando el azul secundario */
+    
+    /* Sombras y efectos */
+    --shadow-sm: 0 2px 4px rgba(36, 43, 87, 0.08);
+    --shadow-md: 0 4px 8px rgba(36, 43, 87, 0.12);
+    --shadow-lg: 0 8px 16px rgba(36, 43, 87, 0.15);
     --border-radius: 8px;
     --card-border-radius: 12px;
     --transition-speed: 0.3s;
@@ -27,7 +45,25 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Hanken Grotesk', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Aplicación estratégica de Novecento Wide solo para elementos principales */
+.top-bar-title h1,
+.section-title {
+    font-family: 'Novecento sans wide', 'Hanken Grotesk', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Hanken Grotesk para subtítulos y elementos secundarios */
+.municipality-info h3,
+.quick-access-card h3,
+.view-more-card h3,
+.panel-title {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-weight: 600;
 }
 
 body {
@@ -46,29 +82,6 @@ body {
 
 /* Barra lateral - Estos estilos se movieron a sidebar.css */
 /* Mantener solo los estilos específicos de la barra lateral para home.php que no están en sidebar.css */
-
-.sidebar-header {
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.sidebar-logo {
-    max-width: 45px;
-    height: auto;
-    background-color: white;
-    padding: 5px;
-    border-radius: 5px;
-}
-
-.sidebar-header h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    white-space: nowrap;
-}
 
 .sidebar-nav {
     padding: 20px 0;
@@ -161,9 +174,10 @@ body {
 /* Estilos del botón de menú - Se movieron a sidebar.css */
 
 .top-bar-title h1 {
-    font-size: 1.4rem;
+    font-size: 1.9rem;
     color: var(--primary-blue);
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: 0.3px;
 }
 
 .user-menu {
@@ -266,7 +280,7 @@ body {
 
 .welcome-text h2 {
     color: var(--primary-blue);
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     margin-bottom: 10px;
 }
 
@@ -281,19 +295,21 @@ body {
 }
 
 .welcome-image {
-    max-width: 150px;
+    max-width: 400px;
 }
 
 .welcome-image img {
     width: 100%;
     height: auto;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(36, 43, 87, 0.25);
 }
 
 /* Secciones comunes */
 .section-title {
     color: var(--primary-blue);
     margin-bottom: 20px;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     display: flex;
     align-items: center;
 }
@@ -335,17 +351,35 @@ body {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: var(--primary-blue);
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
     color: var(--white);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
     margin-bottom: 15px;
+    box-shadow: 0 4px 8px rgba(36, 43, 87, 0.2);
+}
+
+/* Variaciones de colores para diferentes municipios - Más sutiles y armoniosas */
+.municipality-card:nth-child(1) .municipality-icon {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+}
+
+.municipality-card:nth-child(2) .municipality-icon {
+    background: linear-gradient(135deg, var(--secondary-blue), var(--tertiary-gray));
+}
+
+.municipality-card:nth-child(3) .municipality-icon {
+    background: linear-gradient(135deg, var(--tertiary-gray), var(--primary-blue));
+}
+
+.municipality-card:nth-child(4) .municipality-icon {
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-aqua));
 }
 
 .municipality-info h3 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin-bottom: 10px;
     color: var(--primary-blue);
 }
@@ -380,15 +414,34 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 10px 15px;
-    background-color: var(--primary-blue);
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
     color: var(--white);
     text-decoration: none;
     border-radius: var(--border-radius);
-    transition: background-color var(--transition-speed);
+    transition: all var(--transition-speed);
+    position: relative;
+    overflow: hidden;
 }
 
 .municipality-link:hover {
-    background-color: var(--secondary-blue);
+    background: linear-gradient(135deg, var(--secondary-blue), var(--accent-aqua));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(36, 43, 87, 0.25);
+}
+
+.municipality-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.municipality-link:hover::before {
+    left: 100%;
 }
 
 /* Tarjeta "Ver más" */
@@ -399,34 +452,54 @@ body {
     align-items: center;
     justify-content: center;
     padding: 30px 20px;
-    background-color: rgba(0, 73, 144, 0.05);
-    border: 2px dashed var(--medium-gray);
+    background: linear-gradient(135deg, var(--light-magenta), var(--light-aqua));
+    border: 2px dashed var(--accent-magenta);
+    transition: all var(--transition-speed);
+}
+
+.view-more-card:hover {
+    background: linear-gradient(135deg, var(--light-aqua), var(--light-magenta));
+    border-color: var(--accent-aqua);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 62, 141, 0.15);
 }
 
 .view-more-icon {
     font-size: 2.5rem;
-    color: var(--primary-blue);
+    color: var(--accent-magenta);
     margin-bottom: 15px;
+    transition: all var(--transition-speed);
+}
+
+.view-more-card:hover .view-more-icon {
+    color: var(--accent-aqua);
+    transform: scale(1.1);
 }
 
 .view-more-card h3 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin-bottom: 10px;
     color: var(--primary-blue);
 }
 
 .view-more-card p {
-    color: var(--text-secondary);
+    color: var(--tertiary-gray);
     margin-bottom: 20px;
     font-size: 0.9rem;
 }
 
 .view-more-link {
-    color: var(--primary-blue);
+    color: var(--accent-magenta);
     text-decoration: none;
     display: flex;
     align-items: center;
     font-weight: 500;
+    transition: all var(--transition-speed);
+}
+
+.view-more-link:hover {
+    color: var(--accent-aqua);
+    transform: translateX(5px);
 }
 
 .view-more-link i {
@@ -451,23 +524,44 @@ body {
     padding: 20px;
     text-align: center;
     text-decoration: none;
-    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+    transition: all var(--transition-speed);
+    position: relative;
+    overflow: hidden;
+    border-top: 3px solid var(--primary-blue);
+    border-left: 1px solid rgba(36, 43, 87, 0.1);
 }
 
 .quick-access-card:hover {
     transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(to bottom, rgba(36, 43, 87, 0.06), var(--white));
+    border-left: 3px solid var(--primary-blue);
 }
 
+/* Iconos de acceso rápido con diseño armonioso y consistente */
 .quick-access-card i {
-    font-size: 2rem;
-    color: var(--primary-blue);
+    font-size: 2.2rem;
     margin-bottom: 15px;
+    transition: all var(--transition-speed);
+    color: var(--primary-blue);
+    opacity: 0.8;
+}
+
+.quick-access-card:hover i {
+    transform: scale(1.15);
+    opacity: 1;
+    color: var(--secondary-blue);
 }
 
 .quick-access-card h3 {
-    font-size: 1rem;
-    color: var(--dark-gray);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    transition: color var(--transition-speed);
+    font-weight: 600;
+}
+
+.quick-access-card:hover h3 {
+    color: var(--primary-blue);
 }
 
 /* Pie de página */
@@ -665,7 +759,7 @@ body {
 }
 
 .danger-button:hover {
-    background-color: #c82333;
+    background-color: var(--danger-red);
 }
 
 /* Responsividad */
@@ -684,14 +778,9 @@ body {
         width: 80px;
     }
     
-    .sidebar-header h2,
     .nav-item a span,
     .logout-btn span {
         display: none;
-    }
-    
-    .sidebar-header {
-        justify-content: center;
     }
     
     .nav-item a,
@@ -708,7 +797,6 @@ body {
         width: 260px;
     }
     
-    .sidebar.expanded .sidebar-header h2,
     .sidebar.expanded .nav-item a span,
     .sidebar.expanded .logout-btn span {
         display: block;
