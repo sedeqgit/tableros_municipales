@@ -18,7 +18,7 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuración | SEDEQ - Sistema de Estadística Educativa</title>
     <link rel="stylesheet" href="./css/global.css">
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/resumen.css">
     <link rel="stylesheet" href="./css/settings.css">
     <link rel="stylesheet" href="./css/sidebar.css">
     <link rel="stylesheet" href="./css/home.css">
