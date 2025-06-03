@@ -307,8 +307,8 @@ Todos los derechos reservados. Este proyecto es de carácter demostrativo.
 
 **🎓 Dashboard Educativo Corregidora - Transformando datos en conocimiento**
 
-![Estadísticas](https://img.shields.io/badge/Estudiantes-119%2C530-blue?style=flat-square)
-![Instituciones](https://img.shields.io/badge/Escuelas-496-green?style=flat-square)
+![Estadísticas](https://img.shields.io/badge/Estudiantes-48%2C684-blue?style=flat-square)
+![Instituciones](https://img.shields.io/badge/Escuelas-315-green?style=flat-square)
 ![Cobertura](https://img.shields.io/badge/Cobertura%20Estatal-7.98%25-orange?style=flat-square)
 
 </div>
