@@ -118,7 +118,7 @@ $totalAlumnos = $totales['alumnos'];
                                     </div>
                                 </div>
                             </div>
-                            <a href="./dashboard_restructurado.php" class="municipality-link">
+                            <a href="./resumen.php" class="municipality-link">
                                 Ver Dashboard <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>

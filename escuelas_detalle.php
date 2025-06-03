@@ -110,8 +110,7 @@ $datosEficiencia = [
         </div>
         <div class="sidebar-links">
             <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
-            <a href="dashboard_restructurado.php" class="sidebar-link"><i
-                    class="fas fa-chart-bar"></i><span>Resumen</span></a>
+            <a href="resumen.php" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
             <a href="#" class="sidebar-link active"><i class="fas fa-school"></i> <span>Escuelas</span></a>
             <a href="estudiantes.php" class="sidebar-link"><i
                     class="fas fa-user-graduate"></i><span>Estudiantes</span></a> <a href="#" class="sidebar-link"><i

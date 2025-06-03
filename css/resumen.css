@@ -63,11 +63,11 @@ body {
     margin-bottom: 20px;
     background-color: white;
     border-radius: 12px;
-    margin: 0 15px 20px 15px;
+    margin: 25px 15px 20px 15px;
 }
 
 .logo {
-    max-width: 85%;
+    max-width: 95%;
     height: auto;
 }
 
