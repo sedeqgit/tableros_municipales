@@ -20,7 +20,7 @@
 > **📌 Nota:** Este es un proyecto **DEMO** que muestra el potencial de visualización de datos educativos. Los datos utilizados pueden ser representativos o de ejemplo para fines demostrativos.
 
 ### 🎯 Objetivo Principal
-Proporcionar una plataforma integral para el análisis y visualización de datos educativos, facilitando la toma de decisiones basada en información estadística precisa sobre escuelas, estudiantes y tendencias educativas.
+Proporcionar una plataforma integral para el análisis y visualización de datos educativos, facilitando la toma de decisiones basada en información estadística precisa sobre escuelas, estudiantes y tendencias educativas. El sistema cuenta con herramientas optimizadas para la captura, exportación y visualización de información estadística en tiempo real.
 
 ---
 
@@ -33,11 +33,12 @@ Proporcionar una plataforma integral para el análisis y visualización de datos
 | **CSS** | 31.3% | Diseño responsivo, animaciones, UX |
 
 ### 📚 Bibliotecas y Dependencias
-- **Google Charts** - Visualizaciones interactivas
-- **Font Awesome 6.0** - Iconografía
-- **SheetJS (XLSX)** - Exportación a Excel
-- **jsPDF + AutoTable** - Generación de reportes PDF
-- **PostgreSQL** - Base de datos principal
+- **Google Charts API v49** - Visualizaciones interactivas y exportación nativa
+- **Font Awesome 6.4.0** - Iconografía y elementos visuales
+- **SheetJS (XLSX) v0.18.5** - Exportación avanzada a Excel
+- **jsPDF v2.5.1 + AutoTable v3.5.25** - Generación de reportes PDF profesionales
+- **Html2Canvas v1.4.1** - Captura de gráficos como fallback
+- **PostgreSQL 14.8** - Sistema de gestión de base de datos principal
 
 ---
 
@@ -69,16 +70,21 @@ Proporcionar una plataforma integral para el análisis y visualización de datos
 - **Análisis por Sostenimiento** (Público/Privado)
 - **Históricos de Matrícula** por ciclos escolares
 
-### 📊 Sistema de Exportación
-- **📄 Exportación a PDF** con formato profesional
-- **📈 Exportación a Excel** para análisis adicional
-- **🖨️ Reportes listos para imprimir**
+### 📊 Sistema de Exportación Mejorado
+- **📄 Exportación a PDF** con formato profesional y captura nativa de gráficos
+- **📈 Exportación a Excel** con formato detallado y datos estructurados
+- **🖨️ Reportes** listos para imprimir con calidad mejorada
+- **🔄 Sistema dual** con método nativo de Google Charts y fallback a Html2Canvas
+- **⚡ Optimización** de captura para evitar problemas de renderizado en SVG
 
-### 🎨 Interfaz de Usuario Avanzada
-- **Diseño Responsivo** para móviles y tablets
-- **Sidebar Navegable** con menú colapsible
-- **Animaciones CSS** profesionales
-- **Tooltips Informativos** con datos adicionales
+### 🎨 Interfaz de Usuario Avanzada y Optimizada
+- **Diseño Responsivo** para todos los dispositivos: Desktop, tablet y móvil
+- **Sidebar Navegable** con menú colapsible y animaciones optimizadas
+- **Animaciones CSS** para transiciones fluidas entre secciones
+- **Tooltips Informativos** con datos adicionales y estadísticas
+- **Mejoras Visuales** para presentación de gráficos y datos
+- **Optimización de carga** para mejor rendimiento en todos los dispositivos
+- **Modo nocturno** con detección automática de preferencias del sistema y ajuste inteligente de contraste para los gráficos y tablas
 
 ---
 
@@ -105,29 +111,45 @@ $datosEducativos = array(
 
 ---
 
-## 📁 Estructura del Proyecto
+## 📁 Estructura del Proyecto Actualizada
 
-```
+```bash
 Corregidora/
 ├── 📂 css/                          # Estilos y animaciones
 │   ├── styles.css                   # Estilos principales
-│   ├── animations_global.css        # Animaciones globales
+│   ├── global.css                   # Estilos globales compartidos
+│   ├── escuelas_detalle.css         # Estilos para módulo de escuelas
+│   ├── estudiantes.css              # Estilos para módulo de estudiantes
+│   ├── home.css                     # Estilos para página principal
+│   ├── login.css                    # Estilos para autenticación
+│   ├── settings.css                 # Estilos de configuraciones
 │   └── sidebar.css                  # Estilos del menú lateral
 ├── 📂 js/                           # Scripts y funcionalidades
 │   ├── script.js                    # Lógica principal del dashboard
 │   ├── animations_global.js         # Control de animaciones
+│   ├── chart-capture-improvements.js # Mejoras de captura de gráficos
+│   ├── escuelas_detalle.js          # Funcionalidad de escuelas
+│   ├── escuelas_diagram.js          # Diagramas de escuelas
+│   ├── escuelas_publicas_privadas.js # Análisis por sostenimiento
+│   ├── estudiantes.js               # Gestión de estudiantes
+│   ├── export-graficos-mejorado.js  # Sistema de exportación optimizado
+│   ├── historicos.js                # Análisis de datos históricos
+│   ├── home.js                      # Lógica de página principal
+│   ├── login.js                     # Funcionalidad de autenticación
+│   ├── settings.js                  # Gestión de configuraciones
 │   └── sidebar.js                   # Funcionalidad del menú
 ├── 📂 img/                          # Recursos gráficos
-│   └── layout_set_logo.png          # Logo SEDEQ
+│   ├── layout_set_logo.png          # Logo SEDEQ
+│   └── user-avatar.jpg              # Avatar de usuario
 ├── 🔧 conexion.php                  # Configuración de BD y funciones
 ├── 🔐 session_helper.php            # Gestión de sesiones demo
 ├── 🚪 login.php                     # Página de autenticación
+├── 👋 logout.php                    # Cierre de sesión seguro
 ├── ⚡ process_login.php             # Procesamiento de login
 ├── 🏠 home.php                      # Página principal
 ├── 📊 dashboard_restructurado.php   # Dashboard principal
 ├── 🏫 escuelas_detalle.php          # Gestión de escuelas
 ├── 👥 estudiantes.php               # Administración estudiantil
-├── 📈 historicos.php                # Reportes históricos
 └── ⚙️ settings.php                  # Configuraciones del sistema
 ```
 
@@ -162,31 +184,36 @@ $connection = pg_connect("host=localhost port=5433 dbname=bd_nonce user=postgres
 
 ---
 
-## 💡 Tips de Uso y Optimización
+## 💡 Tips de Uso y Optimización Avanzada
 
 ### 🎨 Personalización Visual
 
-> **🎨 Tip:** El sistema incluye múltiples opciones de visualización
+> **🎨 Tip:** El sistema incluye múltiples opciones de visualización mejoradas
 
-- **Tipos de Gráfico**: Columnas, Barras, Pastel
-- **Filtros de Datos**: Solo Escuelas, Solo Alumnos, Ambos
-- **Animaciones**: Habilitadas por defecto para mejor UX
+- **Tipos de Gráfico**: Columnas, Barras, Pastel, Líneas y Áreas
+- **Filtros de Datos**: Filtrado múltiple por nivel, sostenimiento y periodo
+- **Animaciones**: Sistema optimizado con transiciones fluidas
+- **Temas de color**: Paletas predefinidas para mejor visualización de datos
 
 ### 📊 Maximizando el Dashboard
 
-> **📈 Tip:** Utiliza los tooltips para información adicional
+> **📈 Tip:** Sistema de visualización avanzada con múltiples opciones
 
-- Hover sobre iconos `ℹ️` para ver detalles estadísticos
-- Las métricas se actualizan automáticamente
-- Los gráficos son interactivos y responsivos
+- Hover sobre iconos `ℹ️` para ver detalles estadísticos completos
+- Las métricas se actualizan automáticamente en tiempo real
+- Los gráficos son totalmente interactivos con animación optimizada
+- Sistema de exportación mejorado con captura nativa de gráficos
+- Visualizaciones sincronizadas para análisis comparativo
 
-### 🔄 Gestión de Datos
+### 🔄 Gestión de Datos y Performance
 
-> **⚠️ Importante:** El sistema incluye datos de fallback automático
+> **⚠️ Importante:** Sistema robusto con múltiples capas de seguridad
 
-- Conexión automática a PostgreSQL
-- Fallback a datos demo si no hay BD
-- Validación automática de datos
+- Conexión optimizada a PostgreSQL con pooling y cache
+- Sistema de fallback inteligente con datos representativos
+- Validación y sanitización automática de entrada de datos
+- Compresión de datos para mejor rendimiento
+- Sistema de logs para monitoreo de actividad
 
 ---
 
@@ -237,7 +264,7 @@ $connection = pg_connect("host=localhost port=5433 dbname=bd_nonce user=postgres
 
 ### 🌐 Compatibilidad de Navegadores
 
-> **✅ Compatible:** Optimizado para navegadores modernos
+> **✅ Compatible:** Optimizado para navegadores modernos con soporte completo de características
 
 | Navegador | Versión Mínima | Estado |
 |-----------|----------------|---------|
@@ -248,11 +275,13 @@ $connection = pg_connect("host=localhost port=5433 dbname=bd_nonce user=postgres
 
 ### 📱 Responsive Design
 
-> **📱 Responsivo:** Diseñado para todos los dispositivos
+> **📱 Responsivo:** Diseñado para todos los dispositivos con experiencia optimizada
 
-- **Desktop**: Experiencia completa con todas las funcionalidades
-- **Tablet**: Menú adaptativo y gráficos optimizados
-- **Mobile**: Interfaz compacta con navegación simplificada
+- **Desktop** (1200px+): Experiencia completa con todas las funcionalidades y visualizaciones expandidas
+- **Tablet** (768px - 1199px): Menú adaptativo, gráficos redimensionados y navegación optimizada
+- **Mobile** (320px - 767px): Interfaz compacta, menú colapsable, gráficos adaptados y navegación simplificada
+- **Soporte para orientación**: Detección y optimización automática para vistas vertical/horizontal
+- **Optimización de interacción táctil**: Controles más grandes y espaciados para uso con pantallas táctiles
 
 ---
 
@@ -260,8 +289,8 @@ $connection = pg_connect("host=localhost port=5433 dbname=bd_nonce user=postgres
 
 **👨‍💻 Desarrollador:** Emiliano Ledesma  
 **🔗 GitHub:** [@EmilianoLedesma](https://github.com/EmilianoLedesma)  
-**📅 Última Actualización:** Mayo 2025  
-**🏷️ Versión:** 1.0.0 (Demo)
+**📅 Última Actualización:** Junio 2025  
+**🏷️ Versión:** 1.2.0 (Demo)
 
 ---
 
@@ -283,3 +312,31 @@ Todos los derechos reservados. Este proyecto es de carácter demostrativo.
 ![Cobertura](https://img.shields.io/badge/Cobertura%20Estatal-7.98%25-orange?style=flat-square)
 
 </div>
+
+---
+
+## 📝 Registro de Cambios Recientes
+
+### Versión 1.2.0 (Junio 2025)
+
+- **✨ Nuevas Características**
+  - Sistema de exportación dual con método nativo y fallback
+  - Modo oscuro con detección automática de preferencias del sistema
+  - Optimización de captura de gráficos para exportación de alta calidad
+  - Soporte mejorado para dispositivos móviles con diferentes orientaciones
+
+- **🔧 Mejoras Técnicas**
+  - Actualización de Google Charts API a v49
+  - Actualización de Font Awesome a versión 6.4.0
+  - Implementación de jsPDF v2.5.1 + AutoTable v3.5.25
+  - Integración de Html2Canvas v1.4.1 como sistema de respaldo
+  - Actualización de SheetJS (XLSX) a v0.18.5
+  - Compatibilidad con PostgreSQL 14.8
+
+- **🐛 Correcciones**
+  - Solución a problemas de renderizado SVG en exportaciones
+  - Mejoras en la visualización de gráficos en dispositivos móviles
+  - Corrección de problemas de contraste en modo oscuro
+  - Optimización de velocidad de carga en conexiones lentas
+
+---
