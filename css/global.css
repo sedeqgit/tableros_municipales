@@ -333,7 +333,7 @@ body {
 }
 
 .action-button:hover {
-    background-color: var(--secondary-blue);
+    background-color: #003b73;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }

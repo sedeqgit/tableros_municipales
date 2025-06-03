@@ -66,50 +66,13 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                 </div>
             </div>
         </div>
-
         <div class="container-fluid">
-            <div class="settings-grid">
-                <!-- Navegación de configuración -->
-                <div class="settings-nav">
-                    <div class="settings-nav-title">
-                        <i class="fas fa-cog"></i>
-                        Configuración
-                    </div>
-                    <ul class="settings-nav-items">
-                        <li class="settings-nav-item">
-                            <a href="#" class="settings-nav-link active" data-section="profile">
-                                <i class="fas fa-user"></i>
-                                Mi Perfil
-                            </a>
-                        </li>
-                        <li class="settings-nav-item">
-                            <a href="#" class="settings-nav-link" data-section="security">
-                                <i class="fas fa-shield-alt"></i>
-                                Seguridad
-                            </a>
-                        </li>
-                        <li class="settings-nav-item">
-                            <a href="#" class="settings-nav-link" data-section="preferences">
-                                <i class="fas fa-sliders-h"></i>
-                                Preferencias
-                            </a>
-                        </li>
-                        <li class="settings-nav-item">
-                            <a href="#" class="settings-nav-link" data-section="notifications">
-                                <i class="fas fa-bell"></i>
-                                Notificaciones
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Contenido de configuración -->
-                <div class="settings-content">
-                    <!-- Sección: Mi Perfil -->
-                    <div class="settings-section" id="profile-section">
-                        <h2 class="settings-title">Mi Perfil</h2>
-
-                        <div class="form-group">
+            <!-- Contenido de configuración -->
+            <div class="settings-container animate-fade"> <!-- Sección: Mi Perfil -->
+                <div class="settings-panel animate-up">
+                    <h2 class="settings-title"><i class="fas fa-user-circle"></i> Mi Perfil</h2>
+                    <div class="settings-content">
+                        <div class="form-group animate-fade delay-1">
                             <label for="fullname">Nombre Completo</label>
                             <input type="text" id="fullname" class="form-control"
                                 value="<?php echo htmlspecialchars($userFullname); ?>">
@@ -133,12 +96,13 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                                 value="Secretaría de Educación del Estado de Querétaro" disabled>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Sección: Seguridad -->
-                    <div class="settings-section">
-                        <h2 class="settings-title">Seguridad y Contraseña</h2>
-
-                        <div class="form-group">
+                <!-- Sección: Seguridad -->
+                <div class="settings-panel animate-up delay-1">
+                    <h2 class="settings-title"><i class="fas fa-shield-alt"></i> Seguridad y Contraseña</h2>
+                    <div class="settings-content">
+                        <div class="form-group animate-fade delay-2">
                             <label for="current_password">Contraseña Actual</label>
                             <input type="password" id="current_password" class="form-control"
                                 placeholder="Ingrese su contraseña actual">
@@ -163,25 +127,78 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                             </small>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Acciones de formulario -->
-                    <div class="form-actions">
-                        <button type="button" class="cancel-button">
-                            <i class="fas fa-times"></i> Cancelar
-                        </button>
-                        <button type="button" class="save-button">
-                            <i class="fas fa-save"></i> Guardar Cambios
-                        </button>
-                    </div>
+                <!-- Sección: Preferencias -->
+                <div class="settings-panel animate-up delay-2">
+                    <h2 class="settings-title"><i class="fas fa-sliders-h"></i> Preferencias</h2>
+                    <div class="settings-content">
+                        <div class="form-group animate-fade delay-3">
+                            <label for="language">Idioma del Sistema</label>
+                            <select id="language" class="form-control">
+                                <option value="es" selected>Español</option>
+                                <option value="en">English</option>
+                            </select>
+                        </div>
 
-                    <!-- Zona de peligro -->
-                    <div class="danger-zone">
-                        <h3><i class="fas fa-exclamation-triangle"></i> Zona de Peligro</h3>
-                        <p>Las siguientes acciones son irreversibles. Por favor, proceda con precaución.</p>
-                        <button type="button" class="danger-button">
-                            <i class="fas fa-user-slash"></i> Desactivar Cuenta
-                        </button>
+                        <div class="form-group">
+                            <label for="notifications">Notificaciones</label>
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" id="email_notifications" checked>
+                                <label for="email_notifications">Recibir notificaciones por correo</label>
+                            </div>
+                        </div>
                     </div>
+                </div> <!-- Acciones de formulario -->
+                <div class="form-actions animate-fade delay-3">
+                    <button type="button" class="cancel-button animate-hover">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="button" class="save-button animate-hover">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+
+                <!-- Zona de peligro -->
+                <div class="danger-zone animate-up delay-4">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Zona de Peligro</h3>
+                    <p>Las siguientes acciones son irreversibles. Por favor, proceda con precaución.</p>
+                    <button type="button" class="danger-button animate-hover">
+                        <i class="fas fa-user-slash"></i> Desactivar Cuenta
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para notificación de éxito -->
+        <div class="modal" id="successModal">
+            <div class="modal-content animate-scale">
+                <div class="modal-header">
+                    <h3><i class="fas fa-check-circle"></i> Operación Exitosa</h3>
+                    <span class="modal-close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p id="modalMessage">Los cambios han sido guardados correctamente.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn modal-btn-primary animate-hover" id="modalOkBtn">Aceptar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para confirmar desactivación -->
+        <div class="modal" id="confirmModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Confirmar Acción</h3>
+                    <span class="modal-close">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <p>¿Está seguro que desea desactivar su cuenta? Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn modal-btn-secondary" id="modalCancelBtn">Cancelar</button>
+                    <button class="modal-btn modal-btn-danger" id="modalConfirmBtn">Desactivar</button>
                 </div>
             </div>
         </div>

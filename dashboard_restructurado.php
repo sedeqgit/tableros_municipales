@@ -23,8 +23,8 @@ $totalAlumnos = $totales['alumnos'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Estadístico Educativo Corregidora| SEDEQ</title>
+    <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/styles.css">
-    <link rel="stylesheet" href="./css/animations_global.css">
     <link rel="stylesheet" href="./css/sidebar.css">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -134,7 +134,8 @@ $totalAlumnos = $totales['alumnos'];
                         escuela.
                     </p>
                 </div>
-            </div>            <div class="card chart-card animate-fade delay-4">
+            </div>
+            <div class="card chart-card animate-fade delay-4">
                 <div class="card-header">
                     <h2><i class="fas fa-chart-bar"></i> Estadística Educativa por Tipo</h2>
                     <div class="card-actions">

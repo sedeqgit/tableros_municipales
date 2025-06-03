@@ -7,83 +7,97 @@
  * para la página de configuración
  */
 document.addEventListener('DOMContentLoaded', function() {
-    // Manejo de la navegación por pestañas de configuración
-    const settingsNavLinks = document.querySelectorAll('.settings-nav-link');
-    
-    if (settingsNavLinks.length > 0) {
-        settingsNavLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Eliminar clase activa de todos los enlaces
-                settingsNavLinks.forEach(l => l.classList.remove('active'));
-                
-                // Añadir clase activa al enlace clickeado
-                this.classList.add('active');
-                
-                // Aquí se podría implementar la lógica para mostrar la sección correspondiente
-                // Por ejemplo, cargar el contenido de forma dinámica o mostrar/ocultar secciones
-                // En esta versión de demostración, solo activamos visualmente el enlace
+    // Funciones para manejar los modales
+    function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('show');
+        }
+    }
+
+    function hideModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('show');
+        }
+    }
+
+    // Configurar los manejadores de eventos para cerrar los modales
+    const modalCloseButtons = document.querySelectorAll('.modal-close, .modal-btn');
+    if (modalCloseButtons.length > 0) {
+        modalCloseButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const modal = this.closest('.modal');
+                if (modal) {
+                    modal.classList.remove('show');
+                }
             });
         });
     }
-    
-    // Validación del formulario de cambio de contraseña
-    const passwordForm = document.querySelector('.settings-section:nth-child(2)');
+      // Manejo del formulario de configuración
     const saveButton = document.querySelector('.save-button');
     
-    if (saveButton && passwordForm) {
+    if (saveButton) {
         saveButton.addEventListener('click', function() {
+            // Simulamos una validación simple
+            let isValid = true;
+            
             const currentPassword = document.getElementById('current_password');
             const newPassword = document.getElementById('new_password');
             const confirmPassword = document.getElementById('confirm_password');
             
-            let isValid = true;
-            
-            // Limpiar errores anteriores
-            const errorElements = document.querySelectorAll('.password-error');
-            errorElements.forEach(el => el.remove());
-            
-            // Validar que la contraseña actual no esté vacía
-            if (!currentPassword.value.trim()) {
-                displayError(currentPassword, 'La contraseña actual es requerida');
-                isValid = false;
+            // Simulamos la validación solo si hay campos de contraseña con valor
+            if (currentPassword && newPassword && confirmPassword) {
+                if (newPassword.value && confirmPassword.value && newPassword.value !== confirmPassword.value) {
+                    alert('Las contraseñas no coinciden');
+                    isValid = false;
+                }
             }
             
-            // Validar que la nueva contraseña no esté vacía
-            if (!newPassword.value.trim()) {
-                displayError(newPassword, 'La nueva contraseña es requerida');
-                isValid = false;
-            }
-            
-            // Validar que la confirmación no esté vacía y coincida con la nueva contraseña
-            if (!confirmPassword.value.trim()) {
-                displayError(confirmPassword, 'La confirmación de contraseña es requerida');
-                isValid = false;
-            } else if (newPassword.value !== confirmPassword.value) {
-                displayError(confirmPassword, 'Las contraseñas no coinciden');
-                isValid = false;
-            }
-            
-            // Si todo es válido, mostrar mensaje de éxito (en una aplicación real, se enviaría el formulario)
+            // Si todo es válido, mostrar el modal de éxito
             if (isValid) {
-                alert('Los cambios han sido guardados correctamente');
-                // Limpiar campos de contraseña
-                currentPassword.value = '';
-                newPassword.value = '';
-                confirmPassword.value = '';
+                // Limpiamos campos de contraseña si existen
+                if (currentPassword) currentPassword.value = '';
+                if (newPassword) newPassword.value = '';
+                if (confirmPassword) confirmPassword.value = '';
+                
+                // Mostramos el modal de éxito
+                showModal('successModal');
             }
         });
     }
     
-    // Zona de peligro - Desactivar cuenta
+    // Función para mostrar errores (utilizada en la validación)
+    function displayError(inputElement, errorMessage) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'password-error text-danger';
+        errorDiv.textContent = errorMessage;
+        errorDiv.style.color = 'red';
+        errorDiv.style.fontSize = '0.85rem';
+        errorDiv.style.marginTop = '5px';
+        
+        inputElement.parentNode.appendChild(errorDiv);
+        inputElement.style.borderColor = 'red';
+    }
+      // Zona de peligro - Desactivar cuenta
     const dangerButton = document.querySelector('.danger-button');
     if (dangerButton) {
         dangerButton.addEventListener('click', function() {
-            const confirmation = confirm('¿Está seguro que desea desactivar su cuenta? Esta acción no se puede deshacer.');
-            if (confirmation) {
-                alert('Esta es una versión de demostración. En un sistema real, su cuenta sería desactivada.');
-            }
+            // Mostrar el modal de confirmación
+            showModal('confirmModal');
+        });
+    }
+    
+    // Manejar la confirmación de desactivación
+    const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+    if (modalConfirmBtn) {
+        modalConfirmBtn.addEventListener('click', function() {
+            // Ocultar el modal de confirmación
+            hideModal('confirmModal');
+            
+            // Mostrar mensaje de éxito y cambiar el texto
+            document.getElementById('modalMessage').textContent = 'Su cuenta ha sido desactivada correctamente.';
+            showModal('successModal');
         });
     }
     
