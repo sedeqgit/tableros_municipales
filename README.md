@@ -52,8 +52,8 @@ Proporcionar una plataforma integral para el análisis y visualización de datos
 
 ### 📊 Dashboard Principal (`dashboard_restructurado.php`)
 - **📈 Resumen Ejecutivo** con métricas clave:
-  - Total de alumnos: **119,530** estudiantes
-  - Total de escuelas: **496** instituciones educativas
+  - Total de alumnos: **48368** estudiantes
+  - Total de escuelas: **315** instituciones educativas
   - Porcentaje de matrícula estatal: **7.98%**
 - **📉 Análisis de Tendencias** automatizado
 - **🎨 Visualizaciones Interactivas**:
@@ -241,8 +241,8 @@ $connection = pg_connect("host=localhost port=5433 dbname=bd_nonce user=postgres
 > **📊 Datos:** Basado en información oficial del sistema educativo
 
 - **7.98%** de la matrícula estatal total
-- **496** instituciones educativas
-- **119,530** estudiantes registrados
+- **315** instituciones educativas
+- **48684** estudiantes registrados
 - **8** niveles educativos diferentes
 
 ---
