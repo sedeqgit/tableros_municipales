@@ -25,7 +25,7 @@ if (isset($_SESSION['user_id'])) {
         <div class="login-card">
             <div class="login-header">
                 <img src="./img/layout_set_logo.png" alt="Logo SEDEQ" class="login-logo">
-                <h1>Sistema de Estadística Educativa</h1>
+                <h1>SISTEMA DE ESTADÍSTICA EDUCATIVA</h1>
                 <p>Secretaría de Educación del Estado de Querétaro</p>
             </div>
             <div class="login-form">
