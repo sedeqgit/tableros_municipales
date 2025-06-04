@@ -57,7 +57,7 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title">
-                <h1>Configuración del Sistema</h1>
+                <h1 class="section-title">Configuración del Sistema</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -170,38 +170,8 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
             </div>
         </div>
 
-        <!-- Modal para notificación de éxito -->
-        <div class="modal" id="successModal">
-            <div class="modal-content animate-scale">
-                <div class="modal-header">
-                    <h3><i class="fas fa-check-circle"></i> Operación Exitosa</h3>
-                    <span class="modal-close">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <p id="modalMessage">Los cambios han sido guardados correctamente.</p>
-                </div>
-                <div class="modal-footer">
-                    <button class="modal-btn modal-btn-primary animate-hover" id="modalOkBtn">Aceptar</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal para confirmar desactivación -->
-        <div class="modal" id="confirmModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3><i class="fas fa-exclamation-triangle"></i> Confirmar Acción</h3>
-                    <span class="modal-close">&times;</span>
-                </div>
-                <div class="modal-body">
-                    <p>¿Está seguro que desea desactivar su cuenta? Esta acción no se puede deshacer.</p>
-                </div>
-                <div class="modal-footer">
-                    <button class="modal-btn modal-btn-secondary" id="modalCancelBtn">Cancelar</button>
-                    <button class="modal-btn modal-btn-danger" id="modalConfirmBtn">Desactivar</button>
-                </div>
-            </div>
-        </div>
+        <!-- Sistema de Notificaciones -->
+        <div id="notification-container" class="notification-container"></div>
 
         <footer class="dashboard-footer">
             <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
