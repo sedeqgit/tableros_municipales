@@ -5,6 +5,48 @@
  * Usa las variables globales definidas en global.css
  */
 
+/* ===== ESTILOS ESPECÍFICOS DE SETTINGS ===== */
+/* Los estilos de navegación del sidebar están en sidebar.css */
+
+/* Estilos para el título de página */
+.page-title h1 {
+    font-size: 1.8rem;
+    color: var(--primary-blue);
+    margin: 0;
+    font-weight: var(--font-weight-semibold);
+    font-family: var(--font-heading);
+}
+
+.utilities {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.date-display {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    background-color: var(--white);
+    border-radius: 6px;
+    box-shadow: var(--shadow-sm);
+    color: var(--text-secondary);
+    border: 1px solid var(--medium-gray);
+}
+
+.date-display i {
+    margin-right: 8px;
+    color: var(--primary-blue);
+}
+
+/* ===== ESTILOS ORIGINALES DE SETTINGS ===== */
+
+/* Contenedores básicos */
+.container-fluid {
+    width: 100%;
+    padding: 0 15px;
+}
+
 /* Estructura del contenedor de configuración */
 .settings-container {
     max-width: 800px;
@@ -178,12 +220,8 @@
     box-shadow: var(--shadow-sm);
 }
 
-/* Clase para animación pulsante */
-.animate-pulse {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
+/* Animación específica de settings - pulso para zona de peligro */
+@keyframes pulse-danger {
     0% {
         box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
     }
@@ -195,21 +233,10 @@
     }
 }
 
-/* Animaciones específicas para la página de settings */
-.animate-hover {
-    transition: all var(--transition-normal);
+/* Clase específica para animación pulsante en zona de peligro */
+.animate-pulse-danger {
+    animation: pulse-danger 2s infinite;
 }
-
-button.animate-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.delay-1 { animation-delay: 100ms; }
-.delay-2 { animation-delay: 200ms; }
-.delay-3 { animation-delay: 300ms; }
-.delay-4 { animation-delay: 400ms; }
-.delay-5 { animation-delay: 500ms; }
 
 
 

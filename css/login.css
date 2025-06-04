@@ -1,8 +1,5 @@
 /* Estilos para la página de inicio de sesión SEDEQ */
-
-/* Se eliminan las variables duplicadas ya que se importará global.css */
-/* Se importe el archivo de estilos globales */
-@import url('global.css');
+/* Usa variables CSS definidas en global.css */
 
 body {
     background-color: var(--light-gray);

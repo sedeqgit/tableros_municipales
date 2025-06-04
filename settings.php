@@ -18,10 +18,8 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuración | SEDEQ - Sistema de Estadística Educativa</title>
     <link rel="stylesheet" href="./css/global.css">
-    <link rel="stylesheet" href="./css/resumen.css">
     <link rel="stylesheet" href="./css/settings.css">
     <link rel="stylesheet" href="./css/sidebar.css">
-    <link rel="stylesheet" href="./css/home.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
@@ -172,9 +170,8 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
 
         <!-- Sistema de Notificaciones -->
         <div id="notification-container" class="notification-container"></div>
-
-        <footer class="dashboard-footer">
-            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
+        <footer class="main-footer">
+            <p>&copy; <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
                 reservados</p>
         </footer>
     </div>
