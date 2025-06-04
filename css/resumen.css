@@ -30,6 +30,48 @@
     box-sizing: border-box;
 }
 
+/* Estilos para los botones de exportación */
+.export-buttons {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+}
+
+.export-button {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.2s ease;
+    color: white;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+}
+
+.export-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.export-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.export-button:disabled:hover {
+    transform: none;
+}
+
+.export-button i {
+    font-size: 16px;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--light-gray);

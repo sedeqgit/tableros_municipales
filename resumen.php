@@ -32,6 +32,8 @@ $totalAlumnos = $totales['alumnos'];
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <!-- Biblioteca para capturar elementos como imagen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body> <!-- Overlay para cerrar el menú en móviles -->
@@ -138,12 +140,9 @@ $totalAlumnos = $totales['alumnos'];
             <div class="card chart-card animate-fade delay-4">
                 <div class="card-header">
                     <h2><i class="fas fa-chart-bar"></i> Estadística Educativa por Tipo</h2>
-                    <div class="card-actions">
-                        <button id="exportChartPNG" class="action-button" title="Exportar gráfico como PNG">
-                            <i class="fas fa-image"></i>
-                        </button>
-                        <button id="exportChartPDF" class="action-button" title="Exportar gráfico como PDF">
-                            <i class="fas fa-file-pdf"></i>
+                    <div class="export-buttons">
+                        <button id="export-pdf" class="export-button">
+                            <i class="fas fa-file-pdf"></i> Exportar
                         </button>
                     </div>
                 </div>
