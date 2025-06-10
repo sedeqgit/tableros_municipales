@@ -345,70 +345,257 @@ function ejecutarMetodo1(chartElement, nombreArchivo) {
 }
 
 /**
- * MÉTODO 2: Captura con preparación de DOM
+ * MÉTODO 2: Captura con preparación DOM y leyenda incluida
  */
-function ejecutarMetodo2(chartElement, nombreArchivo) {
-    return new Promise((resolve) => {
-        console.log('🎯 Ejecutando Método 2: Captura con preparación DOM');
-        
-        // NUEVO: Activar valores dinámicos antes de la captura
-        const valoresActivados = activarValoresDinamicos();
+async function ejecutarMetodo2(chartElement, nombreArchivo) {
+    console.log('🎯 Ejecutando Método 2: Captura con preparación DOM');
+    
+    // NUEVO: Activar valores dinámicos antes de la captura
+    const valoresActivados = activarValoresDinamicos();
+    
+    // Verificar si necesitamos incluir la leyenda
+    const necesitaLeyenda = (typeof nivelSeleccionado !== 'undefined' && nivelSeleccionado === 'todos');
+    let contenedorTemporal = null;
+    let elementoACapturar = chartElement;
+    
+    try {
+        if (necesitaLeyenda) {
+            console.log('📊 Creando contenedor temporal con leyenda');
+            contenedorTemporal = await crearContenedorConLeyenda(chartElement);
+            if (contenedorTemporal) {
+                elementoACapturar = contenedorTemporal;
+                console.log('✅ Contenedor temporal creado exitosamente');
+            } else {
+                console.log('⚠️ No se pudo crear contenedor temporal, usando solo gráfico');
+            }
+        }
         
         // Aplicar mejoras temporales al DOM
-        const restaurar = aplicarMejorasDOM(chartElement);
+        const restaurar = aplicarMejorasDOM(elementoACapturar);
         
-        setTimeout(() => {
-            const configuracion = {
-                backgroundColor: '#ffffff',
-                scale: 3,
-                logging: false,
-                useCORS: true,
-                allowTaint: true,
-                width: chartElement.offsetWidth + 100,
-                height: chartElement.offsetHeight + 100,
-                x: -50,
-                y: -50,
-                removeContainer: false,
-                foreignObjectRendering: false, // Cambiar estrategia
-                ignoreElements: function(element) {
-                    return element.tagName === 'BUTTON' || 
-                           element.classList.contains('btn') ||
-                           element.id === 'export-btn';
-                }
-            };
+        // Dar tiempo para que las mejoras DOM se apliquen
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        const configuracion = {
+            backgroundColor: '#ffffff',
+            scale: 3,
+            logging: false,
+            useCORS: true,
+            allowTaint: true,
+            width: elementoACapturar.offsetWidth + 100,
+            height: elementoACapturar.offsetHeight + 100,
+            x: -50,
+            y: -50,
+            removeContainer: false,
+            foreignObjectRendering: false,
+            ignoreElements: function(element) {
+                return element.tagName === 'BUTTON' || 
+                       element.classList.contains('btn') ||
+                       element.id === 'export-btn';
+            }
+        };
 
-            html2canvas(chartElement, configuracion).then(canvas => {
-                restaurar(); // Restaurar DOM inmediatamente
-                
-                // Restaurar valores dinámicos
-                if (valoresActivados) {
-                    desactivarValoresDinamicos();
-                }
-                
-                console.log('📸 Método 2 - Captura completada');
-                console.log('📊 Dimensiones canvas:', canvas.width, 'x', canvas.height);
-                  if (validarCanvas(canvas)) {
-                    descargarCanvas(canvas, nombreArchivo);
-                    console.log('✅ Método 2 - Descarga exitosa');
-                    mostrarMensajeExito('Imagen PNG de alta resolución descargada exitosamente');
-                    resolve(true);
-                } else {
-                    console.log('❌ Método 2 - Canvas inválido o vacío');
-                    resolve(false);
-                }
-            }).catch(error => {
-                restaurar(); // Restaurar DOM en caso de error
-                
-                // Restaurar valores dinámicos en caso de error
-                if (valoresActivados) {
-                    desactivarValoresDinamicos();
-                }
-                
-                console.error('❌ Método 2 - Error:', error);
-                resolve(false);
-            });
-        }, 300); // Dar tiempo para que las mejoras DOM se apliquen
-    });
+        const canvas = await html2canvas(elementoACapturar, configuracion);
+        
+        // Limpiar contenedor temporal si se creó
+        if (contenedorTemporal) {
+            document.body.removeChild(contenedorTemporal);
+            console.log('🧹 Contenedor temporal eliminado');
+        }
+        
+        restaurar(); // Restaurar DOM inmediatamente
+        
+        // Restaurar valores dinámicos
+        if (valoresActivados) {
+            desactivarValoresDinamicos();
+        }
+        
+        console.log('📸 Método 2 - Captura completada');
+        console.log('📊 Dimensiones canvas:', canvas.width, 'x', canvas.height);
+        
+        if (validarCanvas(canvas)) {
+            descargarCanvas(canvas, nombreArchivo);
+            console.log('✅ Método 2 - Descarga exitosa');
+            const mensaje = necesitaLeyenda ? 
+                'Imagen PNG con leyenda de colores descargada exitosamente' :
+                'Imagen PNG de alta resolución descargada exitosamente';
+            mostrarMensajeExito(mensaje);
+            return true;
+        } else {
+            console.log('❌ Método 2 - Canvas inválido o vacío');
+            return false;
+        }
+        
+    } catch (error) {
+        // Limpiar contenedor temporal en caso de error
+        if (contenedorTemporal) {
+            try {
+                document.body.removeChild(contenedorTemporal);
+                console.log('🧹 Contenedor temporal eliminado (por error)');
+            } catch (e) {
+                console.warn('⚠️ Error al eliminar contenedor temporal:', e);
+            }
+        }
+        
+        // Restaurar valores dinámicos en caso de error
+        if (valoresActivados) {
+            desactivarValoresDinamicos();
+        }
+        
+        console.error('❌ Método 2 - Error:', error);
+        return false;
+    }
+}
+
+/**
+ * Crea un contenedor temporal que incluye el gráfico y la leyenda de colores
+ * Nueva estrategia: capturar por pasos en lugar de clonar
+ * @param {HTMLElement} chartElement - El elemento del gráfico original
+ * @returns {Promise<HTMLElement|null>} - El contenedor temporal o null si falla
+ */
+async function crearContenedorConLeyenda(chartElement) {
+    try {
+        console.log('🎨 Estrategia: Captura en canvas + leyenda HTML');
+        
+        // PASO 1: Capturar solo el gráfico primero
+        const canvasGrafico = await html2canvas(chartElement, {
+            backgroundColor: '#ffffff',
+            scale: 2,
+            logging: false,
+            useCORS: true,
+            allowTaint: true,
+            removeContainer: false,
+            foreignObjectRendering: false
+        });
+        
+        if (!canvasGrafico || canvasGrafico.width === 0 || canvasGrafico.height === 0) {
+            console.error('❌ No se pudo capturar el gráfico');
+            return null;
+        }
+        
+        console.log('✅ Gráfico capturado:', canvasGrafico.width, 'x', canvasGrafico.height);
+        
+        // PASO 2: Crear contenedor temporal con imagen del gráfico + leyenda HTML
+        const contenedor = document.createElement('div');
+        contenedor.style.cssText = `
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            z-index: -1;
+        `;
+        
+        // Convertir canvas a imagen
+        const imgGrafico = document.createElement('img');
+        imgGrafico.src = canvasGrafico.toDataURL('image/png');
+        imgGrafico.style.cssText = `
+            width: ${chartElement.offsetWidth}px;
+            height: ${chartElement.offsetHeight}px;
+            margin-bottom: 20px;
+            border: none;
+            display: block;
+        `;
+        
+        // Crear leyenda personalizada para exportación
+        const leyendaExport = document.createElement('div');
+        leyendaExport.style.cssText = `
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            justify-content: center;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #eaeaea;
+            margin-top: 20px;
+        `;
+        
+        // Definir los niveles educativos y sus colores (corregidos)
+        const nivelesEducativos = [
+            { nombre: 'Inicial NE', color: '#5C6BC0' },
+            { nombre: 'CAM', color: '#26A69A' },
+            { nombre: 'Preescolar', color: '#FFA726' },
+            { nombre: 'Primaria', color: '#EF5350' },
+            { nombre: 'Secundaria', color: '#7E57C2' },
+            { nombre: 'Media Superior', color: '#66BB6A' },
+            { nombre: 'Superior', color: '#29B6F6' }
+        ];
+        
+        // Crear elementos de leyenda
+        nivelesEducativos.forEach(nivel => {
+            const item = document.createElement('div');
+            item.style.cssText = `
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 13px;
+                padding: 6px 12px;
+                border-radius: 30px;
+                background-color: #ffffff;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+                border: 1px solid #eaeaea;
+            `;
+            
+            const colorBox = document.createElement('div');
+            colorBox.style.cssText = `
+                width: 14px;
+                height: 14px;
+                border-radius: 3px;
+                background-color: ${nivel.color};
+                box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+                flex-shrink: 0;
+            `;
+            
+            const label = document.createElement('span');
+            label.textContent = nivel.nombre;
+            label.style.cssText = `
+                font-weight: 500;
+                color: #333;
+                white-space: nowrap;
+            `;
+            
+            item.appendChild(colorBox);
+            item.appendChild(label);
+            leyendaExport.appendChild(item);
+        });
+        
+        // Agregar título a la leyenda
+        const tituloLeyenda = document.createElement('div');
+        tituloLeyenda.textContent = 'Niveles Educativos';
+        tituloLeyenda.style.cssText = `
+            width: 100%;
+            text-align: center;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        `;
+        leyendaExport.insertBefore(tituloLeyenda, leyendaExport.firstChild);
+        
+        // Ensamblar el contenedor
+        contenedor.appendChild(imgGrafico);
+        contenedor.appendChild(leyendaExport);
+        
+        // Agregar al DOM temporalmente
+        document.body.appendChild(contenedor);
+        
+        // Calcular dimensiones finales
+        const anchoTotal = Math.max(chartElement.offsetWidth, 600);
+        const altoTotal = chartElement.offsetHeight + 150; // Espacio para leyenda
+        
+        contenedor.style.width = anchoTotal + 'px';
+        contenedor.style.height = altoTotal + 'px';
+        
+        console.log('📏 Contenedor temporal con imagen:', anchoTotal, 'x', altoTotal);
+        return contenedor;
+        
+    } catch (error) {
+        console.error('❌ Error creando contenedor temporal:', error);
+        return null;
+    }
 }
 
 /**
