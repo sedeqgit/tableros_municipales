@@ -1096,4 +1096,3 @@ function obtenerColoresGrafico() {
     return Object.values(coloresBase);
 }
 
-// ...existing code...
