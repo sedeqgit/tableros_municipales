@@ -56,8 +56,6 @@ if (count($años) >= 2) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Bibliotecas para exportación -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <!-- Biblioteca para capturar elementos como imagen -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
@@ -102,8 +100,8 @@ if (count($años) >= 2) {
                     <h3 class="matricula-title"><i class="fas fa-user-graduate"></i> Matrícula Total en Escuelas
                         Públicas</h3>
                     <div class="export-buttons">
-                        <button id="export-pdf" class="export-button">
-                            <i class="fas fa-file-pdf"></i> Exportar
+                        <button id="export-btn" class="export-button">
+                            <i class="fas fa-download"></i> Exportar
                         </button>
                     </div>
                 </div>
@@ -211,7 +209,7 @@ if (count($años) >= 2) {
         ?>
     </script>
     <script src="./js/script.js"></script>
-    <script src="./js/export-graficos-mejorado.js"></script>
+    <script src="./js/exports-estudiantes-v2.js"></script>
     <script src="./js/estudiantes.js"></script>
     <script src="./js/animations_global.js"></script>
     <script src="./js/sidebar.js"></script>
