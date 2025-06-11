@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba ExportManager con Anotaciones</title>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="js/export-manager-annotations.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .controls { margin: 20px 0; text-align: center; }
+        .btn { 
+            background: #3498db; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            margin: 5px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        .btn:hover { background: #2980b9; }
+        .success { background: #27ae60; }
+        .danger { background: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Prueba ExportManager con Anotaciones</h1>
+        
+        <div class="controls">
+            <button class="btn" onclick="testPNG()">📸 Probar PNG con Anotaciones</button>
+            <button class="btn success" onclick="testExcel()">📊 Probar Excel</button>
+            <button class="btn danger" onclick="testDebug()">🔍 Debug</button>
+        </div>
+        
+        <div id="chart_div" style="width: 100%; height: 400px; border: 1px solid #ddd;"></div>
+        
+        <div id="test-results" style="margin-top: 20px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+            <h3>📋 Resultados de Pruebas:</h3>
+            <ul id="results-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Datos de prueba
+        const testData = [
+            ['Categoría', 'Valor A', 'Valor B'],
+            ['Categoría 1', 150, 200],
+            ['Categoría 2', 300, 180],
+            ['Categoría 3', 250, 350],
+            ['Categoría 4', 400, 280]
+        ];
+
+        let chart = null;
+
+        // Cargar Google Charts
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            const data = google.visualization.arrayToDataTable(testData);
+            
+            const options = {
+                title: 'Gráfico de Prueba para Anotaciones',
+                width: 750,
+                height: 400,
+                hAxis: { title: 'Categorías' },
+                vAxis: { title: 'Valores' },
+                legend: { position: 'top' }
+            };
+
+            chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+            
+            // Configurar ExportManager
+            ExportManagerAnnotations.configure({
+                pageId: 'test-page',
+                title: 'Gráfico de Prueba',
+                chartSelector: '#chart_div',
+                dataCallback: () => getTestExportData(),
+                chartInstance: chart,
+                getChartData: () => testData,
+                getChartOptions: () => options,
+                restoreChart: () => drawChart()
+            });
+            
+            addResult('✅ Gráfico cargado y ExportManager configurado', 'success');
+        }
+
+        function getTestExportData() {
+            return [
+                ['REPORTE DE PRUEBA'],
+                ['Fecha:', new Date().toLocaleString()],
+                [''],
+                ['Categoría', 'Valor A', 'Valor B', 'Total'],
+                ...testData.slice(1).map(row => [
+                    row[0], row[1], row[2], row[1] + row[2]
+                ])
+            ];
+        }
+
+        async function testPNG() {
+            addResult('🔄 Iniciando prueba PNG con anotaciones...', 'info');
+            try {
+                await ExportManagerAnnotations.exportPNG();
+                addResult('✅ PNG con anotaciones exportado correctamente', 'success');
+            } catch (error) {
+                addResult('❌ Error en PNG: ' + error.message, 'error');
+            }
+        }
+
+        async function testExcel() {
+            addResult('🔄 Iniciando prueba Excel...', 'info');
+            try {
+                await ExportManagerAnnotations.exportExcel();
+                addResult('✅ Excel exportado correctamente', 'success');
+            } catch (error) {
+                addResult('❌ Error en Excel: ' + error.message, 'error');
+            }
+        }
+
+        function testDebug() {
+            ExportManagerAnnotations.debug();
+            addResult('🔍 Debug ejecutado - revisar consola', 'info');
+        }
+
+        function addResult(message, type) {
+            const li = document.createElement('li');
+            li.textContent = message;
+            li.style.color = type === 'success' ? '#27ae60' : 
+                            type === 'error' ? '#e74c3c' : '#3498db';
+            li.style.marginBottom = '5px';
+            document.getElementById('results-list').appendChild(li);
+        }
+    </script>
+</body>
+</html>

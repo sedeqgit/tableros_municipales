@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Demo Dashboard - Sistema de Exportación</title>
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="demo-dashboard.css" rel="stylesheet">
-    
+
     <!-- Google Charts -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
+
 <body>
     <div class="container-fluid">
         <!-- Header -->
@@ -69,7 +71,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body">
@@ -175,14 +177,16 @@
                 </div>
             </div>
         </div>
-    </div>    <!-- Bootstrap JS -->
+    </div> <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- SheetJS for Excel export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- html2canvas for PNG export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>    <!-- Export Manager con Anotaciones -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Export Manager con Anotaciones -->
     <script src="js/export-manager-annotations.js"></script>
     <!-- Page specific JS -->
     <script src="demo-dashboard.js"></script>
 </body>
+
 </html>
