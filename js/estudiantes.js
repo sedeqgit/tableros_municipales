@@ -103,16 +103,18 @@ function prepararDatosTodos() {
  * Prepara los datos para un año específico
  */
 function prepararDatosAño(año) {
-    // Crear encabezados de la tabla
-    const data = [['Nivel Educativo', 'Cantidad de Alumnos']];
+    // Crear encabezados de la tabla - cada nivel educativo será una serie separada
+    const data = [['Categoría', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior']];
     
-    // Para cada nivel, agregar una fila
+    // Crear una sola fila con todos los niveles como series separadas
+    const fila = ['Matrícula ' + año];
     const niveles = ['Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior'];
     niveles.forEach(nivel => {
         const valor = datosMatricula[año][nivel] || 0;
-        data.push([nivel, valor]);
+        fila.push(valor);
     });
     
+    data.push(fila);
     return data;
 }
 
@@ -264,6 +266,18 @@ function getColoresGrafica() {
             // Para un único dato de un nivel y año específico
             return [coloresBase[nivelSeleccionado]];
         }
+    }    // Determinar qué colores devolver según el contexto
+    if (añoSeleccionado !== 'todos' && nivelSeleccionado === 'todos') {
+        // Filtro por año específico - colores para cada nivel educativo como series separadas
+        return [
+            coloresBase['Inicial NE'],
+            coloresBase['CAM'],
+            coloresBase['Preescolar'],
+            coloresBase['Primaria'],
+            coloresBase['Secundaria'],
+            coloresBase['Media superior'],
+            coloresBase['Superior']
+        ];
     }
     
     // Array de colores para todos los niveles (cuando no hay filtro de nivel)
