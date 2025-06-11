@@ -131,6 +131,3 @@ Se revirtieron cambios anteriores que intentaban solucionar el problema incorrec
 
 ---
 
-**Desarrollado por:** GitHub Copilot  
-**Revisado y aprobado:** ✅  
-**Estado:** Implementado y funcionando correctamente
