@@ -87,7 +87,8 @@
     font-size: 1.8rem;
     color: var(--primary-blue);
     margin: 0;
-    font-weight: 600;
+    font-weight: var(--font-weight-semibold);
+    /* La tipografía se aplica via la clase .top-bar-title definida en global.css */
 }
 
 .utilities {

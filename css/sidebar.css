@@ -1,19 +1,52 @@
 /**
- * Estilos específicos para el sidebar colapsable
- * Sistema de Dashboard Estadístico - SEDEQ
+ * =============================================================================
+ * ESTILOS DEL SISTEMA DE NAVEGACIÓN LATERAL - SEDEQ DASHBOARD
+ * =============================================================================
  * 
- * SOPORTA DOS ESTRUCTURAS:
+ * Este archivo define todos los estilos para el sistema de navegación lateral
+ * del dashboard estadístico de SEDEQ, proporcionando una experiencia de usuario
+ * consistente y profesional en todas las páginas del sistema.
  * 
- * 1. Estructura home.php/settings.php:
+ * CARACTERÍSTICAS PRINCIPALES:
+ * - Sidebar colapsable y responsivo para dispositivos móviles
+ * - Soporte para múltiples estructuras de navegación
+ * - Transiciones suaves y animaciones optimizadas
+ * - Sistema de overlay para dispositivos táctiles
+ * - Paleta de colores institucional de SEDEQ
+ * - Iconografía consistente con Font Awesome
+ * 
+ * ESTRUCTURAS SOPORTADAS:
+ * 
+ * 1. Estructura Páginas Principales (home.php, settings.php):
  *    .sidebar > .sidebar-nav > ul > li.nav-item > a
  *    .sidebar > .sidebar-footer > .logout-btn
+ *    - Navegación tipo lista con elementos jerárquicos
+ *    - Footer con botón de logout integrado
  * 
- * 2. Estructura resumen.php/estudiantes.php/etc:
+ * 2. Estructura Dashboards (resumen.php, estudiantes.php, escuelas_detalle.php):
  *    .sidebar > .logo-container > img.logo
  *    .sidebar > .sidebar-links > a.sidebar-link
+ *    - Logo institucional en la parte superior
+ *    - Enlaces directos de navegación con iconos
+ * 
+ * BREAKPOINTS RESPONSIVOS:
+ * - >= 993px: Sidebar visible permanentemente
+ * - <= 992px: Sidebar colapsable con overlay
+ * - <= 768px: Optimizaciones adicionales para móviles
+ * 
+ * @version 2.0
+ * @requires global.css (variables y fuentes)
+ * @requires Font Awesome (iconografía)
  */
 
-/* Overlay para dispositivos móviles */
+/* =============================================
+   SISTEMA DE OVERLAY PARA DISPOSITIVOS MÓVILES
+   ============================================= */
+
+/**
+ * Capa de overlay que se activa en dispositivos móviles
+ * Permite cerrar el sidebar tocando fuera del área del menú
+ */
 .sidebar-overlay {
     position: fixed;
     top: 0;
@@ -23,14 +56,21 @@
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 99;
     display: none;
-    transition: opacity 0.3s;
+    transition: opacity var(--transition-normal);
 }
 
 .sidebar-overlay.active {
     display: block;
 }
 
-/* Sidebar y su comportamiento */
+/* =============================================
+   CONTENEDOR PRINCIPAL DEL SIDEBAR
+   ============================================= */
+
+/**
+ * Definición del contenedor principal de navegación lateral
+ * Utiliza flexbox para organización vertical del contenido
+ */
 .sidebar {
     position: fixed;
     top: 0;

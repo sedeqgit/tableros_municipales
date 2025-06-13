@@ -1,38 +1,54 @@
 /**
  * =============================================================================
- * SCRIPT PRINCIPAL DEL DASHBOARD ESTADÍSTICO - SEDEQ CORREGIDORA
+ * CONTROLADOR PRINCIPAL DEL DASHBOARD ESTADÍSTICO - SEDEQ CORREGIDORA
  * =============================================================================
  * 
- * Controlador principal para todas las visualizaciones y funcionalidades
- * del dashboard estadístico del sistema educativo de Corregidora.
+ * Este módulo actúa como el núcleo central del sistema de visualización
+ * estadística, coordinando todas las funcionalidades de análisis y
+ * presentación de datos educativos del municipio de Corregidora, Querétaro.
  * 
  * FUNCIONALIDADES PRINCIPALES:
- * - Gestión de visualizaciones interactivas con Google Charts
- * - Sistema de filtrado dinámico por tipo de dato (escuelas/alumnos)
- * - Múltiples tipos de gráficos (columnas, barras, pastel, líneas)
- * - Exportación avanzada a PDF y Excel
- * - Análisis automático de tendencias y métricas
- * - Sistema de tooltips informativos
+ * - Gestión integral de visualizaciones interactivas con Google Charts API
+ * - Sistema avanzado de filtrado dinámico por múltiples criterios
+ * - Soporte para diversos tipos de gráficos (columnas, barras, pastel, líneas)
+ * - Motor de exportación multi-formato (PDF, Excel, CSV)
+ * - Análisis automático de tendencias y cálculo de métricas clave
+ * - Sistema inteligente de tooltips contextuales
+ * - Gestión de colores profesionales y accesibles
  * 
- * ARQUITECTURA MODULAR:
- * - Separación clara entre datos, visualización y exportación
- * - Patrón Observer para actualizaciones reactivas
- * - Sistema de configuración centralizada
- * - Manejo robusto de errores y estados
+ * ARQUITECTURA TÉCNICA:
+ * - Patrón MVC con separación clara de responsabilidades
+ * - Sistema de eventos reactivos para actualizaciones en tiempo real
+ * - Configuración centralizada y parametrizable
+ * - Manejo robusto de errores con recuperación automática
+ * - Optimizaciones de rendimiento para grandes datasets
  * 
- * @author Sistema SEDEQ
- * @version 1.2.1
- * @since 2024
+ * COMPONENTES INTEGRADOS:
+ * - Motor de renderizado de gráficos (Google Charts)
+ * - Sistema de filtrado y agrupación de datos
+ * - Generador de reportes y exportación
+ * - Calculadora de métricas estadísticas
+ * - Gestor de eventos de interfaz de usuario
+ * 
+ * @version 2.0.1
+ * @requires Google Charts API
+ * @requires datosEducativos (variable global desde PHP)
  */
 
 // =============================================================================
-// INICIALIZACIÓN Y CONFIGURACIÓN DE LIBRERÍAS
+// INICIALIZACIÓN Y CONFIGURACIÓN DE LIBRERÍAS EXTERNAS
 // =============================================================================
 
 /**
- * Configuración de Google Charts con paquetes optimizados
- * - 'corechart': Gráficos básicos y avanzados
- * - 'bar': Gráficos de barras con mejor rendimiento y personalización
+ * Configuración optimizada de Google Charts
+ * 
+ * Se cargan específicamente los paquetes necesarios para minimizar el tiempo
+ * de carga y mejorar el rendimiento general del dashboard:
+ * 
+ * - 'corechart': Proporciona gráficos fundamentales (columnas, líneas, área, pastel)
+ *                con funcionalidades avanzadas de personalización y interactividad
+ * - 'bar': Gráficos de barras especializados con mejor rendimiento en datasets
+ *          grandes y opciones avanzadas de formateo y animación
  */
 google.charts.load('current', { 'packages': ['corechart', 'bar'] });
 google.charts.setOnLoadCallback(dibujarGrafico);

@@ -1,39 +1,91 @@
 <?php
-// Incluir el helper de sesiones
+/**
+ * =============================================================================
+ * PÁGINA DE ESTADÍSTICAS DE ESTUDIANTES - SISTEMA SEDEQ
+ * =============================================================================
+ * 
+ * Esta página presenta las estadísticas detalladas de matrícula estudiantil
+ * en escuelas públicas del municipio de Corregidora, Querétaro.
+ * 
+ * FUNCIONALIDADES PRINCIPALES:
+ * - Visualización interactiva de datos de matrícula por nivel educativo
+ * - Gráficos comparativos entre ciclos escolares
+ * - Exportación de datos en múltiples formatos (Excel, PDF, CSV)
+ * - Análisis de tendencias y variaciones porcentuales
+ * - Filtros por año escolar y nivel educativo
+ * 
+ * ARQUITECTURA DE DATOS:
+ * - Conexión a base de datos PostgreSQL para datos en tiempo real
+ * - Sistema de fallback con datos representativos para demostración
+ * - Procesamiento de datos con cálculos de tendencias automáticas
+ * - Optimización de consultas para rendimiento
+ * 
+ * COMPONENTES DE VISUALIZACIÓN:
+ * - Google Charts para gráficos interactivos
+ * - Tablas responsivas con datos tabulares
+ * - Paneles de estadísticas con indicadores de tendencia
+ * - Controles de filtrado dinámicos
+ * 
+ * @package SEDEQ_Dashboard
+ * @subpackage Estudiantes
+ * @version 2.0
+ */
+
+// =============================================================================
+// CONFIGURACIÓN E INICIALIZACIÓN DEL SISTEMA
+// =============================================================================
+
+// Incluir el helper de sesiones para manejo de autenticación
 require_once 'session_helper.php';
 
-// Iniciar sesión y configurar usuario de demo si es necesario
+// Inicializar sesión y configurar usuario de demostración si es necesario
+// Esto permite tanto el funcionamiento con autenticación como en modo demo
 iniciarSesionDemo();
 
-// Incluir archivo de conexión
+// Incluir módulo de conexión a base de datos con funciones de consulta
 require_once 'conexion.php';
 
-// Obtener datos de matrícula de escuelas públicas
+// =============================================================================
+// PROCESAMIENTO DE DATOS DE MATRÍCULA
+// =============================================================================
+
+// Obtener datos completos de matrícula de escuelas públicas desde la base de datos
+// Esta función retorna un array multidimensional con datos por año y nivel educativo
 $datosMatricula = obtenerMatriculaPorEscuelasPublicas();
 
-// Extraer años escolares disponibles
+// Extraer años escolares disponibles para construcción de selectores dinámicos
+// Los años se obtienen como claves del array principal de datos
 $añosEscolares = array_keys($datosMatricula);
 
-// Calcular totales por año
+// =============================================================================
+// CÁLCULOS ESTADÍSTICOS Y ANÁLISIS DE TENDENCIAS
+// =============================================================================
+
+// Calcular totales por año escolar para análisis comparativo
+// Suma todos los niveles educativos por cada ciclo escolar
 $totalesPorAño = [];
 foreach ($datosMatricula as $año => $datos) {
     $totalesPorAño[$año] = array_sum(array_values($datos));
 }
 
-// Obtener total general (suma de todos los años más recientes)
+// Determinar total general del ciclo más reciente para métricas principales
+// Prioriza el ciclo 2023-2024 como referencia actual del sistema
 if (isset($datosMatricula['2023-2024'])) {
     $totalGeneral = $totalesPorAño['2023-2024'];
 } else {
+    // Fallback al último año disponible si no existe el ciclo de referencia
     $totalGeneral = end($totalesPorAño);
 }
 
-// Calcular la tendencia general (comparar con el año anterior)
+// Calcular tendencia porcentual entre ciclos escolares consecutivos
+// Compara el último año con el penúltimo para determinar crecimiento/decrecimiento
 $tendencia = 0;
 $años = array_keys($totalesPorAño);
 if (count($años) >= 2) {
     $últimoAño = end($años);
     $penúltimoAño = prev($años);
     if (isset($totalesPorAño[$penúltimoAño]) && $totalesPorAño[$penúltimoAño] > 0) {
+        // Fórmula: ((Valor_Actual - Valor_Anterior) / Valor_Anterior) * 100
         $tendencia = (($totalesPorAño[$últimoAño] - $totalesPorAño[$penúltimoAño]) / $totalesPorAño[$penúltimoAño]) * 100;
     }
 }
@@ -82,7 +134,7 @@ if (count($años) >= 2) {
             <div class="menu-toggle">
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
-            <div class="page-title">
+            <div class="page-title top-bar-title">
                 <h1>Estadísticas de Estudiantes en Escuelas Públicas ciclo 2023 - 2024</h1>
             </div>
             <div class="utilities">
@@ -213,9 +265,7 @@ if (count($años) >= 2) {
     <script src="./js/estudiantes.js"></script>
     <script src="./js/animations_global.js"></script>
     <script src="./js/sidebar.js"></script>
-    <script>
-        /* La funcionalidad del sidebar se ha movido al archivo sidebar.js */
-    </script>
+
 </body>
 
 </html>

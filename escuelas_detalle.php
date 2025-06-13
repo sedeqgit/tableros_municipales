@@ -1,49 +1,113 @@
 <?php
-// Incluir el helper de sesiones
+/**
+ * =============================================================================
+ * PÁGINA DE DETALLE DE ESCUELAS - SISTEMA SEDEQ
+ * =============================================================================
+ * 
+ * Esta página presenta un análisis detallado del sistema educativo en el
+ * municipio de Corregidora, Querétaro, incluyendo distribución por niveles,
+ * sostenimiento (público/privado) y diagramas de flujo educativo.
+ * 
+ * FUNCIONALIDADES PRINCIPALES:
+ * - Resumen ejecutivo de escuelas por nivel educativo
+ * - Análisis comparativo entre escuelas públicas y privadas
+ * - Diagramas de flujo del sistema educativo
+ * - Métricas de eficiencia y retención escolar
+ * - Filtros dinámicos por tipo de sostenimiento
+ * 
+ * COMPONENTES ANALÍTICOS:
+ * - Distribución porcentual por nivel educativo
+ * - Barras de progreso comparativas
+ * - Conclusiones automáticas basadas en datos
+ * - Recomendaciones para política educativa
+ * 
+ * VISUALIZACIONES ESPECIALIZADAS:
+ * - Gráficos de barras horizontales con mini-indicadores
+ * - Diagramas de flujo interactivos
+ * - Paneles de análisis con pestañas navegables
+ * - Indicadores de tendencias y variaciones
+ * 
+ * @package SEDEQ_Dashboard
+ * @subpackage Escuelas_Detalle
+ * @version 2.0
+ */
+
+// =============================================================================
+// CONFIGURACIÓN DEL ENTORNO DE DESARROLLO
+// =============================================================================
+
+// Incluir el helper de sesiones para manejo de autenticación
 require_once 'session_helper.php';
 
-// Iniciar sesión y configurar usuario de demo si es necesario
+// Inicializar sesión y configurar usuario de demostración si es necesario
 iniciarSesionDemo();
 
-// Mostrar todos los errores (quitar en producción)
+// CONFIGURACIÓN DE DEPURACIÓN (remover en producción)
+// Estas configuraciones permiten ver errores durante el desarrollo
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Incluir archivo de conexión
+// =============================================================================
+// OBTENCIÓN Y PROCESAMIENTO DE DATOS EDUCATIVOS
+// =============================================================================
+
+// Incluir módulo de conexión con funciones especializadas de consulta
 require_once 'conexion.php';
 
-// Obtener datos educativos desde la base de datos
+// Obtener conjunto completo de datos educativos desde la base de datos
+// Incluye información de todas las escuelas por nivel y modalidad
 $datosEducativos = obtenerDatosEducativos();
 
-// Calcular totales para resumen
-$totales = calcularTotales($datosEducativos);
-$totalEscuelas = $totales['escuelas']; // Usar la misma lógica que el dashboard principal
-$totalAlumnos = $totales['alumnos']; // Usar la misma lógica que el dashboard principal
+// =============================================================================
+// CÁLCULOS ESTADÍSTICOS GENERALES
+// =============================================================================
 
-// Extraer datos por nivel educativo directamente desde $datosEducativos
+// Calcular totales agregados para métricas principales del dashboard
+// Utiliza la misma lógica de cálculo que el dashboard principal para consistencia
+$totales = calcularTotales($datosEducativos);
+$totalEscuelas = $totales['escuelas']; // Total de instituciones educativas
+$totalAlumnos = $totales['alumnos'];   // Total de estudiantes matriculados
+
+// =============================================================================
+// PROCESAMIENTO DE DATOS POR NIVEL EDUCATIVO
+// =============================================================================
+
+// Extraer y estructurar datos por nivel educativo desde el dataset principal
+// Se omite la primera fila que contiene encabezados de la consulta
 $escuelasPorNivel = [];
 for ($i = 1; $i < count($datosEducativos); $i++) {
-    $tipoEducativo = $datosEducativos[$i][0];
-    $escuelas = $datosEducativos[$i][1];
+    $tipoEducativo = $datosEducativos[$i][0]; // Nombre del nivel (ej: "Primaria")
+    $escuelas = $datosEducativos[$i][1];      // Cantidad de escuelas
     $escuelasPorNivel[$tipoEducativo] = $escuelas;
 }
 
-// Calcular los porcentajes para cada nivel
+// Calcular distribución porcentual para análisis comparativo
+// Cada nivel se expresa como porcentaje del total de escuelas
 $porcentajes = [];
 foreach ($escuelasPorNivel as $nivel => $cantidad) {
     $porcentajes[$nivel] = round(($cantidad / $totalEscuelas) * 100);
 }
 
-// Obtener datos de escuelas por sostenimiento (públicas y privadas)
-$escuelasPorSostenimiento = obtenerEscuelasPorSostenimiento();
-$escuelasPublicas = $escuelasPorSostenimiento['publicas'];
-$escuelasPrivadas = $escuelasPorSostenimiento['privadas'];
-$porcentajePublicas = $escuelasPorSostenimiento['porcentaje_publicas'];
-$porcentajePrivadas = $escuelasPorSostenimiento['porcentaje_privadas'];
-$escuelasNivelSostenimiento = $escuelasPorSostenimiento['por_nivel'];
+// =============================================================================
+// ANÁLISIS POR TIPO DE SOSTENIMIENTO
+// =============================================================================
 
-// Datos para el diagrama de eficiencia escolar
+// Obtener datos segmentados por sostenimiento (público vs privado)
+// Incluye datos agregados y desglosados por nivel educativo
+$escuelasPorSostenimiento = obtenerEscuelasPorSostenimiento();
+$escuelasPublicas = $escuelasPorSostenimiento['publicas'];           // Total escuelas públicas
+$escuelasPrivadas = $escuelasPorSostenimiento['privadas'];           // Total escuelas privadas
+$porcentajePublicas = $escuelasPorSostenimiento['porcentaje_publicas']; // % públicas
+$porcentajePrivadas = $escuelasPorSostenimiento['porcentaje_privadas']; // % privadas
+$escuelasNivelSostenimiento = $escuelasPorSostenimiento['por_nivel'];    // Desglose por nivel
+
+// =============================================================================
+// DATOS PARA ANÁLISIS DE EFICIENCIA EDUCATIVA
+// =============================================================================
+
+// Configurar datos de flujo educativo para diagrama de eficiencia
+// Representa tasas de ingreso, permanencia y egreso por nivel educativo
 $datosEficiencia = [
     'primaria' => [
         'ingreso' => 100,
@@ -123,7 +187,7 @@ $datosEficiencia = [
             <div class="menu-toggle">
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
-            <div class="page-title">
+            <div class="page-title top-bar-title">
                 <h1>Detalle de Escuelas Ciclo 2023 - 2024</h1>
             </div>
             <div class="utilities">
@@ -460,10 +524,6 @@ $datosEficiencia = [
     <script src="./js/animations_global.js"></script>
     <script src="./js/sidebar.js"></script>
     <script src="./js/escuelas_publicas_privadas.js"></script>
-    <script>
-        // Variables de datos específicos para esta página
-        // (No hay código del sidebar aquí para evitar conflictos con sidebar.js)
-    </script>
 </body>
 
 </html>

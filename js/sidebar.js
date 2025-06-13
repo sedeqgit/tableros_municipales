@@ -1,6 +1,44 @@
 /**
- * Script para la funcionalidad del sidebar en el Sistema SEDEQ
- * Este archivo controla la apertura y cierre del menú lateral en todas las páginas
+ * =============================================================================
+ * CONTROLADOR DE NAVEGACIÓN LATERAL - SISTEMA SEDEQ
+ * =============================================================================
+ * 
+ * Este módulo gestiona toda la funcionalidad del menú de navegación lateral
+ * en el dashboard estadístico de SEDEQ, proporcionando una experiencia de
+ * usuario consistente y responsiva en todas las páginas del sistema.
+ * 
+ * FUNCIONALIDADES PRINCIPALES:
+ * - Apertura y cierre del menú lateral en dispositivos móviles
+ * - Gestión de estados colapsado/expandido del sidebar
+ * - Sistema de overlay para cerrar menú en dispositivos táctiles
+ * - Adaptación automática según el tamaño de la ventana
+ * - Preservación del icono hamburguesa para consistencia visual
+ * 
+ * COMPORTAMIENTOS RESPONSIVOS:
+ * - <= 992px: Modo colapsado por defecto con overlay
+ * - > 992px: Sidebar visible permanentemente
+ * - Transiciones suaves para cambios de estado
+ * - Eventos de resize para adaptación dinámica
+ * 
+ * ELEMENTOS DOM REQUERIDOS:
+ * - #sidebarToggle: Botón para alternar estado del menú
+ * - .sidebar: Contenedor principal del menú lateral
+ * - .main-content: Área principal que se ajusta según el estado del sidebar
+ * - .sidebar-overlay: Capa de overlay para cerrar el menú en móviles
+ * 
+ * @version 2.0
+ * @requires Font Awesome para iconos
+ */
+
+// =============================================================================
+// INICIALIZACIÓN DEL CONTROLADOR DE SIDEBAR
+// =============================================================================
+
+/**
+ * Punto de entrada principal del sistema de navegación
+ * 
+ * Se ejecuta cuando el DOM está completamente cargado para garantizar que
+ * todos los elementos estén disponibles antes de asignar event listeners.
  */
 document.addEventListener('DOMContentLoaded', function() {    
     // Toggle para la barra lateral en dispositivos móviles

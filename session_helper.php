@@ -1,25 +1,87 @@
 <?php
 /**
- * Archivo helper para la gestión de sesiones en el Sistema SEDEQ
- * Centraliza la lógica de simulación de sesiones para el modo demo del proyecto
+ * =============================================================================
+ * MÓDULO DE GESTIÓN DE SESIONES - SISTEMA SEDEQ
+ * =============================================================================
+ * 
+ * Este archivo centraliza la lógica de gestión de sesiones para el sistema
+ * de dashboard estadístico de SEDEQ. Proporciona funcionalidades tanto para
+ * el modo de producción con autenticación completa como para el modo demo
+ * que permite acceso sin credenciales para demostraciones y desarrollo.
+ * 
+ * FUNCIONALIDADES PRINCIPALES:
+ * - Inicialización segura de sesiones PHP
+ * - Validación de estados de autenticación
+ * - Modo demo para demostraciones públicas
+ * - Redirección automática a pantalla de login
+ * 
+ * MODOS DE OPERACIÓN:
+ * - Producción: Requiere autenticación válida ($_SESSION['user_id'])
+ * - Demo: Acceso sin autenticación mediante parámetro ?demo
+ * - Desarrollo: Flexibilidad para testing y depuración
+ * 
+ * @package SEDEQ_Core
+ * @subpackage Session_Management
+ * @version 2.0
  */
 
+// =============================================================================
+// FUNCIONES DE GESTIÓN DE SESIONES
+// =============================================================================
+
 /**
- * Inicializa la sesión si no está iniciada y configura un usuario demo si es necesario
- * @param bool $requireAuth - Si es verdadero, redirecciona a login.php si no hay sesión
+ * Inicializa la sesión del sistema y configura el modo de acceso apropiado
+ * 
+ * Esta función es el punto de entrada principal para la gestión de sesiones
+ * en toda la aplicación. Maneja tanto el modo de producción con autenticación
+ * completa como el modo demo para demostraciones y desarrollo.
+ * 
+ * LÓGICA DE VALIDACIÓN:
+ * 1. Verifica e inicializa la sesión PHP si no está activa
+ * 2. Evalúa si se requiere autenticación según el parámetro $requireAuth
+ * 3. Permite acceso demo mediante el parámetro GET 'demo'
+ * 4. Redirecciona a login.php si no hay sesión válida ni modo demo
+ * 
+ * CASOS DE USO:
+ * - iniciarSesionDemo(true): Modo producción, requiere login
+ * - iniciarSesionDemo(false): Modo desarrollo, acceso libre
+ * - URL con ?demo: Modo demostración, acceso sin credenciales
+ * 
+ * @param bool $requireAuth Determina si se requiere autenticación válida
+ *                         true = modo producción, false = modo desarrollo
  * @return void
+ * @since 2.0
  */
 function iniciarSesionDemo($requireAuth = true)
 {
-    // Iniciar sesión si no está iniciada
+    // =======================================================================
+    // INICIALIZACIÓN DE SESIÓN PHP
+    // =======================================================================
+
+    // Verificar el estado actual de la sesión para evitar reinicializaciones
+    // PHP_SESSION_NONE indica que no hay sesión activa en el hilo actual
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
 
-    // Para el prototipo, verificar si se requiere autenticación
+    // =======================================================================
+    // VALIDACIÓN DE AUTENTICACIÓN Y CONTROL DE ACCESO
+    // =======================================================================
+
+    // Implementar lógica de control de acceso basada en múltiples criterios:
+    // - $requireAuth: Parámetro que determina el nivel de seguridad requerido
+    // - $_SESSION['user_id']: Sesión válida de usuario autenticado
+    // - $_GET['demo']: Parámetro que habilita el modo demostración
+
     if ($requireAuth && !isset($_SESSION['user_id']) && !isset($_GET['demo'])) {
-        // Redireccionar a login.php si no hay sesión ni parámetro demo
+        // REDIRECCIÓN DE SEGURIDAD
+        // Si se requiere autenticación y no hay sesión válida ni modo demo,
+        // redireccionar al sistema de login para proteger el acceso
         header("Location: login.php");
-        exit;
+        exit; // Terminar ejecución para prevenir acceso no autorizado
     }
+
+    // MODO DEMO ACTIVADO
+    // Si se detecta el parámetro 'demo', el sistema permite acceso sin
+    // credenciales para demostraciones y presentaciones públicas
 }

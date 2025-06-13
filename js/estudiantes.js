@@ -8,20 +8,28 @@
  * y análisis de datos de matrícula estudiantil por niveles educativos.
  * 
  * FUNCIONALIDADES PRINCIPALES:
- * - Visualización interactiva con Google Charts
- * - Sistema de filtrado dinámico (año/nivel)
- * - Exportación a múltiples formatos (PDF/Excel)
- * - Análisis comparativo y evolutivo
- * - Gestión de colores profesionales
+ * - Visualización interactiva con Google Charts API
+ * - Sistema de filtrado dinámico por año escolar y nivel educativo
+ * - Exportación de datos a múltiples formatos (PDF, Excel, CSV)
+ * - Análisis comparativo y evolutivo entre ciclos escolares
+ * - Gestión de paleta de colores profesional y accesible
  * 
- * ARQUITECTURA:
- * - Patrón Observer para actualizaciones reactivas
- * - Sistema de caché para optimización de rendimiento
- * - Separación de responsabilidades por funciones especializadas
+ * ARQUITECTURA TÉCNICA:
+ * - Patrón Observer para actualizaciones reactivas de la interfaz
+ * - Sistema de caché en memoria para optimización de rendimiento
+ * - Separación de responsabilidades mediante funciones especializadas
+ * - Manejo de errores robusto con fallbacks y notificaciones al usuario
  * 
- * @author Sistema SEDEQ
- * @version 1.2.1
- * @since 2024
+ * COMPONENTES PRINCIPALES:
+ * - Renderizador de gráficos (Google Charts)
+ * - Motor de filtrado y agrupación de datos
+ * - Sistema de exportación multi-formato
+ * - Gestor de eventos de interfaz de usuario
+ * - Validador de integridad de datos
+ * 
+ * @version 2.0.1
+ * @requires Google Charts API
+ * @requires datosMatricula (variable global desde PHP)
  */
 
 // =============================================================================
@@ -29,9 +37,14 @@
 // =============================================================================
 
 /**
- * Carga asincrona de Google Charts con paquetes específicos
- * - 'corechart': Gráficos básicos (columnas, barras, líneas, etc.)
- * - 'bar': Gráficos de barras avanzados con mejor rendimiento
+ * Configuración e inicialización de Google Charts
+ * 
+ * Se cargan los paquetes específicos necesarios para las visualizaciones:
+ * - 'corechart': Proporciona gráficos básicos (columnas, barras, líneas, etc.)
+ * - 'bar': Gráficos de barras horizontales con funcionalidades avanzadas
+ * 
+ * El callback 'inicializarGraficos' se ejecuta cuando las librerías están listas,
+ * garantizando que todos los recursos estén disponibles antes de crear visualizaciones.
  */
 google.charts.load('current', {'packages':['corechart', 'bar']});
 google.charts.setOnLoadCallback(inicializarGraficos);
@@ -41,30 +54,66 @@ google.charts.setOnLoadCallback(inicializarGraficos);
 // =============================================================================
 
 /**
- * @type {Object} datosMatriculaAgrupados - Cache de datos organizados por tipo de vista
- * Estructura:
+ * Cache de datos de matrícula organizados por diferentes tipos de vista
+ * 
+ * Esta estructura optimiza el rendimiento al pre-procesar los datos en diferentes
+ * agrupaciones, evitando recálculos repetitivos durante la interacción del usuario.
+ * 
+ * @type {Object} datosMatriculaAgrupados
+ * @property {Array} todos - Dataset completo sin filtros para vista panorámica
+ * @property {Object} anual - Datos agrupados por año escolar para comparativas temporales
+ * @property {Object} nivel - Datos agrupados por nivel educativo para análisis sectorial
+ * 
+ * Estructura interna:
  * {
- *   'todos': Array,     // Vista panorámica completa
- *   'anual': Object,    // Datos agrupados por año
- *   'nivel': Object     // Datos agrupados por nivel educativo
+ *   'todos': [
+ *     ['Año', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior'],
+ *     ['2018-2019', 120, 45, 1250, 3400, 2100, 890, 245],
+ *     // ... más filas de datos
+ *   ],
+ *   'anual': {
+ *     '2023-2024': { 'Primaria': 3500, 'Secundaria': 2200, ... },
+ *     // ... más años
+ *   },
+ *   'nivel': {
+ *     'Primaria': { '2023-2024': 3500, '2022-2023': 3450, ... },
+ *     // ... más niveles
+ *   }
  * }
  */
 let datosMatriculaAgrupados;
 
 /**
- * @type {google.visualization.ColumnChart} chartMatricula - Instancia del gráfico principal
+ * Instancia del gráfico principal de Google Charts
+ * 
+ * Mantiene la referencia al objeto de visualización para permitir actualizaciones
+ * dinámicas sin recrear el gráfico completo, optimizando el rendimiento.
+ * 
+ * @type {google.visualization.ColumnChart|null} chartMatricula
  */
 let chartMatricula;
 
 /**
- * @type {string} añoSeleccionado - Filtro activo por año escolar
- * Valores: 'todos', '2018-2019', '2019-2020', '2020-2021', '2021-2022', '2022-2023', '2023-2024'
+ * Estado del filtro de año escolar actualmente seleccionado
+ * 
+ * Controla qué datos temporales se muestran en la visualización.
+ * El valor 'todos' muestra datos de todos los años disponibles.
+ * 
+ * @type {string} añoSeleccionado
+ * @default 'todos'
+ * @enum {'todos'|'2018-2019'|'2019-2020'|'2020-2021'|'2021-2022'|'2022-2023'|'2023-2024'}
  */
 let añoSeleccionado = 'todos';
 
 /**
- * @type {string} nivelSeleccionado - Filtro activo por nivel educativo
- * Valores: 'todos', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior'
+ * Estado del filtro de nivel educativo actualmente seleccionado
+ * 
+ * Determina qué niveles educativos se incluyen en la visualización.
+ * El valor 'todos' incluye todos los niveles desde Inicial NE hasta Superior.
+ * 
+ * @type {string} nivelSeleccionado
+ * @default 'todos'
+ * @enum {'todos'|'Inicial NE'|'CAM'|'Preescolar'|'Primaria'|'Secundaria'|'Media superior'|'Superior'}
  */
 let nivelSeleccionado = 'todos';
 

@@ -1,11 +1,46 @@
 /**
- * Script global de animaciones para el sistema SEDEQ
+ * =============================================================================
+ * SISTEMA GLOBAL DE ANIMACIONES - SEDEQ DASHBOARD
+ * =============================================================================
  * 
- * Este script gestiona la aplicación de animaciones a los elementos del sitio,
- * asegurando una experiencia visual atractiva pero ligera.
+ * Este módulo centraliza toda la lógica de animaciones para el dashboard
+ * estadístico de SEDEQ, proporcionando experiencias visuales consistentes
+ * y profesionales en todas las páginas del sistema.
+ * 
+ * FUNCIONALIDADES PRINCIPALES:
+ * - Animaciones de entrada progresivas para elementos de interfaz
+ * - Sistema de retrasos automáticos para efectos escalonados
+ * - Animaciones específicas para diferentes tipos de contenido
+ * - Respeto por las preferencias de accesibilidad del usuario
+ * - Optimización de rendimiento mediante observadores de intersección
+ * 
+ * TIPOS DE ANIMACIONES SOPORTADAS:
+ * - Fade In: Aparición gradual con cambio de opacidad
+ * - Slide Up: Deslizamiento desde abajo hacia arriba
+ * - Slide Right/Left: Deslizamiento horizontal
+ * - Scale In: Aparición con efecto de escala
+ * - Secuencias: Animaciones coordinadas en grupos
+ * 
+ * CLASES CSS UTILIZADAS:
+ * - .animate-fade, .animate-up, .animate-right, .animate-left, .animate-scale
+ * - .delay-1 a .delay-7 para retrasos específicos
+ * - .animate-sequence para contenedores con animaciones coordinadas
+ * 
+ * @version 2.0
+ * @requires CSS animations definidas en global.css
  */
 
-// Esperar a que el DOM esté completamente cargado
+// =============================================================================
+// INICIALIZACIÓN DEL SISTEMA DE ANIMACIONES
+// =============================================================================
+
+/**
+ * Punto de entrada principal del sistema de animaciones
+ * 
+ * Se ejecuta cuando el DOM está completamente cargado, garantizando que
+ * todos los elementos estén disponibles antes de aplicar las animaciones.
+ * Incluye un retraso mínimo para asegurar que los estilos CSS estén aplicados.
+ */
 document.addEventListener('DOMContentLoaded', () => {
     // Iniciar animaciones con un pequeño retraso para asegurar que todo esté cargado
     setTimeout(initAnimations, 100);
