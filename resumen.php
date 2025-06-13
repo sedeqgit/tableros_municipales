@@ -22,9 +22,16 @@ $totalAlumnos = $totales['alumnos'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Estadístico Educativo Corregidora| SEDEQ</title>
+    <title>Dashboard Estadístico Educativo Corregidora | SEDEQ</title>
+
+    <!-- ========================================== -->
+    <!-- HOJAS DE ESTILO MODULARIZADAS             -->
+    <!-- ========================================== -->
+    <!-- Estilos globales compartidos por todo el sistema -->
     <link rel="stylesheet" href="./css/global.css">
+    <!-- Estilos específicos para la página de resumen -->
     <link rel="stylesheet" href="./css/resumen.css">
+    <!-- Estilos para el menú lateral responsive -->
     <link rel="stylesheet" href="./css/sidebar.css">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -60,7 +67,7 @@ $totalAlumnos = $totales['alumnos'];
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title">
-                <h1>Dashboard Estadístico Educativo Corregidora Ciclo 2023 - 2024</h1>
+                <h1 class="section-title">Dashboard Estadístico Educativo Corregidora Ciclo 2023 - 2024</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -72,7 +79,7 @@ $totalAlumnos = $totales['alumnos'];
         <div class="dashboard-grid">
             <div class="card summary-card animate-fade">
                 <div class="card-header">
-                    <h2><i class="fas fa-info-circle"></i> Resumen Ejecutivo</h2>
+                    <h2 class="panel-title"><i class="fas fa-info-circle"></i> Resumen Ejecutivo</h2>
                 </div>
                 <div class="card-body">
                     <div class="metric animate-left delay-1">
@@ -124,7 +131,7 @@ $totalAlumnos = $totales['alumnos'];
             </div>
             <div class="card analysis-card animate-fade delay-3">
                 <div class="card-header">
-                    <h2><i class="fas fa-analytics"></i> Análisis de Tendencias</h2>
+                    <h2 class="panel-title"><i class="fas fa-analytics"></i> Análisis de Tendencias</h2>
                 </div>
                 <div class="card-body">
                     <p id="analisisDinamico" class="animate-up delay-4">
@@ -139,7 +146,7 @@ $totalAlumnos = $totales['alumnos'];
             </div>
             <div class="card chart-card animate-fade delay-4">
                 <div class="card-header">
-                    <h2><i class="fas fa-chart-bar"></i> Estadística Educativa por Tipo</h2>
+                    <h2 class="panel-title"><i class="fas fa-chart-bar"></i> Estadística Educativa por Tipo</h2>
                     <div class="export-buttons">
                         <button id="export-pdf" class="export-button">
                             <i class="fas fa-file-pdf"></i> Exportar
@@ -152,7 +159,7 @@ $totalAlumnos = $totales['alumnos'];
             </div>
             <div class="card controls-card animate-right delay-5">
                 <div class="card-header">
-                    <h2><i class="fas fa-sliders-h"></i> Ajustes de Visualización</h2>
+                    <h2 class="panel-title"><i class="fas fa-sliders-h"></i> Ajustes de Visualización</h2>
                 </div>
                 <div class="card-body">
                     <div class="control-group animate-fade">
@@ -189,10 +196,9 @@ $totalAlumnos = $totales['alumnos'];
                     </div>
                 </div>
             </div>
-
-            <div class="card table-card">
+            <div class="card table-card animate-fade delay-6">
                 <div class="card-header">
-                    <h2><i class="fas fa-table"></i> Datos Numéricos</h2>
+                    <h2 class="panel-title"><i class="fas fa-table"></i> Datos Numéricos</h2>
                     <div class="card-actions">
                         <button id="exportExcel" class="action-button" title="Exportar a Excel">
                             <i class="fas fa-file-excel"></i>
@@ -203,7 +209,7 @@ $totalAlumnos = $totales['alumnos'];
                     </div>
                 </div>
                 <div class="card-body table-container">
-                    <table class="data-table" id="dataTable">
+                    <table class="data-table animate-up delay-7" id="dataTable">
                         <thead>
                             <tr>
                                 <th>Tipo Educativo</th>
@@ -232,7 +238,8 @@ $totalAlumnos = $totales['alumnos'];
         echo "const totalAlumnos = " . $totalAlumnos . ";\n";
         echo "const totalEscuelasFormateado = '" . number_format($totalEscuelas, 0, '.', ',') . "';\n";
         echo "const totalAlumnosFormateado = '" . number_format($totalAlumnos, 0, '.', ',') . "';\n";
-        ?>    </script> <!-- Script del dashboard -->
+        ?>   
+    </script> <!-- Script del dashboard -->
     <script src="./js/script.js"></script>
     <script src="./js/export-graficos-mejorado.js"></script>
     <script src="./js/animations_global.js"></script>

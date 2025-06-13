@@ -1,36 +1,25 @@
-/* Estilos para el Dashboard Estadístico Educativo de Querétaro */
+/**
+ * ESTILOS ESPECÍFICOS PARA LA PÁGINA DE RESUMEN
+ * Sistema de Estadística Educativa - SEDEQ
+ * 
+ * Usa las variables globales definidas en global.css
+ * Los estilos base, reset y sidebar están en sus respectivos archivos
+ * 
+ * DEPENDENCIAS:
+ * - global.css (variables, reset, tipografía, animaciones)
+ * - sidebar.css (navegación lateral)
+ * 
+ * Este archivo contiene únicamente:
+ * - Layout específico del dashboard de resumen
+ * - Estilos de métricas y controles específicos
+ * - Botones de exportación
+ * - Gráficos y tablas de datos
+ * - Responsive design específico
+ */
 
-/* Variables de color - Colores institucionales del Gobierno de Querétaro */
-:root {
-    --primary-blue: #004990; /* Azul institucional de Querétaro */
-    --secondary-blue: #266FB6; 
-    --accent-red: #9D2449; /* Rojo institucional de Querétaro */
-    --accent-gold: #D4AF37; /* Dorado institucional */
-    --light-gray: #f5f7fa;
-    --medium-gray: #e9ecef;
-    --dark-gray: #495057;
-    --white: #ffffff;
-    --black: #212529;
-    --success-green: #28a745;
-    --warning-yellow: #ffc107;
-    --danger-red: #dc3545;
-    --text-primary: #333333;
-    --text-secondary: #6c757d;
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
-    --border-radius: 8px;
-    --card-border-radius: 12px;
-    --transition-speed: 0.3s;
-}
-
-/* Estilos generales */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Estilos para los botones de exportación */
+/* =============================================
+   ESTILOS DE EXPORTACIÓN
+   ============================================= */
 .export-buttons {
     display: flex;
     gap: 12px;
@@ -68,82 +57,12 @@
     transform: none;
 }
 
-.export-button i {
-    font-size: 16px;
+.export-button i {    font-size: 16px;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--light-gray);
-    color: var(--text-primary);
-    line-height: 1.6;
-    transition: background-color var(--transition-speed), color var(--transition-speed);
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
-/* Estructura del Dashboard */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 240px;
-    background-color: var(--primary-blue);
-    color: var(--white);
-    padding: 20px 0;
-    box-shadow: var(--shadow-md);
-    z-index: 1000;
-    transition: all var(--transition-speed);
-    display: flex;
-    flex-direction: column;
-}
-
-.logo-container {
-    padding: 15px;
-    text-align: center;
-    margin-bottom: 20px;
-    background-color: white;
-    border-radius: 12px;
-    margin: 25px 15px 20px 15px;
-}
-
-.logo {
-    max-width: 95%;
-    height: auto;
-}
-
-.sidebar-links {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-.sidebar-link {
-    color: var(--white);
-    text-decoration: none;
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    transition: background-color 0.2s;
-    font-size: 1.05rem;
-}
-
-.sidebar-link i {
-    margin-right: 12px;
-    width: 20px;
-    text-align: center;
-}
-
-.sidebar-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.sidebar-link.active {
-    background-color: rgba(255, 255, 255, 0.2);
-    font-weight: bold;
-    border-left: 4px solid var(--accent-gold);
-}
+/* =============================================
+   LAYOUT ESPECÍFICO DEL DASHBOARD
+   ============================================= */
 
 .main-content {
     margin-left: 240px;
@@ -251,6 +170,12 @@ body {
     margin: 0;
     display: flex;
     align-items: center;
+    /* No especificar font-family para permitir que las clases globales tomen precedencia */
+}
+
+.card-header h2:not(.panel-title) {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-medium);
 }
 
 .card-header h2 i {
@@ -479,7 +404,7 @@ body {
 }
 
 .data-table tr:hover {
-    background-color: rgba(0, 73, 144, 0.05);
+    background-color: rgba(36, 43, 87, 0.05);
 }
 
 .data-table .total-row {
@@ -602,14 +527,6 @@ body {
 }
 
 @media (max-width: 992px) {
-    .sidebar {
-        width: 70px;
-    }
-    
-    .sidebar-link span {
-        display: none;
-    }
-    
     .main-content {
         margin-left: 70px;
     }
@@ -638,11 +555,6 @@ body {
 }
 
 @media (max-width: 576px) {
-    .sidebar {
-        width: 0;
-        padding: 0;
-    }
-    
     .main-content {
         margin-left: 0;
     }
@@ -681,7 +593,7 @@ body {
     display: none;
     position: absolute;
     z-index: 1000;
-    background: rgba(0, 73, 144, 0.95); /* Azul institucional con opacidad */
+    background: rgba(36, 43, 87, 0.95); /* Azul institucional con opacidad */
     color: white;
     padding: 12px;
     border-radius: 6px;
@@ -711,5 +623,5 @@ body {
     height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-bottom: 6px solid rgba(0, 73, 144, 0.95);
+    border-bottom: 6px solid rgba(36, 43, 87, 0.95);
 }

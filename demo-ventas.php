@@ -11,7 +11,7 @@
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Custom CSS -->
-    <link href="demo-ventas.css" rel="stylesheet">
+    <link href="./css/demo-ventas.css" rel="stylesheet">
 
     <!-- Google Charts -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -250,7 +250,7 @@
     <!-- Export Manager con Anotaciones -->
     <script src="js/export-manager-annotations.js"></script>
     <!-- Page specific JS -->
-    <script src="demo-ventas.js"></script>
+    <script src="./js/demo-ventas.js"></script>
 </body>
 
 </html>

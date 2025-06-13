@@ -1,50 +1,138 @@
 /**
- * Archivo JavaScript para la página de estudiantes
- * Sistema de Dashboard Estadístico - SEDEQ
+ * =============================================================================
+ * MÓDULO DE ANÁLISIS DE MATRÍCULA ESTUDIANTIL
+ * Sistema de Dashboard Estadístico - SEDEQ Corregidora
+ * =============================================================================
+ * 
+ * Este módulo maneja toda la funcionalidad relacionada con la visualización
+ * y análisis de datos de matrícula estudiantil por niveles educativos.
+ * 
+ * FUNCIONALIDADES PRINCIPALES:
+ * - Visualización interactiva con Google Charts
+ * - Sistema de filtrado dinámico (año/nivel)
+ * - Exportación a múltiples formatos (PDF/Excel)
+ * - Análisis comparativo y evolutivo
+ * - Gestión de colores profesionales
+ * 
+ * ARQUITECTURA:
+ * - Patrón Observer para actualizaciones reactivas
+ * - Sistema de caché para optimización de rendimiento
+ * - Separación de responsabilidades por funciones especializadas
+ * 
+ * @author Sistema SEDEQ
+ * @version 1.2.1
+ * @since 2024
  */
 
-// Cargar la biblioteca de Google Charts
+// =============================================================================
+// CONFIGURACIÓN Y CARGA DE LIBRERÍAS EXTERNAS
+// =============================================================================
+
+/**
+ * Carga asincrona de Google Charts con paquetes específicos
+ * - 'corechart': Gráficos básicos (columnas, barras, líneas, etc.)
+ * - 'bar': Gráficos de barras avanzados con mejor rendimiento
+ */
 google.charts.load('current', {'packages':['corechart', 'bar']});
 google.charts.setOnLoadCallback(inicializarGraficos);
 
-// Variables globales para los datos y gráficos
+// =============================================================================
+// VARIABLES GLOBALES Y ESTADO DE LA APLICACIÓN
+// =============================================================================
+
+/**
+ * @type {Object} datosMatriculaAgrupados - Cache de datos organizados por tipo de vista
+ * Estructura:
+ * {
+ *   'todos': Array,     // Vista panorámica completa
+ *   'anual': Object,    // Datos agrupados por año
+ *   'nivel': Object     // Datos agrupados por nivel educativo
+ * }
+ */
 let datosMatriculaAgrupados;
+
+/**
+ * @type {google.visualization.ColumnChart} chartMatricula - Instancia del gráfico principal
+ */
 let chartMatricula;
+
+/**
+ * @type {string} añoSeleccionado - Filtro activo por año escolar
+ * Valores: 'todos', '2018-2019', '2019-2020', '2020-2021', '2021-2022', '2022-2023', '2023-2024'
+ */
 let añoSeleccionado = 'todos';
+
+/**
+ * @type {string} nivelSeleccionado - Filtro activo por nivel educativo
+ * Valores: 'todos', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior'
+ */
 let nivelSeleccionado = 'todos';
 
 /**
- * Inicializa los gráficos una vez que Google Charts esté cargado
+ * =============================================================================
+ * INICIALIZACIÓN Y CONFIGURACIÓN DEL MÓDULO
+ * =============================================================================
+ * 
+ * Función principal que se ejecuta cuando Google Charts ha terminado de cargar.
+ * Configura todos los event listeners y prepara los datos para visualización.
+ * 
+ * FLUJO DE INICIALIZACIÓN:
+ * 1. Preparar datos desde formato PHP a Google Charts
+ * 2. Crear instancia del gráfico de columnas
+ * 3. Renderizar visualización inicial
+ * 4. Configurar event listeners para filtros interactivos
+ * 5. Configurar botón de exportación
+ * 
+ * @callback google.charts.setOnLoadCallback
  */
 function inicializarGraficos() {
-    // Preparar los datos desde PHP
+    // PASO 1: PREPARACIÓN DE DATOS
+    // Convierte los datos desde el formato PHP global a estructura optimizada para Google Charts
     prepararDatosMatricula();
     
-    // Inicializar el gráfico
+    // PASO 2: INICIALIZACIÓN DEL GRÁFICO
+    // Crea una instancia del gráfico de columnas vinculada al elemento DOM
     chartMatricula = new google.visualization.ColumnChart(document.getElementById('chart-matricula'));
     
-    // Mostrar gráfico de barras por defecto
+    // PASO 3: RENDERIZADO INICIAL
+    // Muestra la visualización por defecto (todos los años, todos los niveles)
     actualizarVisualizacion();
     
-    // Configurar los selectores de año
+    // PASO 4: CONFIGURACIÓN DE FILTROS INTERACTIVOS
+    // Event listeners para selector de años escolares
+    // Implementa patrón Observer para reactividad automática
     document.querySelectorAll('.year-option').forEach(option => {
         option.addEventListener('click', function() {
+            // Limpiar selección anterior
             document.querySelectorAll('.year-option').forEach(opt => opt.classList.remove('active'));
+            
+            // Marcar nueva selección
             this.classList.add('active');
+            
+            // Actualizar estado global y re-renderizar
             añoSeleccionado = this.getAttribute('data-year');
             actualizarVisualizacion();
         });
     });
     
-    // Configurar los selectores de nivel
+    // Event listeners para selector de niveles educativos
+    // Similar implementación del patrón Observer para niveles
     document.querySelectorAll('.level-option').forEach(option => {
         option.addEventListener('click', function() {
+            // Limpiar selección anterior
             document.querySelectorAll('.level-option').forEach(opt => opt.classList.remove('active'));
+            
+            // Marcar nueva selección
             this.classList.add('active');
+            
+            // Actualizar estado global y re-renderizar
             nivelSeleccionado = this.getAttribute('data-level');
             actualizarVisualizacion();
         });
-    });      // Botón de exportación (unificado)
+    });
+    
+    // PASO 5: CONFIGURACIÓN DE EXPORTACIÓN
+    // Vincula botón de exportación con función unificada de exportación
     document.getElementById('export-btn').addEventListener('click', exportarDatos);
 }
 
@@ -135,27 +223,53 @@ function prepararDatosNivel(nivel) {
 }
 
 /**
- * Actualiza la visualización según las opciones seleccionadas
+ * FUNCIÓN CENTRAL DEL SISTEMA DE VISUALIZACIÓN
+ * Actualiza la visualización según las opciones seleccionadas por el usuario
+ * 
+ * Esta función es el núcleo del sistema de filtrado dinámico que permite
+ * 4 combinaciones diferentes de visualización:
+ * 1. Vista general: Todos los años + Todos los niveles
+ * 2. Vista anual: Un año específico + Todos los niveles  
+ * 3. Vista evolutiva: Todos los años + Un nivel específico
+ * 4. Vista puntual: Un año específico + Un nivel específico
+ * 
+ * @requires datosMatriculaAgrupados - Objeto con datos pre-procesados
+ * @requires añoSeleccionado - Variable global con el año filtrado
+ * @requires nivelSeleccionado - Variable global con el nivel filtrado
  */
 function actualizarVisualizacion() {
     let datos;
     let titulo = '';
     
+    // LÓGICA DE FILTRADO MATRICIAL
     // Determinar qué conjunto de datos usar según los filtros seleccionados
+    // Esta matriz de decisión permite 4 tipos de visualización diferentes
+    
     if (añoSeleccionado === 'todos' && nivelSeleccionado === 'todos') {
-        // Todos los años, todos los niveles
+        // CASO 1: VISTA PANORÁMICA COMPLETA
+        // Muestra evolución histórica de todos los niveles educativos
+        // Útil para análisis comparativo global y tendencias generales
         datos = datosMatriculaAgrupados.todos;
         titulo = 'Matrícula por Nivel Educativo y Año Escolar';
+        
     } else if (añoSeleccionado !== 'todos' && nivelSeleccionado === 'todos') {
-        // Un año específico, todos los niveles
+        // CASO 2: ANÁLISIS TRANSVERSAL POR AÑO
+        // Compara todos los niveles educativos en un período específico
+        // Ideal para evaluación de distribución educativa anual
         datos = datosMatriculaAgrupados.anual[añoSeleccionado];
         titulo = 'Matrícula por Nivel Educativo - ' + añoSeleccionado;
+        
     } else if (añoSeleccionado === 'todos' && nivelSeleccionado !== 'todos') {
-        // Todos los años, un nivel específico
+        // CASO 3: ANÁLISIS LONGITUDINAL POR NIVEL
+        // Muestra evolución temporal de un nivel educativo específico
+        // Perfecto para identificar crecimiento/decrecimiento sectorial
         datos = datosMatriculaAgrupados.nivel[nivelSeleccionado];
         titulo = 'Evolución de Matrícula en ' + nivelSeleccionado + ' (2018-2024)';
+        
     } else {
-        // Un año específico, un nivel específico - mostramos solo ese dato puntual
+        // CASO 4: ANÁLISIS PUNTUAL ESPECÍFICO
+        // Datos granulares de un nivel en un año determinado
+        // Útil para análisis detallado y comparaciones precisas
         datos = [['Nivel Educativo', 'Cantidad de Alumnos']];
         const valorNivel = datosMatricula[añoSeleccionado][nivelSeleccionado] || 0;
         datos.push([nivelSeleccionado, valorNivel]);

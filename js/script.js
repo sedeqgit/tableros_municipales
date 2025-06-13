@@ -1,16 +1,66 @@
 /**
- * Archivo JavaScript para el Dashboard Estadístico - SEDEQ
- * Gestiona las visualizaciones, gráficos y exportaciones
+ * =============================================================================
+ * SCRIPT PRINCIPAL DEL DASHBOARD ESTADÍSTICO - SEDEQ CORREGIDORA
+ * =============================================================================
+ * 
+ * Controlador principal para todas las visualizaciones y funcionalidades
+ * del dashboard estadístico del sistema educativo de Corregidora.
+ * 
+ * FUNCIONALIDADES PRINCIPALES:
+ * - Gestión de visualizaciones interactivas con Google Charts
+ * - Sistema de filtrado dinámico por tipo de dato (escuelas/alumnos)
+ * - Múltiples tipos de gráficos (columnas, barras, pastel, líneas)
+ * - Exportación avanzada a PDF y Excel
+ * - Análisis automático de tendencias y métricas
+ * - Sistema de tooltips informativos
+ * 
+ * ARQUITECTURA MODULAR:
+ * - Separación clara entre datos, visualización y exportación
+ * - Patrón Observer para actualizaciones reactivas
+ * - Sistema de configuración centralizada
+ * - Manejo robusto de errores y estados
+ * 
+ * @author Sistema SEDEQ
+ * @version 1.2.1
+ * @since 2024
  */
 
-// Cargar la librería de Google Charts y configurar
+// =============================================================================
+// INICIALIZACIÓN Y CONFIGURACIÓN DE LIBRERÍAS
+// =============================================================================
+
+/**
+ * Configuración de Google Charts con paquetes optimizados
+ * - 'corechart': Gráficos básicos y avanzados
+ * - 'bar': Gráficos de barras con mejor rendimiento y personalización
+ */
 google.charts.load('current', { 'packages': ['corechart', 'bar'] });
 google.charts.setOnLoadCallback(dibujarGrafico);
 
-// Variables globales
+// =============================================================================
+// VARIABLES GLOBALES Y ESTADO DE LA APLICACIÓN
+// =============================================================================
+
+/**
+ * @type {google.visualization.DataTable} chartData - Tabla de datos principal para gráficos
+ */
 let chartData;
+
+/**
+ * @type {google.visualization.Chart} chart - Instancia del gráfico activo
+ */
 let chart;
+
+/**
+ * @type {string} tipoVisualizacion - Filtro de datos activo
+ * Valores: 'ambos', 'escuelas', 'alumnos'
+ */
 let tipoVisualizacion = 'ambos';
+
+/**
+ * @type {string} tipoGrafico - Tipo de gráfico seleccionado
+ * Valores: 'column', 'bar', 'pie', 'line', 'area'
+ */
 let tipoGrafico = 'column';
 
 /**
