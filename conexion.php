@@ -22,7 +22,6 @@
  * 
  * @author Sistema SEDEQ
  * @version 1.2.1
- * @since 2024
  */
 
 /**
@@ -418,5 +417,213 @@ function calcularTotales($datosEducativos)
     );
 }
 
+/**
+ * =============================================================================
+ * FUNCIONES ESPECÍFICAS PARA DOCENTES
+ * =============================================================================
+ */
+
+/**
+ * Función para obtener datos consolidados de docentes por nivel educativo
+ * Utiliza las consultas específicas identificadas en cada tabla de la BD
+ * 
+ * @return array Arreglo con los datos de docentes por nivel y subnivel
+ */
+function obtenerDocentesPorNivel()
+{
+    // Datos de respaldo en caso de problemas de conexión
+    $datosDocentes = array(
+        array('Nivel Educativo', 'Subnivel', 'Docentes'),
+        array('Inicial Escolarizada', 'General', 36),
+        array('Inicial No Escolarizada', 'Comunitario', 25),
+        array('Preescolar', 'General', 336),
+        array('Preescolar', 'Comunitario', 16),
+        array('Primaria', 'General', 748),
+        array('Primaria', 'Comunitario', 2),
+        array('Secundaria', 'General', 571),
+        array('Media Superior', 'Plantel', 607),
+        array('Superior', 'Licenciatura', 467)
+    );
+
+    // Verificar disponibilidad de PostgreSQL
+    if (!function_exists('pg_connect')) {
+        error_log('SEDEQ: PostgreSQL no disponible para consulta de docentes, usando datos de fallback');
+        return $datosDocentes;
+    }
+
+    $link = Conectarse();
+    if (!$link) {
+        error_log('SEDEQ: No se pudo conectar a la BD para docentes, usando datos de fallback');
+        return $datosDocentes;
+    }
+
+    try {
+        // Consulta unificada para obtener todos los datos de docentes
+        $query = "
+        -- EDUCACIÓN INICIAL ESCOLARIZADA
+        SELECT 
+            'Inicial Escolarizada' as nivel_educativo,
+            'General' as subnivel,
+            COALESCE(SUM(V509+V516+V523+V511+V518+V525+V785+V510+V517+V524+V512+V519+V526+V786), 0) as total_docentes
+        FROM nonce_pano_23.ini_gral_23 
+        WHERE c_nom_mun = 'CORREGIDORA' 
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- EDUCACIÓN INICIAL NO ESCOLARIZADA
+        SELECT 
+            'Inicial No Escolarizada' as nivel_educativo,
+            'Comunitario' as subnivel,
+            COALESCE(SUM(v124 + V125), 0) as total_docentes
+        FROM nonce_pano_23.ini_comuni_23 
+        WHERE c_nom_mun = 'CORREGIDORA' 
+          AND cv_estatus_captura = 0
+
+        UNION ALL
+
+        -- PREESCOLAR GENERAL
+        SELECT 
+            'Preescolar' as nivel_educativo,
+            'General' as subnivel,
+            COALESCE(SUM(v909), 0) as total_docentes
+        FROM nonce_pano_23.pree_gral_23 
+        WHERE c_nom_mun = 'CORREGIDORA' 
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- PREESCOLAR COMUNITARIO
+        SELECT 
+            'Preescolar' as nivel_educativo,
+            'Comunitario' as subnivel,
+            COALESCE(SUM(v151), 0) as total_docentes
+        FROM nonce_pano_23.pree_comuni_23 
+        WHERE c_nom_mun = 'CORREGIDORA' 
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- PRIMARIA GENERAL
+        SELECT 
+            'Primaria' as nivel_educativo,
+            'General' as subnivel,
+            COALESCE(SUM(v1676), 0) as total_docentes
+        FROM nonce_pano_23.prim_gral_23 
+        WHERE c_nom_mun = 'CORREGIDORA' 
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- PRIMARIA COMUNITARIO
+        SELECT 
+            'Primaria' as nivel_educativo,
+            'Comunitario' as subnivel,
+            COALESCE(SUM(v585), 0) as total_docentes
+        FROM nonce_pano_23.prim_comuni_23 
+        WHERE c_nom_mun = 'CORREGIDORA' 
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- SECUNDARIA
+        SELECT 
+            'Secundaria' as nivel_educativo,
+            'General' as subnivel,
+            COALESCE(SUM(v1401), 0) as total_docentes
+        FROM nonce_pano_23.sec_gral_23 
+        WHERE c_nom_mun = 'CORREGIDORA' 
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- MEDIA SUPERIOR
+        SELECT 
+            'Media Superior' as nivel_educativo,
+            'Plantel' as subnivel,
+            COALESCE(SUM(v169), 0) as total_docentes
+        FROM nonce_pano_23.ms_plantel_23 
+        WHERE c_nom_mun = 'CORREGIDORA' 
+          AND cv_motivo = 0
+
+        UNION ALL
+
+        -- SUPERIOR
+        SELECT 
+            'Superior' as nivel_educativo,
+            'Licenciatura' as subnivel,
+            COALESCE(SUM(v83), 0) as total_docentes
+        FROM nonce_pano_23.sup_escuela_23 
+        WHERE c_nom_mun = 'CORREGIDORA' 
+          AND cv_motivo = 0
+        ";
+
+        $result = pg_query($link, $query);
+
+        if ($result && pg_num_rows($result) > 0) {
+            $datosDocentes = array(
+                array('Nivel Educativo', 'Subnivel', 'Docentes')
+            );
+
+            while ($row = pg_fetch_assoc($result)) {
+                $datosDocentes[] = array(
+                    $row['nivel_educativo'],
+                    $row['subnivel'],
+                    (int) $row['total_docentes']
+                );
+            }
+
+            pg_free_result($result);
+        }
+
+        pg_close($link);
+    } catch (Exception $e) {
+        error_log('Error en consulta de docentes: ' . $e->getMessage());
+        // En caso de error, retornar datos de fallback
+        return $datosDocentes;
+    }
+
+    return $datosDocentes;
+}
+
+/**
+ * Función para calcular totales y estadísticas de docentes
+ * 
+ * @param array $datosDocentes Arreglo con los datos de docentes
+ * @return array Arreglo con los totales y estadísticas calculadas
+ */
+function calcularTotalesDocentes($datosDocentes)
+{
+    $totalDocentes = 0;
+    $docentesPorNivel = array();
+    $docentesPorModalidad = array();
+
+    // Omitir la primera fila que contiene encabezados
+    for ($i = 1; $i < count($datosDocentes); $i++) {
+        $nivel = $datosDocentes[$i][0];
+        $subnivel = $datosDocentes[$i][1];
+        $docentes = $datosDocentes[$i][2];
+
+        $totalDocentes += $docentes;
+
+        // Agregar al total por nivel
+        if (!isset($docentesPorNivel[$nivel])) {
+            $docentesPorNivel[$nivel] = 0;
+        }
+        $docentesPorNivel[$nivel] += $docentes;
+
+        // Agregar al total por modalidad
+        if (!isset($docentesPorModalidad[$subnivel])) {
+            $docentesPorModalidad[$subnivel] = 0;
+        }
+        $docentesPorModalidad[$subnivel] += $docentes;
+    }
+
+    return array(
+        'total' => $totalDocentes,
+        'por_nivel' => $docentesPorNivel,
+        'por_modalidad' => $docentesPorModalidad
+    );
+}
 
 ?>

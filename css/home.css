@@ -186,7 +186,7 @@
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 25px;
 }
 
@@ -252,8 +252,9 @@
 
 .municipality-stats {
     display: flex;
-    gap: 15px;
+    gap: 8px;
     margin-bottom: 20px;
+    justify-content: space-between;
 }
 
 .stat {
@@ -261,11 +262,29 @@
     align-items: center;
     font-weight: 500;
     color: var(--dark-gray);
+    flex: 1;
+    font-size: 0.95rem;
+    justify-content: center;
 }
 
 .stat i {
-    margin-right: 5px;
+    margin-right: 4px;
     color: var(--primary-blue);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.stat-number {
+    font-weight: 600;
+    color: var(--dark-gray);
+    margin-right: 2px;
+    font-size: 0.95rem;
+}
+
+.stat-label {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
 }
 
 .municipality-link {
@@ -431,6 +450,30 @@
         width: 80px;
     }
     
+    .dashboard-grid {
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+    
+    .municipality-stats {
+        gap: 6px;
+    }
+    
+    .stat {
+        font-size: 0.9rem;
+    }
+    
+    .stat i {
+        font-size: 1rem;
+    }
+    
+    .stat-number {
+        font-size: 0.9rem;
+    }
+    
+    .stat-label {
+        font-size: 0.6rem;
+    }
+    
     .nav-item a span,
     .logout-btn span {
         display: none;
@@ -470,6 +513,30 @@
     .dashboard-grid,
     .quick-access-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .municipality-stats {
+        gap: 4px;
+        flex-wrap: wrap;
+    }
+    
+    .stat {
+        font-size: 0.85rem;
+        flex: 0 1 auto;
+        min-width: 0;
+    }
+    
+    .stat i {
+        font-size: 0.95rem;
+        margin-right: 3px;
+    }
+    
+    .stat-number {
+        font-size: 0.85rem;
+    }
+    
+    .stat-label {
+        font-size: 0.55rem;
     }
     
     .top-bar {

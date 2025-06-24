@@ -1,0 +1,273 @@
+/* 
+ * CSS ESPECÍFICO PARA PÁGINA DE DOCENTES
+ * Sistema de Estadística Educativa - SEDEQ
+ * Versión: 2.0 - Migrado a variables globales
+ * 
+ * Usa las variables globales definidas en global.css
+ * Mantiene consistencia con escuelas_detalle.css y el resto del sistema
+ */
+
+/* =============================================
+   TÍTULO PRINCIPAL
+   ============================================= */
+
+.docentes-page .top-bar-title h1 {
+    font-family: var(--font-heading); /* Novecento Sans Wide */
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--primary-blue);
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+/* =============================================
+   PANEL PRINCIPAL Y ESTRUCTURA
+   ============================================= */
+
+.docentes-page .panel-title {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    font-size: 1.5rem;
+}
+
+/* =============================================
+   TARJETAS ESTADÍSTICAS PRINCIPALES
+   ============================================= */
+
+/* Centrar las tarjetas estadísticas principales */
+.docentes-page .stats-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin: 2rem auto;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.docentes-page .stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-width: 280px;
+    max-width: 320px;
+    flex: 0 1 auto;
+    margin: 0 auto;
+    padding: 20px 25px;
+    background-color: var(--light-gray);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--shadow-sm);
+    border-top: 4px solid var(--secondary-blue);
+    transition: var(--transition-normal);
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.docentes-page .stat-box:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Valores y etiquetas de las tarjetas usando variables globales */
+.docentes-page .stat-value {
+    font-family: var(--font-primary);
+    font-size: 2.5rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.docentes-page .stat-label {
+    font-family: var(--font-primary);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: var(--font-weight-medium);
+}
+
+/* Texto destacado usando colores globales */
+.docentes-page .highlight-text {
+    color: var(--primary-blue) !important;
+    font-weight: var(--font-weight-semibold) !important;
+    font-family: var(--font-primary) !important;
+}
+
+/* =============================================
+   BARRAS DE PROGRESO POR NIVEL
+   ============================================= */
+
+.docentes-page .level-bars {
+    margin-top: 2rem;
+    font-family: var(--font-primary);
+}
+
+.docentes-page .level-bars h4 {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+}
+
+.docentes-page .level-track {
+    flex: 1;
+    height: 25px;
+    background-color: var(--light-gray);
+    border-radius: var(--border-radius-md);
+    margin: 0 15px;
+    overflow: hidden;
+}
+
+.docentes-page .level-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.5rem 0;
+}
+
+.docentes-page .level-name {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.docentes-page .level-fill {
+    height: 100%;
+    background-color: var(--primary-blue);
+    border-radius: var(--border-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    transition: width var(--transition-slow);
+    color: var(--white);
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+}
+
+.docentes-page .level-percent {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+    color: var(--primary-blue);
+    min-width: 45px;
+    text-align: right;
+}
+
+.docentes-page .escuelas-count {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* =============================================
+   TABLA DETALLADA
+   ============================================= */
+
+.docentes-page .detailed-table h4 {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Tabla usando variables globales */
+.docentes-page .data-table {
+    font-family: var(--font-primary);
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: var(--card-border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.docentes-page .data-table th {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+    color: var(--white) !important;
+    background: linear-gradient(135deg, var(--secondary-blue), var(--accent-aqua)) !important;
+    padding: 0.875rem 1rem;
+    text-align: left;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.docentes-page .data-table td {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-regular);
+    color: var(--text-primary);
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--medium-gray);
+}
+
+.docentes-page .data-table tbody tr:hover {
+    background-color: rgba(73, 150, 196, 0.05);
+}
+
+.docentes-page .data-table .text-center {
+    text-align: center;
+}
+
+.docentes-page .total-row td {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    background: var(--light-gray);
+}
+
+/* =============================================
+   RESPONSIVE DESIGN
+   ============================================= */
+
+/* Responsivo para móviles */
+@media (max-width: 768px) {
+    .docentes-page .stats-row {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 0 1rem;
+    }
+    
+    .docentes-page .stat-box {
+        min-width: 100%;
+        max-width: 100%;
+    }
+    
+    .docentes-page .top-bar-title h1 {
+        font-size: 1.5rem;
+    }
+    
+    .docentes-page .level-bars h4,
+    .docentes-page .detailed-table h4 {
+        font-size: 1.2rem;
+    }
+}
+
+/* Estilo para tablas responsivas */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        margin: 0 -1rem;
+    }
+    
+    .data-table {
+        min-width: 600px;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
+}

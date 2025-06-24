@@ -11,6 +11,11 @@ require_once 'conexion.php';
 // Obtener datos educativos desde la base de datos
 $datosEducativos = obtenerDatosEducativos();
 
+// Obtener datos de docentes desde la base de datos
+$datosDocentes = obtenerDocentesPorNivel();
+$totalesDocentes = calcularTotalesDocentes($datosDocentes);
+$totalDocentes = $totalesDocentes['total'];
+
 // Calcular totales para resumen
 $totales = calcularTotales($datosEducativos);
 $totalEscuelas = $totales['escuelas'];
@@ -56,7 +61,8 @@ $totalAlumnos = $totales['alumnos'];
             <a href="escuelas_detalle.php" class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
             <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-user-graduate"></i>
                 <span>Estudiantes</span></a>
-            <a href="#" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i> <span>Docentes</span></a>
+            <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i>
+                <span>Docentes</span></a>
             <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
         </div>
     </div>
@@ -113,18 +119,17 @@ $totalAlumnos = $totales['alumnos'];
                     </div>
                     <div class="metric">
                         <div class="metric-icon investment">
-                            <i class="fas fa-percentage"></i>
+                            <i class="fas fa-chalkboard-teacher"></i>
                         </div>
                         <div class="metric-details">
-                            <h3 class="metric-title">Porcentaje Matrícula <i class="fas fa-info-circle info-icon"
-                                    data-tooltip="DEL TOTAL DE MATRÍCULA DEL ESTADO CORREGIDORA TIENE EL:
-                                7.57 % de la matrícula del nivel preescolar
-                                7.79 % de la matrícula del nivel primaria
-                                7.71 % de la matrícula del nivel secundaria
-                                9.86 % de la matrícula del nivel bachillerato"></i>
+                            <h3 class="metric-title">Total Docentes <i class="fas fa-info-circle info-icon"
+                                    data-tooltip="NÚMERO TOTAL DE DOCENTES EN CORREGIDORA:
+                                Distribuidos en todos los niveles educativos
+                                Desde educación inicial hasta superior
+                                Personal docente activo ciclo 2023-2024"></i>
                             </h3>
-                            <p class="metric-value">7.98%</p>
-                            <p class="metric-change">Respecto al Estado</p>
+                            <p class="metric-value"><?php echo number_format($totalDocentes, 0, '.', ','); ?></p>
+                            <p class="metric-change">Ciclo escolar 2023-2024</p>
                         </div>
                     </div>
                 </div>

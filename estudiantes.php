@@ -124,7 +124,8 @@ if (count($años) >= 2) {
             <a href="resumen.php" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
             <a href="escuelas_detalle.php" class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
             <a href="#" class="sidebar-link active"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
-            <a href="#" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i> <span>Docentes</span></a>
+            <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i>
+                <span>Docentes</span></a>
             <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
         </div>
     </div>

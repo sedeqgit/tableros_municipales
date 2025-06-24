@@ -100,7 +100,8 @@ $totalAlumnos = $totales['alumnos'];
                     </li>
                     <!-- Enlaces a funcionalidades futuras -->
                     <li class="nav-item">
-                        <a href="#"><i class="fas fa-map-marked-alt"></i> <span>Mapa Educativo</span></a>
+                        <a href="https://www.google.com/maps/d/edit?mid=1LLMZpgMl4X4QSjzNlHQsHgZoNLj1kv4&usp=sharing"
+                            target="_blank"><i class="fas fa-map-marked-alt"></i> <span>Mapa Educativo</span></a>
                     </li>
                     <li class="nav-item">
                         <a href="#"><i class="fas fa-file-alt"></i> <span>Reportes</span></a>
@@ -198,6 +199,11 @@ $totalAlumnos = $totales['alumnos'];
                                         <i class="fas fa-user-graduate"></i>
                                         <?php echo number_format($totalAlumnos, 0, '.', ','); ?>
                                     </div>
+                                    <div class="stat">
+                                        <i class="fas fa-percentage"></i>
+                                        <span class="stat-number">7.98</span>
+                                        <span class="stat-label">Estatal</span>
+                                    </div>
                                 </div>
                             </div>
                             <a href="./resumen.php" class="municipality-link">
@@ -219,6 +225,11 @@ $totalAlumnos = $totales['alumnos'];
                                     </div>
                                     <div class="stat">
                                         <i class="fas fa-user-graduate"></i> 307,645
+                                    </div>
+                                    <div class="stat">
+                                        <i class="fas fa-percentage"></i>
+                                        <span class="stat-number">32.45</span>
+                                        <span class="stat-label">Estatal</span>
                                     </div>
                                 </div>
                             </div>
@@ -242,6 +253,11 @@ $totalAlumnos = $totales['alumnos'];
                                     <div class="stat">
                                         <i class="fas fa-user-graduate"></i> 42,183
                                     </div>
+                                    <div class="stat">
+                                        <i class="fas fa-percentage"></i>
+                                        <span class="stat-number">4.23</span>
+                                        <span class="stat-label">Estatal</span>
+                                    </div>
                                 </div>
                             </div>
                             <a href="#" class="municipality-link">
@@ -263,6 +279,11 @@ $totalAlumnos = $totales['alumnos'];
                                     </div>
                                     <div class="stat">
                                         <i class="fas fa-user-graduate"></i> 73,945
+                                    </div>
+                                    <div class="stat">
+                                        <i class="fas fa-percentage"></i>
+                                        <span class="stat-number">7.41</span>
+                                        <span class="stat-label">Estatal</span>
                                     </div>
                                 </div>
                             </div>

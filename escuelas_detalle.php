@@ -177,8 +177,8 @@ $datosEficiencia = [
             <a href="resumen.php" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
             <a href="#" class="sidebar-link active"><i class="fas fa-school"></i> <span>Escuelas</span></a>
             <a href="estudiantes.php" class="sidebar-link"><i
-                    class="fas fa-user-graduate"></i><span>Estudiantes</span></a> <a href="#" class="sidebar-link"><i
-                    class="fas fa-chalkboard-teacher"></i> <span>Docentes</span></a>
+                    class="fas fa-user-graduate"></i><span>Estudiantes</span></a> <a href="docentes.php"
+                class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i> <span>Docentes</span></a>
             <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
         </div>
     </div>
@@ -496,8 +496,6 @@ $datosEficiencia = [
                     </div>
                 </div>
             </div>
-            <h1>Continuará....</h1>
-            <h1>Escuelas detalle will return</h1>
         </div>
 
         <footer class="dashboard-footer">
