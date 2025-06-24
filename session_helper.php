@@ -103,11 +103,11 @@ function fechaEnEspanol($formato = 'd \d\e F \d\e Y', $timestamp = null)
     if ($timestamp === null) {
         $timestamp = time();
     }
-    
+
     // Array de meses en español
     $mesesEspanol = array(
         'January' => 'enero',
-        'February' => 'febrero', 
+        'February' => 'febrero',
         'March' => 'marzo',
         'April' => 'abril',
         'May' => 'mayo',
@@ -119,7 +119,7 @@ function fechaEnEspanol($formato = 'd \d\e F \d\e Y', $timestamp = null)
         'November' => 'noviembre',
         'December' => 'diciembre'
     );
-    
+
     // Array de días en español
     $diasEspanol = array(
         'Monday' => 'lunes',
@@ -130,19 +130,19 @@ function fechaEnEspanol($formato = 'd \d\e F \d\e Y', $timestamp = null)
         'Saturday' => 'sábado',
         'Sunday' => 'domingo'
     );
-    
+
     // Obtener fecha en inglés
     $fechaIngles = date($formato, $timestamp);
-    
+
     // Reemplazar meses
     foreach ($mesesEspanol as $ingles => $espanol) {
         $fechaIngles = str_replace($ingles, $espanol, $fechaIngles);
     }
-    
+
     // Reemplazar días
     foreach ($diasEspanol as $ingles => $espanol) {
         $fechaIngles = str_replace($ingles, $espanol, $fechaIngles);
     }
-    
+
     return $fechaIngles;
 }
