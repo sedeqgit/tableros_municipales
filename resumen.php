@@ -78,7 +78,7 @@ $totalAlumnos = $totales['alumnos'];
             <div class="utilities">
                 <div class="date-display">
                     <i class="far fa-calendar-alt"></i>
-                    <span id="current-date"><?php echo date('d \d\e F \d\e Y'); ?></span>
+                    <span id="current-date"><?php echo fechaEnEspanol('d \d\e F \d\e Y'); ?></span>
                 </div>
             </div>
         </div>
@@ -234,6 +234,35 @@ $totalAlumnos = $totales['alumnos'];
             <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
                 reservados</p>
         </footer>
+    </div>
+
+    <!-- Modal de información de exportación -->
+    <div id="exportModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-info-circle"></i> Información de Exportación</h3>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <p class="modal-message">
+                    Trabajo en proceso de estandarización.
+                </p>
+                <p class="modal-submessage">
+                    Ir a <strong>Estudiantes</strong> para muestra de funcionalidad.
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancelBtn">Cerrar</button>
+                <button class="btn-primary" id="goToStudents">
+                    <i class="fas fa-user-graduate"></i> Ir a Estudiantes
+                </button>
+            </div>
+        </div>
     </div> <!-- Script con datos desde PHP -->
     <script>
         <?php
@@ -244,6 +273,59 @@ $totalAlumnos = $totales['alumnos'];
         echo "const totalEscuelasFormateado = '" . number_format($totalEscuelas, 0, '.', ',') . "';\n";
         echo "const totalAlumnosFormateado = '" . number_format($totalAlumnos, 0, '.', ',') . "';\n";
         ?>   
+    </script>
+
+    <!-- Script para manejar el modal de exportación -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const exportButton = document.getElementById('export-pdf');
+            const modal = document.getElementById('exportModal');
+            const closeModal = document.getElementById('closeModal');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const goToStudents = document.getElementById('goToStudents');
+
+            // Mostrar modal cuando se haga clic en exportar
+            if (exportButton) {
+                exportButton.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    modal.classList.add('show');
+                });
+            }
+
+            // Cerrar modal
+            function closeModalFunction() {
+                modal.classList.remove('show');
+            }
+
+            if (closeModal) {
+                closeModal.addEventListener('click', closeModalFunction);
+            }
+
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', closeModalFunction);
+            }
+
+            // Ir a página de estudiantes
+            if (goToStudents) {
+                goToStudents.addEventListener('click', function () {
+                    window.location.href = 'estudiantes.php';
+                });
+            }
+
+            // Cerrar modal al hacer clic fuera del contenido
+            modal.addEventListener('click', function (e) {
+                if (e.target === modal) {
+                    closeModalFunction();
+                }
+            });
+
+            // Cerrar modal con tecla ESC
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && modal.classList.contains('show')) {
+                    closeModalFunction();
+                }
+            });
+        });
     </script> <!-- Script del dashboard -->
     <script src="./js/script.js"></script>
     <script src="./js/export-graficos-mejorado.js"></script>

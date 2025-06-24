@@ -114,7 +114,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
             <div class="utilities">
                 <div class="date-display">
                     <i class="far fa-calendar-alt"></i>
-                    <span id="current-date"><?php echo date('d \d\e F \d\e Y'); ?></span>
+                    <span id="current-date"><?php echo fechaEnEspanol('d \d\e F \d\e Y'); ?></span>
                 </div>
             </div>
         </div>
@@ -252,6 +252,10 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                 </div>
             </div>
         </div>
+        <footer class="dashboard-footer">
+            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
+                reservados</p>
+        </footer>
     </div><!-- Scripts -->
     <script src="./js/sidebar.js"></script>
     <script src="./js/animations_global.js"></script>

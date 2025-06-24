@@ -85,3 +85,64 @@ function iniciarSesionDemo($requireAuth = true)
     // Si se detecta el parámetro 'demo', el sistema permite acceso sin
     // credenciales para demostraciones y presentaciones públicas
 }
+
+/**
+ * =============================================================================
+ * FUNCIÓN DE FORMATEO DE FECHAS EN ESPAÑOL
+ * =============================================================================
+ * 
+ * Formatea fechas en español usando el formato estándar del sistema SEDEQ
+ * 
+ * @param string $formato Formato de fecha (opcional, por defecto 'd \d\e F \d\e Y')
+ * @param int $timestamp Timestamp opcional (por defecto fecha actual)
+ * @return string Fecha formateada en español
+ */
+function fechaEnEspanol($formato = 'd \d\e F \d\e Y', $timestamp = null)
+{
+    // Si no se proporciona timestamp, usar fecha actual
+    if ($timestamp === null) {
+        $timestamp = time();
+    }
+    
+    // Array de meses en español
+    $mesesEspanol = array(
+        'January' => 'enero',
+        'February' => 'febrero', 
+        'March' => 'marzo',
+        'April' => 'abril',
+        'May' => 'mayo',
+        'June' => 'junio',
+        'July' => 'julio',
+        'August' => 'agosto',
+        'September' => 'septiembre',
+        'October' => 'octubre',
+        'November' => 'noviembre',
+        'December' => 'diciembre'
+    );
+    
+    // Array de días en español
+    $diasEspanol = array(
+        'Monday' => 'lunes',
+        'Tuesday' => 'martes',
+        'Wednesday' => 'miércoles',
+        'Thursday' => 'jueves',
+        'Friday' => 'viernes',
+        'Saturday' => 'sábado',
+        'Sunday' => 'domingo'
+    );
+    
+    // Obtener fecha en inglés
+    $fechaIngles = date($formato, $timestamp);
+    
+    // Reemplazar meses
+    foreach ($mesesEspanol as $ingles => $espanol) {
+        $fechaIngles = str_replace($ingles, $espanol, $fechaIngles);
+    }
+    
+    // Reemplazar días
+    foreach ($diasEspanol as $ingles => $espanol) {
+        $fechaIngles = str_replace($ingles, $espanol, $fechaIngles);
+    }
+    
+    return $fechaIngles;
+}

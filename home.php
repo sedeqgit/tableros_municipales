@@ -172,7 +172,7 @@ $totalAlumnos = $totales['alumnos'];
                             <p>Accede a los dashboards estadísticos de los diferentes municipios del Estado de
                                 Querétaro.</p>
                             <!-- Fecha dinámica del sistema -->
-                            <p class="welcome-date"><?php echo date('d \d\e F \d\e Y'); ?></p>
+                            <p class="welcome-date"><?php echo fechaEnEspanol('d \d\e F \d\e Y'); ?></p>
                         </div>
                         <!-- Logo institucional con animación -->
                         <div class="welcome-image animate-scale delay-1">
@@ -201,8 +201,8 @@ $totalAlumnos = $totales['alumnos'];
                                     </div>
                                     <div class="stat">
                                         <i class="fas fa-percentage"></i>
-                                        <span class="stat-number">7.98</span>
-                                        <span class="stat-label">Estatal</span>
+                                        <span class="stat-number">7.98 </span>
+                                        <span class="stat-label"> Estatal</span>
                                     </div>
                                 </div>
                             </div>
@@ -228,8 +228,8 @@ $totalAlumnos = $totales['alumnos'];
                                     </div>
                                     <div class="stat">
                                         <i class="fas fa-percentage"></i>
-                                        <span class="stat-number">32.45</span>
-                                        <span class="stat-label">Estatal</span>
+                                        <span class="stat-number">32.45 </span>
+                                        <span class="stat-label"> Estatal</span>
                                     </div>
                                 </div>
                             </div>
@@ -255,8 +255,8 @@ $totalAlumnos = $totales['alumnos'];
                                     </div>
                                     <div class="stat">
                                         <i class="fas fa-percentage"></i>
-                                        <span class="stat-number">4.23</span>
-                                        <span class="stat-label">Estatal</span>
+                                        <span class="stat-number">4.23 </span>
+                                        <span class="stat-label"> Estatal</span>
                                     </div>
                                 </div>
                             </div>
@@ -282,8 +282,8 @@ $totalAlumnos = $totales['alumnos'];
                                     </div>
                                     <div class="stat">
                                         <i class="fas fa-percentage"></i>
-                                        <span class="stat-number">7.41</span>
-                                        <span class="stat-label">Estatal</span>
+                                        <span class="stat-number">7.41 </span>
+                                        <span class="stat-label"> Estatal</span>
                                     </div>
                                 </div>
                             </div>

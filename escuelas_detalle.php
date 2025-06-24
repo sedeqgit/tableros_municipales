@@ -193,7 +193,7 @@ $datosEficiencia = [
             <div class="utilities">
                 <div class="date-display">
                     <i class="far fa-calendar-alt"></i>
-                    <span id="current-date"><?php echo date('d \d\e F \d\e Y'); ?></span>
+                    <span id="current-date"><?php echo fechaEnEspanol('d \d\e F \d\e Y'); ?></span>
                 </div>
             </div>
         </div>
