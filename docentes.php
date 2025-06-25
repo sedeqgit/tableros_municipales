@@ -240,7 +240,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                 <span class="level-name"><?php echo $nivel; ?></span>
                                 <div class="level-track">
                                     <div class="level-fill" style="width: <?php echo $porcentaje; ?>%">
-                                        <span class="docentes-count"><?php echo number_format($cantidad); ?></span>
+                                        <span class="escuelas-count"><?php echo number_format($cantidad); ?></span>
                                     </div>
                                 </div>
                                 <span class="level-percent"><?php echo $porcentaje; ?>%</span>
