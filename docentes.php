@@ -44,6 +44,19 @@ $totalDocentes = $totalesDocentes['total'];
 $docentesPorNivel = $totalesDocentes['por_nivel'];
 
 // =============================================================================
+// ANÁLISIS POR TIPO DE SOSTENIMIENTO
+// =============================================================================
+
+// Obtener datos segmentados por sostenimiento (público vs privado)
+// Incluye datos agregados y desglosados por nivel educativo
+$docentesPorSostenimiento = obtenerDocentesPorSostenimiento();
+$docentesPublicos = $docentesPorSostenimiento['publicos'];           // Total docentes públicos
+$docentesPrivados = $docentesPorSostenimiento['privados'];           // Total docentes privados
+$porcentajePublicos = $docentesPorSostenimiento['porcentaje_publicos']; // % públicos
+$porcentajePrivados = $docentesPorSostenimiento['porcentaje_privados']; // % privados
+$docentesNivelSostenimiento = $docentesPorSostenimiento['por_nivel'];    // Desglose por nivel
+
+// =============================================================================
 // PROCESAMIENTO DE DATOS POR NIVEL EDUCATIVO
 // =============================================================================
 
@@ -147,18 +160,42 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                     <div class="stats-row">
                         <div class="stat-box animate-fade delay-1">
                             <div class="stat-value"><?php echo number_format($totalDocentes); ?></div>
-                            <div class="stat-label">Total Docentes Ciclo escolar 2023-2024</div>
+                            <div class="stat-label">Total Docentes</div>
                         </div>
                         <div class="stat-box animate-fade delay-2">
+                            <div class="stat-value">
+                                <span class="public-schools"><?php echo $docentesPublicos; ?></span>
+                                <span class="separator"> / </span>
+                                <span class="private-schools"><?php echo $docentesPrivados; ?></span>
+                            </div>
+                            <div class="stat-label">Docentes Públicos / Privados</div>
+                        </div>
+                        <div class="stat-box animate-fade delay-3">
                             <div class="stat-value">
                                 <span class="highlight-text"><?php echo $nivelMayorConcentracion; ?></span>
                             </div>
                             <div class="stat-label">Nivel con Mayor Concentración
                                 (<?php echo $porcentajeMayorConcentracion; ?>%)</div>
                         </div>
-                        <div class="stat-box animate-fade delay-3">
-                            <div class="stat-value"><?php echo count($docentesPorNivel); ?></div>
-                            <div class="stat-label">Niveles Educativos Atendidos</div>
+                    </div>
+
+                    <!-- Gráfico de distribución pública vs privada -->
+                    <div class="sostenimiento-chart animate-fade delay-3">
+                        <h4>Distribución por Sostenimiento</h4>
+                        <div class="sostenimiento-filters">
+                            <button class="filter-btn active" data-filter="total">Total</button>
+                            <button class="filter-btn" data-filter="publico">Público</button>
+                            <button class="filter-btn" data-filter="privado">Privado</button>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill public" style="width: <?php echo $porcentajePublicos; ?>%">
+                                    <span class="progress-label"><?php echo $porcentajePublicos; ?>% Públicos</span>
+                                </div>
+                                <div class="progress-fill private" style="width: <?php echo $porcentajePrivados; ?>%">
+                                    <span class="progress-label"><?php echo $porcentajePrivados; ?>% Privados</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -193,13 +230,17 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                         });
                         foreach ($nivelesOrdenadosDisplay as $nivel => $cantidad):
                             $porcentaje = $porcentajesDocentes[$nivel];
-                            // Usar el porcentaje real como ancho de la barra (igual que en escuelas_detalle)
+                            // Obtener datos de sostenimiento para este nivel
+                            $publicos = isset($docentesNivelSostenimiento[$nivel]) ? $docentesNivelSostenimiento[$nivel]['publicos'] : 0;
+                            $privados = isset($docentesNivelSostenimiento[$nivel]) ? $docentesNivelSostenimiento[$nivel]['privados'] : 0;
                             ?>
-                            <div class="level-bar">
+                            <div class="level-bar" data-nivel="<?php echo htmlspecialchars($nivel); ?>"
+                                data-publicos="<?php echo $publicos; ?>" data-privados="<?php echo $privados; ?>"
+                                data-total="<?php echo $cantidad; ?>">
                                 <span class="level-name"><?php echo $nivel; ?></span>
                                 <div class="level-track">
                                     <div class="level-fill" style="width: <?php echo $porcentaje; ?>%">
-                                        <span class="escuelas-count"><?php echo number_format($cantidad); ?></span>
+                                        <span class="docentes-count"><?php echo number_format($cantidad); ?></span>
                                     </div>
                                 </div>
                                 <span class="level-percent"><?php echo $porcentaje; ?>%</span>
@@ -261,6 +302,19 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
     <script src="./js/animations_global.js"></script>
     <script src="./js/docentes.js"></script>
     <script type="text/javascript">
+        // Variables globales para el manejo de sostenimiento
+        <?php
+        echo "const totalDocentes = " . $totalDocentes . ";\n";
+        echo "const docentesPublicos = " . $docentesPublicos . ";\n";
+        echo "const docentesPrivados = " . $docentesPrivados . ";\n";
+        echo "const porcentajePublicos = " . $porcentajePublicos . ";\n";
+        echo "const porcentajePrivados = " . $porcentajePrivados . ";\n";
+
+        // Datos por nivel para filtros
+        echo "const docentesPorNivel = " . json_encode($docentesPorNivel) . ";\n";
+        echo "const docentesNivelSostenimiento = " . json_encode($docentesNivelSostenimiento) . ";\n";
+        ?>
+
         // Asegurar que las tarjetas sean visibles inmediatamente
         document.addEventListener('DOMContentLoaded', function () {
             // Hacer visibles todas las tarjetas inmediatamente

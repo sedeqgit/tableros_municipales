@@ -626,4 +626,231 @@ function calcularTotalesDocentes($datosDocentes)
     );
 }
 
+/**
+ * =============================================================================
+ * FUNCIÓN PARA OBTENER DOCENTES POR SOSTENIMIENTO (PÚBLICO/PRIVADO)
+ * =============================================================================
+ * 
+ * Recupera y procesa los datos de docentes segmentados por modalidad de
+ * sostenimiento. Implementa el mismo patrón que obtenerEscuelasPorSostenimiento.
+ * 
+ * @return array Arreglo con datos de docentes públicos y privados por nivel
+ */
+function obtenerDocentesPorSostenimiento()
+{
+    // Datos por defecto en caso de que no se pueda conectar a la BD
+    $datosSostenimiento = array(
+        'publicos' => 1159,
+        'privados' => 1649,
+        'porcentaje_publicos' => 41,
+        'porcentaje_privados' => 59,
+        'por_nivel' => array(
+            'Inicial Escolarizada' => array('publicos' => 0, 'privados' => 36),
+            'Inicial No Escolarizada' => array('publicos' => 25, 'privados' => 0),
+            'Preescolar' => array('publicos' => 125, 'privados' => 227),
+            'Primaria' => array('publicos' => 386, 'privados' => 364),
+            'Secundaria' => array('publicos' => 262, 'privados' => 309),
+            'Media Superior' => array('publicos' => 230, 'privados' => 377),
+            'Superior' => array('publicos' => 131, 'privados' => 336)
+        )
+    );
+
+    // Verificar si las funciones de PostgreSQL están disponibles
+    if (!function_exists('pg_connect')) {
+        return $datosSostenimiento;
+    }
+
+    // Establecer conexión a la BD
+    $link = Conectarse();
+
+    if (!$link) {
+        return $datosSostenimiento;
+    }
+
+    try {
+        // Consulta para obtener docentes por modalidad usando las consultas correctas
+        $query = "
+        -- INICIAL ESCOLARIZADA POR MODALIDAD
+        SELECT 
+            'Inicial Escolarizada' as nivel,
+            CASE 
+                WHEN subcontrol = 'FEDERAL TRANSFERIDO' THEN 'publicos'
+                WHEN subcontrol = 'PRIVADO' THEN 'privados'
+                ELSE 'publicos'
+            END as modalidad,
+            SUM(V509+V516+V523+V511+V518+V525+V785+V510+V517+V524+V512+V519+V526+V786) as docentes
+        FROM nonce_pano_23.ini_gral_23 
+        WHERE c_nom_mun = 'CORREGIDORA' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        GROUP BY subcontrol
+
+        UNION ALL
+
+        -- INICIAL NO ESCOLARIZADA
+        SELECT 
+            'Inicial No Escolarizada' as nivel,
+            'publicos' as modalidad,
+            SUM(v124 + v125) as docentes
+        FROM nonce_pano_23.ini_comuni_23 
+        WHERE c_nom_mun = 'CORREGIDORA' AND cv_estatus_captura = 0
+
+        UNION ALL
+
+        -- PREESCOLAR GENERAL POR MODALIDAD
+        SELECT 
+            'Preescolar' as nivel,
+            CASE 
+                WHEN subcontrol = 'FEDERAL TRANSFERIDO' THEN 'publicos'
+                WHEN subcontrol = 'PRIVADO' THEN 'privados'
+                ELSE 'publicos'
+            END as modalidad,
+            SUM(v909) as docentes
+        FROM nonce_pano_23.pree_gral_23 
+        WHERE c_nom_mun = 'CORREGIDORA' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        GROUP BY subcontrol
+
+        UNION ALL
+
+        -- PREESCOLAR COMUNITARIO
+        SELECT 
+            'Preescolar' as nivel,
+            'publicos' as modalidad,
+            SUM(v151) as docentes
+        FROM nonce_pano_23.pree_comuni_23 
+        WHERE c_nom_mun = 'CORREGIDORA' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- PRIMARIA GENERAL POR MODALIDAD
+        SELECT 
+            'Primaria' as nivel,
+            CASE 
+                WHEN subcontrol = 'FEDERAL TRANSFERIDO' THEN 'publicos'
+                WHEN subcontrol = 'PRIVADO' THEN 'privados'
+                ELSE 'publicos'
+            END as modalidad,
+            SUM(v1676) as docentes
+        FROM nonce_pano_23.prim_gral_23 
+        WHERE c_nom_mun = 'CORREGIDORA' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        GROUP BY subcontrol
+
+        UNION ALL
+
+        -- PRIMARIA COMUNITARIO
+        SELECT 
+            'Primaria' as nivel,
+            'publicos' as modalidad,
+            SUM(v585) as docentes
+        FROM nonce_pano_23.prim_comuni_23 
+        WHERE c_nom_mun = 'CORREGIDORA' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- SECUNDARIA GENERAL POR MODALIDAD
+        SELECT 
+            'Secundaria' as nivel,
+            CASE 
+                WHEN subcontrol = 'FEDERAL TRANSFERIDO' THEN 'publicos'
+                WHEN subcontrol = 'PRIVADO' THEN 'privados'
+                ELSE 'publicos'
+            END as modalidad,
+            SUM(v1401) as docentes
+        FROM nonce_pano_23.sec_gral_23 
+        WHERE c_nom_mun = 'CORREGIDORA' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        GROUP BY subcontrol
+
+        UNION ALL
+
+        -- MEDIA SUPERIOR POR MODALIDAD
+        SELECT 
+            'Media Superior' as nivel,
+            CASE 
+                WHEN subcontrol IN ('FEDERAL TRANSFERIDO', 'FEDERAL', 'ESTATAL', 'AUT?NOMO') THEN 'publicos'
+                WHEN subcontrol = 'PRIVADO' THEN 'privados'
+                ELSE 'publicos'
+            END as modalidad,
+            SUM(v169) as docentes
+        FROM nonce_pano_23.ms_plantel_23 
+        WHERE c_nom_mun = 'CORREGIDORA' AND cv_motivo = 0
+        GROUP BY 
+            CASE 
+                WHEN subcontrol IN ('FEDERAL TRANSFERIDO', 'FEDERAL', 'ESTATAL', 'AUT?NOMO') THEN 'publicos'
+                WHEN subcontrol = 'PRIVADO' THEN 'privados'
+                ELSE 'publicos'
+            END
+
+        UNION ALL
+
+        -- SUPERIOR POR MODALIDAD
+        SELECT 
+            'Superior' as nivel,
+            CASE 
+                WHEN subcontrol IN ('FEDERAL TRANSFERIDO', 'FEDERAL', 'ESTATAL', 'AUT?NOMO') THEN 'publicos'
+                WHEN subcontrol = 'PRIVADO' THEN 'privados'
+                ELSE 'publicos'
+            END as modalidad,
+            SUM(v83) as docentes
+        FROM nonce_pano_23.sup_escuela_23 
+        WHERE c_nom_mun = 'CORREGIDORA' AND cv_motivo = 0
+        GROUP BY 
+            CASE 
+                WHEN subcontrol IN ('FEDERAL TRANSFERIDO', 'FEDERAL', 'ESTATAL', 'AUT?NOMO') THEN 'publicos'
+                WHEN subcontrol = 'PRIVADO' THEN 'privados'
+                ELSE 'publicos'
+            END
+        ";
+
+        $result = pg_query($link, $query);
+
+        // Totales acumulados
+        $totalPublicos = 0;
+        $totalPrivados = 0;
+        $porNivel = array();
+
+        // Inicializar niveles
+        $niveles = ['Inicial Escolarizada', 'Inicial No Escolarizada', 'Preescolar', 'Primaria', 'Secundaria', 'Media Superior', 'Superior'];
+        foreach ($niveles as $nivel) {
+            $porNivel[$nivel] = array('publicos' => 0, 'privados' => 0);
+        }
+
+        // Si la consulta fue exitosa, procesar resultados
+        if ($result && pg_num_rows($result) > 0) {
+            while ($row = pg_fetch_assoc($result)) {
+                $nivel = $row['nivel'];
+                $modalidad = $row['modalidad'];
+                $docentes = (int) $row['docentes'];
+
+                if ($modalidad === 'publicos') {
+                    $totalPublicos += $docentes;
+                    $porNivel[$nivel]['publicos'] += $docentes;
+                } else {
+                    $totalPrivados += $docentes;
+                    $porNivel[$nivel]['privados'] += $docentes;
+                }
+            }
+
+            pg_free_result($result);
+        }
+
+        pg_close($link);
+
+        // Calcular porcentajes
+        $total = $totalPublicos + $totalPrivados;
+        $porcentajePublicos = $total > 0 ? round(($totalPublicos / $total) * 100) : 0;
+        $porcentajePrivados = $total > 0 ? round(($totalPrivados / $total) * 100) : 0;
+
+        $datosSostenimiento = array(
+            'publicos' => $totalPublicos,
+            'privados' => $totalPrivados,
+            'porcentaje_publicos' => $porcentajePublicos,
+            'porcentaje_privados' => $porcentajePrivados,
+            'por_nivel' => $porNivel
+        );
+
+    } catch (Exception $e) {
+        error_log('SEDEQ: Error en obtenerDocentesPorSostenimiento: ' . $e->getMessage());
+    }
+
+    return $datosSostenimiento;
+}
+
 ?>

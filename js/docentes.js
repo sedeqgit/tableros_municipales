@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeAnimations();
     initializeTooltips();
     initializeInteractiveElements();
+    initializeSostenimientoFilters(); // Nueva funcionalidad
     
     // Configurar redimensionamiento de gráficos
     window.addEventListener('resize', debounce(resizeCharts, 250));
@@ -313,3 +314,187 @@ function addDynamicStyles() {
 
 // Inicializar estilos dinámicos
 addDynamicStyles();
+
+/**
+ * =============================================
+ * SISTEMA DE FILTRADO POR SOSTENIMIENTO
+ * =============================================
+ */
+
+// Variables globales para filtrado
+let valoresOriginalesDocentes = {};
+
+/**
+ * Inicializar sistema de filtrado por sostenimiento
+ */
+function initializeSostenimientoFilters() {
+    console.log('=== Sistema de Filtrado de Docentes por Sostenimiento ===');
+    
+    // Almacenar los valores originales de cada nivel
+    const barrasNivel = document.querySelectorAll('.level-bar');
+    console.log(`Se encontraron ${barrasNivel.length} barras de nivel educativo`);
+
+    // Guardar los valores iniciales
+    barrasNivel.forEach(bar => {
+        const nombreNivel = bar.querySelector('.level-name').textContent.trim();
+        const docentesCount = bar.querySelector('.escuelas-count');
+        const levelFill = bar.querySelector('.level-fill');
+        const levelPercent = bar.querySelector('.level-percent');
+
+        if (docentesCount && levelFill && levelPercent) {
+            valoresOriginalesDocentes[nombreNivel] = {
+                cantidad: docentesCount.textContent,
+                porcentaje: levelPercent.textContent,
+                ancho: levelPercent.textContent
+            };
+        }
+    });
+
+    // Configurar los botones de filtro
+    const filterButtons = document.querySelectorAll('.sostenimiento-filters .filter-btn');
+    if (filterButtons.length > 0) {
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filterType = this.getAttribute('data-filter');
+                aplicarFiltroDocentes(filterType);
+            });
+        });
+    }
+
+    // Animación inicial
+    animateProgressBars();
+}
+
+function animateProgressBars() {
+    setTimeout(function() {
+        let publicBar = document.querySelector('.progress-fill.public');
+        let privateBar = document.querySelector('.progress-fill.private');
+        
+        if (publicBar && privateBar) {
+            setTimeout(() => {
+                publicBar.style.transition = 'width 1.5s ease-in-out';
+                privateBar.style.transition = 'width 1.5s ease-in-out';
+                
+                if (typeof porcentajePublicos !== 'undefined') {
+                    publicBar.style.width = porcentajePublicos + '%';
+                }
+                if (typeof porcentajePrivados !== 'undefined') {
+                    privateBar.style.width = porcentajePrivados + '%';
+                }
+            }, 500);
+        }
+    }, 1000);
+}
+
+function aplicarFiltroDocentes(tipo) {
+    console.log(`Aplicando filtro de docentes: ${tipo}`);
+    
+    const barrasNivel = document.querySelectorAll('.level-bar');
+    
+    barrasNivel.forEach(bar => {
+        const nombreNivel = bar.querySelector('.level-name').textContent.trim();
+        const docentesCount = bar.querySelector('.escuelas-count');
+        const levelFill = bar.querySelector('.level-fill');
+        const levelPercent = bar.querySelector('.level-percent');
+        
+        try {
+            if (tipo === 'total') {
+                // Restaurar valores originales
+                if (docentesCount && valoresOriginalesDocentes[nombreNivel]) {
+                    docentesCount.textContent = valoresOriginalesDocentes[nombreNivel].cantidad;
+                }
+                if (levelFill && valoresOriginalesDocentes[nombreNivel]) {
+                    levelFill.style.width = valoresOriginalesDocentes[nombreNivel].porcentaje;
+                }
+                if (levelPercent && valoresOriginalesDocentes[nombreNivel]) {
+                    levelPercent.textContent = valoresOriginalesDocentes[nombreNivel].porcentaje;
+                }
+                bar.classList.remove('filtered', 'highlighted');
+                
+            } else {
+                // Aplicar filtro específico
+                const nivelData = buscarDatosDocentesSostenimiento(nombreNivel);
+                
+                if (nivelData) {
+                    let cantidad = 0;
+                    let porcentaje = 0;
+                    let totalReferencia = 0;
+                    
+                    if (tipo === 'publico') {
+                        cantidad = nivelData.publicos || 0;
+                        totalReferencia = typeof docentesPublicos !== 'undefined' ? docentesPublicos : 0;
+                    } else if (tipo === 'privado') {
+                        cantidad = nivelData.privados || 0;
+                        totalReferencia = typeof docentesPrivados !== 'undefined' ? docentesPrivados : 0;
+                    }
+                    
+                    if (totalReferencia > 0) {
+                        porcentaje = Math.round((cantidad / totalReferencia) * 100);
+                    }
+                    
+                    // Actualizar interfaz
+                    if (docentesCount) docentesCount.textContent = cantidad.toLocaleString();
+                    if (levelFill) levelFill.style.width = porcentaje + '%';
+                    if (levelPercent) levelPercent.textContent = porcentaje + '%';
+                    
+                    if (cantidad > 0) {
+                        bar.classList.add('highlighted');
+                        bar.classList.remove('filtered');
+                    } else {
+                        bar.classList.add('filtered');
+                        bar.classList.remove('highlighted');
+                    }
+                } else {
+                    // No hay datos - mostrar cero
+                    if (docentesCount) docentesCount.textContent = '0';
+                    if (levelFill) levelFill.style.width = '0%';
+                    if (levelPercent) levelPercent.textContent = '0%';
+                    bar.classList.add('filtered');
+                    bar.classList.remove('highlighted');
+                }
+            }
+        } catch (error) {
+            console.error(`Error al procesar el nivel ${nombreNivel}:`, error);
+        }
+    });
+}
+
+function buscarDatosDocentesSostenimiento(nombreNivel) {
+    if (typeof docentesNivelSostenimiento === 'undefined') {
+        return null;
+    }
+    
+    // Mapeo de nombres
+    const mapaCoincidencias = {
+        'Inicial E': 'Inicial (Escolarizado)',
+        'Inicial NE': 'Inicial (No Escolarizado)',
+        'Inicial (E)': 'Inicial (Escolarizado)',
+        'Inicial (NE)': 'Inicial (No Escolarizado)',
+        'Especial': 'Especial (CAM)',
+        'Media Sup.': 'Media Superior'
+    };
+    
+    // Buscar coincidencia exacta
+    let datosEncontrados = docentesNivelSostenimiento[nombreNivel];
+    
+    // Buscar usando mapa
+    if (!datosEncontrados && mapaCoincidencias[nombreNivel]) {
+        datosEncontrados = docentesNivelSostenimiento[mapaCoincidencias[nombreNivel]];
+    }
+    
+    // Búsqueda flexible
+    if (!datosEncontrados) {
+        for (let clave in docentesNivelSostenimiento) {
+            if (clave.toLowerCase().includes(nombreNivel.toLowerCase()) || 
+                nombreNivel.toLowerCase().includes(clave.toLowerCase())) {
+                datosEncontrados = docentesNivelSostenimiento[clave];
+                break;
+            }
+        }
+    }
+    
+    return datosEncontrados;
+}

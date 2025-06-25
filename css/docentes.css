@@ -55,7 +55,7 @@
     justify-content: center;
     text-align: center;
     min-width: 280px;
-    max-width: 320px;
+    max-width: 370px;
     flex: 0 1 auto;
     margin: 0 auto;
     padding: 20px 25px;
@@ -224,6 +224,164 @@
 }
 
 /* =============================================
+   FILTROS DE SOSTENIMIENTO
+   ============================================= */
+
+.sostenimiento-chart {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: var(--white);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.sostenimiento-chart h4 {
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.sostenimiento-filters {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--medium-gray);
+    border-radius: var(--border-radius-sm);
+    background-color: var(--light-gray);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    font-size: 0.9rem;
+    font-weight: var(--font-weight-medium);
+    font-family: var(--font-primary);
+}
+
+.filter-btn:hover {
+    background-color: var(--medium-gray);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.filter-btn.active {
+    background-color: var(--secondary-blue);
+    color: var(--white);
+    border-color: var(--secondary-blue);
+    box-shadow: var(--shadow-md);
+}
+
+/* =============================================
+   BARRAS DE PROGRESO ESPECÍFICAS
+   ============================================= */
+
+/* Estilos para docentes públicos y privados */
+.public-schools {
+    color: var(--secondary-blue);
+    font-weight: var(--font-weight-semibold);
+}
+
+.private-schools {
+    color: var(--tertiary-gray);
+    font-weight: var(--font-weight-semibold);
+}
+
+.separator {
+    font-weight: var(--font-weight-semibold);
+    opacity: 0.7;
+}
+
+.progress-container {
+    margin: 15px 0;
+    width: 100%;
+}
+
+.progress-bar {
+    height: 30px;
+    background-color: var(--light-gray);
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+    display: flex;
+    box-shadow: var(--shadow-sm);
+}
+
+.progress-fill {
+    color: var(--white);
+    text-align: center;
+    line-height: 30px;
+    padding: 0 10px;
+    font-size: 14px;
+    font-weight: var(--font-weight-medium);
+    transition: width var(--transition-slow);
+}
+
+.progress-fill.public {
+    background-color: var(--secondary-blue);
+}
+
+.progress-fill.private {
+    background-color: var(--tertiary-gray);
+}
+
+/* =============================================
+   MINI INDICADORES DE SOSTENIMIENTO
+   ============================================= */
+
+.sostenimiento-mini {
+    font-size: 0.75rem;
+    margin-top: 2px;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.mini-public {
+    color: var(--secondary-blue);
+    font-weight: var(--font-weight-semibold);
+}
+
+.mini-private {
+    color: var(--tertiary-gray);
+    font-weight: var(--font-weight-semibold);
+}
+
+.mini-separator {
+    opacity: 0.6;
+    font-weight: var(--font-weight-normal);
+}
+
+/* =============================================
+   ANIMACIONES Y TRANSICIONES
+   ============================================= */
+
+.level-bar {
+    transition: all var(--transition-normal);
+}
+
+.level-bar:hover {
+    transform: translateX(5px);
+    box-shadow: var(--shadow-sm);
+}
+
+.level-bar.filtered {
+    opacity: 0.3;
+    transform: scale(0.98);
+}
+
+.level-bar.highlighted {
+    opacity: 1;
+    transform: scale(1.02);
+    box-shadow: var(--shadow-md);
+}
+
+/* =============================================
    RESPONSIVE DESIGN
    ============================================= */
 
@@ -247,6 +405,32 @@
     .docentes-page .level-bars h4,
     .docentes-page .detailed-table h4 {
         font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sostenimiento-filters {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .filter-btn {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .progress-bar {
+        height: 40px;
+    }
+    
+    .progress-fill {
+        line-height: 40px;
+        font-size: 12px;
+    }
+    
+    .sostenimiento-mini {
+        font-size: 0.7rem;
     }
 }
 
