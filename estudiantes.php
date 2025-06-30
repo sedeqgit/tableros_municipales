@@ -162,7 +162,7 @@ if (count($años) >= 2) {
                     <div class="stats-row">
                         <div class="stat-box">
                             <div class="stat-value"><?php echo number_format($totalGeneral); ?></div>
-                            <div class="stat-label">Total de Estudiantes</div>
+                            <div class="stat-label">Total de Estudiantes (ciclo actual)</div>
                         </div>
                     </div>
                     <div class="chart-controls">
