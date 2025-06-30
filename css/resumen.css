@@ -83,11 +83,15 @@
     box-sizing: border-box;
 }
 
+/* Título principal de la página - usa --font-heading */
 .page-title h1 {
-    font-size: 1.8rem;
-    color: var(--primary-blue);
-    margin: 0;
+    font-family: var(--font-heading);
     font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 1.8rem;
+    margin: 0;
     /* La tipografía se aplica via la clase .top-bar-title definida en global.css */
 }
 
@@ -109,12 +113,12 @@
 
 .date-display i {
     margin-right: 8px;
-    color: var(--primary-blue);
+    color: var(--text-primary);
 }
 
 .utility-button {
     background-color: var(--white);
-    color: var(--primary-blue);
+    color: var(--text-primary);
     border: none;
     border-radius: 50%;
     width: 40px;

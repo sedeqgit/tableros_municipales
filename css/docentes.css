@@ -8,23 +8,21 @@
  */
 
 /* =============================================
-   TÍTULO PRINCIPAL
+   TÍTULOS ESTANDARIZADOS
    ============================================= */
 
+/* Título principal de la página - usa --font-heading */
 .docentes-page .top-bar-title h1 {
     font-family: var(--font-heading); /* Novecento Sans Wide */
     font-weight: var(--font-weight-semibold);
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    color: var(--primary-blue);
+    color: var(--text-primary);
     font-size: 1.8rem;
     margin: 0;
 }
 
-/* =============================================
-   PANEL PRINCIPAL Y ESTRUCTURA
-   ============================================= */
-
+/* Títulos de paneles - usa --font-primary */
 .docentes-page .panel-title {
     font-family: var(--font-primary);
     font-weight: var(--font-weight-semibold);
@@ -453,5 +451,79 @@
     .data-table td {
         padding: 0.5rem;
         font-size: 0.875rem;
+    }
+}
+
+/* =============================================
+   ESTILOS ESPECÍFICOS PARA COLUMNAS DE GÉNERO
+   ============================================= */
+
+/* Columnas de docentes hombres - azul suave */
+.docentes-page .data-table .docentes-hombres {
+    background-color: rgba(52, 144, 220, 0.1);
+    font-weight: var(--font-weight-medium);
+    color: var(--secondary-blue);
+}
+
+/* Columnas de docentes mujeres - rosa suave */
+.docentes-page .data-table .docentes-mujeres {
+    background-color: rgba(231, 76, 142, 0.1);
+    font-weight: var(--font-weight-medium);
+    color: #E74C8E;
+}
+
+/* Porcentajes de hombres */
+.docentes-page .data-table .porcentaje-hombres {
+    background-color: rgba(52, 144, 220, 0.08);
+    color: var(--secondary-blue);
+    font-weight: var(--font-weight-medium);
+}
+
+/* Porcentajes de mujeres */
+.docentes-page .data-table .porcentaje-mujeres {
+    background-color: rgba(231, 76, 142, 0.08);
+    color: #E74C8E;
+    font-weight: var(--font-weight-medium);
+}
+
+/* Headers de género con colores distintivos */
+.docentes-page .data-table th:nth-child(4), /* Docentes Hombres */
+.docentes-page .data-table th:nth-child(6) { /* % Hombres */
+    background: linear-gradient(135deg, var(--secondary-blue), #3498db) !important;
+}
+
+.docentes-page .data-table th:nth-child(5), /* Docentes Mujeres */
+.docentes-page .data-table th:nth-child(7) { /* % Mujeres */
+    background: linear-gradient(135deg, #E74C8E, #ff6b9d) !important;
+}
+
+/* Mejorar responsive para las nuevas columnas */
+@media (max-width: 768px) {
+    .data-table {
+        font-size: 0.8rem;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 0.4rem 0.3rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Ocultar algunas columnas en móvil si es necesario */
+    .data-table th:nth-child(6),
+    .data-table td:nth-child(6),
+    .data-table th:nth-child(7),
+    .data-table td:nth-child(7) {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    /* En pantallas muy pequeñas, mostrar solo info esencial */
+    .data-table th:nth-child(4),
+    .data-table td:nth-child(4),
+    .data-table th:nth-child(5),
+    .data-table td:nth-child(5) {
+        display: none;
     }
 }

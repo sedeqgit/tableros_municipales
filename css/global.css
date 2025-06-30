@@ -133,20 +133,31 @@ body {
    SISTEMA DE TIPOGRAFÍA
    ============================================= */
 
-/* Aplicación estratégica de Novecento Wide solo para elementos principales */
+/* =============================================
+   SISTEMA DE TIPOGRAFÍA ESTANDARIZADO
+   ============================================= */
+
+/* TÍTULOS PRINCIPALES (H1) - Uso de --font-heading con color --text-primary en mayúsculas */
+h1,
 .top-bar-title h1,
-.section-title {
+.section-title,
+.page-title h1,
+.panel-title h1 {
     font-family: var(--font-heading);
     font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
     letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 
-/* Hanken Grotesk para subtítulos y elementos secundarios */
+/* SUBTÍTULOS Y HEADINGS SECUNDARIOS (H2-H6) - Uso de --font-primary */
+h2, h3, h4, h5, h6,
+.panel-title,
 .municipality-info h3,
 .quick-access-card h3,
 .view-more-card h3,
-.panel-title {
+.metric-title,
+.matricula-title {
     font-family: var(--font-primary);
     font-weight: var(--font-weight-semibold);
 }

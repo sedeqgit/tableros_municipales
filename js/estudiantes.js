@@ -113,7 +113,7 @@ let añoSeleccionado = 'todos';
  * 
  * @type {string} nivelSeleccionado
  * @default 'todos'
- * @enum {'todos'|'Inicial NE'|'CAM'|'Preescolar'|'Primaria'|'Secundaria'|'Media superior'|'Superior'}
+ * @enum {'todos'|'Inicial E'|'Inicial NE'|'CAM'|'Preescolar'|'Primaria'|'Secundaria'|'Media superior'|'Superior'}
  */
 let nivelSeleccionado = 'todos';
 
@@ -201,7 +201,7 @@ function prepararDatosMatricula() {
     }
     
     // Preparar datos por nivel
-    const niveles = ['Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior'];
+    const niveles = ['Inicial E', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior'];
     niveles.forEach(nivel => {
         datosMatriculaAgrupados['nivel'][nivel] = prepararDatosNivel(nivel);
     });
@@ -212,7 +212,7 @@ function prepararDatosMatricula() {
  */
 function prepararDatosTodos() {
     // Crear encabezados de la tabla
-    const data = [['Año Escolar', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior', 'Total']];
+    const data = [['Año Escolar', 'Inicial E', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior', 'Total']];
     
     // Para cada año, agregar una fila con los datos de cada nivel
     for (const año in datosMatricula) {
@@ -220,7 +220,7 @@ function prepararDatosTodos() {
         let total = 0;
         
         // Para cada nivel, agregar el dato o 0 si no existe
-        const niveles = ['Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior'];
+        const niveles = ['Inicial E', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior'];
         niveles.forEach(nivel => {
             const valor = datosMatricula[año][nivel] || 0;
             fila.push(valor);
@@ -241,11 +241,11 @@ function prepararDatosTodos() {
  */
 function prepararDatosAño(año) {
     // Crear encabezados de la tabla - cada nivel educativo será una serie separada
-    const data = [['Categoría', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior']];
+    const data = [['Categoría', 'Inicial E', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior']];
     
     // Crear una sola fila con todos los niveles como series separadas
     const fila = ['Matrícula ' + año];
-    const niveles = ['Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior'];
+    const niveles = ['Inicial E', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior'];
     niveles.forEach(nivel => {
         const valor = datosMatricula[año][nivel] || 0;
         fila.push(valor);
@@ -375,7 +375,8 @@ function actualizarVisualizacion() {
                 fontSize: 12,
                 color: '#555',
                 fontName: 'Arial'
-            }
+            },
+            minValue: 0  // Asegurar que la escala siempre inicie en 0
         },
         bar: { groupWidth: '75%' },
         tooltip: { 
@@ -408,6 +409,7 @@ function actualizarVisualizacion() {
 function getColoresGrafica() {
     // Colores profesionales más armónicos y con mejor contraste
     const coloresBase = {
+        'Inicial E': '#1A237E',       // Azul índigo profundo para Inicial Escolarizada
         'Inicial NE': '#3949AB',      // Azul más profundo
         'CAM': '#00897B',             // Verde azulado más saturado
         'Preescolar': '#FB8C00',      // Naranja más cálido
@@ -433,6 +435,7 @@ function getColoresGrafica() {
     if (añoSeleccionado !== 'todos' && nivelSeleccionado === 'todos') {
         // Filtro por año específico - colores para cada nivel educativo como series separadas
         return [
+            coloresBase['Inicial E'],
             coloresBase['Inicial NE'],
             coloresBase['CAM'],
             coloresBase['Preescolar'],
@@ -445,6 +448,7 @@ function getColoresGrafica() {
     
     // Array de colores para todos los niveles (cuando no hay filtro de nivel)
     return [
+        coloresBase['Inicial E'],
         coloresBase['Inicial NE'],
         coloresBase['CAM'],
         coloresBase['Preescolar'],

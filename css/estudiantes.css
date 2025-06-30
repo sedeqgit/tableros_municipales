@@ -21,17 +21,32 @@
  */
 
 /* =============================================
-   TÍTULO PRINCIPAL
+   TÍTULOS ESTANDARIZADOS
    ============================================= */
 
-.page-title h1 {
+/* Título principal de la página - usa --font-heading */
+.page-title h1,
+.top-bar-title h1 {
     font-family: var(--font-heading); /* Novecento Sans Wide */
     font-weight: var(--font-weight-semibold);
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    color: var(--primary-blue);
+    color: var(--text-primary);
     font-size: 1.8rem;
     margin: 0;
+}
+
+/* Títulos de paneles - usa --font-primary */
+.matricula-title {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: var(--font-weight-semibold);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: 0.3px;
+    font-family: var(--font-primary); /* Hanken Grotesk */
+    color: var(--white);
 }
 
 /* =============================================
@@ -71,7 +86,8 @@
     align-items: center;
     gap: 12px;
     letter-spacing: 0.3px;
-    font-family: var(--font-heading);
+    font-family: var(--font-primary); /* Hanken Grotesk */
+    color: var(--white);
 }
 
 .matricula-title i {
@@ -343,7 +359,7 @@
     font-size: 16px;
     color: var(--text-primary);
     font-weight: var(--font-weight-semibold);
-    font-family: var(--font-heading);
+    font-family: var(--font-primary);
 }
 
 .data-table {

@@ -20,15 +20,16 @@
  */
 
 /* =============================================
-   TÍTULO PRINCIPAL
+   TÍTULOS ESTANDARIZADOS
    ============================================= */
 
+/* Título principal de la página - usa --font-heading */
 .top-bar-title h1 {
     font-family: var(--font-heading); /* Novecento Sans Wide */
     font-weight: var(--font-weight-semibold);
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    color: var(--primary-blue);
+    color: var(--text-primary);
     font-size: 1.8rem;
     margin: 0;
 }
@@ -250,6 +251,7 @@
     font-size: 0.9rem;
     text-align: center;
     font-weight: var(--font-weight-semibold);
+    font-family: var(--font-primary);
 }
 
 .education-level p {
@@ -403,12 +405,13 @@
 }
 
 .tab-content h4 {
-    color: var(--primary-blue);
+    color: var(--text-primary);
     font-size: 1.1rem;
     margin: 20px 0 15px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--medium-gray);
     font-weight: var(--font-weight-semibold);
+    font-family: var(--font-primary);
 }
 
 .tab-content p {
@@ -558,8 +561,8 @@
 .analysis-text h4 {
     margin-top: 0;
     margin-bottom: 15px;
-    color: var(--primary-blue);
-    font-family: var(--font-heading);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
 }
 
 .analysis-text p {
@@ -640,8 +643,9 @@
     margin-top: 0;
     margin-bottom: 12px;
     font-weight: var(--font-weight-semibold);
-    color: var(--primary-blue);
+    color: var(--text-primary);
     font-size: 1.1rem;
+    font-family: var(--font-primary);
 }
 
 .conclusion-item ul {
@@ -665,7 +669,8 @@
 .level-bars h4 {
     margin-bottom: 15px;
     font-weight: var(--font-weight-semibold);
-    color: var(--primary-blue);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
 }
 
 .level-bar {
@@ -777,6 +782,7 @@
     margin: 0;
     font-size: 0.9rem;
     font-weight: var(--font-weight-semibold);
+    font-family: var(--font-primary);
 }
 
 .flow-node p {

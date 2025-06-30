@@ -162,7 +162,7 @@ if (count($años) >= 2) {
                     <div class="stats-row">
                         <div class="stat-box">
                             <div class="stat-value"><?php echo number_format($totalGeneral); ?></div>
-                            <div class="stat-label">Total de Estudiantes (Ciclo más reciente)</div>
+                            <div class="stat-label">Total de Estudiantes</div>
                         </div>
                     </div>
                     <div class="chart-controls">
@@ -180,6 +180,7 @@ if (count($años) >= 2) {
                             <div class="selector-label"><i class="fas fa-filter"></i> Filtrar por nivel:</div>
                             <div class="level-selector">
                                 <div class="level-option active" data-level="todos">Todos los niveles</div>
+                                <div class="level-option" data-level="Inicial E">Inicial E</div>
                                 <div class="level-option" data-level="Inicial NE">Inicial NE</div>
                                 <div class="level-option" data-level="CAM">CAM</div>
                                 <div class="level-option" data-level="Preescolar">Preescolar</div>
@@ -198,31 +199,35 @@ if (count($años) >= 2) {
 
                     <div class="chart-legend">
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #5C6BC0"></div>
+                            <div class="legend-color" style="background-color: #1A237E"></div>
+                            <span>Inicial E</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #3949AB"></div>
                             <span>Inicial NE</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #26A69A"></div>
+                            <div class="legend-color" style="background-color: #00897B"></div>
                             <span>CAM</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #FFA726"></div>
+                            <div class="legend-color" style="background-color: #FB8C00"></div>
                             <span>Preescolar</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #EF5350"></div>
+                            <div class="legend-color" style="background-color: #E53935"></div>
                             <span>Primaria</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #7E57C2"></div>
+                            <div class="legend-color" style="background-color: #5E35B1"></div>
                             <span>Secundaria</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #66BB6A"></div>
+                            <div class="legend-color" style="background-color: #43A047"></div>
                             <span>Media Superior</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #29B6F6"></div>
+                            <div class="legend-color" style="background-color: #0288D1"></div>
                             <span>Superior</span>
                         </div>
                     </div>

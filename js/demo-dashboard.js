@@ -224,7 +224,8 @@ function getOpcionesGraficoNiveles() {
         vAxis: {
             title: 'Número de Estudiantes',
             titleTextStyle: { color: '#2c3e50', fontSize: 14 },
-            format: '#,###'
+            format: '#,###',
+            minValue: 0  // Asegurar que la escala siempre inicie en 0
         },
         colors: ['#3498db', '#27ae60', '#f39c12', '#e74c3c'],
         backgroundColor: 'transparent',
@@ -263,7 +264,8 @@ function getOpcionesGraficoAnios() {
         vAxis: {
             title: 'Número de Estudiantes',
             titleTextStyle: { color: '#2c3e50', fontSize: 14 },
-            format: '#,###'
+            format: '#,###',
+            minValue: 0  // Asegurar que la escala siempre inicie en 0
         },
         colors: ['#3498db', '#27ae60', '#f39c12', '#e74c3c'],
         backgroundColor: 'transparent',

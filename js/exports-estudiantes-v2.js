@@ -1194,7 +1194,8 @@ function obtenerOpcionesConValores() {
                 fontSize: 12,
                 color: '#555',
                 fontName: 'Arial'
-            }
+            },
+            minValue: 0  // Asegurar que la escala siempre inicie en 0
         },
         bar: { groupWidth: '75%' },
         backgroundColor: {

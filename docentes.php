@@ -37,6 +37,7 @@ require_once 'conexion.php';
 
 // Obtener conjunto completo de datos de docentes desde la base de datos
 $datosDocentes = obtenerDocentesPorNivel();
+$datosDocentesGenero = obtenerDocentesPorGenero();
 
 // Calcular totales agregados para métricas principales del dashboard
 $totalesDocentes = calcularTotalesDocentes($datosDocentes);
@@ -257,24 +258,40 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                     <tr>
                                         <th>Nivel Educativo</th>
                                         <th>Subnivel</th>
-                                        <th>Cantidad de Docentes</th>
-                                        <th>Porcentaje del Total</th>
+                                        <th>Total Docentes</th>
+                                        <th>Docentes Hombres</th>
+                                        <th>Docentes Mujeres</th>
+                                        <th>% Hombres</th>
+                                        <th>% Mujeres</th>
+                                        <th>% del Total General</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                    // Mostrar datos detallados (omitir encabezados)
-                                    for ($i = 1; $i < count($datosDocentes); $i++):
-                                        $nivel = $datosDocentes[$i][0];
-                                        $subnivel = $datosDocentes[$i][1];
-                                        $cantidad = $datosDocentes[$i][2];
-                                        $porcentajeIndividual = round(($cantidad / $totalDocentes) * 100, 2);
+                                    // Mostrar datos detallados con distribución por género (omitir encabezados)
+                                    for ($i = 1; $i < count($datosDocentesGenero); $i++):
+                                        $nivel = $datosDocentesGenero[$i][0];
+                                        $subnivel = $datosDocentesGenero[$i][1];
+                                        $totalNivel = $datosDocentesGenero[$i][2];
+                                        $hombres = $datosDocentesGenero[$i][3];
+                                        $mujeres = $datosDocentesGenero[$i][4];
+                                        $porcentajeHombres = $datosDocentesGenero[$i][5];
+                                        $porcentajeMujeres = $datosDocentesGenero[$i][6];
+                                        $porcentajeDelTotal = round(($totalNivel / $totalDocentes) * 100, 2);
                                         ?>
                                         <tr>
                                             <td><?php echo $nivel; ?></td>
                                             <td><?php echo $subnivel; ?></td>
-                                            <td class="text-center"><?php echo number_format($cantidad); ?></td>
-                                            <td class="text-center"><?php echo $porcentajeIndividual; ?>%</td>
+                                            <td class="text-center"><?php echo number_format($totalNivel); ?></td>
+                                            <td class="text-center docentes-hombres"><?php echo number_format($hombres); ?>
+                                            </td>
+                                            <td class="text-center docentes-mujeres"><?php echo number_format($mujeres); ?>
+                                            </td>
+                                            <td class="text-center porcentaje-hombres"><?php echo $porcentajeHombres; ?>%
+                                            </td>
+                                            <td class="text-center porcentaje-mujeres"><?php echo $porcentajeMujeres; ?>%
+                                            </td>
+                                            <td class="text-center"><?php echo $porcentajeDelTotal; ?>%</td>
                                         </tr>
                                     <?php endfor; ?>
                                 </tbody>
@@ -283,6 +300,29 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                         <td colspan="2"><strong>TOTAL GENERAL</strong></td>
                                         <td class="text-center">
                                             <strong><?php echo number_format($totalDocentes); ?></strong>
+                                        </td>
+                                        <?php
+                                        // Calcular totales de género
+                                        $totalHombres = 0;
+                                        $totalMujeres = 0;
+                                        for ($i = 1; $i < count($datosDocentesGenero); $i++) {
+                                            $totalHombres += $datosDocentesGenero[$i][3];
+                                            $totalMujeres += $datosDocentesGenero[$i][4];
+                                        }
+                                        $porcentajeTotalHombres = $totalDocentes > 0 ? round(($totalHombres / $totalDocentes) * 100, 1) : 0;
+                                        $porcentajeTotalMujeres = $totalDocentes > 0 ? round(($totalMujeres / $totalDocentes) * 100, 1) : 0;
+                                        ?>
+                                        <td class="text-center">
+                                            <strong><?php echo number_format($totalHombres); ?></strong>
+                                        </td>
+                                        <td class="text-center">
+                                            <strong><?php echo number_format($totalMujeres); ?></strong>
+                                        </td>
+                                        <td class="text-center">
+                                            <strong><?php echo $porcentajeTotalHombres; ?>%</strong>
+                                        </td>
+                                        <td class="text-center">
+                                            <strong><?php echo $porcentajeTotalMujeres; ?>%</strong>
                                         </td>
                                         <td class="text-center"><strong>100.0%</strong></td>
                                     </tr>

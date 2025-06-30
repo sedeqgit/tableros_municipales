@@ -152,7 +152,10 @@ function dibujarGrafico() {
         title: 'Ingreso vs Egreso por Nivel Educativo',
         chartArea: { width: '60%' },
         colors: ['#1976d2', '#2e7d32'],
-        hAxis: { title: 'Estudiantes' },
+        hAxis: { 
+            title: 'Estudiantes',
+            minValue: 0  // Asegurar que la escala siempre inicie en 0
+        },
         vAxis: { title: 'Nivel Educativo' }
     };
     
