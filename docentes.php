@@ -211,17 +211,19 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                 return 1;
                             if (strpos($nivel, 'inicial') !== false && strpos($nivel, 'no') !== false)
                                 return 2;
-                            if (strpos($nivel, 'preescolar') !== false)
+                            if (strpos($nivel, 'cam') !== false)
                                 return 3;
-                            if (strpos($nivel, 'primaria') !== false)
+                            if (strpos($nivel, 'preescolar') !== false)
                                 return 4;
-                            if (strpos($nivel, 'secundaria') !== false)
+                            if (strpos($nivel, 'primaria') !== false)
                                 return 5;
-                            if (strpos($nivel, 'media') !== false || strpos($nivel, 'medio') !== false)
+                            if (strpos($nivel, 'secundaria') !== false)
                                 return 6;
-                            if (strpos($nivel, 'superior') !== false)
+                            if (strpos($nivel, 'media') !== false || strpos($nivel, 'medio') !== false)
                                 return 7;
-                            return 8; // Para niveles no reconocidos
+                            if (strpos($nivel, 'superior') !== false)
+                                return 8;
+                            return 9; // Para niveles no reconocidos
                         }
 
                         // Ordenar según el orden educativo lógico
@@ -268,15 +270,82 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                 </thead>
                                 <tbody>
                                     <?php
-                                    // Mostrar datos detallados con distribución por género (omitir encabezados)
-                                    for ($i = 1; $i < count($datosDocentesGenero); $i++):
-                                        $nivel = $datosDocentesGenero[$i][0];
-                                        $subnivel = $datosDocentesGenero[$i][1];
-                                        $totalNivel = $datosDocentesGenero[$i][2];
-                                        $hombres = $datosDocentesGenero[$i][3];
-                                        $mujeres = $datosDocentesGenero[$i][4];
-                                        $porcentajeHombres = $datosDocentesGenero[$i][5];
-                                        $porcentajeMujeres = $datosDocentesGenero[$i][6];
+                                    // Función para determinar orden de subniveles (similar a la anterior)
+                                    function obtenerOrdenSubnivel($nivel, $subnivel)
+                                    {
+                                        $nivel = strtolower($nivel);
+                                        $subnivel = strtolower($subnivel);
+
+                                        // Mapeo específico por nivel + subnivel para orden exacto
+                                        if ($nivel === 'educación inicial' && strpos($subnivel, 'escolarizada') !== false)
+                                            return 1; // Educación Inicial - Escolarizada General
+                                        if ($nivel === 'educación inicial' && strpos($subnivel, 'no escolarizada') !== false)
+                                            return 2; // Educación Inicial - No Escolarizada Comunitaria
+                                        if ($nivel === 'inicial escolarizada')
+                                            return 1;
+                                        if ($nivel === 'inicial no escolarizada')
+                                            return 2;
+
+                                        // CAM (TERCERO)
+                                        if (strpos($nivel, 'cam') !== false)
+                                            return 3;
+
+                                        // Preescolar
+                                        if (strpos($nivel, 'preescolar') !== false && strpos($subnivel, 'general') !== false)
+                                            return 4;
+                                        if (strpos($nivel, 'preescolar') !== false && strpos($subnivel, 'comunitario') !== false)
+                                            return 5;
+
+                                        // Primaria
+                                        if (strpos($nivel, 'primaria') !== false && strpos($subnivel, 'general') !== false)
+                                            return 6;
+                                        if (strpos($nivel, 'primaria') !== false && strpos($subnivel, 'comunitaria') !== false)
+                                            return 7;
+
+                                        // Secundaria
+                                        if (strpos($nivel, 'secundaria') !== false)
+                                            return 8;
+
+                                        // Media Superior
+                                        if (strpos($nivel, 'media') !== false || strpos($nivel, 'medio') !== false)
+                                            return 9;
+
+                                        // Superior
+                                        if (strpos($nivel, 'superior') !== false)
+                                            return 10;
+
+                                        return 11; // Para niveles no reconocidos
+                                    }
+
+                                    // Crear array temporal para ordenar
+                                    $datosOrdenados = array();
+                                    for ($i = 1; $i < count($datosDocentesGenero); $i++) {
+                                        $datosOrdenados[] = array(
+                                            'nivel' => $datosDocentesGenero[$i][0],
+                                            'subnivel' => $datosDocentesGenero[$i][1],
+                                            'total' => $datosDocentesGenero[$i][2],
+                                            'hombres' => $datosDocentesGenero[$i][3],
+                                            'mujeres' => $datosDocentesGenero[$i][4],
+                                            'porcentaje_hombres' => $datosDocentesGenero[$i][5],
+                                            'porcentaje_mujeres' => $datosDocentesGenero[$i][6],
+                                            'orden' => obtenerOrdenSubnivel($datosDocentesGenero[$i][0], $datosDocentesGenero[$i][1])
+                                        );
+                                    }
+
+                                    // Ordenar por el campo orden
+                                    usort($datosOrdenados, function ($a, $b) {
+                                        return $a['orden'] - $b['orden'];
+                                    });
+
+                                    // Mostrar datos ordenados
+                                    foreach ($datosOrdenados as $fila):
+                                        $nivel = $fila['nivel'];
+                                        $subnivel = $fila['subnivel'];
+                                        $totalNivel = $fila['total'];
+                                        $hombres = $fila['hombres'];
+                                        $mujeres = $fila['mujeres'];
+                                        $porcentajeHombres = $fila['porcentaje_hombres'];
+                                        $porcentajeMujeres = $fila['porcentaje_mujeres'];
                                         $porcentajeDelTotal = round(($totalNivel / $totalDocentes) * 100, 2);
                                         ?>
                                         <tr>
@@ -293,7 +362,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                             </td>
                                             <td class="text-center"><?php echo $porcentajeDelTotal; ?>%</td>
                                         </tr>
-                                    <?php endfor; ?>
+                                    <?php endforeach; ?>
                                 </tbody>
                                 <tfoot>
                                     <tr class="total-row">

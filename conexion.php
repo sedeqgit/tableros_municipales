@@ -436,6 +436,7 @@ function obtenerDocentesPorNivel()
         array('Nivel Educativo', 'Subnivel', 'Docentes'),
         array('Inicial Escolarizada', 'General', 36),
         array('Inicial No Escolarizada', 'Comunitario', 25),
+        array('CAM', 'Especial', 22),
         array('Preescolar', 'General', 336),
         array('Preescolar', 'Comunitario', 16),
         array('Primaria', 'General', 748),
@@ -479,6 +480,14 @@ function obtenerDocentesPorNivel()
         FROM nonce_pano_23.ini_comuni_23 
         WHERE c_nom_mun = 'CORREGIDORA' 
           AND cv_estatus_captura = 0
+
+        UNION ALL
+
+        -- CAM (CENTRO DE ATENCIÓN MÚLTIPLE)
+        SELECT 
+            'CAM' as nivel_educativo,
+            'Especial' as subnivel,
+            22 as total_docentes
 
         UNION ALL
 
@@ -640,13 +649,14 @@ function obtenerDocentesPorSostenimiento()
 {
     // Datos por defecto en caso de que no se pueda conectar a la BD
     $datosSostenimiento = array(
-        'publicos' => 1159,
+        'publicos' => 1181,
         'privados' => 1649,
-        'porcentaje_publicos' => 41,
-        'porcentaje_privados' => 59,
+        'porcentaje_publicos' => 42,
+        'porcentaje_privados' => 58,
         'por_nivel' => array(
             'Inicial Escolarizada' => array('publicos' => 0, 'privados' => 36),
             'Inicial No Escolarizada' => array('publicos' => 25, 'privados' => 0),
+            'CAM' => array('publicos' => 22, 'privados' => 0),
             'Preescolar' => array('publicos' => 125, 'privadas' => 227),
             'Primaria' => array('publicos' => 386, 'privadas' => 364),
             'Secundaria' => array('publicos' => 262, 'privadas' => 309),
@@ -692,6 +702,14 @@ function obtenerDocentesPorSostenimiento()
             SUM(v124 + v125) as docentes
         FROM nonce_pano_23.ini_comuni_23 
         WHERE c_nom_mun = 'CORREGIDORA' AND cv_estatus_captura = 0
+
+        UNION ALL
+
+        -- CAM (CENTRO DE ATENCIÓN MÚLTIPLE)
+        SELECT 
+            'CAM' as nivel,
+            'publicos' as modalidad,
+            22 as docentes
 
         UNION ALL
 
@@ -807,7 +825,7 @@ function obtenerDocentesPorSostenimiento()
         $porNivel = array();
 
         // Inicializar niveles
-        $niveles = ['Inicial Escolarizada', 'Inicial No Escolarizada', 'Preescolar', 'Primaria', 'Secundaria', 'Media Superior', 'Superior'];
+        $niveles = ['Inicial Escolarizada', 'Inicial No Escolarizada', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media Superior', 'Superior'];
         foreach ($niveles as $nivel) {
             $porNivel[$nivel] = array('publicos' => 0, 'privados' => 0);
         }
@@ -885,6 +903,7 @@ function obtenerDocentesPorGenero()
         array('Nivel Educativo', 'Subnivel', 'Total Docentes', 'Hombres', 'Mujeres', '% Hombres', '% Mujeres'),
         array('Inicial Escolarizada', 'General', 36, 0, 36, 0.0, 100.0),
         array('Inicial No Escolarizada', 'Comunitario', 25, 0, 25, 0.0, 100.0),
+        array('CAM', 'Especial', 22, 1, 21, 4.5, 95.5),
         array('Preescolar', 'General', 336, 15, 321, 4.5, 95.5),
         array('Preescolar', 'Comunitario', 16, 1, 15, 6.3, 93.8),
         array('Primaria', 'General', 748, 239, 509, 31.9, 68.1),
@@ -950,9 +969,22 @@ function obtenerDocentesPorGenero()
             
             UNION ALL
             
-            -- PREESCOLAR GENERAL
+            -- CAM (CENTRO DE ATENCIÓN MÚLTIPLE)
             SELECT 
                 3 as orden,
+                'CAM' as nivel_educativo,
+                'Especial' as subnivel,
+                1 as docentes_hombres,
+                21 as docentes_mujeres,
+                22 as total_docentes,
+                4.5 as porcentaje_hombres,
+                95.5 as porcentaje_mujeres
+            
+            UNION ALL
+            
+            -- PREESCOLAR GENERAL
+            SELECT 
+                4 as orden,
                 'Educación Preescolar' as nivel_educativo,
                 'General' as subnivel,
                 SUM(v859 + v867) as docentes_hombres,
@@ -967,7 +999,7 @@ function obtenerDocentesPorGenero()
             
             -- PREESCOLAR COMUNITARIO
             SELECT 
-                4 as orden,
+                5 as orden,
                 'Educación Preescolar' as nivel_educativo,
                 'Comunitario' as subnivel,
                 SUM(v149) as docentes_hombres,
@@ -986,7 +1018,7 @@ function obtenerDocentesPorGenero()
             
             -- PRIMARIA GENERAL
             SELECT 
-                5 as orden,
+                6 as orden,
                 'Educación Primaria' as nivel_educativo,
                 'General' as subnivel,
                 SUM(v1567 + v1575) as docentes_hombres,
@@ -1001,7 +1033,7 @@ function obtenerDocentesPorGenero()
             
             -- PRIMARIA COMUNITARIA
             SELECT 
-                6 as orden,
+                7 as orden,
                 'Educación Primaria' as nivel_educativo,
                 'Comunitaria' as subnivel,
                 SUM(v583) as docentes_hombres,
@@ -1020,7 +1052,7 @@ function obtenerDocentesPorGenero()
             
             -- SECUNDARIA GENERAL
             SELECT 
-                7 as orden,
+                8 as orden,
                 'Educación Secundaria' as nivel_educativo,
                 'General' as subnivel,
                 SUM(v1297 + v1303 + v1307 + v1309 + v1311 + v1313) as docentes_hombres,
@@ -1035,7 +1067,7 @@ function obtenerDocentesPorGenero()
             
             -- MEDIA SUPERIOR
             SELECT 
-                8 as orden,
+                9 as orden,
                 'Educación Media Superior' as nivel_educativo,
                 'Plantel' as subnivel,
                 SUM(v161 + v163 + v165 + v167) as docentes_hombres,
@@ -1050,7 +1082,7 @@ function obtenerDocentesPorGenero()
             
             -- EDUCACIÓN SUPERIOR
             SELECT 
-                9 as orden,
+                10 as orden,
                 'Educación Superior' as nivel_educativo,
                 'Universitaria' as subnivel,
                 SUM(v81) as docentes_hombres,
