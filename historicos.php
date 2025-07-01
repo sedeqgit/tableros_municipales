@@ -82,7 +82,7 @@ $matriculaHistorica = array(
         'escuelas_privadas' => 145
     ),
     '2020-2021' => array(
-        'total_estudiantes' => 94680, // Reducción por pandemia
+        'total_estudiantes' => 98850, // Crecimiento moderado
         'total_escuelas' => 478,
         'docentes' => 2920,
         'escuelas_publicas' => 332,
@@ -116,7 +116,7 @@ $evolucionPorNivel = array(
     'Preescolar' => array(
         '2018-2019' => 11500,
         '2019-2020' => 11850,
-        '2020-2021' => 11200, // Impacto pandemia
+        '2020-2021' => 11750, // Crecimiento sostenido
         '2021-2022' => 11650,
         '2022-2023' => 11950,
         '2023-2024' => 12200
@@ -124,7 +124,7 @@ $evolucionPorNivel = array(
     'Primaria' => array(
         '2018-2019' => 44200,
         '2019-2020' => 44800,
-        '2020-2021' => 43500,
+        '2020-2021' => 44300,
         '2021-2022' => 44100,
         '2022-2023' => 44650,
         '2023-2024' => 45000
@@ -132,7 +132,7 @@ $evolucionPorNivel = array(
     'Secundaria' => array(
         '2018-2019' => 27200,
         '2019-2020' => 27650,
-        '2020-2021' => 26800,
+        '2020-2021' => 27400,
         '2021-2022' => 27300,
         '2022-2023' => 27750,
         '2023-2024' => 28000
@@ -140,7 +140,7 @@ $evolucionPorNivel = array(
     'Media Superior' => array(
         '2018-2019' => 18100,
         '2019-2020' => 18450,
-        '2020-2021' => 17900,
+        '2020-2021' => 18200,
         '2021-2022' => 18250,
         '2022-2023' => 18650,
         '2023-2024' => 19000
@@ -158,8 +158,8 @@ $evolucionPorNivel = array(
 // Indicadores clave de desempeño histórico
 $indicadoresHistoricos = array(
     'crecimiento_promedio_anual' => 2.8,
-    'variacion_2020_2021' => -2.7, // Impacto pandemia
-    'recuperacion_2021_2024' => 5.8,
+    'variacion_tecnologica_2020_2024' => 4.2, // Modernización tecnológica
+    'crecimiento_infraestructura' => 6.1,
     'tasa_cobertura_preescolar' => 94.5,
     'tasa_cobertura_primaria' => 98.2,
     'tasa_cobertura_secundaria' => 89.7,
@@ -211,8 +211,10 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
             <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
             <a href="resumen.php" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
             <a href="escuelas_detalle.php" class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
-            <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
-            <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i> <span>Docentes</span></a>
+            <a href="estudiantes.php" class="sidebar-link"><i
+                    class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
+            <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i>
+                <span>Docentes</span></a>
             <a href="#" class="sidebar-link active"><i class="fas fa-history"></i> <span>Históricos</span></a>
         </div>
     </div>
@@ -223,7 +225,7 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>Análisis Históricos del Sistema Educativo Corregidora</h1>
+                <h1>DEMO Análisis Históricos del Sistema Educativo Corregidora</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -273,7 +275,9 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
                                 <i class="fas fa-school"></i>
                             </div>
                             <div class="metric-content">
-                                <div class="metric-value"><?php echo $matriculaHistorica[$cicloActual]['total_escuelas']; ?></div>
+                                <div class="metric-value">
+                                    <?php echo $matriculaHistorica[$cicloActual]['total_escuelas']; ?>
+                                </div>
                                 <div class="metric-label">Total Escuelas</div>
                                 <div class="metric-period">Histórico máximo</div>
                             </div>
@@ -283,7 +287,9 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
                                 <i class="fas fa-chalkboard-teacher"></i>
                             </div>
                             <div class="metric-content">
-                                <div class="metric-value"><?php echo number_format($matriculaHistorica[$cicloActual]['docentes']); ?></div>
+                                <div class="metric-value">
+                                    <?php echo number_format($matriculaHistorica[$cicloActual]['docentes']); ?>
+                                </div>
                                 <div class="metric-label">Total Docentes</div>
                                 <div class="metric-period">Proyección 2024</div>
                             </div>
@@ -298,17 +304,17 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
                     <h3 class="historical-title">
                         <i class="fas fa-chart-area"></i> Evolución Temporal de la Matrícula
                     </h3>
+                </div>
+                <div class="historical-body">
                     <div class="chart-controls">
                         <div class="time-selector">
                             <button class="time-btn active" data-period="all">Todo el período</button>
                             <button class="time-btn" data-period="recent">Últimos 5 años</button>
-                            <button class="time-btn" data-period="pandemic">Impacto COVID</button>
+                            <button class="time-btn" data-period="growth">Período 2018-2022</button>
                         </div>
                     </div>
-                </div>
-                <div class="historical-body">
                     <div id="chart-evolution-container" class="chart-container">
-                        <div id="chart-evolution" style="width:100%; height:450px;"></div>
+                        <div id="chart-evolution" style="width:100%; height:500px;"></div>
                     </div>
                 </div>
             </div>
@@ -353,7 +359,7 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
                                 </div>
                                 <div class="trend-item stable">
                                     <div class="trend-icon">
-                                        <i class="fas fa-minus"></i>
+                                        <i class="fas fa-equals"></i>
                                     </div>
                                     <div class="trend-content">
                                         <h5>Educación Primaria</h5>
@@ -361,15 +367,178 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
                                         <span class="trend-value">+1.8% promedio</span>
                                     </div>
                                 </div>
-                                <div class="trend-item recovery">
+                                <div class="trend-item innovation">
                                     <div class="trend-icon">
-                                        <i class="fas fa-chart-line"></i>
+                                        <i class="fas fa-lightbulb"></i>
                                     </div>
                                     <div class="trend-content">
-                                        <h5>Recuperación Post-COVID</h5>
-                                        <p>Todos los niveles muestran <strong>recuperación completa</strong></p>
-                                        <span class="trend-value">+5.8% desde 2021</span>
+                                        <h5>Innovación Educativa</h5>
+                                        <p>Implementación de <strong>tecnologías digitales</strong> en el aula</p>
+                                        <span class="trend-value">+85% digitalización</span>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nuevas visualizaciones: Tarjetas de Impacto por Nivel -->
+                    <div class="impact-cards-section">
+                        <h4>Indicadores de Impacto por Nivel Educativo</h4>
+                        <div class="impact-cards-grid">
+                            <div class="impact-card preescolar">
+                                <div class="impact-header">
+                                    <div class="impact-icon">
+                                        <i class="fas fa-baby"></i>
+                                    </div>
+                                    <h5>Preescolar</h5>
+                                </div>
+                                <div class="impact-metrics">
+                                    <div class="impact-metric">
+                                        <span class="metric-number">12,200</span>
+                                        <span class="metric-label">Estudiantes</span>
+                                    </div>
+                                    <div class="impact-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 94.5%"></div>
+                                        </div>
+                                        <span class="progress-label">94.5% Cobertura</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="impact-card primaria">
+                                <div class="impact-header">
+                                    <div class="impact-icon">
+                                        <i class="fas fa-book-open"></i>
+                                    </div>
+                                    <h5>Primaria</h5>
+                                </div>
+                                <div class="impact-metrics">
+                                    <div class="impact-metric">
+                                        <span class="metric-number">45,000</span>
+                                        <span class="metric-label">Estudiantes</span>
+                                    </div>
+                                    <div class="impact-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 98.2%"></div>
+                                        </div>
+                                        <span class="progress-label">98.2% Cobertura</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="impact-card secundaria">
+                                <div class="impact-header">
+                                    <div class="impact-icon">
+                                        <i class="fas fa-graduation-cap"></i>
+                                    </div>
+                                    <h5>Secundaria</h5>
+                                </div>
+                                <div class="impact-metrics">
+                                    <div class="impact-metric">
+                                        <span class="metric-number">28,000</span>
+                                        <span class="metric-label">Estudiantes</span>
+                                    </div>
+                                    <div class="impact-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 89.7%"></div>
+                                        </div>
+                                        <span class="progress-label">89.7% Cobertura</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="impact-card media-superior">
+                                <div class="impact-header">
+                                    <div class="impact-icon">
+                                        <i class="fas fa-university"></i>
+                                    </div>
+                                    <h5>Media Superior</h5>
+                                </div>
+                                <div class="impact-metrics">
+                                    <div class="impact-metric">
+                                        <span class="metric-number">19,000</span>
+                                        <span class="metric-label">Estudiantes</span>
+                                    </div>
+                                    <div class="impact-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 85.3%"></div>
+                                        </div>
+                                        <span class="progress-label">85.3% Cobertura</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="impact-card superior">
+                                <div class="impact-header">
+                                    <div class="impact-icon">
+                                        <i class="fas fa-medal"></i>
+                                    </div>
+                                    <h5>Superior</h5>
+                                </div>
+                                <div class="impact-metrics">
+                                    <div class="impact-metric">
+                                        <span class="metric-number">15,000</span>
+                                        <span class="metric-label">Estudiantes</span>
+                                    </div>
+                                    <div class="impact-progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" style="width: 72.8%"></div>
+                                        </div>
+                                        <span class="progress-label">72.8% Cobertura</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visualización de Crecimiento Comparativo -->
+                    <div class="growth-comparison-section">
+                        <h4>Crecimiento Comparativo por Período</h4>
+                        <div class="growth-bars">
+                            <div class="growth-bar-item">
+                                <div class="growth-bar-label">
+                                    <span class="level-name">Educación Superior</span>
+                                    <span class="growth-percent">+8.7%</span>
+                                </div>
+                                <div class="growth-bar-track">
+                                    <div class="growth-bar-fill superior" style="width: 87%"></div>
+                                </div>
+                            </div>
+                            <div class="growth-bar-item">
+                                <div class="growth-bar-label">
+                                    <span class="level-name">Media Superior</span>
+                                    <span class="growth-percent">+5.2%</span>
+                                </div>
+                                <div class="growth-bar-track">
+                                    <div class="growth-bar-fill media-superior" style="width: 52%"></div>
+                                </div>
+                            </div>
+                            <div class="growth-bar-item">
+                                <div class="growth-bar-label">
+                                    <span class="level-name">Secundaria</span>
+                                    <span class="growth-percent">+2.9%</span>
+                                </div>
+                                <div class="growth-bar-track">
+                                    <div class="growth-bar-fill secundaria" style="width: 29%"></div>
+                                </div>
+                            </div>
+                            <div class="growth-bar-item">
+                                <div class="growth-bar-label">
+                                    <span class="level-name">Primaria</span>
+                                    <span class="growth-percent">+1.8%</span>
+                                </div>
+                                <div class="growth-bar-track">
+                                    <div class="growth-bar-fill primaria" style="width: 18%"></div>
+                                </div>
+                            </div>
+                            <div class="growth-bar-item">
+                                <div class="growth-bar-label">
+                                    <span class="level-name">Preescolar</span>
+                                    <span class="growth-percent">+6.1%</span>
+                                </div>
+                                <div class="growth-bar-track">
+                                    <div class="growth-bar-fill preescolar" style="width: 61%"></div>
                                 </div>
                             </div>
                         </div>
@@ -425,8 +594,129 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
                 </div>
             </div>
 
-            <!-- Panel de tabla histórica detallada -->
+            <!-- Panel de Métricas de Rendimiento Educativo -->
             <div class="historical-panel animate-fade delay-5">
+                <div class="historical-header">
+                    <h3 class="historical-title">
+                        <i class="fas fa-chart-pie"></i> Métricas de Rendimiento Educativo
+                    </h3>
+                </div>
+                <div class="historical-body">
+                    <!-- Dashboard de indicadores clave -->
+                    <div class="performance-dashboard">
+                        <div class="kpi-grid">
+                            <div class="kpi-card efficiency">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value">87.3%</div>
+                                    <div class="kpi-label">Eficiencia Terminal</div>
+                                    <div class="kpi-trend positive">
+                                        <i class="fas fa-arrow-up"></i> +2.1%
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="kpi-card quality">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value">8.4/10</div>
+                                    <div class="kpi-label">Índice de Calidad</div>
+                                    <div class="kpi-trend positive">
+                                        <i class="fas fa-arrow-up"></i> +0.3
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="kpi-card innovation">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-laptop"></i>
+                                </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value">92.1%</div>
+                                    <div class="kpi-label">Conectividad Digital</div>
+                                    <div class="kpi-trend positive">
+                                        <i class="fas fa-arrow-up"></i> +15.2%
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="kpi-card infrastructure">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-building"></i>
+                                </div>
+                                <div class="kpi-content">
+                                    <div class="kpi-value">78.9%</div>
+                                    <div class="kpi-label">Infraestructura Moderna</div>
+                                    <div class="kpi-trend positive">
+                                        <i class="fas fa-arrow-up"></i> +6.7%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Métricas Radiales -->
+                    <div class="radial-metrics-section">
+                        <h4>Indicadores de Desempeño por Dimensión</h4>
+                        <div class="radial-metrics-grid">
+                            <div class="radial-metric">
+                                <div class="radial-chart" data-percentage="87">
+                                    <svg viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="45" stroke="#e9ecef" stroke-width="8" fill="none" />
+                                        <circle cx="50" cy="50" r="45" stroke="#28a745" stroke-width="8" fill="none"
+                                            stroke-dasharray="283" stroke-dashoffset="37" stroke-linecap="round" />
+                                        <text x="50" y="50" text-anchor="middle" dy="0.3em"
+                                            class="radial-text">87%</text>
+                                    </svg>
+                                </div>
+                                <div class="radial-details">
+                                    <div class="radial-value">87,320 estudiantes</div>
+                                    <div class="radial-label">Retención Estudiantil</div>
+                                </div>
+                            </div>
+
+                            <div class="radial-metric">
+                                <div class="radial-chart" data-percentage="94">
+                                    <svg viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="45" stroke="#e9ecef" stroke-width="8" fill="none" />
+                                        <circle cx="50" cy="50" r="45" stroke="#007bff" stroke-width="8" fill="none"
+                                            stroke-dasharray="283" stroke-dashoffset="17" stroke-linecap="round" />
+                                        <text x="50" y="50" text-anchor="middle" dy="0.3em"
+                                            class="radial-text">94%</text>
+                                    </svg>
+                                </div>
+                                <div class="radial-details">
+                                    <div class="radial-value">94,170 estudiantes</div>
+                                    <div class="radial-label">Alto Aprovechamiento</div>
+                                </div>
+                            </div>
+
+                            <div class="radial-metric">
+                                <div class="radial-chart" data-percentage="76">
+                                    <svg viewBox="0 0 100 100">
+                                        <circle cx="50" cy="50" r="45" stroke="#e9ecef" stroke-width="8" fill="none" />
+                                        <circle cx="50" cy="50" r="45" stroke="#ffc107" stroke-width="8" fill="none"
+                                            stroke-dasharray="283" stroke-dashoffset="68" stroke-linecap="round" />
+                                        <text x="50" y="50" text-anchor="middle" dy="0.3em"
+                                            class="radial-text">76%</text>
+                                    </svg>
+                                </div>
+                                <div class="radial-details">
+                                    <div class="radial-value">76,140 familias</div>
+                                    <div class="radial-label">Satisfacción Familias</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de tabla histórica detallada -->
+            <div class="historical-panel animate-fade delay-6">
                 <div class="historical-header">
                     <h3 class="historical-title">
                         <i class="fas fa-table"></i> Datos Históricos Detallados
@@ -457,38 +747,39 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($matriculaHistorica as $ciclo => $datos): 
+                                <?php foreach ($matriculaHistorica as $ciclo => $datos):
                                     // Calcular variación anual
                                     $ciclosOrdenados = array_keys($matriculaHistorica);
                                     $indiceCiclo = array_search($ciclo, $ciclosOrdenados);
                                     $variacion = 0;
-                                    
+
                                     if ($indiceCiclo > 0) {
                                         $cicloAnterior = $ciclosOrdenados[$indiceCiclo - 1];
                                         $estudiantesActuales = $datos['total_estudiantes'];
                                         $estudiantesAnteriores = $matriculaHistorica[$cicloAnterior]['total_estudiantes'];
                                         $variacion = (($estudiantesActuales - $estudiantesAnteriores) / $estudiantesAnteriores) * 100;
                                     }
-                                    
+
                                     $ratio = round($datos['total_estudiantes'] / $datos['docentes'], 1);
                                     $variacionClass = $variacion > 0 ? 'positive' : ($variacion < 0 ? 'negative' : 'neutral');
-                                ?>
-                                <tr>
-                                    <td class="period-cell"><?php echo $ciclo; ?></td>
-                                    <td class="number-cell"><?php echo number_format($datos['total_estudiantes']); ?></td>
-                                    <td class="number-cell"><?php echo $datos['total_escuelas']; ?></td>
-                                    <td class="number-cell"><?php echo number_format($datos['docentes']); ?></td>
-                                    <td class="number-cell public"><?php echo $datos['escuelas_publicas']; ?></td>
-                                    <td class="number-cell private"><?php echo $datos['escuelas_privadas']; ?></td>
-                                    <td class="variation-cell <?php echo $variacionClass; ?>">
-                                        <?php if ($variacion != 0): ?>
-                                            <?php echo ($variacion > 0 ? '+' : '') . number_format($variacion, 1) . '%'; ?>
-                                        <?php else: ?>
-                                            --
-                                        <?php endif; ?>
-                                    </td>
-                                    <td class="ratio-cell"><?php echo $ratio; ?></td>
-                                </tr>
+                                    ?>
+                                    <tr>
+                                        <td class="period-cell"><?php echo $ciclo; ?></td>
+                                        <td class="number-cell"><?php echo number_format($datos['total_estudiantes']); ?>
+                                        </td>
+                                        <td class="number-cell"><?php echo $datos['total_escuelas']; ?></td>
+                                        <td class="number-cell"><?php echo number_format($datos['docentes']); ?></td>
+                                        <td class="number-cell public"><?php echo $datos['escuelas_publicas']; ?></td>
+                                        <td class="number-cell private"><?php echo $datos['escuelas_privadas']; ?></td>
+                                        <td class="variation-cell <?php echo $variacionClass; ?>">
+                                            <?php if ($variacion != 0): ?>
+                                                <?php echo ($variacion > 0 ? '+' : '') . number_format($variacion, 1) . '%'; ?>
+                                            <?php else: ?>
+                                                --
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="ratio-cell"><?php echo $ratio; ?></td>
+                                    </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
@@ -497,7 +788,7 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
             </div>
 
             <!-- Panel de proyecciones -->
-            <div class="historical-panel animate-fade delay-6">
+            <div class="historical-panel animate-fade delay-7">
                 <div class="historical-header">
                     <h3 class="historical-title">
                         <i class="fas fa-crystal-ball"></i> Proyecciones y Análisis Predictivo
@@ -557,7 +848,8 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
         </div>
 
         <footer class="dashboard-footer">
-            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos reservados</p>
+            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
+                reservados</p>
         </footer>
     </div>
 

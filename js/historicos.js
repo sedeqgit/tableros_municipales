@@ -494,8 +494,8 @@ function getFilteredDataByPeriod() {
     switch (currentPeriod) {
         case 'recent':
             return getRecentYearsData();
-        case 'pandemic':
-            return getPandemicPeriodData();
+        case 'growth':
+            return getGrowthPeriodData();
         default:
             return matriculaHistorica;
     }
@@ -514,17 +514,17 @@ function getRecentYearsData() {
     return recentYears;
 }
 
-function getPandemicPeriodData() {
-    const pandemicYears = {};
-    const relevantYears = ['2019-2020', '2020-2021', '2021-2022', '2022-2023', '2023-2024'];
+function getGrowthPeriodData() {
+    const growthYears = {};
+    const relevantYears = ['2018-2019', '2019-2020', '2020-2021', '2021-2022', '2022-2023'];
     
     relevantYears.forEach(year => {
         if (matriculaHistorica[year]) {
-            pandemicYears[year] = matriculaHistorica[year];
+            growthYears[year] = matriculaHistorica[year];
         }
     });
     
-    return pandemicYears;
+    return growthYears;
 }
 
 // =============================================================================

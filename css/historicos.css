@@ -276,26 +276,68 @@
 .chart-container {
     background-color: var(--white);
     border-radius: var(--border-radius);
-    padding: 20px;
+    padding: 24px;
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--medium-gray);
+    min-height: 500px; /* Asegurar altura mínima */
+    position: relative;
 }
 
-.dual-chart-container {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 24px;
-    align-items: start;
+/* Contenedor específico para el gráfico de evolución */
+#chart-evolution-container {
+    margin-top: 16px;
+    padding: 20px;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
 }
 
-.chart-section h4,
-.trends-section h4 {
-    font-family: var(--font-primary);
-    font-weight: var(--font-weight-semibold);
+#chart-evolution {
+    width: 100% !important;
+    height: 500px !important; /* Altura más generosa */
+    min-height: 500px;
+}
+
+/* Mejorar controles de tiempo */
+.chart-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 16px 0;
+}
+
+.time-selector {
+    display: flex;
+    gap: 8px;
+    background: var(--light-gray);
+    padding: 6px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.time-btn {
+    background: transparent;
+    border: none;
     color: var(--text-primary);
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--accent-aqua);
+    padding: 10px 16px;
+    border-radius: calc(var(--border-radius) - 2px);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: var(--font-weight-medium);
+    transition: var(--transition-fast);
+    white-space: nowrap;
+}
+
+.time-btn:hover {
+    background: rgba(36, 43, 87, 0.1);
+    transform: translateY(-1px);
+}
+
+.time-btn.active {
+    background: var(--primary-blue);
+    color: var(--white);
+    box-shadow: var(--shadow-sm);
 }
 
 /* =============================================
@@ -311,17 +353,33 @@
 .trend-item {
     background-color: var(--white);
     border-radius: var(--border-radius);
-    padding: 16px;
+    padding: 20px;
     display: flex;
     align-items: flex-start;
-    gap: 12px;
-    box-shadow: var(--shadow-sm);
+    gap: 16px;
+    box-shadow: var(--shadow-md);
     transition: var(--transition-normal);
+    border-left: 4px solid transparent;
 }
 
 .trend-item:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+.trend-item.positive {
+    border-left-color: var(--success-green);
+    background: linear-gradient(135deg, #f8fff9, #ffffff);
+}
+
+.trend-item.stable {
+    border-left-color: var(--secondary-blue);
+    background: linear-gradient(135deg, #f0f8ff, #ffffff);
+}
+
+.trend-item.innovation {
+    border-left-color: var(--accent-magenta);
+    background: linear-gradient(135deg, #fff5f8, #ffffff);
 }
 
 .trend-icon {
@@ -349,27 +407,27 @@
 }
 
 .trend-content h5 {
-    font-family: var(--font-primary);
-    font-weight: var(--font-weight-semibold);
     color: var(--text-primary);
-    margin: 0 0 6px 0;
-    font-size: 0.95rem;
+    font-weight: var(--font-weight-bold);
+    margin-bottom: 8px;
+    font-size: 1.1rem;
 }
 
 .trend-content p {
-    font-size: 0.85rem;
     color: var(--text-secondary);
-    margin: 0 0 8px 0;
+    margin-bottom: 8px;
     line-height: 1.4;
+    font-size: 0.95rem;
 }
 
 .trend-value {
-    font-size: 0.8rem;
+    background: var(--primary-blue);
+    color: var(--white);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
     font-weight: var(--font-weight-semibold);
-    color: var(--accent-aqua);
-    background-color: rgba(124, 198, 216, 0.1);
-    padding: 2px 8px;
-    border-radius: var(--border-radius-sm);
+    display: inline-block;
 }
 
 /* =============================================
@@ -791,5 +849,571 @@
     .projection-card,
     .recommendation-card {
         padding: 16px;
+    }
+}
+
+/* Mejorar el panel de evolución temporal específicamente */
+.historical-panel .historical-body {
+    padding: 24px;
+    background: var(--white);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+/* Asegurar que el contenedor del gráfico tenga suficiente espacio */
+.historical-panel .chart-container {
+    margin: 0;
+    padding: 20px;
+    background: var(--white);
+    border: none;
+    box-shadow: none;
+    border-radius: var(--border-radius);
+}
+
+/* Mejorar el header del panel */
+.historical-header {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+    color: var(--white);
+    padding: 20px 24px;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+/* Responsive para controles */
+@media (max-width: 768px) {
+    .chart-controls {
+        justify-content: center;
+        margin-top: 12px;
+    }
+    
+    .time-selector {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .time-btn {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+}
+
+/* =============================================
+   MEJORAS DE CONTRASTE VISUAL
+   ============================================= */
+
+/* Mejorar contraste en trend items */
+.trend-item {
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-normal);
+    border-left: 4px solid transparent;
+}
+
+.trend-item.positive {
+    border-left-color: var(--success-green);
+    background: linear-gradient(135deg, #f8fff9, #ffffff);
+}
+
+.trend-item.stable {
+    border-left-color: var(--secondary-blue);
+    background: linear-gradient(135deg, #f0f8ff, #ffffff);
+}
+
+.trend-item.innovation {
+    border-left-color: var(--accent-magenta);
+    background: linear-gradient(135deg, #fff5f8, #ffffff);
+}
+
+.trend-content h5 {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.trend-content p {
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    line-height: 1.4;
+    font-size: 0.95rem;
+}
+
+.trend-value {
+    background: var(--primary-blue);
+    color: var(--white);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: var(--font-weight-semibold);
+    display: inline-block;
+}
+
+/* =============================================
+   TARJETAS DE IMPACTO POR NIVEL
+   ============================================= */
+
+.impact-cards-section {
+    margin-top: 32px;
+    padding: 24px 0;
+    text-align: center;
+}
+
+.impact-cards-section h4 {
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent-aqua);
+    text-align: center;
+}
+
+.impact-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 16px;
+}
+
+.impact-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-normal);
+    border-top: 6px solid;
+}
+
+.impact-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.impact-card.preescolar { border-top-color: #FB8C00; }
+.impact-card.primaria { border-top-color: #E53935; }
+.impact-card.secundaria { border-top-color: #5E35B1; }
+.impact-card.media-superior { border-top-color: #43A047; }
+.impact-card.superior { border-top-color: #0288D1; }
+
+.impact-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.impact-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--border-radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: var(--white);
+}
+
+.impact-card.preescolar .impact-icon { background: #FB8C00; }
+.impact-card.primaria .impact-icon { background: #E53935; }
+.impact-card.secundaria .impact-icon { background: #5E35B1; }
+.impact-card.media-superior .impact-icon { background: #43A047; }
+.impact-card.superior .impact-icon { background: #0288D1; }
+
+.impact-header h5 {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-bold);
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.impact-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.impact-metric {
+    text-align: center;
+}
+
+.metric-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-blue);
+    line-height: 1;
+}
+
+.metric-label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.impact-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--light-gray);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--success-green), var(--accent-aqua));
+    border-radius: 4px;
+    transition: width 0.8s ease;
+}
+
+/* Colores específicos para barras de progreso por nivel educativo */
+.impact-card.preescolar .progress-fill { 
+    background: linear-gradient(90deg, #FB8C00, #FFB74D); 
+}
+.impact-card.primaria .progress-fill { 
+    background: linear-gradient(90deg, #E53935, #EF5350); 
+}
+.impact-card.secundaria .progress-fill { 
+    background: linear-gradient(90deg, #5E35B1, #9575CD); 
+}
+.impact-card.media-superior .progress-fill { 
+    background: linear-gradient(90deg, #43A047, #81C784); 
+}
+.impact-card.superior .progress-fill { 
+    background: linear-gradient(90deg, #0288D1, #4FC3F7); 
+}
+
+.progress-label {
+    text-align: center;
+    color: var(--text-primary);
+    font-weight: var(--font-weight-medium);
+    font-size: 0.9rem;
+}
+
+/* =============================================
+   VISUALIZACIÓN DE CRECIMIENTO COMPARATIVO
+   ============================================= */
+
+.growth-comparison-section {
+    margin-top: 32px;
+    padding: 24px;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+}
+
+.growth-comparison-section h4 {
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: 24px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent-aqua);
+    text-align: center;
+}
+
+.growth-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.growth-bar-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.growth-bar-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.level-name {
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+}
+
+.growth-percent {
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-blue);
+    background: rgba(36, 43, 87, 0.1);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+
+.growth-bar-track {
+    width: 100%;
+    height: 12px;
+    background: var(--light-gray);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.growth-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 1s ease;
+}
+
+.growth-bar-fill.superior { background: linear-gradient(90deg, #0288D1, #4FC3F7); }
+.growth-bar-fill.media-superior { background: linear-gradient(90deg, #43A047, #81C784); }
+.growth-bar-fill.secundaria { background: linear-gradient(90deg, #5E35B1, #9575CD); }
+.growth-bar-fill.primaria { background: linear-gradient(90deg, #E53935, #EF5350); }
+.growth-bar-fill.preescolar { background: linear-gradient(90deg, #FB8C00, #FFB74D); }
+
+/* =============================================
+   RESPONSIVE DESIGN PARA NUEVAS SECCIONES
+   ============================================= */
+
+@media (max-width: 768px) {
+    .impact-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .growth-bar-label {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .impact-card {
+        padding: 20px;
+    }
+    
+    .metric-number {
+        font-size: 1.6rem;
+    }
+}
+
+/* =============================================
+   PANEL DE MÉTRICAS DE RENDIMIENTO
+   ============================================= */
+
+.performance-dashboard {
+    margin-bottom: 32px;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+    justify-items: center;
+}
+
+.kpi-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-normal);
+    border-left: 6px solid;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    border-radius: 50%;
+    transform: translate(30px, -30px);
+}
+
+.kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.kpi-card.efficiency { border-left-color: #28a745; }
+.kpi-card.quality { border-left-color: #007bff; }
+.kpi-card.innovation { border-left-color: #6f42c1; }
+.kpi-card.infrastructure { border-left-color: #fd7e14; }
+
+.kpi-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--border-radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--white);
+    flex-shrink: 0;
+}
+
+.kpi-card.efficiency .kpi-icon { background: linear-gradient(135deg, #28a745, #20c997); }
+.kpi-card.quality .kpi-icon { background: linear-gradient(135deg, #007bff, #6610f2); }
+.kpi-card.innovation .kpi-icon { background: linear-gradient(135deg, #6f42c1, #e83e8c); }
+.kpi-card.infrastructure .kpi-icon { background: linear-gradient(135deg, #fd7e14, #dc3545); }
+
+.kpi-content {
+    flex: 1;
+}
+
+.kpi-value {
+    font-size: 2.2rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.kpi-label {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    font-weight: var(--font-weight-medium);
+}
+
+.kpi-trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.9rem;
+    font-weight: var(--font-weight-semibold);
+}
+
+.kpi-trend.positive {
+    color: var(--success-green);
+}
+
+.kpi-trend.negative {
+    color: var(--danger-red);
+}
+
+/* =============================================
+   MÉTRICAS RADIALES
+   ============================================= */
+
+.radial-metrics-section {
+    margin-top: 32px;
+    padding: 24px;
+    background: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+}
+
+.radial-metrics-section h4 {
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+    margin-bottom: 24px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent-aqua);
+}
+
+.radial-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    justify-items: center;
+    align-items: center;
+}
+
+.radial-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.radial-chart {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 12px;
+    position: relative;
+}
+
+.radial-chart svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.radial-text {
+    font-size: 18px;
+    font-weight: var(--font-weight-bold);
+    fill: var(--text-primary);
+    transform: rotate(90deg);
+}
+
+.radial-label {
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-medium);
+    font-size: 0.95rem;
+}
+
+.radial-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.radial-value {
+    color: var(--primary-deep-blue);
+    font-weight: var(--font-weight-bold);
+    font-size: 1rem;
+    margin-bottom: 4px;
+}
+
+/* =============================================
+   RESPONSIVE PARA MÉTRICAS DE RENDIMIENTO
+   ============================================= */
+
+@media (max-width: 768px) {
+    .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .kpi-card {
+        padding: 20px;
+    }
+    
+    .kpi-value {
+        font-size: 1.8rem;
+    }
+    
+    .radial-metrics-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+    }
+    
+    .radial-chart {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .radial-text {
+        font-size: 16px;
     }
 }
