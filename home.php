@@ -104,6 +104,9 @@ $totalAlumnos = $totales['alumnos'];
                             target="_blank"><i class="fas fa-map-marked-alt"></i> <span>Mapa Educativo</span></a>
                     </li>
                     <li class="nav-item">
+                        <a href="historicos.php"><i class="fas fa-history"></i> <span>Históricos</span></a>
+                    </li>
+                    <li class="nav-item">
                         <a href="#"><i class="fas fa-file-alt"></i> <span>Reportes</span></a>
                     </li>
                     <!-- Enlace a configuraciones del sistema -->
