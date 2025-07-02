@@ -396,10 +396,51 @@ $datosEficiencia = [
                                         <span>Desglose por nivel educativo</span>
                                     </div>
                                     <div class="details-content">
-                                        <?php foreach ($datos['desglose'] as $nivel => $cantidad): ?>
+                                        <?php
+                                        // Definir orden específico de los niveles educativos
+                                        $ordenNiveles = [
+                                            'Inicial Escolarizado' => 1,
+                                            'Inicial No Escolarizado' => 2,
+                                            'Especial (CAM)' => 3,
+                                            'Preescolar' => 4,
+                                            'Primaria' => 5,
+                                            'Secundaria' => 6,
+                                            'Media Superior' => 7,
+                                            'Superior' => 8
+                                        ];
+
+                                        // Crear array ordenado de niveles con sus cantidades
+                                        $nivelesOrdenados = [];
+                                        foreach ($ordenNiveles as $nivel => $indice) {
+                                            // Buscar coincidencias flexibles para el nivel
+                                            foreach ($datos['desglose'] as $nivelOriginal => $cantidad) {
+                                                if (
+                                                    stripos($nivelOriginal, $nivel) !== false ||
+                                                    stripos($nivel, $nivelOriginal) !== false ||
+                                                    ($nivel === 'Inicial Escolarizado' && stripos($nivelOriginal, 'Inicial') !== false && stripos($nivelOriginal, 'Escolar') !== false) ||
+                                                    ($nivel === 'Inicial No Escolarizado' && stripos($nivelOriginal, 'Inicial') !== false && stripos($nivelOriginal, 'No Escolar') !== false) ||
+                                                    ($nivel === 'Especial (CAM)' && (stripos($nivelOriginal, 'CAM') !== false || stripos($nivelOriginal, 'Especial') !== false)) ||
+                                                    ($nivel === 'Preescolar' && stripos($nivelOriginal, 'Preescolar') !== false) ||
+                                                    ($nivel === 'Primaria' && stripos($nivelOriginal, 'Primaria') !== false) ||
+                                                    ($nivel === 'Secundaria' && stripos($nivelOriginal, 'Secundaria') !== false) ||
+                                                    ($nivel === 'Media Superior' && stripos($nivelOriginal, 'Media Superior') !== false) ||
+                                                    ($nivel === 'Superior' && stripos($nivelOriginal, 'Superior') !== false && stripos($nivelOriginal, 'Media') === false)
+                                                ) {
+                                                    $nivelesOrdenados[$indice] = [
+                                                        'nombre' => $nivelOriginal,
+                                                        'cantidad' => $cantidad
+                                                    ];
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        // Ordenar por índice y mostrar
+                                        ksort($nivelesOrdenados);
+                                        foreach ($nivelesOrdenados as $nivelData): ?>
                                             <div class="detail-item">
-                                                <span class="detail-level"><?php echo $nivel; ?></span>
-                                                <span class="detail-count"><?php echo $cantidad; ?></span>
+                                                <span class="detail-level"><?php echo $nivelData['nombre']; ?></span>
+                                                <span class="detail-count"><?php echo $nivelData['cantidad']; ?></span>
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
