@@ -225,7 +225,7 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>DEMO Análisis Históricos del Sistema Educativo Corregidora</h1>
+                <h1>Análisis Históricos del Sistema Educativo Corregidora (En proceso)</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -237,6 +237,7 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
 
         <div class="container-fluid">
             <!-- Panel de resumen histórico -->
+            <i>Datos fijos no reales, solo para uso representativo. Página de prueba</i>
             <div class="historical-panel animate-fade delay-1">
                 <div class="historical-header">
                     <h3 class="historical-title">
