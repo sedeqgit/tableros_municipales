@@ -5,7 +5,10 @@
  * =============================================================================
  * 
  * Esta página presenta un análisis detallado del sistema educativo en el
- * municipio de Corregidora, Querétaro, incluyendo distribución por niveles,
+ * municipio de Corregidora, Querétaro, incluyendo di                    <div class="subcontrol-intro animate-fade delay-1">
+                        <p>Análisis detallado de las <strong><?php echo $totalEscuelasSubcontrol; ?> escuelas</strong> 
+                           del municipio de Corregidora según su subcontrol administrativo y fuente de financiamiento.</p>
+                    </div>bución por niveles,
  * sostenimiento (público/privado) y diagramas de flujo educativo.
  * 
  * FUNCIONALIDADES PRINCIPALES:
@@ -101,6 +104,16 @@ $escuelasPrivadas = $escuelasPorSostenimiento['privadas'];           // Total es
 $porcentajePublicas = $escuelasPorSostenimiento['porcentaje_publicas']; // % públicas
 $porcentajePrivadas = $escuelasPorSostenimiento['porcentaje_privadas']; // % privadas
 $escuelasNivelSostenimiento = $escuelasPorSostenimiento['por_nivel'];    // Desglose por nivel
+
+// =============================================================================
+// ANÁLISIS POR SUBCONTROL EDUCATIVO
+// =============================================================================
+
+// Obtener datos segmentados por subcontrol educativo según análisis verificado
+// Incluye PRIVADO, FEDERAL TRANSFERIDO, FEDERAL, ESTATAL y AUTÓNOMO
+$escuelasPorSubcontrol = obtenerEscuelasPorSubcontrol();
+$totalEscuelasSubcontrol = $escuelasPorSubcontrol['total_escuelas'];
+$distribucionSubcontrol = $escuelasPorSubcontrol['distribución'];
 
 // =============================================================================
 // DATOS PARA ANÁLISIS DE EFICIENCIA EDUCATIVA
@@ -339,7 +352,95 @@ $datosEficiencia = [
                         </div>
                     </div>
                 </div>
-            </div> <!-- Panel de eficiencia educativa -->
+            </div>
+
+            <!-- Panel de distribución por subcontrol educativo -->
+            <div class="panel animate-up delay-1">
+                <div class="panel-header">
+                    <h3 class="panel-title"><i class="fas fa-building"></i> Distribución por Subcontrol Educativo</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="subcontrol-cards animate-sequence">
+                        <?php foreach ($distribucionSubcontrol as $subcontrol => $datos): ?>
+                            <?php
+                            // Normalizar el subcontrol para manejar problemas de encoding
+                            $subcontrolNormalizado = $subcontrol;
+                            if ($subcontrol === 'AUT?NOMO' || strpos($subcontrol, 'AUT') === 0) {
+                                $subcontrolNormalizado = 'AUTÓNOMO';
+                            }
+                            $dataAttribute = strtolower(str_replace(array(' ', 'Ó'), array('-', 'o'), $subcontrolNormalizado));
+                            ?>
+                            <div class="subcontrol-card animate-scale" data-subcontrol="<?php echo $dataAttribute; ?>">
+                                <div class="subcontrol-header">
+                                    <div class="subcontrol-info">
+                                        <h4 class="subcontrol-name"><?php echo $subcontrolNormalizado; ?></h4>
+                                        <div class="subcontrol-stats">
+                                            <span class="subcontrol-count"><?php echo $datos['total']; ?></span>
+                                            <span class="subcontrol-label">escuelas</span>
+                                            <span class="subcontrol-percentage"><?php echo $datos['porcentaje']; ?>%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="subcontrol-progress">
+                                    <div class="progress-bar-subcontrol">
+                                        <div class="progress-fill-subcontrol"
+                                            style="width: <?php echo $datos['porcentaje']; ?>%"
+                                            data-subcontrol="<?php echo $dataAttribute; ?>">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="subcontrol-details">
+                                    <div class="details-header">
+                                        <span>Desglose por nivel educativo</span>
+                                    </div>
+                                    <div class="details-content">
+                                        <?php foreach ($datos['desglose'] as $nivel => $cantidad): ?>
+                                            <div class="detail-item">
+                                                <span class="detail-level"><?php echo $nivel; ?></span>
+                                                <span class="detail-count"><?php echo $cantidad; ?></span>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <!-- Resumen estadístico del subcontrol -->
+                    <div class="subcontrol-summary animate-fade delay-3">
+                        <div class="summary-stats">
+                            <div class="summary-item">
+                                <i class="fas fa-chart-pie"></i>
+                                <div>
+                                    <span
+                                        class="summary-value"><?php echo $distribucionSubcontrol['PRIVADO']['porcentaje']; ?>%</span>
+                                    <span class="summary-label">Privadas</span>
+                                </div>
+                            </div>
+                            <div class="summary-item">
+                                <i class="fas fa-building-columns"></i>
+                                <div>
+                                    <span
+                                        class="summary-value"><?php echo round($distribucionSubcontrol['FEDERAL TRANSFERIDO']['porcentaje'] + $distribucionSubcontrol['FEDERAL']['porcentaje'] + $distribucionSubcontrol['ESTATAL']['porcentaje'] + $distribucionSubcontrol['AUTÓNOMO']['porcentaje'], 1); ?>%</span>
+                                    <span class="summary-label">Públicas</span>
+                                </div>
+                            </div>
+                            <div class="summary-item">
+                                <i class="fas fa-crown"></i>
+                                <div>
+                                    <span
+                                        class="summary-value"><?php echo $distribucionSubcontrol['FEDERAL TRANSFERIDO']['porcentaje']; ?>%</span>
+                                    <span class="summary-label">Fed. Transferido</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de eficiencia educativa -->
             <div class="panel animate-up delay-2">
                 <div class="panel-header">
                     <h3 class="panel-title"><i class="fas fa-chart-line"></i> Eficiencia del Sistema Educativo en
@@ -515,6 +616,10 @@ $datosEficiencia = [
         echo "const porcentajePrivadas = " . $porcentajePrivadas . ";\n";
         echo "const escuelasNivelSostenimiento = " . json_encode($escuelasNivelSostenimiento) . ";\n";
         echo "const escuelasPorNivel = " . json_encode($escuelasPorNivel) . ";\n";
+
+        // Datos de subcontrol educativo
+        echo "const totalEscuelasSubcontrol = " . $totalEscuelasSubcontrol . ";\n";
+        echo "const distribucionSubcontrol = " . json_encode($distribucionSubcontrol) . ";\n";
         ?>
     </script>
     <script src="./js/script.js"></script>

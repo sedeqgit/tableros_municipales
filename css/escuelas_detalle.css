@@ -958,3 +958,298 @@
         padding: 15px;
     }
 }
+
+/* =============================================
+   ESTILOS PARA SUBCONTROL EDUCATIVO
+   ============================================= */
+
+.subcontrol-intro {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--light-gray) 0%, var(--surface-color) 100%);
+    border-radius: var(--border-radius-lg);
+    border-left: 4px solid var(--primary-color);
+}
+
+.subcontrol-intro p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+}
+
+.subcontrol-cards {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.subcontrol-card {
+    background: var(--surface-color);
+    border-radius: var(--border-radius-lg);
+    padding: 18px;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.subcontrol-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--primary-color);
+}
+
+.subcontrol-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.subcontrol-info {
+    flex: 1;
+}
+
+.subcontrol-name {
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin: 0 0 6px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.subcontrol-stats {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.subcontrol-count {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-color);
+    line-height: 1;
+}
+
+.subcontrol-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-right: 12px;
+}
+
+.subcontrol-percentage {
+    background: var(--accent-color);
+    color: white;
+    padding: 4px 8px;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.85rem;
+    font-weight: var(--font-weight-medium);
+}
+
+.subcontrol-progress {
+    margin: 20px 0;
+}
+
+.progress-bar-subcontrol {
+    width: 100%;
+    height: 8px;
+    background: var(--light-gray);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill-subcontrol {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease-in-out;
+    position: relative;
+}
+
+.progress-fill-subcontrol[data-subcontrol="privado"] {
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+.progress-fill-subcontrol[data-subcontrol="federal-transferido"] {
+    background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+}
+
+.progress-fill-subcontrol[data-subcontrol="federal"] {
+    background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.progress-fill-subcontrol[data-subcontrol="estatal"] {
+    background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.progress-fill-subcontrol[data-subcontrol="autonomo"] {
+    background: linear-gradient(90deg, #fa709a 0%, #fee140 100%);
+}
+
+.subcontrol-details {
+    background: var(--light-gray);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.details-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    font-weight: var(--font-weight-medium);
+    font-size: 0.9rem;
+}
+
+.details-content {
+    display: grid;
+    gap: 8px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    background: white;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+.detail-item:hover {
+    background: var(--primary-color-alpha);
+}
+
+.detail-level {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    flex: 1;
+}
+
+.detail-count {
+    color: var(--primary-color);
+    font-weight: var(--font-weight-semibold);
+    font-size: 0.9rem;
+    background: var(--primary-color-alpha);
+    padding: 2px 8px;
+    border-radius: 10px;
+    min-width: 30px;
+    text-align: center;
+}
+
+.subcontrol-summary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    color: white;
+    padding: 24px;
+    border-radius: var(--border-radius-lg);
+    margin-top: 30px;
+}
+
+.summary-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+}
+
+.summary-item i {
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+
+.summary-value {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.summary-label {
+    display: block;
+    font-size: 0.85rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsive para subcontrol */
+@media (max-width: 1200px) {
+    .subcontrol-cards {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .subcontrol-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    .subcontrol-card {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .subcontrol-cards {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .subcontrol-card {
+        padding: 20px;
+    }
+    
+    .subcontrol-count {
+        font-size: 1.6rem;
+    }
+    
+    .summary-stats {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .subcontrol-intro {
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+    
+    .subcontrol-intro p {
+        font-size: 1rem;
+    }
+    
+    .subcontrol-card {
+        padding: 16px;
+    }
+    
+    .subcontrol-name {
+        font-size: 1rem;
+    }
+    
+    .subcontrol-summary {
+        padding: 20px;
+    }
+    
+    .summary-value {
+        font-size: 1.4rem;
+    }
+}
