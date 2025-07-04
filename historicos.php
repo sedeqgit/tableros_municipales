@@ -225,7 +225,8 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>Análisis Históricos del Sistema Educativo Corregidora (En proceso)</h1>
+                <h1>Análisis Históricos del Sistema Educativo Corregidora (En proceso, demo de diferentes elementos
+                    viusuales)</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">

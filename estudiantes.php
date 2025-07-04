@@ -136,7 +136,7 @@ if (count($años) >= 2) {
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>Estadísticas de Estudiantes en Escuelas Públicas ciclo 2023 - 2024</h1>
+                <h1>Estadísticas de Estudiantes en Escuelas Públicas ciclo 2023 - 2024 (se migró a alumnos.php)</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -151,7 +151,8 @@ if (count($años) >= 2) {
             <div class="matricula-panel animate-fade delay-1">
                 <div class="matricula-header">
                     <h3 class="matricula-title"><i class="fas fa-user-graduate"></i> Matrícula Total en Escuelas
-                        Públicas</h3>
+                        Públicas (página
+                        tentativa de históricos)</h3>
                     <div class="export-buttons">
                         <button id="export-btn" class="export-button">
                             <i class="fas fa-download"></i> Exportar

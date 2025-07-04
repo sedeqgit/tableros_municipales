@@ -1369,3 +1369,51 @@ function obtenerEscuelasPorSubcontrol()
 
     return $datosSubcontrol;
 }
+
+/**
+ * =============================================================================
+ * FUNCIÓN PARA OBTENER MATRÍCULA CONSOLIDADA POR NIVEL EDUCATIVO
+ * =============================================================================
+ * 
+ * Obtiene los datos de matrícula estudiantil consolidados por nivel educativo
+ * para el municipio de Corregidora, integrando todas las modalidades.
+ * 
+ * NIVELES INCLUIDOS:
+ * - Inicial Escolarizada y No Escolarizada
+ * - CAM (Centro de Atención Múltiple)
+ * - Preescolar (General, Indígena, Comunitario)
+ * - Primaria (General, Indígena, Comunitario)
+ * - Secundaria (General, Comunitario)
+ * - Media Superior (General, Tecnológico)
+ * - Superior (Carrera, Posgrado)
+ * 
+ * @return array Array con datos consolidados por nivel, sector y totales
+ */
+function obtenerMatriculaConsolidadaPorNivel()
+{
+    // Datos consolidados basados en consultas SQL validadas
+    $datosMatricula = [
+        'Inicial E' => ['publico' => 0, 'privado' => 643, 'total' => 643],
+        'Inicial NE' => ['publico' => 232, 'privado' => 0, 'total' => 232],
+        'CAM' => ['publico' => 210, 'privado' => 0, 'total' => 210],
+        'Preescolar' => ['publico' => 3122, 'privado' => 2905, 'total' => 6027],
+        'Primaria' => ['publico' => 12198, 'privado' => 7463, 'total' => 19661],
+        'Secundaria' => ['publico' => 5636, 'privado' => 3803, 'total' => 9439],
+        'Media Superior' => ['publico' => 6689, 'privado' => 2835, 'total' => 9524],
+        'Superior' => ['publico' => 1038, 'privado' => 1910, 'total' => 2948]
+    ];
+
+    // Calcular totales generales
+    $totalPublico = array_sum(array_column($datosMatricula, 'publico'));
+    $totalPrivado = array_sum(array_column($datosMatricula, 'privado'));
+    $totalGeneral = $totalPublico + $totalPrivado;
+
+    return [
+        'datos_por_nivel' => $datosMatricula,
+        'totales' => [
+            'publico' => $totalPublico,
+            'privado' => $totalPrivado,
+            'general' => $totalGeneral
+        ]
+    ];
+}

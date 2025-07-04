@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Iniciar servidor XAMPP",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-Command",
+				"Write-Host 'Iniciando servidor XAMPP para pruebas...' -ForegroundColor Green; Start-Process 'http://localhost/Corregidora/alumnos.php' -ErrorAction SilentlyContinue; Write-Host 'Servidor disponible en: http://localhost/Corregidora/' -ForegroundColor Cyan"
+			],
+			"group": "build",
+			"isBackground": false
+		}
+	]
+}
