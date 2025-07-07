@@ -253,7 +253,7 @@ $totalAlumnos = $totales['alumnos'];
                     Trabajo en proceso de estandarización.
                 </p>
                 <p class="modal-submessage">
-                    Ir a <strong>Estudiantes</strong> para muestra de funcionalidad.
+                    Ir a <strong>Históricos</strong> para muestra de funcionalidad.
                 </p>
             </div>
             <div class="modal-actions">

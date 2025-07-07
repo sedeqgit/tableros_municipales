@@ -202,10 +202,11 @@ function obtenerDatosEducativos()
 function obtenerMatriculaPorEscuelasPublicas()
 {
     // Datos por defecto en caso de que no se pueda conectar a la BD
+    // NOTA: Se agrega valor fijo de 232 a Inicial NE SOLO para ciclo 2023-2024
     $datosMatricula = array(
         // Estructurar los datos por año y subnivel
         '2018-2019' => array(
-            'Inicial NE' => 444,
+            'Inicial NE' => 444,  // Valor original sin ajuste
             'CAM' => 164,
             'Preescolar' => 3350,
             'Primaria' => 11621,
@@ -215,7 +216,7 @@ function obtenerMatriculaPorEscuelasPublicas()
         ),
         // Incluir los demás años como datos de respaldo
         '2019-2020' => array(
-            'Inicial NE' => 245,
+            'Inicial NE' => 245,  // Valor original sin ajuste
             'CAM' => 190,
             'Preescolar' => 3410,
             'Primaria' => 12148,
@@ -227,7 +228,15 @@ function obtenerMatriculaPorEscuelasPublicas()
         '2020-2021' => array(),
         '2021-2022' => array(),
         '2022-2023' => array(),
-        '2023-2024' => array(),
+        '2023-2024' => array(
+            'Inicial NE' => 232, // Valor fijo para este ciclo escolar
+            'CAM' => 210, // Valor corregido para CAM
+            'Preescolar' => 3122,
+            'Primaria' => 12198,
+            'Secundaria' => 5636,
+            'Media superior' => 6689,
+            'Superior' => 1038
+        ),
     );
 
     // Verificar si las funciones de PostgreSQL están disponibles
@@ -243,10 +252,14 @@ function obtenerMatriculaPorEscuelasPublicas()
     }
 
     // Consulta SQL para obtener los datos de matrícula por año y subnivel
+    // NOTA: Se agrega valor fijo de 232 a Inicial NE SOLO para ciclo 2023-2024
     $query = "SELECT 
                 anio, 
-                subnivel, 
-                cantidad_alumnos
+                subnivel,
+                CASE 
+                    WHEN subnivel = 'Inicial NE' AND anio = '2023-2024' THEN cantidad_alumnos + 232
+                    ELSE cantidad_alumnos
+                END as cantidad_alumnos
             FROM 
                 nonce_pano_23.matricula_escuelas_publicas
             ORDER BY 
@@ -273,7 +286,7 @@ function obtenerMatriculaPorEscuelasPublicas()
         while ($row = pg_fetch_assoc($result)) {
             $anio = $row['anio'];
             $subnivel = $row['subnivel'];
-            $cantidad = (int) $row['cantidad_alumnos'];
+            $cantidad = (int) $row['cantidad_alumnos']; // Ya incluye el valor fijo para Inicial NE
 
             // Inicializar el arreglo del año si no existe
             if (!isset($datosMatricula[$anio])) {
@@ -286,6 +299,22 @@ function obtenerMatriculaPorEscuelasPublicas()
 
         // Cerrar la conexión
         pg_close($link);
+    }
+
+    // ASEGURAR que los valores fijos críticos estén presentes para 2023-2024
+    // Esto es crítico porque pueden no existir registros en la BD para estos subniveles
+    if (!isset($datosMatricula['2023-2024'])) {
+        $datosMatricula['2023-2024'] = array();
+    }
+
+    // Valor fijo de 232 para Inicial NE solo en 2023-2024
+    if (!isset($datosMatricula['2023-2024']['Inicial NE'])) {
+        $datosMatricula['2023-2024']['Inicial NE'] = 232;
+    }
+
+    // Valor corregido de 210 para CAM en 2023-2024 
+    if (!isset($datosMatricula['2023-2024']['CAM'])) {
+        $datosMatricula['2023-2024']['CAM'] = 210;
     }
 
     return $datosMatricula;
@@ -1389,12 +1418,16 @@ function obtenerEscuelasPorSubcontrol()
  * 
  * @return array Array con datos consolidados por nivel, sector y totales
  */
-function obtenerMatriculaConsolidadaPorNivel()
+function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2023-2024')
 {
     // Datos consolidados basados en consultas SQL validadas
+    // NOTA: El valor fijo de 232 para Inicial NE solo se aplica al ciclo 2023-2024
+    $inicialNEPublico = ($cicloEscolar === '2023-2024') ? 232 : 0;
+    $inicialNETotal = $inicialNEPublico; // Solo hay público para Inicial NE
+
     $datosMatricula = [
         'Inicial E' => ['publico' => 0, 'privado' => 643, 'total' => 643],
-        'Inicial NE' => ['publico' => 232, 'privado' => 0, 'total' => 232],
+        'Inicial NE' => ['publico' => $inicialNEPublico, 'privado' => 0, 'total' => $inicialNETotal],
         'CAM' => ['publico' => 210, 'privado' => 0, 'total' => 210],
         'Preescolar' => ['publico' => 3122, 'privado' => 2905, 'total' => 6027],
         'Primaria' => ['publico' => 12198, 'privado' => 7463, 'total' => 19661],
@@ -1414,6 +1447,7 @@ function obtenerMatriculaConsolidadaPorNivel()
             'publico' => $totalPublico,
             'privado' => $totalPrivado,
             'general' => $totalGeneral
-        ]
+        ],
+        'ciclo_escolar' => $cicloEscolar
     ];
 }

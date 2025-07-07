@@ -123,10 +123,11 @@ if (count($años) >= 2) {
             <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
             <a href="resumen.php" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
             <a href="escuelas_detalle.php" class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
-            <a href="#" class="sidebar-link active"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
+            <a href="alumnos.php" class="sidebar-link"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
             <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i>
                 <span>Docentes</span></a>
-            <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
+            <a href="estudiantes.php" class="sidebar-link active"><i class="fas fa-history"></i>
+                <span>Históricos</span></a>
         </div>
     </div>
 
@@ -136,7 +137,7 @@ if (count($años) >= 2) {
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>Estadísticas de Estudiantes en Escuelas Públicas ciclo 2023 - 2024 (se migró a alumnos.php)</h1>
+                <h1>Estadísticas Históricas de Estudiantes en Escuelas Públicas</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -151,8 +152,7 @@ if (count($años) >= 2) {
             <div class="matricula-panel animate-fade delay-1">
                 <div class="matricula-header">
                     <h3 class="matricula-title"><i class="fas fa-user-graduate"></i> Matrícula Total en Escuelas
-                        Públicas (página
-                        tentativa de históricos)</h3>
+                        Públicas</h3>
                     <div class="export-buttons">
                         <button id="export-btn" class="export-button">
                             <i class="fas fa-download"></i> Exportar
