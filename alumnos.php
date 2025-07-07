@@ -92,10 +92,10 @@ foreach ($datosPorNivel as $nivel => $datos) {
             <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
             <a href="resumen.php" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
             <a href="escuelas_detalle.php" class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
-            <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
-            <a href="#" class="sidebar-link active"><i class="fas fa-users"></i><span>Matrícula por Nivel</span></a>
-            <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i><span>Docentes</span></a>
-            <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
+            <a href="#" class="sidebar-link active"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
+            <a href="docentes.php" class="sidebar-link"><i
+                    class="fas fa-chalkboard-teacher"></i><span>Docentes</span></a>
+            <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
         </div>
     </div>
 
@@ -105,7 +105,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>Matrícula Estudiantil por Nivel Educativo - Corregidora</h1>
+                <h1>Matrícula Estudiantil por Nivel Educativo (En proceso)</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -136,13 +136,17 @@ foreach ($datosPorNivel as $nivel => $datos) {
                         <div class="stat-box sector-publico">
                             <div class="stat-value"><?php echo number_format($totales['publico']); ?></div>
                             <div class="stat-label">Sector Público</div>
-                            <div class="stat-percentage"><?php echo round(($totales['publico'] / $totales['general']) * 100, 1); ?>%</div>
+                            <div class="stat-percentage">
+                                <?php echo round(($totales['publico'] / $totales['general']) * 100, 1); ?>%
+                            </div>
                             <div class="stat-icon"><i class="fas fa-university"></i></div>
                         </div>
                         <div class="stat-box sector-privado">
                             <div class="stat-value"><?php echo number_format($totales['privado']); ?></div>
                             <div class="stat-label">Sector Privado</div>
-                            <div class="stat-percentage"><?php echo round(($totales['privado'] / $totales['general']) * 100, 1); ?>%</div>
+                            <div class="stat-percentage">
+                                <?php echo round(($totales['privado'] / $totales['general']) * 100, 1); ?>%
+                            </div>
                             <div class="stat-icon"><i class="fas fa-building"></i></div>
                         </div>
                     </div>
@@ -169,9 +173,9 @@ foreach ($datosPorNivel as $nivel => $datos) {
                             </thead>
                             <tbody>
                                 <?php foreach ($datosPorNivel as $nivel => $datos): ?>
-                                    <?php 
-                                        $porcentajePublico = $datos['total'] > 0 ? round(($datos['publico'] / $datos['total']) * 100, 1) : 0;
-                                        $porcentajePrivado = $datos['total'] > 0 ? round(($datos['privado'] / $datos['total']) * 100, 1) : 0;
+                                    <?php
+                                    $porcentajePublico = $datos['total'] > 0 ? round(($datos['publico'] / $datos['total']) * 100, 1) : 0;
+                                    $porcentajePrivado = $datos['total'] > 0 ? round(($datos['privado'] / $datos['total']) * 100, 1) : 0;
                                     ?>
                                     <tr>
                                         <td class="nivel-nombre"><?php echo $nivel; ?></td>
@@ -186,11 +190,21 @@ foreach ($datosPorNivel as $nivel => $datos) {
                             <tfoot>
                                 <tr class="total-row">
                                     <td><strong>TOTAL GENERAL</strong></td>
-                                    <td class="sector-publico"><strong><?php echo number_format($totales['publico']); ?></strong></td>
-                                    <td class="sector-privado"><strong><?php echo number_format($totales['privado']); ?></strong></td>
-                                    <td class="total-nivel"><strong><?php echo number_format($totales['general']); ?></strong></td>
-                                    <td class="porcentaje-publico"><strong><?php echo round(($totales['publico'] / $totales['general']) * 100, 1); ?>%</strong></td>
-                                    <td class="porcentaje-privado"><strong><?php echo round(($totales['privado'] / $totales['general']) * 100, 1); ?>%</strong></td>
+                                    <td class="sector-publico">
+                                        <strong><?php echo number_format($totales['publico']); ?></strong>
+                                    </td>
+                                    <td class="sector-privado">
+                                        <strong><?php echo number_format($totales['privado']); ?></strong>
+                                    </td>
+                                    <td class="total-nivel">
+                                        <strong><?php echo number_format($totales['general']); ?></strong>
+                                    </td>
+                                    <td class="porcentaje-publico">
+                                        <strong><?php echo round(($totales['publico'] / $totales['general']) * 100, 1); ?>%</strong>
+                                    </td>
+                                    <td class="porcentaje-privado">
+                                        <strong><?php echo round(($totales['privado'] / $totales['general']) * 100, 1); ?>%</strong>
+                                    </td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -201,7 +215,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
             <!-- Panel de análisis de tendencias -->
             <div class="matricula-panel animate-fade delay-3">
                 <div class="matricula-header">
-                    <h3 class="matricula-title"><i class="fas fa-chart-line"></i> Análisis por Nivel</h3>
+                    <h3 class="matricula-title"><i class="fas fa-chart-line"></i> Análisis por Nivel (porcentaje del
+                        total del estado)</h3>
                     <div class="view-toggle">
                         <button id="toggle-view" class="toggle-button" data-view="cards">
                             <i class="fas fa-chart-bar"></i> Ver Gráfico
@@ -212,10 +227,10 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     <!-- Vista de tarjetas (por defecto) -->
                     <div id="cards-view" class="analysis-grid">
                         <?php foreach ($datosPorNivel as $nivel => $datos): ?>
-                            <?php 
-                                $porcentajePublico = $datos['total'] > 0 ? round(($datos['publico'] / $datos['total']) * 100, 1) : 0;
-                                $dominante = $datos['publico'] > $datos['privado'] ? 'público' : 'privado';
-                                $participacion = round(($datos['total'] / $totales['general']) * 100, 1);
+                            <?php
+                            $porcentajePublico = $datos['total'] > 0 ? round(($datos['publico'] / $datos['total']) * 100, 1) : 0;
+                            $dominante = $datos['publico'] > $datos['privado'] ? 'público' : 'privado';
+                            $participacion = round(($datos['total'] / $totales['general']) * 100, 1);
                             ?>
                             <div class="analysis-card">
                                 <div class="analysis-header">
@@ -240,8 +255,10 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                         </div>
                                     </div>
                                     <div class="progress-bar">
-                                        <div class="progress-publico" style="width: <?php echo $porcentajePublico; ?>%"></div>
-                                        <div class="progress-privado" style="width: <?php echo 100 - $porcentajePublico; ?>%"></div>
+                                        <div class="progress-publico" style="width: <?php echo $porcentajePublico; ?>%">
+                                        </div>
+                                        <div class="progress-privado"
+                                            style="width: <?php echo 100 - $porcentajePublico; ?>%"></div>
                                     </div>
                                 </div>
                             </div>
@@ -257,7 +274,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
         </div>
 
         <footer class="dashboard-footer">
-            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos reservados</p>
+            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
+                reservados</p>
         </footer>
     </div>
 
