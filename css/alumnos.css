@@ -22,6 +22,55 @@
  * @version 2.0
  */
 
+/* =============================================
+   PANELES DE MATRÍCULA
+   ============================================= */
+
+.matricula-panel {
+    background-color: var(--white);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 30px;
+    overflow: visible;
+    transition: var(--transition-normal);
+    border: 1px solid var(--light-gray);
+}
+
+
+.matricula-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    color: var(--white);
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.matricula-title {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: var(--font-weight-semibold);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: 0.3px;
+    font-family: var(--font-primary); /* Hanken Grotesk */
+    color: var(--white);
+}
+
+.matricula-title i {
+    font-size: 1.5rem;
+    opacity: 0.9;
+    color: var(--accent-aqua);
+}
+
+.matricula-body {
+    padding: 24px;
+    background-color: var(--light-gray);
+}
+
+
 /* =============================================================================
    ESTILOS ESPECÍFICOS PARA MATRÍCULA POR NIVEL
    ============================================================================= */
@@ -370,4 +419,209 @@
     .data-table {
         min-width: 400px; /* Ancho mínimo aún menor para pantallas muy pequeñas */
     }
+}
+
+/* =============================================================================
+   REGLAS ESPECÍFICAS PARA PANELES INDIVIDUALES
+   ============================================================================= */
+
+/* Panel de tabla detallada (delay-2) - Asegurar espacio suficiente para la tabla */
+.matricula-panel.delay-2 .table-container {
+    min-height: 500px;
+    padding-bottom: 20px;
+}
+
+.matricula-panel.delay-2 .matricula-body {
+    padding: 30px 24px;
+}
+
+/* Panel de análisis por nivel (aislado de herencia global) */
+.panel-nivelaislado {
+    overflow: visible !important;
+    min-height: auto !important;
+    height: auto !important;
+}
+
+.panel-nivelaislado .body-nivelaislado {
+    overflow: visible !important;
+    min-height: auto !important;
+    height: auto !important;
+    max-height: none !important;
+}
+
+.panel-nivelaislado .grid-nivelaislado {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    grid-template-rows: repeat(2, auto) !important;
+    gap: 20px !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    grid-auto-rows: auto !important;
+    height: auto !important;
+}
+
+.panel-nivelaislado .card-nivelaislado {
+    display: block !important;
+    visibility: visible !important;
+    position: relative !important;
+    min-height: 200px !important;
+    width: 300px;
+    box-sizing: border-box !important;
+    background: var(--white);
+    border-radius: var(--card-border-radius);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.header-nivelaislado {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    color: var(--white);
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.title-nivelaislado {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: var(--font-weight-semibold);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    letter-spacing: 0.3px;
+    font-family: var(--font-primary);
+    color: var(--white);
+}
+.toggle-nivelaislado {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+}
+.toggle-btn-nivelaislado {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.2s ease;
+    color: white;
+    font-weight: 500;
+}
+.toggle-btn-nivelaislado:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+.toggle-btn-nivelaislado.active {
+    background-color: var(--secondary-blue);
+    border-color: var(--secondary-blue);
+}
+.toggle-btn-nivelaislado i {
+    font-size: 16px;
+}
+.header-card-nivelaislado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.header-card-nivelaislado h4 {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-semibold);
+    margin: 0;
+}
+.participacion-nivelaislado {
+    background: var(--light-blue);
+    color: var(--text-accent);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: var(--font-weight-medium);
+}
+.content-nivelaislado {
+    /* igual que analysis-content */
+}
+.sectorinfo-nivelaislado {
+    margin-bottom: 15px;
+}
+.sectordom-nivelaislado {
+    margin-bottom: 10px;
+}
+.sectordom-nivelaislado.público .sectorvalue-nivelaislado {
+    color: var(--secondary-blue);
+    font-weight: var(--font-weight-bold);
+}
+.sectordom-nivelaislado.privado .sectorvalue-nivelaislado {
+    color: var(--tertiary-gray);
+    font-weight: var(--font-weight-bold);
+}
+.sectorlabel-nivelaislado {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-right: 8px;
+}
+.sectorstats-nivelaislado {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+.statmini-nivelaislado {
+    text-align: center;
+}
+.valuenivelaislado {
+    display: block;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+}
+.labelnivelaislado {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+.progressbar-nivelaislado {
+    height: 8px;
+    background: var(--medium-gray);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+}
+.progresspublico-nivelaislado {
+    background: var(--secondary-blue);
+    height: 100%;
+    transition: width var(--transition-normal);
+}
+.progressprivado-nivelaislado {
+    background: var(--tertiary-gray);
+    height: 100%;
+    transition: width var(--transition-normal);
+}
+@media (max-width: 1024px) {
+    .panel-nivelaislado .body-nivelaislado .grid-nivelaislado {
+        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-rows: repeat(4, auto) !important;
+    }
+}
+@media (max-width: 768px) {
+    .panel-nivelaislado .body-nivelaislado .grid-nivelaislado {
+        grid-template-columns: 1fr !important;
+        grid-template-rows: repeat(8, auto) !important;
+    }
+}
+
+.stat-box:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-3px) scale(1.015);
+    z-index: 2;
+    transition: box-shadow 0.25s cubic-bezier(0.4,0,0.2,1), transform 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
+.panel-nivelaislado .card-nivelaislado:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-3px) scale(1.001);
+    z-index: 2;
+    transition: box-shadow 0.25s cubic-bezier(0.4,0,0.2,1), transform 0.25s cubic-bezier(0.4,0,0.2,1);
 }

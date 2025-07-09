@@ -68,11 +68,10 @@ foreach ($datosPorNivel as $nivel => $datos) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matrícula Estudiantil | SEDEQ</title>
+    <link rel="stylesheet" href="./css/alumnos.css">
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/sidebar.css">
     <link rel="stylesheet" href="./css/resumen.css">
-    <link rel="stylesheet" href="./css/estudiantes.css">
-    <link rel="stylesheet" href="./css/alumnos.css">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Bibliotecas para exportación -->
@@ -212,52 +211,54 @@ foreach ($datosPorNivel as $nivel => $datos) {
                 </div>
             </div>
 
-            <!-- Panel de análisis de tendencias -->
-            <div class="matricula-panel animate-fade delay-3">
-                <div class="matricula-header">
-                    <h3 class="matricula-title"><i class="fas fa-chart-line"></i> Análisis por Nivel (porcentaje del
+            <!-- Panel de análisis de tendencias (aislado de herencia global) -->
+            <div class="matricula-panel animate-fade delay-3 panel-nivelaislado">
+                <div class="header-nivelaislado">
+                    <h3 class="title-nivelaislado"><i class="fas fa-chart-line"></i> Análisis por Nivel (porcentaje del
                         total del estado)</h3>
-                    <div class="view-toggle">
-                        <button id="toggle-view" class="toggle-button" data-view="cards">
+                    <div class="toggle-nivelaislado">
+                        <button id="toggle-view" class="toggle-btn-nivelaislado" data-view="cards">
                             <i class="fas fa-chart-bar"></i> Ver Gráfico
                         </button>
                     </div>
                 </div>
-                <div class="matricula-body">
+                <div class="body-nivelaislado">
                     <!-- Vista de tarjetas (por defecto) -->
-                    <div id="cards-view" class="analysis-grid">
+                    <div id="cards-view" class="grid-nivelaislado">
                         <?php foreach ($datosPorNivel as $nivel => $datos): ?>
                             <?php
                             $porcentajePublico = $datos['total'] > 0 ? round(($datos['publico'] / $datos['total']) * 100, 1) : 0;
                             $dominante = $datos['publico'] > $datos['privado'] ? 'público' : 'privado';
                             $participacion = round(($datos['total'] / $totales['general']) * 100, 1);
                             ?>
-                            <div class="analysis-card">
-                                <div class="analysis-header">
+                            <div class="card-nivelaislado">
+                                <div class="header-card-nivelaislado">
                                     <h4><?php echo $nivel; ?></h4>
-                                    <span class="participacion"><?php echo $participacion; ?>% del total</span>
+                                    <span class="participacion-nivelaislado"><?php echo $participacion; ?>% del total</span>
                                 </div>
-                                <div class="analysis-content">
-                                    <div class="sector-info">
-                                        <div class="sector-dominant <?php echo $dominante; ?>">
-                                            <span class="sector-label">Sector dominante:</span>
-                                            <span class="sector-value"><?php echo ucfirst($dominante); ?></span>
+                                <div class="content-nivelaislado">
+                                    <div class="sectorinfo-nivelaislado">
+                                        <div class="sectordom-nivelaislado <?php echo $dominante; ?>">
+                                            <span class="sectorlabel-nivelaislado">Sector dominante:</span>
+                                            <span class="sectorvalue-nivelaislado"><?php echo ucfirst($dominante); ?></span>
                                         </div>
-                                        <div class="sector-stats">
-                                            <div class="stat-mini">
-                                                <span class="value"><?php echo number_format($datos['publico']); ?></span>
-                                                <span class="label">Públicos</span>
+                                        <div class="sectorstats-nivelaislado">
+                                            <div class="statmini-nivelaislado">
+                                                <span
+                                                    class="valuenivelaislado"><?php echo number_format($datos['publico']); ?></span>
+                                                <span class="labelnivelaislado">Públicos</span>
                                             </div>
-                                            <div class="stat-mini">
-                                                <span class="value"><?php echo number_format($datos['privado']); ?></span>
-                                                <span class="label">Privados</span>
+                                            <div class="statmini-nivelaislado">
+                                                <span
+                                                    class="valuenivelaislado"><?php echo number_format($datos['privado']); ?></span>
+                                                <span class="labelnivelaislado">Privados</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="progress-bar">
-                                        <div class="progress-publico" style="width: <?php echo $porcentajePublico; ?>%">
-                                        </div>
-                                        <div class="progress-privado"
+                                    <div class="progressbar-nivelaislado">
+                                        <div class="progresspublico-nivelaislado"
+                                            style="width: <?php echo $porcentajePublico; ?>%"></div>
+                                        <div class="progressprivado-nivelaislado"
                                             style="width: <?php echo 100 - $porcentajePublico; ?>%"></div>
                                     </div>
                                 </div>
