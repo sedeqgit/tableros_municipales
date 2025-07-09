@@ -259,7 +259,7 @@ $totalAlumnos = $totales['alumnos'];
             <div class="modal-actions">
                 <button class="btn-secondary" id="cancelBtn">Cerrar</button>
                 <button class="btn-primary" id="goToStudents">
-                    <i class="fas fa-user-graduate"></i> Ir a Estudiantes
+                    <i class="fas fa-user-graduate"></i> Ir a Históricos
                 </button>
             </div>
         </div>
