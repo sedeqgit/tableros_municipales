@@ -1451,3 +1451,188 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2023-2024')
         'ciclo_escolar' => $cicloEscolar
     ];
 }
+/**
+ * =============================================================================
+ * FUNCIÓN PARA OBTENER MATRÍCULA CONSOLIDADA POR NIVEL EDUCATIVO Y GÉNERO
+ * =============================================================================
+ *
+ * Devuelve la matrícula total de alumnos por nivel educativo, desglosada en hombres, mujeres y total,
+ * para el municipio de Corregidora, ciclo 2023-2024. Incluye valores fijos para Preescolar y CAM.
+ *
+ * @return array Array con los datos de matrícula por nivel educativo y género
+ */
+function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2023-2024')
+{
+    // Solo implementado para ciclo 2023-2024 y municipio Corregidora
+    $datos = array();
+    if ($cicloEscolar !== '2023-2024') {
+        return $datos;
+    }
+
+    // Verificar si las funciones de PostgreSQL están disponibles
+    if (!function_exists('pg_connect')) {
+        return $datos;
+    }
+
+    $link = Conectarse();
+    if (!$link) {
+        return $datos;
+    }
+
+    $query = "
+SELECT 'Inicial Escolarizada' AS nivel, COALESCE(SUM(v390 + v406),0) AS hombres, COALESCE(SUM(v394 + v410),0) AS
+mujeres, COALESCE(SUM(v390 + v406 + v394 + v410),0) AS total
+FROM nonce_pano_23.ini_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND c_nom_mun = 'CORREGIDORA'
+
+UNION ALL
+SELECT 'Inicial No Escolarizada',
+COALESCE((SELECT SUM(v129) FROM nonce_pano_23.ini_ne_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
+c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v79) FROM nonce_pano_23.ini_comuni_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
+'CORREGIDORA'),0) AS hombres,
+COALESCE((SELECT SUM(v130) FROM nonce_pano_23.ini_ne_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
+c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v80) FROM nonce_pano_23.ini_comuni_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
+'CORREGIDORA'),0) AS mujeres,
+(
+COALESCE((SELECT SUM(v129) FROM nonce_pano_23.ini_ne_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
+c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v79) FROM nonce_pano_23.ini_comuni_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
+'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v130) FROM nonce_pano_23.ini_ne_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
+c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v80) FROM nonce_pano_23.ini_comuni_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
+'CORREGIDORA'),0)
+) AS total
+
+UNION ALL
+SELECT 'CAM', 137 AS hombres, 73 AS mujeres, 210 AS total
+
+UNION ALL
+SELECT 'Preescolar',
+COALESCE((SELECT SUM(v165) FROM nonce_pano_23.pree_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
+c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v165) FROM nonce_pano_23.pree_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
+'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v85) FROM nonce_pano_23.pree_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+AND c_nom_mun = 'CORREGIDORA'),0)
++ 48 AS hombres,
+COALESCE((SELECT SUM(v171) FROM nonce_pano_23.pree_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
+c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v171) FROM nonce_pano_23.pree_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
+'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v91) FROM nonce_pano_23.pree_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+AND c_nom_mun = 'CORREGIDORA'),0)
++ 41 AS mujeres,
+(
+COALESCE((SELECT SUM(v165) FROM nonce_pano_23.pree_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
+c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v165) FROM nonce_pano_23.pree_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
+'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v85) FROM nonce_pano_23.pree_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v171) FROM nonce_pano_23.pree_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v171) FROM nonce_pano_23.pree_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
+'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v91) FROM nonce_pano_23.pree_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+AND c_nom_mun = 'CORREGIDORA'),0)
++ 89
+) AS total
+
+UNION ALL
+SELECT 'Primaria',
+COALESCE((SELECT SUM(v562 + v573) FROM nonce_pano_23.prim_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
+10) AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v564 + v575) FROM nonce_pano_23.prim_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
+'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v469 + v480) FROM nonce_pano_23.prim_comuni_23 WHERE (cv_estatus_captura = 0 OR
+cv_estatus_captura = 10) AND c_nom_mun = 'CORREGIDORA'),0) AS hombres,
+COALESCE((SELECT SUM(v585 + v596) FROM nonce_pano_23.prim_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
+10) AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v587 + v598) FROM nonce_pano_23.prim_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
+'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v492 + v503) FROM nonce_pano_23.prim_comuni_23 WHERE (cv_estatus_captura = 0 OR
+cv_estatus_captura = 10) AND c_nom_mun = 'CORREGIDORA'),0) AS mujeres,
+(
+COALESCE((SELECT SUM(v562 + v573) FROM nonce_pano_23.prim_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
+10) AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v564 + v575) FROM nonce_pano_23.prim_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
+'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v469 + v480) FROM nonce_pano_23.prim_comuni_23 WHERE (cv_estatus_captura = 0 OR
+cv_estatus_captura = 10) AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v585 + v596) FROM nonce_pano_23.prim_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura
+= 10) AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v587 + v598) FROM nonce_pano_23.prim_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
+'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v492 + v503) FROM nonce_pano_23.prim_comuni_23 WHERE (cv_estatus_captura = 0 OR
+cv_estatus_captura = 10) AND c_nom_mun = 'CORREGIDORA'),0)
+) AS total
+
+UNION ALL
+SELECT 'Secundaria',
+COALESCE((SELECT SUM(v306 + v314) FROM nonce_pano_23.sec_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
+10) AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v223 + v231) FROM nonce_pano_23.sec_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura
+= 10) AND c_nom_mun = 'CORREGIDORA'),0) AS hombres,
+COALESCE((SELECT SUM(v323 + v331) FROM nonce_pano_23.sec_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
+10) AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v240 + v248) FROM nonce_pano_23.sec_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura
+= 10) AND c_nom_mun = 'CORREGIDORA'),0) AS mujeres,
+(
+COALESCE((SELECT SUM(v306 + v314) FROM nonce_pano_23.sec_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
+10) AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v223 + v231) FROM nonce_pano_23.sec_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura
+= 10) AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v323 + v331) FROM nonce_pano_23.sec_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
+10) AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v240 + v248) FROM nonce_pano_23.sec_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura
+= 10) AND c_nom_mun = 'CORREGIDORA'),0)
+) AS total
+
+UNION ALL
+SELECT 'Media Superior',
+COALESCE((SELECT SUM(v395) FROM nonce_pano_23.ms_gral_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v470) FROM nonce_pano_23.ms_tecno_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0) AS
+hombres,
+COALESCE((SELECT SUM(v396) FROM nonce_pano_23.ms_gral_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v471) FROM nonce_pano_23.ms_tecno_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0) AS
+mujeres,
+(
+COALESCE((SELECT SUM(v395) FROM nonce_pano_23.ms_gral_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v470) FROM nonce_pano_23.ms_tecno_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v396) FROM nonce_pano_23.ms_gral_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v471) FROM nonce_pano_23.ms_tecno_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
+) AS total
+
+UNION ALL
+SELECT 'Superior',
+COALESCE((SELECT SUM(v175) FROM nonce_pano_23.sup_carrera_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v140) FROM nonce_pano_23.sup_posgrado_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0) AS
+hombres,
+COALESCE((SELECT SUM(v176) FROM nonce_pano_23.sup_carrera_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v141) FROM nonce_pano_23.sup_posgrado_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0) AS
+mujeres,
+(
+COALESCE((SELECT SUM(v175) FROM nonce_pano_23.sup_carrera_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v140) FROM nonce_pano_23.sup_posgrado_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v176) FROM nonce_pano_23.sup_carrera_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
++ COALESCE((SELECT SUM(v141) FROM nonce_pano_23.sup_posgrado_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
+) AS total
+";
+
+    $result = pg_query($link, $query);
+    if ($result && pg_num_rows($result) > 0) {
+        while ($row = pg_fetch_assoc($result)) {
+            $datos[] = array(
+                'nivel' => $row['nivel'],
+                'hombres' => (int) $row['hombres'],
+                'mujeres' => (int) $row['mujeres'],
+                'total' => (int) $row['total']
+            );
+        }
+        pg_free_result($result);
+    }
+    pg_close($link);
+    return $datos;
+}

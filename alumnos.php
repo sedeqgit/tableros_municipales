@@ -45,6 +45,9 @@ require_once 'conexion.php';
 // Obtener datos consolidados de matrícula por nivel educativo
 $datosMatricula = obtenerMatriculaConsolidadaPorNivel();
 
+// Obtener desglose por género (matrícula por nivel y género)
+$matriculaPorGenero = obtenerMatriculaPorNivelYGenero();
+
 // Extraer datos organizados
 $datosPorNivel = $datosMatricula['datos_por_nivel'];
 $totales = $datosMatricula['totales'];
@@ -155,7 +158,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
             <!-- Panel de tabla detallada -->
             <div class="matricula-panel animate-fade delay-2">
                 <div class="matricula-header">
-                    <h3 class="matricula-title"><i class="fas fa-table"></i> Datos Detallados por Nivel</h3>
+                    <h3 class="matricula-title"><i class="fas fa-table"></i> Desgloce por Sostenimiento</h3>
                 </div>
                 <div class="matricula-body">
                     <div class="table-container">
@@ -214,7 +217,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
             <!-- Panel de análisis de tendencias (aislado de herencia global) -->
             <div class="matricula-panel animate-fade delay-3 panel-nivelaislado">
                 <div class="header-nivelaislado">
-                    <h3 class="title-nivelaislado"><i class="fas fa-chart-line"></i> Análisis por Nivel (porcentaje del
+                    <h3 class="title-nivelaislado"><i class="fas fa-chart-line"></i> Análisis por Nivel Educativo
+                        (porcentaje del
                         total del estado)</h3>
                     <div class="toggle-nivelaislado">
                         <button id="toggle-view" class="toggle-btn-nivelaislado" data-view="cards">
@@ -269,6 +273,124 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     <!-- Vista de gráfico (oculta por defecto) -->
                     <div id="chart-view" class="chart-container" style="display: none;">
                         <div id="chart-comparativo" style="width:100%; height:500px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de tabla detallada por género (diseño igual que Análisis por Nivel) -->
+            <div class="matricula-panel animate-fade delay-4 matricula-genero">
+                <div class="matricula-header">
+                    <h3 class="matricula-title"><i class="fas fa-venus-mars"></i> Matrícula por Género</h3>
+                </div>
+                <div class="matricula-body">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Nivel Educativo</th>
+                                    <th><i class="fas fa-mars"></i> Hombres</th>
+                                    <th><i class="fas fa-venus"></i> Mujeres</th>
+                                    <th>Total</th>
+                                    <th>% Hombres</th>
+                                    <th>% Mujeres</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $totalHombres = 0;
+                                $totalMujeres = 0;
+                                $totalGeneralGenero = 0;
+                                foreach ($matriculaPorGenero as $fila):
+                                    $totalHombres += $fila['hombres'];
+                                    $totalMujeres += $fila['mujeres'];
+                                    $totalGeneralGenero += $fila['total'];
+                                    $porcH = $fila['total'] > 0 ? round(($fila['hombres'] / $fila['total']) * 100, 1) : 0;
+                                    $porcM = $fila['total'] > 0 ? round(($fila['mujeres'] / $fila['total']) * 100, 1) : 0;
+                                    ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($fila['nivel']); ?></td>
+                                        <td class="col-hombres"><?php echo number_format($fila['hombres']); ?></td>
+                                        <td class="col-mujeres"><?php echo number_format($fila['mujeres']); ?></td>
+                                        <td><?php echo number_format($fila['total']); ?></td>
+                                        <td><?php echo $porcH; ?>%</td>
+                                        <td><?php echo $porcM; ?>%</td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                            <tfoot>
+                                <tr class="total-row">
+                                    <td><strong>TOTAL GENERAL</strong></td>
+                                    <td class="col-hombres"><strong><?php echo number_format($totalHombres); ?></strong>
+                                    </td>
+                                    <td class="col-mujeres"><strong><?php echo number_format($totalMujeres); ?></strong>
+                                    </td>
+                                    <td><strong><?php echo number_format($totalGeneralGenero); ?></strong></td>
+                                    <td><strong><?php echo $totalGeneralGenero > 0 ? round(($totalHombres / $totalGeneralGenero) * 100, 1) : 0; ?>%</strong>
+                                    </td>
+                                    <td><strong><?php echo $totalGeneralGenero > 0 ? round(($totalMujeres / $totalGeneralGenero) * 100, 1) : 0; ?>%</strong>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de análisis de tendencias por género (tarjetas, diseño igual que Análisis por Nivel) -->
+            <div class="matricula-panel animate-fade delay-5 panel-nivelaislado panel-genero">
+                <div class="header-nivelaislado">
+                    <h3 class="title-nivelaislado"><i class="fas fa-venus-mars"></i> Análisis por Nivel</h3>
+                </div>
+                <div class="body-nivelaislado">
+                    <div id="cards-view-genero" class="grid-nivelaislado">
+                        <?php foreach ($matriculaPorGenero as $fila): ?>
+                            <?php
+                            $porcH = $fila['total'] > 0 ? round(($fila['hombres'] / $fila['total']) * 100, 1) : 0;
+                            $porcM = $fila['total'] > 0 ? round(($fila['mujeres'] / $fila['total']) * 100, 1) : 0;
+                            $dominante = $fila['hombres'] > $fila['mujeres'] ? 'hombres' : 'mujeres';
+                            $participacion = $totalGeneralGenero > 0 ? round(($fila['total'] / $totalGeneralGenero) * 100, 1) : 0;
+                            ?>
+                            <div class="card-nivelaislado">
+                                <div class="header-card-nivelaislado">
+                                    <h4><?php echo htmlspecialchars($fila['nivel']); ?></h4>
+                                    <span class="participacion-nivelaislado" style="color: var(--text-accent)">
+                                        <?php echo $participacion; ?>% del total</span>
+                                </div>
+                                <div class="content-nivelaislado">
+                                    <div class="sectorinfo-nivelaislado">
+                                        <div class="sectordom-nivelaislado <?php echo $dominante; ?>"
+                                            style="font-weight:bold;">
+                                            <span class="sectorlabel-nivelaislado">Género dominante:</span>
+                                            <span class="sectorvalue-nivelaislado"
+                                                style="color:<?php echo $dominante == 'hombres' ? '#5b8df6' : '#f472b6'; ?>;">
+                                                <?php echo ucfirst($dominante); ?>
+                                            </span>
+                                        </div>
+                                        <div class="sectorstats-nivelaislado">
+                                            <div class="statmini-nivelaislado">
+                                                <span class="valuenivelaislado" style="color:#5b8df6;">
+                                                    <?php echo number_format($fila['hombres']); ?> </span>
+                                                <span class="labelnivelaislado">Hombres</span>
+                                            </div>
+                                            <div class="statmini-nivelaislado">
+                                                <span class="valuenivelaislado" style="color:#f472b6;">
+                                                    <?php echo number_format($fila['mujeres']); ?> </span>
+                                                <span class="labelnivelaislado">Mujeres</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="progressbar-nivelaislado"
+                                        style="height: 18px; background: #ede9fe; border-radius: 8px; overflow: hidden;">
+                                        <div class="progresspublico-nivelaislado"
+                                            style="width: <?php echo $porcH; ?>%; background: #5b8df6; height: 100%; float:left;">
+                                        </div>
+                                        <div class="progressprivado-nivelaislado"
+                                            style="width: <?php echo $porcM; ?>%; background: #f472b6; height: 100%; float:left;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>

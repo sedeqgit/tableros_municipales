@@ -386,6 +386,67 @@
     border-top-right-radius: var(--border-radius-md) !important;
 }
 
+/* =============================
+   DIFERENCIACIÓN SUTIL DE SECCIONES POR GÉNERO
+   ================================ */
+
+.matricula-panel.matricula-genero {
+    border-left: 5px solid var(--accent-magenta);
+    box-shadow: var(--shadow-md);
+}
+.matricula-panel.matricula-genero .matricula-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    color: var(--white);
+}
+.matricula-panel.matricula-genero .matricula-title i {
+    color: var(--white);
+}
+
+.panel-nivelaislado.panel_genero {
+    border-left: 5px solid var(--accent-magenta);
+    box-shadow: var(--shadow-md);
+}
+.panel-nivelaislado.panel_genero .header-nivelaislado {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    color: var(--white);
+}
+.panel-nivelaislado.panel_genero .title-nivelaislado i {
+    color: var(--accent-magenta);
+}
+.panel-nivelaislado.panel_genero .participacion-nivelaislado {
+    color: var(--accent-magenta);
+}
+
+/* Matrícula por Género: mayor altura para evitar scroll */
+.matricula-panel.matricula-genero .table-container {
+    min-height: 520px;
+    padding-bottom: 20px;
+}
+.matricula-panel.matricula-genero .matricula-body {
+    padding: 30px 24px;
+}
+
+/* Panel de análisis visual por género: borde magenta igual que la tabla */
+.panel-nivelaislado.panel-genero {
+    border-left: 5px solid var(--accent-magenta);
+    box-shadow: var(--shadow-md);
+}
+
+/* Barra de progreso fina y sutil para género (igual que análisis por nivel) */
+.panel-nivelaislado.panel-genero .progressbar-nivelaislado {
+    height: 8px !important;
+    background: var(--medium-gray);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    margin-top: 0;
+}
+.panel-nivelaislado.panel_genero .progressprivado-nivelaislado {
+    background: var(--accent-magenta);
+    height: 100%;
+    transition: width var(--transition-normal);
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .stats-row {
@@ -583,6 +644,7 @@
     font-weight: var(--font-weight-bold);
 }
 .sectorlabel-nivelaislado {
+ 
     color: var(--text-secondary);
     font-size: 0.9rem;
     margin-right: 8px;
@@ -647,4 +709,23 @@
     transform: translateY(-3px) scale(1.001);
     z-index: 2;
     transition: box-shadow 0.25s cubic-bezier(0.4,0,0.2,1), transform 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
+.data-table .col-hombres {
+    background-color: transparent;
+    color: #5b8df6; /* Azul menos intenso */
+    font-weight: var(--font-weight-medium);
+}
+.data-table .col-mujeres {
+    background-color: transparent;
+    color: #f472b6; /* Rosa menos intenso */
+    font-weight: var(--font-weight-medium);
+}
+.data-table .total-row .col-hombres,
+.data-table .total-row .col-hombres strong {
+    color: #5b8df6 !important;
+}
+.data-table .total-row .col-mujeres,
+.data-table .total-row .col-mujeres strong {
+    color: #f472b6 !important;
 }
