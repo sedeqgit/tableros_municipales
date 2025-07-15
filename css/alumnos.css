@@ -111,6 +111,14 @@
     background: var(--tertiary-gray); /* Gris para privado */
 }
 
+.stat-box.sector-hombres::before {
+    background: #5b8df6; /* Azul para público */
+}
+
+.stat-box.sector-mujeres::before {
+    background: #f472b6; /* Gris para privado */
+}
+
 .stat-box.total-general::before {
     background: linear-gradient(90deg, var(--primary-blue), var(--accent-aqua));
 }

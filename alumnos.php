@@ -118,6 +118,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
         </div>
 
         <div class="container-fluid">
+
             <!-- Panel de resumen general -->
             <div class="matricula-panel animate-fade delay-1">
                 <div class="matricula-header">
@@ -154,7 +155,6 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     </div>
                 </div>
             </div>
-
             <!-- Panel de tabla detallada -->
             <div class="matricula-panel animate-fade delay-2">
                 <div class="matricula-header">
@@ -219,7 +219,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
                 <div class="header-nivelaislado">
                     <h3 class="title-nivelaislado"><i class="fas fa-chart-line"></i> Análisis por Nivel Educativo
                         (porcentaje del
-                        total del estado)</h3>
+                        total del municipio)</h3>
                     <div class="toggle-nivelaislado">
                         <button id="toggle-view" class="toggle-btn-nivelaislado" data-view="cards">
                             <i class="fas fa-chart-bar"></i> Ver Gráfico
@@ -276,7 +276,50 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     </div>
                 </div>
             </div>
-
+            <!-- Panel de resumen general por género -->
+            <div class="matricula-panel animate-fade delay-2">
+                <div class="matricula-header">
+                    <h3 class="matricula-title"><i class="fas fa-venus-mars"></i> Resumen General por Género</h3>
+                </div>
+                <div class="matricula-body">
+                    <div class="stats-row">
+                        <?php
+                        // Calcular totales de hombres y mujeres
+                        $totalHombres = 0;
+                        $totalMujeres = 0;
+                        $totalGeneralGenero = 0;
+                        foreach ($matriculaPorGenero as $fila) {
+                            $totalHombres += $fila['hombres'];
+                            $totalMujeres += $fila['mujeres'];
+                            $totalGeneralGenero += $fila['total'];
+                        }
+                        ?>
+                        <div class="stat-box total-general">
+                            <div class="stat-value"><?php echo number_format($totalGeneralGenero); ?></div>
+                            <div class="stat-label">Total de Alumnos</div>
+                            <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        </div>
+                        <div class="stat-box sector-hombres">
+                            <div class="stat-value"><?php echo number_format($totalHombres); ?>
+                            </div>
+                            <div class="stat-label">Total Hombres</div>
+                            <div class="stat-percentage">
+                                <?php echo $totalGeneralGenero > 0 ? round(($totalHombres / $totalGeneralGenero) * 100, 1) : 0; ?>%
+                            </div>
+                            <div class="stat-icon"><i class="fas fa-mars"></i></div>
+                        </div>
+                        <div class="stat-box sector-mujeres">
+                            <div class="stat-value"><?php echo number_format($totalMujeres); ?>
+                            </div>
+                            <div class="stat-label">Total Mujeres</div>
+                            <div class="stat-percentage">
+                                <?php echo $totalGeneralGenero > 0 ? round(($totalMujeres / $totalGeneralGenero) * 100, 1) : 0; ?>%
+                            </div>
+                            <div class="stat-icon"><i class="fas fa-venus"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- Panel de tabla detallada por género (diseño igual que Análisis por Nivel) -->
             <div class="matricula-panel animate-fade delay-4 matricula-genero">
                 <div class="matricula-header">
