@@ -128,6 +128,9 @@ if (count($años) >= 2) {
                 <span>Docentes</span></a>
             <a href="estudiantes.php" class="sidebar-link active"><i class="fas fa-history"></i>
                 <span>Históricos</span></a>
+            <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
+                    Históricos</span></a>
+
         </div>
     </div>
 
