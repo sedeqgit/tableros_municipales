@@ -448,7 +448,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
         <div class="matricula-panel animate-fade delay-6">
             <div class="matricula-header">
                 <h3 class="matricula-title"><i class="fas fa-wheelchair"></i> Resumen General de Alumnos con
-                    Discapacidad</h3>
+                    Discapacidad (datos demo)</h3>
             </div>
             <div class="matricula-body">
                 <div class="stats-row">
@@ -492,7 +492,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
         <div class="matricula-panel animate-fade delay-7 matricula-genero">
             <div class="matricula-header">
                 <h3 class="matricula-title"><i class="fas fa-wheelchair"></i> Alumnos con Discapacidad por Nivel
-                    Educativo</h3>
+                    Educativo (datos demo)</h3>
             </div>
             <div class="matricula-body">
                 <div class="table-container">
@@ -533,9 +533,11 @@ foreach ($datosPorNivel as $nivel => $datos) {
                             <tr class="total-row">
                                 <td><strong>TOTAL GENERAL</strong></td>
                                 <td class="col-hombres">
-                                    <strong><?php echo number_format($totalHombresDiscapacidad); ?></strong></td>
+                                    <strong><?php echo number_format($totalHombresDiscapacidad); ?></strong>
+                                </td>
                                 <td class="col-mujeres">
-                                    <strong><?php echo number_format($totalMujeresDiscapacidad); ?></strong></td>
+                                    <strong><?php echo number_format($totalMujeresDiscapacidad); ?></strong>
+                                </td>
                                 <td><strong><?php echo number_format($totalGeneralDiscapacidad); ?></strong></td>
                                 <td><strong><?php echo $totalGeneralDiscapacidad > 0 ? round(($totalHombresDiscapacidad / $totalGeneralDiscapacidad) * 100, 1) : 0; ?>%</strong>
                                 </td>
@@ -552,7 +554,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
         <div class="matricula-panel animate-fade delay-8 panel-nivelaislado panel-discapacidad">
             <div class="header-nivelaislado">
                 <h3 class="title-nivelaislado"><i class="fas fa-wheelchair"></i> Análisis de Discapacidad por Nivel
-                    Educativo</h3>
+                    Educativo (datos demo)</h3>
             </div>
             <div class="body-nivelaislado">
                 <div id="cards-view-discapacidad" class="grid-nivelaislado">
