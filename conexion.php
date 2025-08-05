@@ -1418,23 +1418,220 @@ function obtenerEscuelasPorSubcontrol()
  * 
  * @return array Array con datos consolidados por nivel, sector y totales
  */
-function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2023-2024')
+function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
 {
-    // Datos consolidados basados en consultas SQL validadas
-    // NOTA: El valor fijo de 232 para Inicial NE solo se aplica al ciclo 2023-2024
-    $inicialNEPublico = ($cicloEscolar === '2023-2024') ? 232 : 0;
-    $inicialNETotal = $inicialNEPublico; // Solo hay público para Inicial NE
+    // Verificar si las funciones de PostgreSQL están disponibles
+    if (!function_exists('pg_connect')) {
+        return [
+            'datos_por_nivel' => [],
+            'totales' => ['publico' => 0, 'privado' => 0, 'general' => 0],
+            'ciclo_escolar' => $cicloEscolar
+        ];
+    }
 
-    $datosMatricula = [
-        'Inicial E' => ['publico' => 0, 'privado' => 643, 'total' => 643],
-        'Inicial NE' => ['publico' => $inicialNEPublico, 'privado' => 0, 'total' => $inicialNETotal],
-        'CAM' => ['publico' => 210, 'privado' => 0, 'total' => 210],
-        'Preescolar' => ['publico' => 3122, 'privado' => 2905, 'total' => 6027],
-        'Primaria' => ['publico' => 12198, 'privado' => 7463, 'total' => 19661],
-        'Secundaria' => ['publico' => 5636, 'privado' => 3803, 'total' => 9439],
-        'Media Superior' => ['publico' => 6689, 'privado' => 2835, 'total' => 9524],
-        'Superior' => ['publico' => 1038, 'privado' => 1910, 'total' => 2948]
-    ];
+    $link = Conectarse();
+    if (!$link) {
+        return [
+            'datos_por_nivel' => [],
+            'totales' => ['publico' => 0, 'privado' => 0, 'general' => 0],
+            'ciclo_escolar' => $cicloEscolar
+        ];
+    }
+
+    // Consulta consolidada que obtiene todos los niveles educativos desde nonce_pano_24
+    $query = "
+    -- INICIAL ESCOLARIZADO
+    SELECT 'Inicial E' as nivel_educativo,
+        control,
+        SUM(V398 + V414) as total_alumnos
+    FROM nonce_pano_24.ini_gral_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    GROUP BY control
+    
+    UNION ALL
+    
+    -- INICIAL NO ESCOLARIZADO
+    SELECT 'Inicial NE' as nivel_educativo,
+        'PUBLICO' as control,
+        SUM(V129 + V130) as total_alumnos
+    FROM nonce_pano_24.ini_ne_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    
+    UNION ALL
+    
+    SELECT 'Inicial NE' as nivel_educativo,
+        'PUBLICO' as control,
+        SUM(V79 + V80) as total_alumnos
+    FROM nonce_pano_24.ini_comuni_24
+    WHERE cv_estatus_captura = 0
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    
+    UNION ALL
+    
+    -- CAM
+    SELECT 'CAM' as nivel_educativo,
+        'PUBLICO' as control,
+        SUM(v2264) as total_alumnos
+    FROM nonce_pano_24.esp_cam_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    
+    UNION ALL
+    
+    -- PREESCOLAR
+    SELECT 'Preescolar' as nivel_educativo,
+        control,
+        SUM(v177) as total_alumnos
+    FROM nonce_pano_24.pree_gral_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    GROUP BY control
+    
+    UNION ALL
+    
+    SELECT 'Preescolar' as nivel_educativo,
+        'PUBLICO' as control,
+        SUM(v177) as total_alumnos
+    FROM nonce_pano_24.pree_ind_24
+    WHERE cv_estatus_captura = 0
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    
+    UNION ALL
+    
+    SELECT 'Preescolar' as nivel_educativo,
+        'PUBLICO' as control,
+        SUM(v97) as total_alumnos
+    FROM nonce_pano_24.pree_comuni_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    
+    UNION ALL
+    
+    -- PRIMARIA
+    SELECT 'Primaria' as nivel_educativo,
+        control,
+        SUM(v608) as total_alumnos
+    FROM nonce_pano_24.prim_gral_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    GROUP BY control
+    
+    UNION ALL
+    
+    SELECT 'Primaria' as nivel_educativo,
+        'PUBLICO' as control,
+        SUM(v610) as total_alumnos
+    FROM nonce_pano_24.prim_ind_24
+    WHERE cv_estatus_captura = 0
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    
+    UNION ALL
+    
+    SELECT 'Primaria' as nivel_educativo,
+        'PUBLICO' as control,
+        SUM(v515) as total_alumnos
+    FROM nonce_pano_24.prim_comuni_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    
+    UNION ALL
+    
+    -- SECUNDARIA
+    SELECT 'Secundaria' as nivel_educativo,
+        control,
+        SUM(v340) as total_alumnos
+    FROM nonce_pano_24.sec_gral_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    GROUP BY control
+    
+    UNION ALL
+    
+    SELECT 'Secundaria' as nivel_educativo,
+        'PUBLICO' as control,
+        SUM(v257) as total_alumnos
+    FROM nonce_pano_24.sec_comuni_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    
+    UNION ALL
+    
+    -- MEDIA SUPERIOR
+    SELECT 'Media Superior' as nivel_educativo,
+        control,
+        SUM(v397) as total_alumnos
+    FROM nonce_pano_24.ms_gral_24
+    WHERE c_nom_mun ILIKE '%CORREGIDORA%'
+    GROUP BY control
+    
+    UNION ALL
+    
+    SELECT 'Media Superior' as nivel_educativo,
+        control,
+        SUM(v472) as total_alumnos
+    FROM nonce_pano_24.ms_tecno_24
+    WHERE c_nom_mun ILIKE '%CORREGIDORA%'
+    GROUP BY control
+    
+    UNION ALL
+    
+    -- SUPERIOR
+    SELECT 'Superior' as nivel_educativo,
+        control,
+        SUM(v177) as total_alumnos
+    FROM nonce_pano_24.sup_carrera_24
+    WHERE cv_motivo = 0
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    GROUP BY control
+    
+    UNION ALL
+    
+    SELECT 'Superior' as nivel_educativo,
+        control,
+        SUM(v142) as total_alumnos
+    FROM nonce_pano_24.sup_posgrado_24
+    WHERE cv_motivo = 0
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+    GROUP BY control
+    
+    ORDER BY nivel_educativo, control;
+    ";
+
+    $result = pg_query($link, $query);
+    $datosMatricula = [];
+
+    if ($result && pg_num_rows($result) > 0) {
+        while ($row = pg_fetch_assoc($result)) {
+            $nivel = $row['nivel_educativo'];
+            $control = $row['control'];
+            $total = (int) $row['total_alumnos'];
+
+            if (!isset($datosMatricula[$nivel])) {
+                $datosMatricula[$nivel] = ['publico' => 0, 'privado' => 0, 'total' => 0];
+            }
+
+            // Verificar si es público con múltiples variaciones de encoding
+            $controlNormalizado = preg_replace('/[^A-Z]/', '', $control);
+            $esPublico = (
+                $control === 'PUBLICO' || 
+                $control === 'P?BLICO' || 
+                $control === 'PÚBLICO' ||
+                $controlNormalizado === 'PUBLICO' ||
+                (strpos($control, 'P') === 0 && strpos($control, 'BLICO') !== false)
+            );
+            
+            if ($esPublico) {
+                $datosMatricula[$nivel]['publico'] += $total;
+            } else {
+                $datosMatricula[$nivel]['privado'] += $total;
+            }
+            $datosMatricula[$nivel]['total'] += $total;
+        }
+        pg_free_result($result);
+    }
+    pg_close($link);
 
     // Calcular totales generales
     $totalPublico = array_sum(array_column($datosMatricula, 'publico'));
@@ -1461,177 +1658,228 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2023-2024')
  *
  * @return array Array con los datos de matrícula por nivel educativo y género
  */
-function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2023-2024')
+function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
 {
-    // Solo implementado para ciclo 2023-2024 y municipio Corregidora
-    $datos = array();
-    if ($cicloEscolar !== '2023-2024') {
-        return $datos;
-    }
-
     // Verificar si las funciones de PostgreSQL están disponibles
     if (!function_exists('pg_connect')) {
-        return $datos;
+        return [];
     }
 
     $link = Conectarse();
     if (!$link) {
-        return $datos;
+        return [];
     }
 
+    // Consulta consolidada desde nonce_pano_24 (ciclo 2024-2025)
     $query = "
-SELECT 'Inicial Escolarizada' AS nivel, COALESCE(SUM(v390 + v406),0) AS hombres, COALESCE(SUM(v394 + v410),0) AS
-mujeres, COALESCE(SUM(v390 + v406 + v394 + v410),0) AS total
-FROM nonce_pano_23.ini_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND c_nom_mun = 'CORREGIDORA'
+    -- INICIAL ESCOLARIZADO
+    SELECT 'Inicial Escolarizada' AS nivel, 
+        COALESCE(SUM(v390 + v406), 0) AS hombres, 
+        COALESCE(SUM(v394 + v410), 0) AS mujeres, 
+        COALESCE(SUM(v390 + v406 + v394 + v410), 0) AS total
+    FROM nonce_pano_24.ini_gral_24 
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
 
-UNION ALL
-SELECT 'Inicial No Escolarizada',
-COALESCE((SELECT SUM(v129) FROM nonce_pano_23.ini_ne_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
-c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v79) FROM nonce_pano_23.ini_comuni_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
-'CORREGIDORA'),0) AS hombres,
-COALESCE((SELECT SUM(v130) FROM nonce_pano_23.ini_ne_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
-c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v80) FROM nonce_pano_23.ini_comuni_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
-'CORREGIDORA'),0) AS mujeres,
-(
-COALESCE((SELECT SUM(v129) FROM nonce_pano_23.ini_ne_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
-c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v79) FROM nonce_pano_23.ini_comuni_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
-'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v130) FROM nonce_pano_23.ini_ne_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
-c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v80) FROM nonce_pano_23.ini_comuni_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
-'CORREGIDORA'),0)
-) AS total
+    UNION ALL
 
-UNION ALL
-SELECT 'CAM', 137 AS hombres, 73 AS mujeres, 210 AS total
+    SELECT 'Inicial Escolarizada' AS nivel,
+        COALESCE(SUM(v183), 0) AS hombres,
+        COALESCE(SUM(v184), 0) AS mujeres,
+        COALESCE(SUM(v183 + v184), 0) AS total
+    FROM nonce_pano_24.ini_ind_24
+    WHERE cv_estatus_captura = 0
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
 
-UNION ALL
-SELECT 'Preescolar',
-COALESCE((SELECT SUM(v165) FROM nonce_pano_23.pree_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
-c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v165) FROM nonce_pano_23.pree_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
-'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v85) FROM nonce_pano_23.pree_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-AND c_nom_mun = 'CORREGIDORA'),0)
-+ 48 AS hombres,
-COALESCE((SELECT SUM(v171) FROM nonce_pano_23.pree_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
-c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v171) FROM nonce_pano_23.pree_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
-'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v91) FROM nonce_pano_23.pree_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-AND c_nom_mun = 'CORREGIDORA'),0)
-+ 41 AS mujeres,
-(
-COALESCE((SELECT SUM(v165) FROM nonce_pano_23.pree_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND
-c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v165) FROM nonce_pano_23.pree_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
-'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v85) FROM nonce_pano_23.pree_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v171) FROM nonce_pano_23.pree_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v171) FROM nonce_pano_23.pree_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
-'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v91) FROM nonce_pano_23.pree_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-AND c_nom_mun = 'CORREGIDORA'),0)
-+ 89
-) AS total
+    UNION ALL
 
-UNION ALL
-SELECT 'Primaria',
-COALESCE((SELECT SUM(v562 + v573) FROM nonce_pano_23.prim_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
-10) AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v564 + v575) FROM nonce_pano_23.prim_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
-'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v469 + v480) FROM nonce_pano_23.prim_comuni_23 WHERE (cv_estatus_captura = 0 OR
-cv_estatus_captura = 10) AND c_nom_mun = 'CORREGIDORA'),0) AS hombres,
-COALESCE((SELECT SUM(v585 + v596) FROM nonce_pano_23.prim_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
-10) AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v587 + v598) FROM nonce_pano_23.prim_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
-'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v492 + v503) FROM nonce_pano_23.prim_comuni_23 WHERE (cv_estatus_captura = 0 OR
-cv_estatus_captura = 10) AND c_nom_mun = 'CORREGIDORA'),0) AS mujeres,
-(
-COALESCE((SELECT SUM(v562 + v573) FROM nonce_pano_23.prim_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
-10) AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v564 + v575) FROM nonce_pano_23.prim_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
-'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v469 + v480) FROM nonce_pano_23.prim_comuni_23 WHERE (cv_estatus_captura = 0 OR
-cv_estatus_captura = 10) AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v585 + v596) FROM nonce_pano_23.prim_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura
-= 10) AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v587 + v598) FROM nonce_pano_23.prim_ind_23 WHERE cv_estatus_captura = 0 AND c_nom_mun =
-'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v492 + v503) FROM nonce_pano_23.prim_comuni_23 WHERE (cv_estatus_captura = 0 OR
-cv_estatus_captura = 10) AND c_nom_mun = 'CORREGIDORA'),0)
-) AS total
+    -- INICIAL NO ESCOLARIZADO
+    SELECT 'Inicial No Escolarizada' AS nivel,
+        COALESCE(SUM(v129), 0) AS hombres,
+        COALESCE(SUM(v130), 0) AS mujeres,
+        COALESCE(SUM(v129 + v130), 0) AS total
+    FROM nonce_pano_24.ini_ne_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
 
-UNION ALL
-SELECT 'Secundaria',
-COALESCE((SELECT SUM(v306 + v314) FROM nonce_pano_23.sec_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
-10) AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v223 + v231) FROM nonce_pano_23.sec_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura
-= 10) AND c_nom_mun = 'CORREGIDORA'),0) AS hombres,
-COALESCE((SELECT SUM(v323 + v331) FROM nonce_pano_23.sec_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
-10) AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v240 + v248) FROM nonce_pano_23.sec_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura
-= 10) AND c_nom_mun = 'CORREGIDORA'),0) AS mujeres,
-(
-COALESCE((SELECT SUM(v306 + v314) FROM nonce_pano_23.sec_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
-10) AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v223 + v231) FROM nonce_pano_23.sec_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura
-= 10) AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v323 + v331) FROM nonce_pano_23.sec_gral_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura =
-10) AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v240 + v248) FROM nonce_pano_23.sec_comuni_23 WHERE (cv_estatus_captura = 0 OR cv_estatus_captura
-= 10) AND c_nom_mun = 'CORREGIDORA'),0)
-) AS total
+    UNION ALL
 
-UNION ALL
-SELECT 'Media Superior',
-COALESCE((SELECT SUM(v395) FROM nonce_pano_23.ms_gral_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v470) FROM nonce_pano_23.ms_tecno_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0) AS
-hombres,
-COALESCE((SELECT SUM(v396) FROM nonce_pano_23.ms_gral_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v471) FROM nonce_pano_23.ms_tecno_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0) AS
-mujeres,
-(
-COALESCE((SELECT SUM(v395) FROM nonce_pano_23.ms_gral_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v470) FROM nonce_pano_23.ms_tecno_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v396) FROM nonce_pano_23.ms_gral_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v471) FROM nonce_pano_23.ms_tecno_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
-) AS total
+    SELECT 'Inicial No Escolarizada' AS nivel,
+        COALESCE(SUM(v79), 0) AS hombres,
+        COALESCE(SUM(v80), 0) AS mujeres,
+        COALESCE(SUM(v79 + v80), 0) AS total
+    FROM nonce_pano_24.ini_comuni_24
+    WHERE cv_estatus_captura = 0
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
 
-UNION ALL
-SELECT 'Superior',
-COALESCE((SELECT SUM(v175) FROM nonce_pano_23.sup_carrera_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v140) FROM nonce_pano_23.sup_posgrado_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0) AS
-hombres,
-COALESCE((SELECT SUM(v176) FROM nonce_pano_23.sup_carrera_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v141) FROM nonce_pano_23.sup_posgrado_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0) AS
-mujeres,
-(
-COALESCE((SELECT SUM(v175) FROM nonce_pano_23.sup_carrera_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v140) FROM nonce_pano_23.sup_posgrado_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v176) FROM nonce_pano_23.sup_carrera_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
-+ COALESCE((SELECT SUM(v141) FROM nonce_pano_23.sup_posgrado_23 WHERE cv_motivo = 0 AND c_nom_mun = 'CORREGIDORA'),0)
-) AS total
-";
+    UNION ALL
+
+    -- CAM
+    SELECT 'CAM' AS nivel,
+        COALESCE(SUM(v2255), 0) AS hombres,
+        COALESCE(SUM(v2256), 0) AS mujeres,
+        COALESCE(SUM(v2264), 0) AS total
+    FROM nonce_pano_24.esp_cam_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+
+    UNION ALL
+
+    -- PREESCOLAR
+    SELECT 'Preescolar' AS nivel,
+        COALESCE(SUM(v165), 0) AS hombres,
+        COALESCE(SUM(v171), 0) AS mujeres,
+        COALESCE(SUM(v177), 0) AS total
+    FROM nonce_pano_24.pree_gral_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+
+    UNION ALL
+
+    SELECT 'Preescolar' AS nivel,
+        COALESCE(SUM(v165), 0) AS hombres,
+        COALESCE(SUM(v171), 0) AS mujeres,
+        COALESCE(SUM(v177), 0) AS total
+    FROM nonce_pano_24.pree_ind_24
+    WHERE cv_estatus_captura = 0
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+
+    UNION ALL
+
+    SELECT 'Preescolar' AS nivel,
+        COALESCE(SUM(v85), 0) AS hombres,
+        COALESCE(SUM(v91), 0) AS mujeres,
+        COALESCE(SUM(v97), 0) AS total
+    FROM nonce_pano_24.pree_comuni_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+
+    UNION ALL
+
+    -- PRIMARIA
+    SELECT 'Primaria' AS nivel,
+        COALESCE(SUM(v562 + v573), 0) AS hombres,
+        COALESCE(SUM(v585 + v596), 0) AS mujeres,
+        COALESCE(SUM(v608), 0) AS total
+    FROM nonce_pano_24.prim_gral_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+
+    UNION ALL
+
+    SELECT 'Primaria' AS nivel,
+        COALESCE(SUM(v564 + v575), 0) AS hombres,
+        COALESCE(SUM(v587 + v598), 0) AS mujeres,
+        COALESCE(SUM(v610), 0) AS total
+    FROM nonce_pano_24.prim_ind_24
+    WHERE cv_estatus_captura = 0
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+
+    UNION ALL
+
+    SELECT 'Primaria' AS nivel,
+        COALESCE(SUM(v469 + v480), 0) AS hombres,
+        COALESCE(SUM(v492 + v503), 0) AS mujeres,
+        COALESCE(SUM(v515), 0) AS total
+    FROM nonce_pano_24.prim_comuni_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+
+    UNION ALL
+
+    -- SECUNDARIA
+    SELECT 'Secundaria' AS nivel,
+        COALESCE(SUM(v306 + v314), 0) AS hombres,
+        COALESCE(SUM(v323 + v331), 0) AS mujeres,
+        COALESCE(SUM(v340), 0) AS total
+    FROM nonce_pano_24.sec_gral_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+
+    UNION ALL
+
+    SELECT 'Secundaria' AS nivel,
+        COALESCE(SUM(v223 + v231), 0) AS hombres,
+        COALESCE(SUM(v240 + v248), 0) AS mujeres,
+        COALESCE(SUM(v257), 0) AS total
+    FROM nonce_pano_24.sec_comuni_24
+    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+
+    UNION ALL
+
+    -- MEDIA SUPERIOR
+    SELECT 'Media Superior' AS nivel,
+        COALESCE(SUM(v395), 0) AS hombres,
+        COALESCE(SUM(v396), 0) AS mujeres,
+        COALESCE(SUM(v397), 0) AS total
+    FROM nonce_pano_24.ms_gral_24
+    WHERE c_nom_mun ILIKE '%CORREGIDORA%'
+
+    UNION ALL
+
+    SELECT 'Media Superior' AS nivel,
+        COALESCE(SUM(v470), 0) AS hombres,
+        COALESCE(SUM(v471), 0) AS mujeres,
+        COALESCE(SUM(v472), 0) AS total
+    FROM nonce_pano_24.ms_tecno_24
+    WHERE c_nom_mun ILIKE '%CORREGIDORA%'
+
+    UNION ALL
+
+    -- SUPERIOR
+    SELECT 'Superior' AS nivel,
+        COALESCE(SUM(v175), 0) AS hombres,
+        COALESCE(SUM(v176), 0) AS mujeres,
+        COALESCE(SUM(v177), 0) AS total
+    FROM nonce_pano_24.sup_carrera_24
+    WHERE cv_motivo = 0
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+
+    UNION ALL
+
+    SELECT 'Superior' AS nivel,
+        COALESCE(SUM(v140), 0) AS hombres,
+        COALESCE(SUM(v141), 0) AS mujeres,
+        COALESCE(SUM(v142), 0) AS total
+    FROM nonce_pano_24.sup_posgrado_24
+    WHERE cv_motivo = 0
+        AND c_nom_mun ILIKE '%CORREGIDORA%'
+
+    ORDER BY nivel;
+    ";
 
     $result = pg_query($link, $query);
+    $datos = [];
+    $datosConsolidados = [];
+
     if ($result && pg_num_rows($result) > 0) {
         while ($row = pg_fetch_assoc($result)) {
-            $datos[] = array(
-                'nivel' => $row['nivel'],
-                'hombres' => (int) $row['hombres'],
-                'mujeres' => (int) $row['mujeres'],
-                'total' => (int) $row['total']
-            );
+            $nivel = $row['nivel'];
+            $hombres = (int) $row['hombres'];
+            $mujeres = (int) $row['mujeres'];
+            $total = (int) $row['total'];
+
+            // Consolidar datos por nivel (sumar modalidades)
+            if (!isset($datosConsolidados[$nivel])) {
+                $datosConsolidados[$nivel] = ['hombres' => 0, 'mujeres' => 0, 'total' => 0];
+            }
+
+            $datosConsolidados[$nivel]['hombres'] += $hombres;
+            $datosConsolidados[$nivel]['mujeres'] += $mujeres;
+            $datosConsolidados[$nivel]['total'] += $total;
         }
         pg_free_result($result);
+
+        // Convertir a formato esperado
+        foreach ($datosConsolidados as $nivel => $data) {
+            $datos[] = [
+                'nivel' => $nivel,
+                'hombres' => $data['hombres'],
+                'mujeres' => $data['mujeres'],
+                'total' => $data['total']
+            ];
+        }
     }
     pg_close($link);
     return $datos;
