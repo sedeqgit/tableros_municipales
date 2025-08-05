@@ -1615,13 +1615,13 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
             // Verificar si es público con múltiples variaciones de encoding
             $controlNormalizado = preg_replace('/[^A-Z]/', '', $control);
             $esPublico = (
-                $control === 'PUBLICO' || 
-                $control === 'P?BLICO' || 
+                $control === 'PUBLICO' ||
+                $control === 'P?BLICO' ||
                 $control === 'PÚBLICO' ||
                 $controlNormalizado === 'PUBLICO' ||
                 (strpos($control, 'P') === 0 && strpos($control, 'BLICO') !== false)
             );
-            
+
             if ($esPublico) {
                 $datosMatricula[$nivel]['publico'] += $total;
             } else {
