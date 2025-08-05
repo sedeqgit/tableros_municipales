@@ -448,7 +448,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
         <div class="matricula-panel animate-fade delay-6">
             <div class="matricula-header">
                 <h3 class="matricula-title"><i class="fas fa-wheelchair"></i> Resumen General de Alumnos con
-                    Discapacidad (datos demo)</h3>
+                    Barreras de Aprendizaje (datos demo)</h3>
             </div>
             <div class="matricula-body">
                 <div class="stats-row">
@@ -491,7 +491,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
         <!-- Panel de tabla detallada de alumnos con discapacidad por género -->
         <div class="matricula-panel animate-fade delay-7 matricula-genero">
             <div class="matricula-header">
-                <h3 class="matricula-title"><i class="fas fa-wheelchair"></i> Alumnos con Discapacidad por Nivel
+                <h3 class="matricula-title"><i class="fas fa-wheelchair"></i> Alumnos con Barreras de Aprendizaje por
+                    Nivel
                     Educativo (datos demo)</h3>
             </div>
             <div class="matricula-body">
@@ -553,7 +554,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
         <!-- Panel de análisis de tendencias de discapacidad por nivel educativo -->
         <div class="matricula-panel animate-fade delay-8 panel-nivelaislado panel-discapacidad">
             <div class="header-nivelaislado">
-                <h3 class="title-nivelaislado"><i class="fas fa-wheelchair"></i> Análisis de Discapacidad por Nivel
+                <h3 class="title-nivelaislado"><i class="fas fa-wheelchair"></i> Análisis de Barreras de Aprendizaje por
+                    Nivel
                     Educativo (datos demo)</h3>
             </div>
             <div class="body-nivelaislado">
@@ -569,7 +571,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
                             <div class="header-card-nivelaislado">
                                 <h4><?php echo htmlspecialchars($fila['nivel']); ?></h4>
                                 <span class="participacion-nivelaislado" style="color: var(--accent-orange);">
-                                    <?php echo $participacion; ?>% del total con discapacidad
+                                    <?php echo $participacion; ?>% del total con barreras del aprendizaje
                                 </span>
                             </div>
                             <div class="content-nivelaislado">
