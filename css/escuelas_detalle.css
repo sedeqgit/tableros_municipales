@@ -1253,3 +1253,153 @@
         font-size: 1.4rem;
     }
 }
+
+/* =============================================================================
+   ESTILOS PARA DIRECTORIO DE ESCUELAS
+   ============================================================================= */
+
+/* Filtros de directorio */
+.directorio-filters {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px 20px;
+    background: var(--white);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-light);
+    border: 1px solid var(--light-gray);
+}
+
+.search-input,
+.nivel-filter {
+    padding: 10px 15px;
+    border: 2px solid var(--medium-gray);
+    border-radius: var(--border-radius-sm);
+    font-size: 14px;
+    font-family: var(--font-primary);
+    transition: all 0.3s ease;
+    background: var(--white);
+}
+
+.search-input {
+    flex: 1;
+    min-width: 200px;
+}
+
+.nivel-filter {
+    min-width: 180px;
+}
+
+.search-input:focus,
+.nivel-filter:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Contador de escuelas */
+.school-count {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--light-blue);
+    padding: 8px 12px;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--primary-blue);
+}
+
+.count-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: var(--font-weight-medium);
+}
+
+.count-number {
+    color: var(--primary-blue);
+    font-size: 1.1rem;
+    font-weight: var(--font-weight-bold);
+}
+
+.count-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Estilos específicos para celdas del directorio */
+.data-table .nivel-nombre {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    min-width: 120px;
+}
+
+.data-table .cct-codigo {
+    font-family: 'Courier New', monospace;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+    background-color: var(--light-gray);
+    text-align: center;
+    min-width: 110px;
+}
+
+.data-table .escuela-nombre {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    max-width: 300px;
+    word-wrap: break-word;
+}
+
+.data-table .localidad-nombre {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Reutilizar estilos existentes de sector-publico y sector-privado */
+.data-table .sector-publico {
+    color: var(--secondary-blue);
+    font-weight: var(--font-weight-medium);
+    text-align: right;
+}
+
+.data-table .sector-privado {
+    color: var(--tertiary-gray);
+    font-weight: var(--font-weight-medium);
+    text-align: right;
+}
+
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .directorio-filters {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .search-input {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .nivel-filter {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .school-count {
+        align-self: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .directorio-filters {
+        padding: 12px 15px;
+    }
+    
+    .data-table .escuela-nombre {
+        max-width: 200px;
+    }
+    
+    .data-table .cct-codigo {
+        min-width: 90px;
+    }
+}

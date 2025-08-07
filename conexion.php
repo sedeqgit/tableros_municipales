@@ -497,7 +497,7 @@ function obtenerDocentesPorNivel()
             COALESCE(SUM(V509+V516+V523+V511+V518+V525+V785+V510+V517+V524+V512+V519+V526+V786), 0) as total_docentes
         FROM nonce_pano_23.ini_gral_23 
         WHERE c_nom_mun = 'CORREGIDORA' 
-          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+          AND cv_estatus_captura = 0
 
         UNION ALL
 
@@ -527,7 +527,7 @@ function obtenerDocentesPorNivel()
             COALESCE(SUM(v909), 0) as total_docentes
         FROM nonce_pano_23.pree_gral_23 
         WHERE c_nom_mun = 'CORREGIDORA' 
-          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+          AND cv_estatus_captura = 0
 
         UNION ALL
 
@@ -538,7 +538,7 @@ function obtenerDocentesPorNivel()
             COALESCE(SUM(v151), 0) as total_docentes
         FROM nonce_pano_23.pree_comuni_23 
         WHERE c_nom_mun = 'CORREGIDORA' 
-          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+          AND cv_estatus_captura = 0
 
         UNION ALL
 
@@ -549,7 +549,7 @@ function obtenerDocentesPorNivel()
             COALESCE(SUM(v1676), 0) as total_docentes
         FROM nonce_pano_23.prim_gral_23 
         WHERE c_nom_mun = 'CORREGIDORA' 
-          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+          AND cv_estatus_captura = 0
 
         UNION ALL
 
@@ -560,7 +560,7 @@ function obtenerDocentesPorNivel()
             COALESCE(SUM(v585), 0) as total_docentes
         FROM nonce_pano_23.prim_comuni_23 
         WHERE c_nom_mun = 'CORREGIDORA' 
-          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+          AND cv_estatus_captura = 0
 
         UNION ALL
 
@@ -571,7 +571,7 @@ function obtenerDocentesPorNivel()
             COALESCE(SUM(v1401), 0) as total_docentes
         FROM nonce_pano_23.sec_gral_23 
         WHERE c_nom_mun = 'CORREGIDORA' 
-          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+          AND cv_estatus_captura = 0
 
         UNION ALL
 
@@ -1955,7 +1955,7 @@ function obtenerAlumnosDiscapacidadPorNivelYGenero($cicloEscolar = '2023-2024')
                 COALESCE(SUM(v383), 0) as total
             FROM nonce_pano_23.ini_gral_23 
             WHERE c_nom_mun = 'CORREGIDORA' 
-              AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+              AND cv_estatus_captura = 0
             
             UNION ALL
             
@@ -1968,7 +1968,7 @@ function obtenerAlumnosDiscapacidadPorNivelYGenero($cicloEscolar = '2023-2024')
                 COALESCE(SUM(v169), 0) as total
             FROM nonce_pano_23.ini_ne_23 
             WHERE c_nom_mun = 'CORREGIDORA' 
-              AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+              AND cv_estatus_captura = 0
             
             UNION ALL
             
@@ -1989,32 +1989,32 @@ function obtenerAlumnosDiscapacidadPorNivelYGenero($cicloEscolar = '2023-2024')
                 COALESCE((
                     SELECT SUM(v185 + v191) FROM nonce_pano_23.pree_gral_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) +
                 COALESCE((
                     SELECT SUM(v95) FROM nonce_pano_23.pree_comuni_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) as hombres,
                 COALESCE((
                     SELECT SUM(v189 + v195) FROM nonce_pano_23.pree_gral_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) +
                 COALESCE((
                     SELECT SUM(v101) FROM nonce_pano_23.pree_comuni_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) as mujeres,
                 COALESCE((
                     SELECT SUM(v185 + v191 + v189 + v195) FROM nonce_pano_23.pree_gral_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) +
                 COALESCE((
                     SELECT SUM(v95 + v101) FROM nonce_pano_23.pree_comuni_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) as total
             
             UNION ALL
@@ -2026,7 +2026,7 @@ function obtenerAlumnosDiscapacidadPorNivelYGenero($cicloEscolar = '2023-2024')
                 COALESCE((
                     SELECT SUM(v618 + v629) FROM nonce_pano_23.prim_gral_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) +
                 COALESCE((
                     SELECT SUM(v620 + v631) FROM nonce_pano_23.prim_ind_23 
@@ -2036,12 +2036,12 @@ function obtenerAlumnosDiscapacidadPorNivelYGenero($cicloEscolar = '2023-2024')
                 COALESCE((
                     SELECT SUM(v525 + v536) FROM nonce_pano_23.prim_comuni_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) as hombres,
                 COALESCE((
                     SELECT SUM(v641 + v652) FROM nonce_pano_23.prim_gral_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) +
                 COALESCE((
                     SELECT SUM(v643 + v654) FROM nonce_pano_23.prim_ind_23 
@@ -2051,12 +2051,12 @@ function obtenerAlumnosDiscapacidadPorNivelYGenero($cicloEscolar = '2023-2024')
                 COALESCE((
                     SELECT SUM(v548 + v559) FROM nonce_pano_23.prim_comuni_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) as mujeres,
                 COALESCE((
                     SELECT SUM(v618 + v629 + v641 + v652) FROM nonce_pano_23.prim_gral_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) +
                 COALESCE((
                     SELECT SUM(v620 + v631 + v643 + v654) FROM nonce_pano_23.prim_ind_23 
@@ -2066,7 +2066,7 @@ function obtenerAlumnosDiscapacidadPorNivelYGenero($cicloEscolar = '2023-2024')
                 COALESCE((
                     SELECT SUM(v525 + v536 + v548 + v559) FROM nonce_pano_23.prim_comuni_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) as total
             
             UNION ALL
@@ -2078,32 +2078,32 @@ function obtenerAlumnosDiscapacidadPorNivelYGenero($cicloEscolar = '2023-2024')
                 COALESCE((
                     SELECT SUM(v348 + v356) FROM nonce_pano_23.sec_gral_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) +
                 COALESCE((
                     SELECT SUM(v265 + v273) FROM nonce_pano_23.sec_comuni_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) as hombres,
                 COALESCE((
                     SELECT SUM(v365 + v373) FROM nonce_pano_23.sec_gral_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) +
                 COALESCE((
                     SELECT SUM(v282 + v290) FROM nonce_pano_23.sec_comuni_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) as mujeres,
                 COALESCE((
                     SELECT SUM(v348 + v356 + v365 + v373) FROM nonce_pano_23.sec_gral_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) +
                 COALESCE((
                     SELECT SUM(v265 + v273 + v282 + v290) FROM nonce_pano_23.sec_comuni_23 
                     WHERE c_nom_mun = 'CORREGIDORA' 
-                      AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      AND cv_estatus_captura = 0
                 ), 0) as total
             
             UNION ALL
@@ -2210,4 +2210,390 @@ function obtenerAlumnosDiscapacidadPorNivelYGenero($cicloEscolar = '2023-2024')
     }
 
     return $datosDiscapacidad;
+}
+
+/**
+ * =============================================================================
+ * FUNCIÓN PARA OBTENER DIRECTORIO COMPLETO DE ESCUELAS PÚBLICAS
+ * =============================================================================
+ * 
+ * Recupera un listado detallado de todas las escuelas públicas del municipio
+ * de Corregidora con información completa de ubicación, nivel y matrícula.
+ * 
+ * FUNCIONALIDADES:
+ * - Lista todas las escuelas públicas por nivel educativo
+ * - Incluye CCT, nombre, localidad y cantidad de alumnos
+ * - Agrupa por nivel para mejor organización
+ * - Manejo de errores con datos de fallback
+ * 
+ * @return array Arreglo con escuelas públicas organizadas por nivel
+ * @uses Conectarse() Para establecer conexión a PostgreSQL
+ */
+function obtenerDirectorioEscuelasPublicas()
+{
+    if (!function_exists('pg_connect')) {
+        error_log('SEDEQ: PostgreSQL no disponible para directorio de escuelas públicas');
+        return [];
+    }
+
+    $link = Conectarse();
+    if (!$link) {
+        error_log('SEDEQ: No se pudo conectar a la BD para directorio de escuelas públicas');
+        return [];
+    }
+
+    /*Usar consultas mas simplificadas y verficar si en todas hace falta, de momento solo en media y superior
+    select count (cv_cct) as escuelas, control, nombre_ins,cv_cct,subcontrol
+from nonce_pano_24.sup_escuela_24
+where cv_motivo = 0 and cv_mun = 6
+group by control, nombre_ins,cv_cct,subcontrol
+order by control asc
+Estas escuelas parecen obtener mejor el conteo y nombres*/
+    try {
+        $query = "
+        WITH escuelas_publicas_consolidadas AS (
+            -- Inicial Comunitario (FEDERAL)
+            SELECT DISTINCT
+                'Inicial Comunitario' as nivel,
+                cv_cct,
+                nombrect,
+                c_nom_loc,
+                subcontrol,
+                COALESCE(v95 + v101, 0) as total_alumnos
+            FROM nonce_pano_24.ini_comuni_24 
+            WHERE cv_mun = 6
+            
+            UNION
+            
+            -- Preescolar General (FEDERAL TRANSFERIDO)
+            SELECT DISTINCT
+                'Preescolar' as nivel,
+                cv_cct,
+                nombrect,
+                c_nom_loc,
+                subcontrol,
+                COALESCE(v185 + v191 + v189 + v195, 0) as total_alumnos
+            FROM nonce_pano_24.pree_gral_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+              AND cv_mun = 6 
+              AND subcontrol = 'FEDERAL TRANSFERIDO'
+            
+            UNION
+            
+            -- Preescolar Comunitario (FEDERAL)
+            SELECT DISTINCT
+                'Preescolar Comunitario' as nivel,
+                cv_cct,
+                nombrect,
+                c_nom_loc,
+                subcontrol,
+                COALESCE(v95 + v101, 0) as total_alumnos
+            FROM nonce_pano_24.pree_comuni_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND cv_mun = 6
+            
+            UNION
+            
+            -- Primaria General (FEDERAL TRANSFERIDO) - agregando turnos
+            SELECT 
+                'Primaria' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(subcontrol) as subcontrol,
+                SUM(COALESCE(v618 + v629 + v641 + v652, 0)) as total_alumnos
+            FROM nonce_pano_24.prim_gral_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+              AND cv_mun = 6 
+              AND subcontrol = 'FEDERAL TRANSFERIDO'
+            GROUP BY cv_cct
+            
+            UNION
+            
+            -- Primaria Comunitaria (FEDERAL)
+            SELECT DISTINCT
+                'Primaria Comunitaria' as nivel,
+                cv_cct,
+                nombrect,
+                c_nom_loc,
+                subcontrol,
+                COALESCE(v525 + v536 + v548 + v559, 0) as total_alumnos
+            FROM nonce_pano_24.prim_comuni_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND cv_mun = 6
+            
+            UNION
+            
+            -- Secundaria General (FEDERAL TRANSFERIDO) - agregando turnos
+            SELECT distinct
+                'Secundaria' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(subcontrol) as subcontrol,
+                SUM(COALESCE(v348 + v356 + v365 + v373, 0)) as total_alumnos
+            FROM nonce_pano_24.sec_gral_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+              AND cv_mun = 6 
+              AND subcontrol = 'FEDERAL TRANSFERIDO'
+            GROUP BY cv_cct
+            
+            UNION
+            
+            -- Media Superior (FEDERAL, ESTATAL, AUTÓNOMO)
+            SELECT DISTINCT
+                'Media Superior' as nivel,
+                cct_ins_pla as cv_cct,
+                nombre_ins_pla as nombrect,
+                c_nom_loc,
+                subcontrol,
+                0 as total_alumnos
+            FROM nonce_pano_24.ms_plantel_24 
+            WHERE cv_motivo = 0 
+              AND cv_mun = 6 
+              AND subcontrol IN ('FEDERAL', 'ESTATAL', 'AUTÓNOMO', 'AUT?NOMO')
+            
+            UNION
+            
+            -- Superior Escuela (ESTATAL, AUTÓNOMO)
+            SELECT DISTINCT
+                'Superior' as nivel,
+                cv_cct,
+                nombrect,
+                c_nom_loc,
+                subcontrol,
+                0 as total_alumnos
+            FROM nonce_pano_24.sup_escuela_24 
+            WHERE cv_motivo = 0 
+              AND cv_mun = 6 
+              AND subcontrol IN ('ESTATAL', 'AUTÓNOMO', 'AUT?NOMO')
+            
+            UNION
+            
+            -- Educación Especial CAM (FEDERAL TRANSFERIDO)
+            SELECT DISTINCT
+                'Especial (CAM)' as nivel,
+                cv_cct,
+                nombrect,
+                c_nom_loc,
+                subcontrol,
+                0 as total_alumnos
+            FROM nonce_pano_24.esp_cam_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND cv_mun = 6
+        )
+        SELECT 
+            nivel,
+            cv_cct as cct,
+            nombrect as nombre,
+            c_nom_loc as localidad,
+            total_alumnos
+        FROM escuelas_publicas_consolidadas
+        WHERE nombrect IS NOT NULL AND nombrect != ''
+        ORDER BY 
+            CASE nivel
+                WHEN 'Inicial Comunitario' THEN 1
+                WHEN 'Especial (CAM)' THEN 2
+                WHEN 'Preescolar' THEN 3
+                WHEN 'Preescolar Comunitario' THEN 4
+                WHEN 'Primaria' THEN 5
+                WHEN 'Primaria Comunitaria' THEN 6
+                WHEN 'Secundaria' THEN 7
+                WHEN 'Media Superior' THEN 8
+                WHEN 'Superior' THEN 9
+                ELSE 99
+            END,
+            total_alumnos DESC,
+            nombre
+        ";
+
+        $result = pg_query($link, $query);
+        $escuelasPublicas = [];
+
+        if ($result && pg_num_rows($result) > 0) {
+            while ($row = pg_fetch_assoc($result)) {
+                $escuelasPublicas[] = [
+                    'nivel' => $row['nivel'],
+                    'cct' => $row['cct'],
+                    'nombre' => $row['nombre'],
+                    'localidad' => $row['localidad'],
+                    'total_alumnos' => (int) $row['total_alumnos']
+                ];
+            }
+            pg_free_result($result);
+        }
+
+        pg_close($link);
+        return $escuelasPublicas;
+
+    } catch (Exception $e) {
+        error_log('SEDEQ: Error en consulta de directorio de escuelas públicas: ' . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * =============================================================================
+ * FUNCIÓN PARA OBTENER DIRECTORIO COMPLETO DE ESCUELAS PRIVADAS
+ * =============================================================================
+ * 
+ * Recupera un listado detallado de todas las escuelas privadas del municipio
+ * de Corregidora con información completa de ubicación, nivel y matrícula.
+ * 
+ * FUNCIONALIDADES:
+ * - Lista todas las escuelas privadas por nivel educativo
+ * - Incluye CCT, nombre, localidad y cantidad de alumnos
+ * - Agrupa por nivel para mejor organización
+ * - Manejo de errores con datos de fallback
+ * 
+ * @return array Arreglo con escuelas privadas organizadas por nivel
+ * @uses Conectarse() Para establecer conexión a PostgreSQL
+ */
+function obtenerDirectorioEscuelasPrivadas()
+{
+    if (!function_exists('pg_connect')) {
+        error_log('SEDEQ: PostgreSQL no disponible para directorio de escuelas privadas');
+        return [];
+    }
+
+    $link = Conectarse();
+    if (!$link) {
+        error_log('SEDEQ: No se pudo conectar a la BD para directorio de escuelas privadas');
+        return [];
+    }
+
+    try {
+        $query = "
+        WITH escuelas_privadas_consolidadas AS (
+            -- Inicial Escolarizado (PRIVADO)
+            SELECT DISTINCT
+                'Inicial Escolarizado' as nivel,
+                cv_cct,
+                nombrect,
+                c_nom_loc,
+                subcontrol,
+                COALESCE(v402 + v418 + v478, 0) as total_alumnos
+            FROM nonce_pano_24.ini_gral_24 
+            WHERE cv_mun = 6 AND subcontrol = 'PRIVADO'
+            
+            UNION
+            
+            -- Preescolar General (PRIVADO) - agregando turnos
+            SELECT 
+                'Preescolar' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(subcontrol) as subcontrol,
+                SUM(COALESCE(v185 + v191 + v189 + v195, 0)) as total_alumnos
+            FROM nonce_pano_24.pree_gral_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+              AND cv_mun = 6 
+              AND subcontrol = 'PRIVADO'
+            GROUP BY cv_cct
+            
+            UNION
+            
+            -- Primaria General (PRIVADO) - agregando turnos
+            SELECT 
+                'Primaria' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(subcontrol) as subcontrol,
+                SUM(COALESCE(v618 + v629 + v641 + v652, 0)) as total_alumnos
+            FROM nonce_pano_24.prim_gral_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+              AND cv_mun = 6 
+              AND subcontrol = 'PRIVADO'
+            GROUP BY cv_cct
+            
+            UNION
+            
+            -- Secundaria General (PRIVADO) - agregando turnos
+            SELECT 
+                'Secundaria' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(subcontrol) as subcontrol,
+                SUM(COALESCE(v348 + v356 + v365 + v373, 0)) as total_alumnos
+            FROM nonce_pano_24.sec_gral_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+              AND cv_mun = 6 
+              AND subcontrol = 'PRIVADO'
+            GROUP BY cv_cct
+            
+            UNION
+            
+            -- Media Superior (PRIVADO)
+            SELECT DISTINCT
+                'Media Superior' as nivel,
+                cct_ins_pla as cv_cct,
+                nombre_ins_pla as nombrect,
+                c_nom_loc,
+                subcontrol,
+                0 as total_alumnos
+            FROM nonce_pano_24.ms_plantel_24 
+            WHERE cv_motivo = 0 
+              AND cv_mun = 6 
+              AND subcontrol = 'PRIVADO'
+            
+            UNION
+            
+            -- Superior Escuela (PRIVADO)
+            SELECT DISTINCT
+                'Superior' as nivel,
+                cv_cct,
+                nombrect,
+                c_nom_loc,
+                subcontrol,
+                0 as total_alumnos
+            FROM nonce_pano_24.sup_escuela_24 
+            WHERE cv_motivo = 0 
+              AND cv_mun = 6 
+              AND subcontrol = 'PRIVADO'
+        )
+        SELECT 
+            nivel,
+            cv_cct as cct,
+            nombrect as nombre,
+            c_nom_loc as localidad,
+            total_alumnos
+        FROM escuelas_privadas_consolidadas
+        WHERE nombrect IS NOT NULL AND nombrect != ''
+        ORDER BY 
+            CASE nivel
+                WHEN 'Inicial Escolarizado' THEN 1
+                WHEN 'Preescolar' THEN 2
+                WHEN 'Primaria' THEN 3
+                WHEN 'Secundaria' THEN 4
+                WHEN 'Media Superior' THEN 5
+                WHEN 'Superior' THEN 6
+                ELSE 99
+            END,
+            total_alumnos DESC,
+            nombre
+        ";
+
+        $result = pg_query($link, $query);
+        $escuelasPrivadas = [];
+
+        if ($result && pg_num_rows($result) > 0) {
+            while ($row = pg_fetch_assoc($result)) {
+                $escuelasPrivadas[] = [
+                    'nivel' => $row['nivel'],
+                    'cct' => $row['cct'],
+                    'nombre' => $row['nombre'],
+                    'localidad' => $row['localidad'],
+                    'total_alumnos' => (int) $row['total_alumnos']
+                ];
+            }
+            pg_free_result($result);
+        }
+
+        pg_close($link);
+        return $escuelasPrivadas;
+
+    } catch (Exception $e) {
+        error_log('SEDEQ: Error en consulta de directorio de escuelas privadas: ' . $e->getMessage());
+        return [];
+    }
 }

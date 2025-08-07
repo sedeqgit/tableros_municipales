@@ -116,6 +116,14 @@ $totalEscuelasSubcontrol = $escuelasPorSubcontrol['total_escuelas'];
 $distribucionSubcontrol = $escuelasPorSubcontrol['distribución'];
 
 // =============================================================================
+// OBTENER DIRECTORIOS DE ESCUELAS
+// =============================================================================
+
+// Obtener listados completos de escuelas públicas y privadas
+$escuelasPublicasDirectorio = obtenerDirectorioEscuelasPublicas();
+$escuelasPrivadasDirectorio = obtenerDirectorioEscuelasPrivadas();
+
+// =============================================================================
 // DATOS PARA ANÁLISIS DE EFICIENCIA EDUCATIVA
 // =============================================================================
 
@@ -602,7 +610,111 @@ $datosEficiencia = [
                         </div>
                     </div>
                 </div>
-            </div> <!-- Panel de conclusiones -->
+            </div>
+
+            <!-- Panel de Directorio de Escuelas Públicas -->
+            <div class="matricula-panel animate-fade delay-4">
+                <div class="matricula-header">
+                    <h3 class="matricula-title"><i class="fas fa-landmark"></i> Directorio de Escuelas Públicas</h3>
+                </div>
+                <div class="matricula-body">
+                    <div class="directorio-filters">
+                        <input type="text" id="search-publicas" placeholder="Buscar escuela pública..." class="search-input">
+                        <select id="nivel-filter-publicas" class="nivel-filter">
+                            <option value="">Todos los niveles</option>
+                            <?php
+                            $nivelesPublicas = array_unique(array_column($escuelasPublicasDirectorio, 'nivel'));
+                            sort($nivelesPublicas);
+                            foreach ($nivelesPublicas as $nivel): ?>
+                                <option value="<?php echo $nivel; ?>"><?php echo $nivel; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="school-count">
+                            <span class="count-label">Total:</span>
+                            <span class="count-number" id="count-publicas"><?php echo count($escuelasPublicasDirectorio); ?></span>
+                            <span class="count-text">escuelas</span>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table" id="tabla-publicas">
+                            <thead>
+                                <tr>
+                                    <th>Nivel Educativo</th>
+                                    <th>CCT</th>
+                                    <th>Nombre de la Escuela</th>
+                                    <th>Localidad</th>
+                                    <th>Total Alumnos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($escuelasPublicasDirectorio as $escuela): ?>
+                                <tr data-nivel="<?php echo $escuela['nivel']; ?>">
+                                    <td class="nivel-nombre"><?php echo $escuela['nivel']; ?></td>
+                                    <td class="cct-codigo"><?php echo $escuela['cct']; ?></td>
+                                    <td class="escuela-nombre"><?php echo $escuela['nombre']; ?></td>
+                                    <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
+                                    <td class="sector-publico"><?php echo number_format($escuela['total_alumnos']); ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Directorio de Escuelas Privadas -->
+            <div class="matricula-panel animate-fade delay-5">
+                <div class="matricula-header">
+                    <h3 class="matricula-title"><i class="fas fa-building"></i> Directorio de Escuelas Privadas</h3>
+                </div>
+                <div class="matricula-body">
+                    <div class="directorio-filters">
+                        <input type="text" id="search-privadas" placeholder="Buscar escuela privada..." class="search-input">
+                        <select id="nivel-filter-privadas" class="nivel-filter">
+                            <option value="">Todos los niveles</option>
+                            <?php
+                            $nivelesPrivadas = array_unique(array_column($escuelasPrivadasDirectorio, 'nivel'));
+                            sort($nivelesPrivadas);
+                            foreach ($nivelesPrivadas as $nivel): ?>
+                                <option value="<?php echo $nivel; ?>"><?php echo $nivel; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="school-count">
+                            <span class="count-label">Total:</span>
+                            <span class="count-number" id="count-privadas"><?php echo count($escuelasPrivadasDirectorio); ?></span>
+                            <span class="count-text">escuelas</span>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="data-table" id="tabla-privadas">
+                            <thead>
+                                <tr>
+                                    <th>Nivel Educativo</th>
+                                    <th>CCT</th>
+                                    <th>Nombre de la Escuela</th>
+                                    <th>Localidad</th>
+                                    <th>Total Alumnos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($escuelasPrivadasDirectorio as $escuela): ?>
+                                <tr data-nivel="<?php echo $escuela['nivel']; ?>">
+                                    <td class="nivel-nombre"><?php echo $escuela['nivel']; ?></td>
+                                    <td class="cct-codigo"><?php echo $escuela['cct']; ?></td>
+                                    <td class="escuela-nombre"><?php echo $escuela['nombre']; ?></td>
+                                    <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
+                                    <td class="sector-privado"><?php echo number_format($escuela['total_alumnos']); ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de conclusiones -->
             <div class="panel animate-up delay-4">
                 <div class="panel-header">
                     <h3 class="panel-title"><i class="fas fa-clipboard-check"></i> Conclusiones del Análisis</h3>
@@ -670,6 +782,7 @@ $datosEficiencia = [
     <script src="./js/animations_global.js"></script>
     <script src="./js/sidebar.js"></script>
     <script src="./js/escuelas_publicas_privadas.js"></script>
+    <script src="./js/directorio_escuelas.js"></script>
 </body>
 
 </html>

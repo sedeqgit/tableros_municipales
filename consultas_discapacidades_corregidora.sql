@@ -3,7 +3,6 @@
 -- Ciclo Escolar 2024-2025 (Esquema: nonce_pano_24)
 -- Basado en análisis de archivos legacy y campos validados
 -- =====================================================================================
-
 -- =====================================================================================
 -- 1. PRIMARIA - Alumnos con discapacidad
 -- =====================================================================================
@@ -18,12 +17,13 @@ SELECT 'PRIMARIA' as nivel_educativo,
     SUM(v1081) as hombres_discapacidad,
     SUM(v1082) as mujeres_discapacidad
 FROM nonce_pano_24.prim_gral_24
-WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+WHERE (
+        cv_estatus_captura = 0
+        OR cv_estatus_captura = 10
+    )
     AND c_nom_mun ILIKE '%CORREGIDORA%'
 GROUP BY control
-
 UNION ALL
-
 SELECT 'PRIMARIA' as nivel_educativo,
     'INDIGENA' as subnivel,
     'PUBLICO' as control,
@@ -31,11 +31,9 @@ SELECT 'PRIMARIA' as nivel_educativo,
     SUM(v1014) as hombres_discapacidad,
     SUM(v1015) as mujeres_discapacidad
 FROM nonce_pano_24.prim_ind_24
-WHERE cv_estatus_captura = 0 
+WHERE cv_estatus_captura = 0
     AND c_nom_mun ILIKE '%CORREGIDORA%'
-
 UNION ALL
-
 SELECT 'PRIMARIA' as nivel_educativo,
     'COMUNITARIA' as subnivel,
     'PUBLICO' as control,
@@ -43,14 +41,14 @@ SELECT 'PRIMARIA' as nivel_educativo,
     SUM(v580) as hombres_discapacidad,
     SUM(v581) as mujeres_discapacidad
 FROM nonce_pano_24.prim_comuni_24
-WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-    AND c_nom_mun ILIKE '%CORREGIDORA%'
-
--- =====================================================================================
--- 2. PREESCOLAR - Alumnos con discapacidad
--- =====================================================================================
+WHERE (
+        cv_estatus_captura = 0
+        OR cv_estatus_captura = 10
+    )
+    AND c_nom_mun ILIKE '%CORREGIDORA%' -- =====================================================================================
+    -- 2. PREESCOLAR - Alumnos con discapacidad
+    -- =====================================================================================
 UNION ALL
-
 SELECT 'PREESCOLAR' as nivel_educativo,
     'GENERAL' as subnivel,
     CASE
@@ -61,12 +59,13 @@ SELECT 'PREESCOLAR' as nivel_educativo,
     SUM(v421) as hombres_discapacidad,
     SUM(v422) as mujeres_discapacidad
 FROM nonce_pano_24.pree_gral_24
-WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+WHERE (
+        cv_estatus_captura = 0
+        OR cv_estatus_captura = 10
+    )
     AND c_nom_mun ILIKE '%CORREGIDORA%'
 GROUP BY control
-
 UNION ALL
-
 SELECT 'PREESCOLAR' as nivel_educativo,
     'INDIGENA' as subnivel,
     'PUBLICO' as control,
@@ -74,11 +73,9 @@ SELECT 'PREESCOLAR' as nivel_educativo,
     SUM(v384) as hombres_discapacidad,
     SUM(v385) as mujeres_discapacidad
 FROM nonce_pano_24.pree_ind_24
-WHERE cv_estatus_captura = 0 
+WHERE cv_estatus_captura = 0
     AND c_nom_mun ILIKE '%CORREGIDORA%'
-
 UNION ALL
-
 SELECT 'PREESCOLAR' as nivel_educativo,
     'COMUNITARIA' as subnivel,
     'PUBLICO' as control,
@@ -86,14 +83,14 @@ SELECT 'PREESCOLAR' as nivel_educativo,
     SUM(v146) as hombres_discapacidad,
     SUM(v147) as mujeres_discapacidad
 FROM nonce_pano_24.pree_comuni_24
-WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-    AND c_nom_mun ILIKE '%CORREGIDORA%'
-
--- =====================================================================================
--- 3. SECUNDARIA - Alumnos con discapacidad
--- =====================================================================================
+WHERE (
+        cv_estatus_captura = 0
+        OR cv_estatus_captura = 10
+    )
+    AND c_nom_mun ILIKE '%CORREGIDORA%' -- =====================================================================================
+    -- 3. SECUNDARIA - Alumnos con discapacidad
+    -- =====================================================================================
 UNION ALL
-
 SELECT 'SECUNDARIA' as nivel_educativo,
     'GENERAL' as subnivel,
     CASE
@@ -105,12 +102,13 @@ SELECT 'SECUNDARIA' as nivel_educativo,
     SUM(v580) as hombres_discapacidad,
     SUM(v581) as mujeres_discapacidad
 FROM nonce_pano_24.sec_gral_24
-WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+WHERE (
+        cv_estatus_captura = 0
+        OR cv_estatus_captura = 10
+    )
     AND c_nom_mun ILIKE '%CORREGIDORA%'
 GROUP BY control
-
 UNION ALL
-
 SELECT 'SECUNDARIA' as nivel_educativo,
     'COMUNITARIA' as subnivel,
     'PUBLICO' as control,
@@ -118,14 +116,14 @@ SELECT 'SECUNDARIA' as nivel_educativo,
     SUM(v309) as hombres_discapacidad,
     SUM(v310) as mujeres_discapacidad
 FROM nonce_pano_24.sec_comuni_24
-WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-    AND c_nom_mun ILIKE '%CORREGIDORA%'
-
--- =====================================================================================
--- 4. MEDIA SUPERIOR - Alumnos con discapacidad
--- =====================================================================================
+WHERE (
+        cv_estatus_captura = 0
+        OR cv_estatus_captura = 10
+    )
+    AND c_nom_mun ILIKE '%CORREGIDORA%' -- =====================================================================================
+    -- 4. MEDIA SUPERIOR - Alumnos con discapacidad
+    -- =====================================================================================
 UNION ALL
-
 SELECT 'MEDIA SUPERIOR' as nivel_educativo,
     'GENERAL' as subnivel,
     CASE
@@ -139,9 +137,7 @@ SELECT 'MEDIA SUPERIOR' as nivel_educativo,
 FROM nonce_pano_24.ms_gral_24
 WHERE c_nom_mun ILIKE '%CORREGIDORA%'
 GROUP BY control
-
 UNION ALL
-
 SELECT 'MEDIA SUPERIOR' as nivel_educativo,
     'TECNOLOGICO' as subnivel,
     CASE
@@ -154,13 +150,10 @@ SELECT 'MEDIA SUPERIOR' as nivel_educativo,
     SUM(v1037) as mujeres_discapacidad
 FROM nonce_pano_24.ms_tecno_24
 WHERE c_nom_mun ILIKE '%CORREGIDORA%'
-GROUP BY control
-
--- =====================================================================================
--- 5. SUPERIOR - Alumnos con discapacidad
--- =====================================================================================
+GROUP BY control -- =====================================================================================
+    -- 5. SUPERIOR - Alumnos con discapacidad
+    -- =====================================================================================
 UNION ALL
-
 SELECT 'SUPERIOR' as nivel_educativo,
     'LICENCIATURA' as subnivel,
     CASE
@@ -172,12 +165,10 @@ SELECT 'SUPERIOR' as nivel_educativo,
     SUM(v335) as hombres_discapacidad,
     SUM(v336) as mujeres_discapacidad
 FROM nonce_pano_24.sup_carrera_24
-WHERE cv_motivo = 0 
+WHERE cv_motivo = 0
     AND c_nom_mun ILIKE '%CORREGIDORA%'
 GROUP BY control
-
 UNION ALL
-
 SELECT 'SUPERIOR' as nivel_educativo,
     'POSGRADO' as subnivel,
     CASE
@@ -189,51 +180,60 @@ SELECT 'SUPERIOR' as nivel_educativo,
     SUM(v181) as hombres_discapacidad,
     SUM(v182) as mujeres_discapacidad
 FROM nonce_pano_24.sup_posgrado_24
-WHERE cv_motivo = 0 
+WHERE cv_motivo = 0
     AND c_nom_mun ILIKE '%CORREGIDORA%'
-GROUP BY control
-
--- =====================================================================================
--- 6. ESPECIAL CAM - Alumnos con discapacidad (usando campos específicos solicitados)
--- =====================================================================================
+GROUP BY control -- =====================================================================================
+    -- 6. ESPECIAL CAM - Alumnos con discapacidad (usando campos específicos solicitados)
+    -- =====================================================================================
 UNION ALL
-
 SELECT 'ESPECIAL CAM' as nivel_educativo,
     'CAM' as subnivel,
     CASE
         WHEN control = 'P?BLICO' THEN 'PUBLICO'
         ELSE control
     END as control,
-    SUM(v1392 + v1467 + v1560 + v1635 + v1814 + v1940 + v1393 + v1468 + v1561 + v1635 + v1815 + v1941) as total_discapacidad,
+    SUM(
+        v1392 + v1467 + v1560 + v1635 + v1814 + v1940 + v1393 + v1468 + v1561 + v1635 + v1815 + v1941
+    ) as total_discapacidad,
     SUM(v1392 + v1467 + v1560 + v1635 + v1814 + v1940) as hombres_discapacidad,
     SUM(v1393 + v1468 + v1561 + v1635 + v1815 + v1941) as mujeres_discapacidad
 FROM nonce_pano_24.esp_cam_24
-WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+WHERE (
+        cv_estatus_captura = 0
+        OR cv_estatus_captura = 10
+    )
     AND c_nom_mun ILIKE '%CORREGIDORA%'
 GROUP BY control
-
-ORDER BY nivel_educativo, subnivel, control;
-
+ORDER BY nivel_educativo,
+    subnivel,
+    control;
 -- =====================================================================================
 -- CONSULTA CONSOLIDADA POR NIVEL EDUCATIVO
 -- =====================================================================================
-
 -- Resumen por nivel educativo
-SELECT 
-    nivel_educativo,
+SELECT nivel_educativo,
     COUNT(DISTINCT subnivel) as modalidades,
-    SUM(CASE WHEN control = 'PUBLICO' THEN total_discapacidad ELSE 0 END) as publico_discapacidad,
-    SUM(CASE WHEN control = 'PRIVADO' THEN total_discapacidad ELSE 0 END) as privado_discapacidad,
+    SUM(
+        CASE
+            WHEN control = 'PUBLICO' THEN total_discapacidad
+            ELSE 0
+        END
+    ) as publico_discapacidad,
+    SUM(
+        CASE
+            WHEN control = 'PRIVADO' THEN total_discapacidad
+            ELSE 0
+        END
+    ) as privado_discapacidad,
     SUM(total_discapacidad) as total_discapacidad,
     SUM(hombres_discapacidad) as total_hombres,
     SUM(mujeres_discapacidad) as total_mujeres
 FROM (
-    -- Subquery con todos los datos de discapacidad...
-    -- [Aquí iría la consulta completa anterior]
-) as discapacidades
+        -- Subquery con todos los datos de discapacidad...
+        -- [Aquí iría la consulta completa anterior]
+    ) as discapacidades
 GROUP BY nivel_educativo
 ORDER BY nivel_educativo;
-
 -- =====================================================================================
 -- NOTAS IMPORTANTES:
 -- =====================================================================================
