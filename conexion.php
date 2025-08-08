@@ -2248,7 +2248,9 @@ from nonce_pano_24.sup_escuela_24
 where cv_motivo = 0 and cv_mun = 6
 group by control, nombre_ins,cv_cct,subcontrol
 order by control asc
-Estas escuelas parecen obtener mejor el conteo y nombres*/
+Estas escuelas parecen obtener mejor el conteo y nombres
+
+Definitivamente, las claves están equivocadas, verificar nuevamente las claves, usar consutas legacy para verificar*/
     try {
         $query = "
         WITH escuelas_publicas_consolidadas AS (
@@ -2300,7 +2302,7 @@ Estas escuelas parecen obtener mejor el conteo y nombres*/
                 MAX(nombrect) as nombrect,
                 MAX(c_nom_loc) as c_nom_loc,
                 MAX(subcontrol) as subcontrol,
-                SUM(COALESCE(v618 + v629 + v641 + v652, 0)) as total_alumnos
+                SUM(COALESCE(v608, 0)) as total_alumnos
             FROM nonce_pano_24.prim_gral_24 
             WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
               AND cv_mun = 6 
