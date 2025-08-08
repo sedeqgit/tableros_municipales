@@ -163,7 +163,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
             <!-- Panel de tabla detallada -->
             <div class="matricula-panel animate-fade delay-2">
                 <div class="matricula-header">
-                    <h3 class="matricula-title"><i class="fas fa-table"></i> Desgloce por Sostenimiento</h3>
+                    <h3 class="matricula-title"><i class="fas fa-table"></i> Desglose por Sostenimiento</h3>
                 </div>
                 <div class="matricula-body">
                     <div class="table-container">
