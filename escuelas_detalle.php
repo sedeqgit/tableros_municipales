@@ -619,23 +619,53 @@ $datosEficiencia = [
                 </div>
                 <div class="matricula-body">
                     <div class="directorio-filters">
-                        <input type="text" id="search-publicas" placeholder="Buscar escuela pública..." class="search-input">
+                        <input type="text" id="search-publicas" placeholder="Buscar escuela pública..."
+                            class="search-input">
                         <select id="nivel-filter-publicas" class="nivel-filter">
                             <option value="">Todos los niveles</option>
                             <?php
+                            // Definir orden específico de los niveles educativos
+                            $ordenNivelesEducativos = [
+                                'Inicial (Escolarizado)',
+                                'Inicial (No Escolarizado)',
+                                'Especial (CAM)',
+                                'Preescolar',
+                                'Primaria',
+                                'Secundaria',
+                                'Media Superior',
+                                'Superior'
+                            ];
+
                             $nivelesPublicas = array_unique(array_column($escuelasPublicasDirectorio, 'nivel'));
-                            sort($nivelesPublicas);
-                            foreach ($nivelesPublicas as $nivel): ?>
+
+                            // Ordenar según el orden educativo específico
+                            $nivelesOrdenados = [];
+                            foreach ($ordenNivelesEducativos as $nivelOrden) {
+                                foreach ($nivelesPublicas as $nivel) {
+                                    if (
+                                        $nivel === $nivelOrden ||
+                                        ($nivelOrden === 'Especial (CAM)' && stripos($nivel, 'CAM') !== false) ||
+                                        ($nivelOrden === 'Inicial (Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'Escolar') !== false) ||
+                                        ($nivelOrden === 'Inicial (No Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'No Escolar') !== false)
+                                    ) {
+                                        $nivelesOrdenados[] = $nivel;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            foreach ($nivelesOrdenados as $nivel): ?>
                                 <option value="<?php echo $nivel; ?>"><?php echo $nivel; ?></option>
                             <?php endforeach; ?>
                         </select>
                         <div class="school-count">
                             <span class="count-label">Total:</span>
-                            <span class="count-number" id="count-publicas"><?php echo count($escuelasPublicasDirectorio); ?></span>
+                            <span class="count-number"
+                                id="count-publicas"><?php echo count($escuelasPublicasDirectorio); ?></span>
                             <span class="count-text">escuelas</span>
                         </div>
                     </div>
-                    
+
                     <div class="table-container">
                         <table class="data-table" id="tabla-publicas">
                             <thead>
@@ -649,13 +679,14 @@ $datosEficiencia = [
                             </thead>
                             <tbody>
                                 <?php foreach ($escuelasPublicasDirectorio as $escuela): ?>
-                                <tr data-nivel="<?php echo $escuela['nivel']; ?>">
-                                    <td class="nivel-nombre"><?php echo $escuela['nivel']; ?></td>
-                                    <td class="cct-codigo"><?php echo $escuela['cct']; ?></td>
-                                    <td class="escuela-nombre"><?php echo $escuela['nombre']; ?></td>
-                                    <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
-                                    <td class="sector-publico"><?php echo number_format($escuela['total_alumnos']); ?></td>
-                                </tr>
+                                    <tr data-nivel="<?php echo $escuela['nivel']; ?>">
+                                        <td class="nivel-nombre"><?php echo $escuela['nivel']; ?></td>
+                                        <td class="cct-codigo"><?php echo $escuela['cct']; ?></td>
+                                        <td class="escuela-nombre"><?php echo $escuela['nombre']; ?></td>
+                                        <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
+                                        <td class="sector-publico"><?php echo number_format($escuela['total_alumnos']); ?>
+                                        </td>
+                                    </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
@@ -670,23 +701,53 @@ $datosEficiencia = [
                 </div>
                 <div class="matricula-body">
                     <div class="directorio-filters">
-                        <input type="text" id="search-privadas" placeholder="Buscar escuela privada..." class="search-input">
+                        <input type="text" id="search-privadas" placeholder="Buscar escuela privada..."
+                            class="search-input">
                         <select id="nivel-filter-privadas" class="nivel-filter">
                             <option value="">Todos los niveles</option>
                             <?php
+                            // Definir orden específico de los niveles educativos
+                            $ordenNivelesEducativos = [
+                                'Inicial (Escolarizado)',
+                                'Inicial (No Escolarizado)',
+                                'Especial (CAM)',
+                                'Preescolar',
+                                'Primaria',
+                                'Secundaria',
+                                'Media Superior',
+                                'Superior'
+                            ];
+
                             $nivelesPrivadas = array_unique(array_column($escuelasPrivadasDirectorio, 'nivel'));
-                            sort($nivelesPrivadas);
-                            foreach ($nivelesPrivadas as $nivel): ?>
+
+                            // Ordenar según el orden educativo específico
+                            $nivelesOrdenados = [];
+                            foreach ($ordenNivelesEducativos as $nivelOrden) {
+                                foreach ($nivelesPrivadas as $nivel) {
+                                    if (
+                                        $nivel === $nivelOrden ||
+                                        ($nivelOrden === 'Especial (CAM)' && stripos($nivel, 'CAM') !== false) ||
+                                        ($nivelOrden === 'Inicial (Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'Escolar') !== false) ||
+                                        ($nivelOrden === 'Inicial (No Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'No Escolar') !== false)
+                                    ) {
+                                        $nivelesOrdenados[] = $nivel;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            foreach ($nivelesOrdenados as $nivel): ?>
                                 <option value="<?php echo $nivel; ?>"><?php echo $nivel; ?></option>
                             <?php endforeach; ?>
                         </select>
                         <div class="school-count">
                             <span class="count-label">Total:</span>
-                            <span class="count-number" id="count-privadas"><?php echo count($escuelasPrivadasDirectorio); ?></span>
+                            <span class="count-number"
+                                id="count-privadas"><?php echo count($escuelasPrivadasDirectorio); ?></span>
                             <span class="count-text">escuelas</span>
                         </div>
                     </div>
-                    
+
                     <div class="table-container">
                         <table class="data-table" id="tabla-privadas">
                             <thead>
@@ -700,13 +761,14 @@ $datosEficiencia = [
                             </thead>
                             <tbody>
                                 <?php foreach ($escuelasPrivadasDirectorio as $escuela): ?>
-                                <tr data-nivel="<?php echo $escuela['nivel']; ?>">
-                                    <td class="nivel-nombre"><?php echo $escuela['nivel']; ?></td>
-                                    <td class="cct-codigo"><?php echo $escuela['cct']; ?></td>
-                                    <td class="escuela-nombre"><?php echo $escuela['nombre']; ?></td>
-                                    <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
-                                    <td class="sector-privado"><?php echo number_format($escuela['total_alumnos']); ?></td>
-                                </tr>
+                                    <tr data-nivel="<?php echo $escuela['nivel']; ?>">
+                                        <td class="nivel-nombre"><?php echo $escuela['nivel']; ?></td>
+                                        <td class="cct-codigo"><?php echo $escuela['cct']; ?></td>
+                                        <td class="escuela-nombre"><?php echo $escuela['nombre']; ?></td>
+                                        <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
+                                        <td class="sector-privado"><?php echo number_format($escuela['total_alumnos']); ?>
+                                        </td>
+                                    </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>

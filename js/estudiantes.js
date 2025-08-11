@@ -200,7 +200,7 @@ function prepararDatosMatricula() {
         datosMatriculaAgrupados['anual'][año] = prepararDatosAño(año);
     }
     
-    // Preparar datos por nivel
+    // Preparar datos por nivel (orden correcto de niveles educativos)
     const niveles = ['Inicial E', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior'];
     niveles.forEach(nivel => {
         datosMatriculaAgrupados['nivel'][nivel] = prepararDatosNivel(nivel);
@@ -211,7 +211,7 @@ function prepararDatosMatricula() {
  * Prepara los datos para la visualización general (todos los años)
  */
 function prepararDatosTodos() {
-    // Crear encabezados de la tabla
+    // Crear encabezados de la tabla (orden correcto de niveles educativos)
     const data = [['Año Escolar', 'Inicial E', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior', 'Total']];
     
     // Para cada año, agregar una fila con los datos de cada nivel
@@ -219,7 +219,7 @@ function prepararDatosTodos() {
         const fila = [año];
         let total = 0;
         
-        // Para cada nivel, agregar el dato o 0 si no existe
+        // Para cada nivel, agregar el dato o 0 si no existe (orden correcto)
         const niveles = ['Inicial E', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior'];
         niveles.forEach(nivel => {
             const valor = datosMatricula[año][nivel] || 0;
@@ -240,10 +240,10 @@ function prepararDatosTodos() {
  * Prepara los datos para un año específico
  */
 function prepararDatosAño(año) {
-    // Crear encabezados de la tabla - cada nivel educativo será una serie separada
+    // Crear encabezados de la tabla - cada nivel educativo será una serie separada (orden correcto)
     const data = [['Categoría', 'Inicial E', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior']];
     
-    // Crear una sola fila con todos los niveles como series separadas
+    // Crear una sola fila con todos los niveles como series separadas (orden correcto)
     const fila = ['Matrícula ' + año];
     const niveles = ['Inicial E', 'Inicial NE', 'CAM', 'Preescolar', 'Primaria', 'Secundaria', 'Media superior', 'Superior'];
     niveles.forEach(nivel => {

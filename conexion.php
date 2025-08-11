@@ -2214,192 +2214,391 @@ function obtenerAlumnosDiscapacidadPorNivelYGenero($cicloEscolar = '2023-2024')
 
 /**
  * =============================================================================
- * FUNCIÓN PARA OBTENER DIRECTORIO COMPLETO DE ESCUELAS PÚBLICAS
+ * FUNCIÓN CONSOLIDADA PARA OBTENER DIRECTORIO DE ESCUELAS POR SOSTENIMIENTO
  * =============================================================================
  * 
- * Recupera un listado detallado de todas las escuelas públicas del municipio
- * de Corregidora con información completa de ubicación, nivel y matrícula.
+ * Recupera un listado detallado de escuelas del municipio de Corregidora
+ * filtradas por tipo de sostenimiento (público/privado) con información 
+ * completa de ubicación, nivel y matrícula.
+ * 
+ * METODOLOGÍA:
+ * - Usa la lógica unificada validada: ILIKE '%PRIVADO%' vs 'Público'
+ * - Integra todas las modalidades educativas desde nonce_pano_24
+ * - Incluye campos de matrícula donde están disponibles (v478 breakthrough)
+ * - Manejo robusto de errores con datos de fallback
  * 
  * FUNCIONALIDADES:
- * - Lista todas las escuelas públicas por nivel educativo
+ * - Filtra escuelas por sostenimiento (públicas, privadas o ambas)
+ * - Lista por nivel educativo con información completa
  * - Incluye CCT, nombre, localidad y cantidad de alumnos
- * - Agrupa por nivel para mejor organización
- * - Manejo de errores con datos de fallback
+ * - Agrupa y ordena por nivel para mejor organización
  * 
- * @return array Arreglo con escuelas públicas organizadas por nivel
+ * @param string $tipoSostenimiento 'publico', 'privado' o 'ambos' (default: 'ambos')
+ * @return array Arreglo con escuelas organizadas por nivel y sostenimiento
  * @uses Conectarse() Para establecer conexión a PostgreSQL
  */
-function obtenerDirectorioEscuelasPublicas()
+function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
 {
     if (!function_exists('pg_connect')) {
-        error_log('SEDEQ: PostgreSQL no disponible para directorio de escuelas públicas');
+        error_log('SEDEQ: PostgreSQL no disponible para directorio consolidado de escuelas');
         return [];
     }
 
     $link = Conectarse();
     if (!$link) {
-        error_log('SEDEQ: No se pudo conectar a la BD para directorio de escuelas públicas');
+        error_log('SEDEQ: No se pudo conectar a la BD para directorio consolidado de escuelas');
         return [];
     }
 
-    /*Usar consultas mas simplificadas y verficar si en todas hace falta, de momento solo en media y superior
-    select count (cv_cct) as escuelas, control, nombre_ins,cv_cct,subcontrol
-from nonce_pano_24.sup_escuela_24
-where cv_motivo = 0 and cv_mun = 6
-group by control, nombre_ins,cv_cct,subcontrol
-order by control asc
-Estas escuelas parecen obtener mejor el conteo y nombres
-
-Definitivamente, las claves están equivocadas, verificar nuevamente las claves, usar consutas legacy para verificar*/
     try {
+        // Consulta unificada basada exactamente en escuelas_por_control_2024.sql
+        // Usa la lógica: ILIKE '%PRIVADO%' vs 'Público' (Else)
+        // Agrupa por CCT para consolidar escuelas y obtener directorio completo
         $query = "
-        WITH escuelas_publicas_consolidadas AS (
-            -- Inicial Comunitario (FEDERAL)
-            SELECT DISTINCT
-                'Inicial Comunitario' as nivel,
+        WITH escuelas_consolidadas AS (
+            -- INICIAL ESCOLARIZADO GENERAL
+            SELECT 
+                'Inicial (Escolarizado)' as nivel,
                 cv_cct,
-                nombrect,
-                c_nom_loc,
-                subcontrol,
-                COALESCE(v95 + v101, 0) as total_alumnos
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(V398 + V414, 0)) as total_alumnos
+            FROM nonce_pano_24.ini_gral_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
+            
+            UNION ALL
+            
+            -- INICIAL ESCOLARIZADO INDÍGENA
+            SELECT 
+                'Inicial (Escolarizado)' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(V183 + V184, 0)) as total_alumnos
+            FROM nonce_pano_24.ini_ind_24 
+            WHERE cv_estatus_captura = 0 
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
+            
+            UNION ALL
+            
+            -- INICIAL NO ESCOLARIZADO GENERAL
+            SELECT 
+                'Inicial (No Escolarizado)' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(V129 + V130, 0)) as total_alumnos
+            FROM nonce_pano_24.ini_ne_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
+            
+            UNION ALL
+            
+            -- INICIAL NO ESCOLARIZADO COMUNITARIO
+            SELECT 
+                'Inicial (No Escolarizado)' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(V79 + V80, 0)) as total_alumnos
             FROM nonce_pano_24.ini_comuni_24 
-            WHERE cv_mun = 6
+            WHERE cv_estatus_captura = 0 
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
             
-            UNION
+            UNION ALL
             
-            -- Preescolar General (FEDERAL TRANSFERIDO)
-            SELECT DISTINCT
+            -- ESPECIAL (CAM)
+            SELECT 
+                'CAM' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                'Público' as sostenimiento,
+                SUM(COALESCE(v2264, 0)) as total_alumnos
+            FROM nonce_pano_24.esp_cam_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
+            
+            UNION ALL
+            
+            -- PREESCOLAR GENERAL
+            SELECT 
                 'Preescolar' as nivel,
                 cv_cct,
-                nombrect,
-                c_nom_loc,
-                subcontrol,
-                COALESCE(v185 + v191 + v189 + v195, 0) as total_alumnos
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(v177, 0)) as total_alumnos
             FROM nonce_pano_24.pree_gral_24 
             WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND cv_mun = 6 
-              AND subcontrol = 'FEDERAL TRANSFERIDO'
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
             
-            UNION
+            UNION ALL
             
-            -- Preescolar Comunitario (FEDERAL)
-            SELECT DISTINCT
-                'Preescolar Comunitario' as nivel,
+            -- PREESCOLAR INDÍGENA
+            SELECT 
+                'Preescolar' as nivel,
                 cv_cct,
-                nombrect,
-                c_nom_loc,
-                subcontrol,
-                COALESCE(v95 + v101, 0) as total_alumnos
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(v177, 0)) as total_alumnos
+            FROM nonce_pano_24.pree_ind_24 
+            WHERE cv_estatus_captura = 0 
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
+            
+            UNION ALL
+            
+            -- PREESCOLAR COMUNITARIO
+            SELECT 
+                'Preescolar' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(v97, 0)) as total_alumnos
             FROM nonce_pano_24.pree_comuni_24 
-            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND cv_mun = 6
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
             
-            UNION
+            UNION ALL
             
-            -- Primaria General (FEDERAL TRANSFERIDO) - agregando turnos
+            -- PRIMARIA GENERAL
             SELECT 
                 'Primaria' as nivel,
                 cv_cct,
                 MAX(nombrect) as nombrect,
                 MAX(c_nom_loc) as c_nom_loc,
-                MAX(subcontrol) as subcontrol,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
                 SUM(COALESCE(v608, 0)) as total_alumnos
             FROM nonce_pano_24.prim_gral_24 
             WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND cv_mun = 6 
-              AND subcontrol = 'FEDERAL TRANSFERIDO'
+              AND c_nom_mun = 'CORREGIDORA'
             GROUP BY cv_cct
             
-            UNION
+            UNION ALL
             
-            -- Primaria Comunitaria (FEDERAL)
-            SELECT DISTINCT
-                'Primaria Comunitaria' as nivel,
+            -- PRIMARIA INDÍGENA
+            SELECT 
+                'Primaria' as nivel,
                 cv_cct,
-                nombrect,
-                c_nom_loc,
-                subcontrol,
-                COALESCE(v525 + v536 + v548 + v559, 0) as total_alumnos
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(v610, 0)) as total_alumnos
+            FROM nonce_pano_24.prim_ind_24 
+            WHERE cv_estatus_captura = 0 
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
+            
+            UNION ALL
+            
+            -- PRIMARIA COMUNITARIA
+            SELECT 
+                'Primaria' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(v515, 0)) as total_alumnos
             FROM nonce_pano_24.prim_comuni_24 
-            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND cv_mun = 6
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
             
-            UNION
+            UNION ALL
             
-            -- Secundaria General (FEDERAL TRANSFERIDO) - agregando turnos
-            SELECT distinct
+            -- SECUNDARIA GENERAL
+            SELECT 
                 'Secundaria' as nivel,
                 cv_cct,
                 MAX(nombrect) as nombrect,
                 MAX(c_nom_loc) as c_nom_loc,
-                MAX(subcontrol) as subcontrol,
-                SUM(COALESCE(v348 + v356 + v365 + v373, 0)) as total_alumnos
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(v340, 0)) as total_alumnos
             FROM nonce_pano_24.sec_gral_24 
             WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND cv_mun = 6 
-              AND subcontrol = 'FEDERAL TRANSFERIDO'
+              AND c_nom_mun = 'CORREGIDORA'
             GROUP BY cv_cct
             
-            UNION
+            UNION ALL
             
-            -- Media Superior (FEDERAL, ESTATAL, AUTÓNOMO)
-            SELECT DISTINCT
+            -- SECUNDARIA COMUNITARIA
+            SELECT 
+                'Secundaria' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(v257, 0)) as total_alumnos
+            FROM nonce_pano_24.sec_comuni_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
+            
+            UNION ALL
+            
+            -- MEDIA SUPERIOR GENERAL
+            SELECT 
                 'Media Superior' as nivel,
-                cct_ins_pla as cv_cct,
-                nombre_ins_pla as nombrect,
-                c_nom_loc,
-                subcontrol,
-                0 as total_alumnos
-            FROM nonce_pano_24.ms_plantel_24 
-            WHERE cv_motivo = 0 
-              AND cv_mun = 6 
-              AND subcontrol IN ('FEDERAL', 'ESTATAL', 'AUTÓNOMO', 'AUT?NOMO')
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(v397, 0)) as total_alumnos
+            FROM nonce_pano_24.ms_gral_24 
+            WHERE cv_motivo = 0
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
             
-            UNION
+            UNION ALL
             
-            -- Superior Escuela (ESTATAL, AUTÓNOMO)
-            SELECT DISTINCT
+            -- MEDIA SUPERIOR TECNOLÓGICO
+            SELECT 
+                'Media Superior' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(v472, 0)) as total_alumnos
+            FROM nonce_pano_24.ms_tecno_24 
+            WHERE cv_motivo = 0
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
+            
+            UNION ALL
+            
+            -- SUPERIOR CARRERA
+            SELECT 
                 'Superior' as nivel,
                 cv_cct,
-                nombrect,
-                c_nom_loc,
-                subcontrol,
-                0 as total_alumnos
-            FROM nonce_pano_24.sup_escuela_24 
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(v177, 0)) as total_alumnos
+            FROM nonce_pano_24.sup_carrera_24 
             WHERE cv_motivo = 0 
-              AND cv_mun = 6 
-              AND subcontrol IN ('ESTATAL', 'AUTÓNOMO', 'AUT?NOMO')
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
             
-            UNION
+            UNION ALL
             
-            -- Educación Especial CAM (FEDERAL TRANSFERIDO)
-            SELECT DISTINCT
-                'Especial (CAM)' as nivel,
+            -- SUPERIOR POSGRADO
+            SELECT 
+                'Superior' as nivel,
                 cv_cct,
-                nombrect,
-                c_nom_loc,
-                subcontrol,
-                0 as total_alumnos
-            FROM nonce_pano_24.esp_cam_24 
-            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND cv_mun = 6
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(CASE 
+                    WHEN control ILIKE '%PRIVADO%' THEN 'Privado'
+                    ELSE 'Público'
+                END) as sostenimiento,
+                SUM(COALESCE(v142, 0)) as total_alumnos
+            FROM nonce_pano_24.sup_posgrado_24 
+            WHERE cv_motivo = 0 
+              AND c_nom_mun = 'CORREGIDORA'
+            GROUP BY cv_cct
+        ), 
+        escuelas_finales AS (
+            -- Agrupar una vez más por CCT para consolidar en caso de que haya duplicados entre niveles
+            SELECT 
+                nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                MAX(sostenimiento) as sostenimiento,
+                SUM(total_alumnos) as total_alumnos
+            FROM escuelas_consolidadas
+            GROUP BY cv_cct, nivel
         )
         SELECT 
             nivel,
             cv_cct as cct,
             nombrect as nombre,
             c_nom_loc as localidad,
+            sostenimiento,
             total_alumnos
-        FROM escuelas_publicas_consolidadas
-        WHERE nombrect IS NOT NULL AND nombrect != ''
+        FROM escuelas_finales
+        WHERE nombrect IS NOT NULL AND nombrect != ''";
+
+        // Aplicar filtro de sostenimiento si se especifica
+        if ($tipoSostenimiento === 'publico') {
+            $query .= " AND sostenimiento = 'Público'";
+        } elseif ($tipoSostenimiento === 'privado') {
+            $query .= " AND sostenimiento = 'Privado'";
+        }
+        // Si es 'ambos' no agregamos filtro
+
+        $query .= "
         ORDER BY 
+            sostenimiento,
             CASE nivel
-                WHEN 'Inicial Comunitario' THEN 1
-                WHEN 'Especial (CAM)' THEN 2
-                WHEN 'Preescolar' THEN 3
-                WHEN 'Preescolar Comunitario' THEN 4
+                WHEN 'Inicial (Escolarizado)' THEN 1
+                WHEN 'Inicial (No Escolarizado)' THEN 2
+                WHEN 'CAM' THEN 3
+                WHEN 'Preescolar' THEN 4
                 WHEN 'Primaria' THEN 5
-                WHEN 'Primaria Comunitaria' THEN 6
-                WHEN 'Secundaria' THEN 7
-                WHEN 'Media Superior' THEN 8
-                WHEN 'Superior' THEN 9
+                WHEN 'Secundaria' THEN 6
+                WHEN 'Media Superior' THEN 7
+                WHEN 'Superior' THEN 8
                 ELSE 99
             END,
             total_alumnos DESC,
@@ -2407,15 +2606,16 @@ Definitivamente, las claves están equivocadas, verificar nuevamente las claves,
         ";
 
         $result = pg_query($link, $query);
-        $escuelasPublicas = [];
+        $escuelasConsolidadas = [];
 
         if ($result && pg_num_rows($result) > 0) {
             while ($row = pg_fetch_assoc($result)) {
-                $escuelasPublicas[] = [
+                $escuelasConsolidadas[] = [
                     'nivel' => $row['nivel'],
                     'cct' => $row['cct'],
                     'nombre' => $row['nombre'],
                     'localidad' => $row['localidad'],
+                    'sostenimiento' => $row['sostenimiento'],
                     'total_alumnos' => (int) $row['total_alumnos']
                 ];
             }
@@ -2423,12 +2623,32 @@ Definitivamente, las claves están equivocadas, verificar nuevamente las claves,
         }
 
         pg_close($link);
-        return $escuelasPublicas;
+        return $escuelasConsolidadas;
 
     } catch (Exception $e) {
-        error_log('SEDEQ: Error en consulta de directorio de escuelas públicas: ' . $e->getMessage());
+        error_log('SEDEQ: Error en consulta de directorio consolidado de escuelas: ' . $e->getMessage());
         return [];
     }
+}
+
+/**
+ * =============================================================================
+ * FUNCIONES DE COMPATIBILIDAD PARA DIRECTORIOS DE ESCUELAS
+ * =============================================================================
+ * 
+ * Estas funciones mantienen la compatibilidad con el código existente
+ * mientras redirigen a la nueva función consolidada para mayor eficiencia.
+ */
+
+/**
+ * FUNCIÓN DE COMPATIBILIDAD: Obtener directorio de escuelas públicas
+ * Redirige a la función consolidada con filtro público
+ * 
+ * @return array Arreglo con escuelas públicas organizadas por nivel
+ */
+function obtenerDirectorioEscuelasPublicas()
+{
+    return obtenerDirectorioEscuelasConsolidado('publico');
 }
 
 /**
@@ -2450,152 +2670,7 @@ Definitivamente, las claves están equivocadas, verificar nuevamente las claves,
  */
 function obtenerDirectorioEscuelasPrivadas()
 {
-    if (!function_exists('pg_connect')) {
-        error_log('SEDEQ: PostgreSQL no disponible para directorio de escuelas privadas');
-        return [];
-    }
-
-    $link = Conectarse();
-    if (!$link) {
-        error_log('SEDEQ: No se pudo conectar a la BD para directorio de escuelas privadas');
-        return [];
-    }
-
-    try {
-        $query = "
-        WITH escuelas_privadas_consolidadas AS (
-            -- Inicial Escolarizado (PRIVADO)
-            SELECT DISTINCT
-                'Inicial Escolarizado' as nivel,
-                cv_cct,
-                nombrect,
-                c_nom_loc,
-                subcontrol,
-                COALESCE(v402 + v418 + v478, 0) as total_alumnos
-            FROM nonce_pano_24.ini_gral_24 
-            WHERE cv_mun = 6 AND subcontrol = 'PRIVADO'
-            
-            UNION
-            
-            -- Preescolar General (PRIVADO) - agregando turnos
-            SELECT 
-                'Preescolar' as nivel,
-                cv_cct,
-                MAX(nombrect) as nombrect,
-                MAX(c_nom_loc) as c_nom_loc,
-                MAX(subcontrol) as subcontrol,
-                SUM(COALESCE(v185 + v191 + v189 + v195, 0)) as total_alumnos
-            FROM nonce_pano_24.pree_gral_24 
-            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND cv_mun = 6 
-              AND subcontrol = 'PRIVADO'
-            GROUP BY cv_cct
-            
-            UNION
-            
-            -- Primaria General (PRIVADO) - agregando turnos
-            SELECT 
-                'Primaria' as nivel,
-                cv_cct,
-                MAX(nombrect) as nombrect,
-                MAX(c_nom_loc) as c_nom_loc,
-                MAX(subcontrol) as subcontrol,
-                SUM(COALESCE(v618 + v629 + v641 + v652, 0)) as total_alumnos
-            FROM nonce_pano_24.prim_gral_24 
-            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND cv_mun = 6 
-              AND subcontrol = 'PRIVADO'
-            GROUP BY cv_cct
-            
-            UNION
-            
-            -- Secundaria General (PRIVADO) - agregando turnos
-            SELECT 
-                'Secundaria' as nivel,
-                cv_cct,
-                MAX(nombrect) as nombrect,
-                MAX(c_nom_loc) as c_nom_loc,
-                MAX(subcontrol) as subcontrol,
-                SUM(COALESCE(v348 + v356 + v365 + v373, 0)) as total_alumnos
-            FROM nonce_pano_24.sec_gral_24 
-            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND cv_mun = 6 
-              AND subcontrol = 'PRIVADO'
-            GROUP BY cv_cct
-            
-            UNION
-            
-            -- Media Superior (PRIVADO)
-            SELECT DISTINCT
-                'Media Superior' as nivel,
-                cct_ins_pla as cv_cct,
-                nombre_ins_pla as nombrect,
-                c_nom_loc,
-                subcontrol,
-                0 as total_alumnos
-            FROM nonce_pano_24.ms_plantel_24 
-            WHERE cv_motivo = 0 
-              AND cv_mun = 6 
-              AND subcontrol = 'PRIVADO'
-            
-            UNION
-            
-            -- Superior Escuela (PRIVADO)
-            SELECT DISTINCT
-                'Superior' as nivel,
-                cv_cct,
-                nombrect,
-                c_nom_loc,
-                subcontrol,
-                0 as total_alumnos
-            FROM nonce_pano_24.sup_escuela_24 
-            WHERE cv_motivo = 0 
-              AND cv_mun = 6 
-              AND subcontrol = 'PRIVADO'
-        )
-        SELECT 
-            nivel,
-            cv_cct as cct,
-            nombrect as nombre,
-            c_nom_loc as localidad,
-            total_alumnos
-        FROM escuelas_privadas_consolidadas
-        WHERE nombrect IS NOT NULL AND nombrect != ''
-        ORDER BY 
-            CASE nivel
-                WHEN 'Inicial Escolarizado' THEN 1
-                WHEN 'Preescolar' THEN 2
-                WHEN 'Primaria' THEN 3
-                WHEN 'Secundaria' THEN 4
-                WHEN 'Media Superior' THEN 5
-                WHEN 'Superior' THEN 6
-                ELSE 99
-            END,
-            total_alumnos DESC,
-            nombre
-        ";
-
-        $result = pg_query($link, $query);
-        $escuelasPrivadas = [];
-
-        if ($result && pg_num_rows($result) > 0) {
-            while ($row = pg_fetch_assoc($result)) {
-                $escuelasPrivadas[] = [
-                    'nivel' => $row['nivel'],
-                    'cct' => $row['cct'],
-                    'nombre' => $row['nombre'],
-                    'localidad' => $row['localidad'],
-                    'total_alumnos' => (int) $row['total_alumnos']
-                ];
-            }
-            pg_free_result($result);
-        }
-
-        pg_close($link);
-        return $escuelasPrivadas;
-
-    } catch (Exception $e) {
-        error_log('SEDEQ: Error en consulta de directorio de escuelas privadas: ' . $e->getMessage());
-        return [];
-    }
+    // Redirige a la función consolidada con filtro privado
+    return obtenerDirectorioEscuelasConsolidado('privado');
 }
+?>

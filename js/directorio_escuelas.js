@@ -471,21 +471,24 @@ function initOriginalTexts() {
  * @param {HTMLElement} tbody - Elemento tbody de la tabla
  */
 function sortTableByLevelAndStudents(rows, tbody) {
-    // Definir orden de niveles educativos
+    // Definir orden correcto de niveles educativos
     const levelOrder = {
+        'Inicial (Escolarizado)': 1,
         'Inicial Escolarizada': 1,
+        'Inicial (No Escolarizado)': 2,
+        'Inicial No Escolarizada': 2,
         'Inicial Comunitaria': 2,
         'Inicial Indigena': 2,
-        'Inicial No Escolarizada': 2,
+        'CAM': 3,
         'Especial (CAM)': 3,
         'Preescolar': 4,
-        'Preescolar Comunitario': 5,
-        'Primaria': 6,
-        'Primaria Comunitaria': 7,
-        'Secundaria': 8,
-        'Secundaria Comunitaria': 9,
-        'Media Superior': 10,
-        'Superior': 11
+        'Preescolar Comunitario': 4,
+        'Primaria': 5,
+        'Primaria Comunitaria': 5,
+        'Secundaria': 6,
+        'Secundaria Comunitaria': 6,
+        'Media Superior': 7,
+        'Superior': 8
     };
     
     // Ordenar filas
@@ -493,7 +496,7 @@ function sortTableByLevelAndStudents(rows, tbody) {
         const aLevel = a.getAttribute('data-nivel');
         const bLevel = b.getAttribute('data-nivel');
         
-        // Primero ordenar por nivel
+        // Primero ordenar por nivel (orden correcto de niveles educativos)
         const aLevelOrder = levelOrder[aLevel] || 99;
         const bLevelOrder = levelOrder[bLevel] || 99;
         
