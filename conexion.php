@@ -142,18 +142,173 @@ function obtenerDatosEducativos()
 
     if (!$link) {
         return $datosEducativos;
-    }    // Consulta SQL para obtener los datos de escuelas y alumnos por tipo educativo
-    $query = "SELECT 
-            tipo_educativo, 
-            SUM(escuelas_total) as escuelas,
-            SUM(alumnos_total) as alumnos
-          FROM 
-            nonce_pano_23.estadistica_corregidora
-          WHERE
-            tipo_educativo NOT LIKE '%USAER%'
-          GROUP BY 
-            tipo_educativo
-          ORDER BY 
+    }    // Consulta SQL directa al esquema nonce_pano_24 - MIGRACIÓN DESDE TABLAS AUXILIARES
+    $query = "
+        WITH datos_alumnos AS (
+            -- INICIAL ESCOLARIZADO
+            SELECT 'Inicial (Escolarizado)' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v390 + v406 + v394 + v410), 0) as alumnos
+            FROM nonce_pano_24.ini_gral_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+                AND c_nom_mun = 'CORREGIDORA'
+            
+            UNION ALL
+            
+            SELECT 'Inicial (Escolarizado)' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v183 + v184), 0) as alumnos
+            FROM nonce_pano_24.ini_ind_24
+            WHERE cv_estatus_captura = 0
+                AND c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            -- INICIAL NO ESCOLARIZADO
+            SELECT 'Inicial (No Escolarizado)' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v129 + v130), 0) as alumnos
+            FROM nonce_pano_24.ini_ne_24
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                AND c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            SELECT 'Inicial (No Escolarizado)' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v79 + v80), 0) as alumnos
+            FROM nonce_pano_24.ini_comuni_24
+            WHERE cv_estatus_captura = 0
+                AND c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            -- CAM (ESPECIAL)
+            SELECT 'Especial (CAM)' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v2264), 0) as alumnos
+            FROM nonce_pano_24.esp_cam_24
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                AND c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            -- PREESCOLAR
+            SELECT 'Preescolar' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v177), 0) as alumnos
+            FROM nonce_pano_24.pree_gral_24
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                AND c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            SELECT 'Preescolar' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v177), 0) as alumnos
+            FROM nonce_pano_24.pree_ind_24
+            WHERE cv_estatus_captura = 0
+                AND c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            SELECT 'Preescolar' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v97), 0) as alumnos
+            FROM nonce_pano_24.pree_comuni_24
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                AND c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            -- PRIMARIA
+            SELECT 'Primaria' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v608), 0) as alumnos
+            FROM nonce_pano_24.prim_gral_24
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                AND c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            SELECT 'Primaria' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v610), 0) as alumnos
+            FROM nonce_pano_24.prim_ind_24
+            WHERE cv_estatus_captura = 0
+                AND c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            SELECT 'Primaria' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v515), 0) as alumnos
+            FROM nonce_pano_24.prim_comuni_24
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                AND c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            -- SECUNDARIA
+            SELECT 'Secundaria' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v340), 0) as alumnos
+            FROM nonce_pano_24.sec_gral_24
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                AND c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            SELECT 'Secundaria' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v257), 0) as alumnos
+            FROM nonce_pano_24.sec_comuni_24
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                AND c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            -- MEDIA SUPERIOR
+            SELECT 'Media Superior' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v397), 0) as alumnos
+            FROM nonce_pano_24.ms_gral_24
+            WHERE c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            SELECT 'Media Superior' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v472), 0) as alumnos
+            FROM nonce_pano_24.ms_tecno_24
+            WHERE c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            -- SUPERIOR
+            SELECT 'Superior' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v177), 0) as alumnos
+            FROM nonce_pano_24.sup_carrera_24
+            WHERE cv_motivo = 0
+                AND c_nom_mun = 'CORREGIDORA'
+
+            UNION ALL
+
+            SELECT 'Superior' as tipo_educativo,
+                COUNT(DISTINCT cv_cct) as escuelas,
+                COALESCE(SUM(v142), 0) as alumnos
+            FROM nonce_pano_24.sup_posgrado_24
+            WHERE cv_motivo = 0
+                AND c_nom_mun = 'CORREGIDORA'
+        )
+        SELECT 
+            tipo_educativo,
+            SUM(escuelas) as escuelas,
+            SUM(alumnos) as alumnos
+        FROM datos_alumnos
+        GROUP BY tipo_educativo
+        ORDER BY 
             CASE 
               WHEN tipo_educativo = 'Inicial (Escolarizado)' THEN 1
               WHEN tipo_educativo = 'Inicial (No Escolarizado)' THEN 2
@@ -495,9 +650,9 @@ function obtenerDocentesPorNivel()
             'Inicial Escolarizada' as nivel_educativo,
             'General' as subnivel,
             COALESCE(SUM(V509+V516+V523+V511+V518+V525+V785+V510+V517+V524+V512+V519+V526+V786), 0) as total_docentes
-        FROM nonce_pano_23.ini_gral_23 
+        FROM nonce_pano_24.ini_gral_24 
         WHERE c_nom_mun = 'CORREGIDORA' 
-          AND cv_estatus_captura = 0
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
 
         UNION ALL
 
@@ -506,7 +661,7 @@ function obtenerDocentesPorNivel()
             'Inicial No Escolarizada' as nivel_educativo,
             'Comunitario' as subnivel,
             COALESCE(SUM(v124 + V125), 0) as total_docentes
-        FROM nonce_pano_23.ini_comuni_23 
+        FROM nonce_pano_24.ini_comuni_24 
         WHERE c_nom_mun = 'CORREGIDORA' 
           AND cv_estatus_captura = 0
 
@@ -525,9 +680,9 @@ function obtenerDocentesPorNivel()
             'Preescolar' as nivel_educativo,
             'General' as subnivel,
             COALESCE(SUM(v909), 0) as total_docentes
-        FROM nonce_pano_23.pree_gral_23 
+        FROM nonce_pano_24.pree_gral_24 
         WHERE c_nom_mun = 'CORREGIDORA' 
-          AND cv_estatus_captura = 0
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
 
         UNION ALL
 
@@ -536,9 +691,9 @@ function obtenerDocentesPorNivel()
             'Preescolar' as nivel_educativo,
             'Comunitario' as subnivel,
             COALESCE(SUM(v151), 0) as total_docentes
-        FROM nonce_pano_23.pree_comuni_23 
+        FROM nonce_pano_24.pree_comuni_24 
         WHERE c_nom_mun = 'CORREGIDORA' 
-          AND cv_estatus_captura = 0
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
 
         UNION ALL
 
@@ -547,9 +702,9 @@ function obtenerDocentesPorNivel()
             'Primaria' as nivel_educativo,
             'General' as subnivel,
             COALESCE(SUM(v1676), 0) as total_docentes
-        FROM nonce_pano_23.prim_gral_23 
+        FROM nonce_pano_24.prim_gral_24 
         WHERE c_nom_mun = 'CORREGIDORA' 
-          AND cv_estatus_captura = 0
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
 
         UNION ALL
 
@@ -558,9 +713,9 @@ function obtenerDocentesPorNivel()
             'Primaria' as nivel_educativo,
             'Comunitario' as subnivel,
             COALESCE(SUM(v585), 0) as total_docentes
-        FROM nonce_pano_23.prim_comuni_23 
+        FROM nonce_pano_24.prim_comuni_24 
         WHERE c_nom_mun = 'CORREGIDORA' 
-          AND cv_estatus_captura = 0
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
 
         UNION ALL
 
@@ -569,9 +724,9 @@ function obtenerDocentesPorNivel()
             'Secundaria' as nivel_educativo,
             'General' as subnivel,
             COALESCE(SUM(v1401), 0) as total_docentes
-        FROM nonce_pano_23.sec_gral_23 
+        FROM nonce_pano_24.sec_gral_24 
         WHERE c_nom_mun = 'CORREGIDORA' 
-          AND cv_estatus_captura = 0
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
 
         UNION ALL
 
@@ -580,7 +735,7 @@ function obtenerDocentesPorNivel()
             'Media Superior' as nivel_educativo,
             'Plantel' as subnivel,
             COALESCE(SUM(v169), 0) as total_docentes
-        FROM nonce_pano_23.ms_plantel_23 
+        FROM nonce_pano_24.ms_plantel_24 
         WHERE c_nom_mun = 'CORREGIDORA' 
           AND cv_motivo = 0
 
@@ -591,7 +746,7 @@ function obtenerDocentesPorNivel()
             'Superior' as nivel_educativo,
             'Licenciatura' as subnivel,
             COALESCE(SUM(v83), 0) as total_docentes
-        FROM nonce_pano_23.sup_escuela_23 
+        FROM nonce_pano_24.sup_escuela_24 
         WHERE c_nom_mun = 'CORREGIDORA' 
           AND cv_motivo = 0
         ";
