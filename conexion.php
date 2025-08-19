@@ -2828,4 +2828,195 @@ function obtenerDirectorioEscuelasPrivadas()
     // Redirige a la función consolidada con filtro privado
     return obtenerDirectorioEscuelasConsolidado('privado');
 }
+
+// =============================================================================
+// FUNCIÓN PARA OBTENER LISTA DINÁMICA DE MUNICIPIOS
+// =============================================================================
+
+/**
+ * Obtiene la lista de todos los municipios disponibles en la base de datos
+ * 
+ * Esta función utiliza la misma consulta dinámica que los archivos legacy
+ * para obtener todos los municipios que tienen datos educativos en el sistema.
+ * Incluye un sistema de fallback en caso de problemas de conexión.
+ * 
+ * FUNCIONALIDADES:
+ * - Consulta UNION de todas las tablas principales por nivel educativo
+ * - Ordenamiento alfabético de municipios
+ * - Sistema de fallback con municipios básicos
+ * - Manejo robusto de errores
+ * 
+ * @return array Lista de municipios encontrados en la base de datos
+ * @uses Conectarse() Para establecer conexión a PostgreSQL
+ */
+function obtenerMunicipios()
+{
+    // Lista de fallback en caso de problemas de conexión
+    $municipiosFallback = ['CORREGIDORA', 'QUERÉTARO', 'EL MARQUÉS', 'SAN JUAN DEL RÍO'];
+    
+    // Verificar disponibilidad de PostgreSQL
+    if (!function_exists('pg_connect')) {
+        error_log('SEDEQ: PostgreSQL no disponible para consulta de municipios, usando datos de fallback');
+        return $municipiosFallback;
+    }
+
+    try {
+        // Establecer conexión usando la función existente del sistema
+        $conn = Conectarse();
+        
+        if (!$conn) {
+            error_log('SEDEQ: Error al conectar con PostgreSQL para municipios');
+            return $municipiosFallback;
+        }
+        
+        // Consulta dinámica mejorada para evitar duplicados por diferencias de codificación
+        // Normaliza los nombres usando TRIM y UPPER para eliminar duplicados por acentos mal codificados
+        $query = "SELECT DISTINCT TRIM(UPPER(c_nom_mun)) AS municipio
+                  FROM (
+                      SELECT c_nom_mun FROM nonce_pano_24.ini_gral_24 
+                      WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      UNION
+                      SELECT c_nom_mun FROM nonce_pano_24.ini_ind_24 
+                      WHERE cv_estatus_captura = 0
+                      UNION
+                      SELECT c_nom_mun FROM nonce_pano_24.pree_gral_24 
+                      WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      UNION
+                      SELECT c_nom_mun FROM nonce_pano_24.prim_gral_24 
+                      WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      UNION
+                      SELECT c_nom_mun FROM nonce_pano_24.sec_gral_24 
+                      WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+                      UNION
+                      SELECT c_nom_mun FROM nonce_pano_24.ms_gral_24
+                      UNION
+                      SELECT c_nom_mun FROM nonce_pano_24.sup_carrera_24 
+                      WHERE cv_motivo = 0
+                  ) AS municipios
+                  WHERE TRIM(c_nom_mun) != '' AND c_nom_mun IS NOT NULL
+                  ORDER BY municipio;";
+        
+        $result = pg_query($conn, $query);
+        $municipios = [];
+        
+        if ($result) {
+            $municipiosUnicos = []; // Array para evitar duplicados
+            while ($row = pg_fetch_assoc($result)) {
+                // Obtener el municipio y normalizarlo para display
+                $municipioNormalizado = normalizarNombreMunicipio($row['municipio']);
+                if (!empty($municipioNormalizado) && !in_array($municipioNormalizado, $municipiosUnicos)) {
+                    $municipiosUnicos[] = $municipioNormalizado;
+                    $municipios[] = $municipioNormalizado;
+                }
+            }
+            pg_free_result($result);
+        }
+        
+        pg_close($conn);
+        
+        // Asegurar que tenemos los 18 municipios oficiales de Querétaro
+        $municipiosOficiales = [
+            'AMEALCO DE BONFIL', 'ARROYO SECO', 'CADEREYTA DE MONTES', 'COLÓN', 
+            'CORREGIDORA', 'EL MARQUÉS', 'EZEQUIEL MONTES', 'HUIMILPAN', 
+            'JALPAN DE SERRA', 'LANDA DE MATAMOROS', 'PEÑAMILLER', 'PEDRO ESCOBEDO', 
+            'PINAL DE AMOLES', 'QUERÉTARO', 'SAN JOAQUÍN', 'SAN JUAN DEL RÍO', 
+            'TEQUISQUIAPAN', 'TOLIMÁN'
+        ];
+        
+        // Agregar municipios faltantes que no estén en los datos
+        foreach ($municipiosOficiales as $oficial) {
+            if (!in_array($oficial, $municipios)) {
+                $municipios[] = $oficial;
+            }
+        }
+        
+        // Ordenar alfabéticamente
+        sort($municipios);
+        
+        // Si no se encontraron municipios, usar fallback
+        return empty($municipios) ? $municipiosFallback : $municipios;
+        
+    } catch (Exception $e) {
+        // Log del error para debugging
+        error_log('SEDEQ: Error en consulta de municipios: ' . $e->getMessage());
+        return $municipiosFallback;
+    }
+}
+
+// =============================================================================
+// FUNCIÓN AUXILIAR PARA NORMALIZAR NOMBRES DE MUNICIPIOS
+// =============================================================================
+
+/**
+ * Normaliza nombres de municipios para manejo consistente de acentos y caracteres especiales
+ * 
+ * Esta función estandariza los nombres de municipios que pueden venir con diferentes
+ * codificaciones desde la base de datos, asegurando un manejo consistente.
+ * 
+ * @param string $nombreMunicipio Nombre del municipio desde la base de datos
+ * @return string Nombre normalizado del municipio
+ */
+function normalizarNombreMunicipio($nombreMunicipio) {
+    // Eliminar espacios extra y convertir a string
+    $nombre = trim((string)$nombreMunicipio);
+    
+    // Si está vacío, retornar vacío
+    if (empty($nombre)) {
+        return '';
+    }
+    
+    // Lista oficial de los 18 municipios de Querétaro con sus variantes
+    $municipiosQueretaro = [
+        // Patrones principales - sin acentos para matching
+        'AMEALCO DE BONFIL' => 'AMEALCO DE BONFIL',
+        'ARROYO SECO' => 'ARROYO SECO',
+        'CADEREYTA DE MONTES' => 'CADEREYTA DE MONTES',
+        'COLON' => 'COLÓN',
+        'CORREGIDORA' => 'CORREGIDORA',
+        'EL MARQUES' => 'EL MARQUÉS',
+        'EZEQUIEL MONTES' => 'EZEQUIEL MONTES',
+        'HUIMILPAN' => 'HUIMILPAN',
+        'JALPAN DE SERRA' => 'JALPAN DE SERRA',
+        'LANDA DE MATAMOROS' => 'LANDA DE MATAMOROS',
+        'PENAMILLER' => 'PEÑAMILLER',
+        'PEDRO ESCOBEDO' => 'PEDRO ESCOBEDO',
+        'PINAL DE AMOLES' => 'PINAL DE AMOLES',
+        'QUERETARO' => 'QUERÉTARO',
+        'SAN JOAQUIN' => 'SAN JOAQUÍN',
+        'SAN JUAN DEL RIO' => 'SAN JUAN DEL RÍO',
+        'TEQUISQUIAPAN' => 'TEQUISQUIAPAN',
+        'TOLIMAN' => 'TOLIMÁN',
+        
+        // Variantes con caracteres problemáticos
+        'SAN JOAQUN' => 'SAN JOAQUÍN',
+        'SAN JUAN DEL RO' => 'SAN JUAN DEL RÍO',
+        'PEAMILLER' => 'PEÑAMILLER'
+    ];
+    
+    // Limpiar caracteres problemáticos pero preservar estructura
+    $nombreLimpio = strtoupper(trim($nombre));
+    $nombreLimpio = preg_replace('/[^\w\s]/u', '', $nombreLimpio);
+    $nombreLimpio = preg_replace('/\s+/', ' ', $nombreLimpio);
+    
+    // Buscar coincidencia directa
+    if (isset($municipiosQueretaro[$nombreLimpio])) {
+        return $municipiosQueretaro[$nombreLimpio];
+    }
+    
+    // Buscar por similitud (para casos de caracteres perdidos)
+    foreach ($municipiosQueretaro as $patron => $oficial) {
+        if (levenshtein($nombreLimpio, $patron) <= 2) {
+            return $oficial;
+        }
+    }
+    
+    // Verificar si contiene palabras clave de municipios conocidos
+    if (strpos($nombreLimpio, 'JOAQU') !== false) return 'SAN JOAQUÍN';
+    if (strpos($nombreLimpio, 'JUAN') !== false && strpos($nombreLimpio, 'DEL') !== false) return 'SAN JUAN DEL RÍO';
+    if (strpos($nombreLimpio, 'MILLER') !== false) return 'PEÑAMILLER';
+    if (strpos($nombreLimpio, 'TOLIM') !== false) return 'TOLIMÁN';
+    
+    // Como último recurso, si es un municipio válido pero no mapeado
+    return $nombreLimpio;
+}
 ?>

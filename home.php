@@ -58,6 +58,32 @@ $datosEducativos = obtenerDatosEducativos();
 $totales = calcularTotales($datosEducativos);
 $totalEscuelas = $totales['escuelas'];
 $totalAlumnos = $totales['alumnos'];
+
+// Obtener lista dinámica de municipios desde conexion.php
+$todosLosMunicipios = obtenerMunicipios();
+
+// Definir municipios principales que se mostrarán inicialmente
+$municipiosPrincipales = ['CORREGIDORA', 'QUERÉTARO', 'EL MARQUÉS', 'SAN JUAN DEL RÍO'];
+
+// Filtrar municipios adicionales (excluyendo los principales)
+$municipiosAdicionales = array_filter($todosLosMunicipios, function ($municipio) use ($municipiosPrincipales) {
+    return !in_array(strtoupper($municipio), $municipiosPrincipales);
+});
+
+/**
+ * Formatea nombres de municipios para display en formato título
+ * Preserva acentos y convierte a formato apropiado para mostrar
+ */
+function formatearNombreMunicipio($municipio)
+{
+    // Convertir a minúsculas y luego aplicar ucwords
+    $formatted = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
+
+    // Corrección específica para preposiciones que deben estar en minúsculas
+    $formatted = str_replace([' De ', ' Del '], [' de ', ' del '], $formatted);
+
+    return $formatted;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -185,129 +211,122 @@ $totalAlumnos = $totales['alumnos'];
                 </section><!-- Sección de municipios -->
                 <section class="dashboard-section animate-up delay-2">
                     <h2 class="section-title"><i class="fas fa-map-marker-alt"></i> Dashboards por Municipio</h2>
-                    <div class="dashboard-grid animate-sequence"> <!-- Tarjeta de municipio - Corregidora -->
-                        <div class="municipality-card">
-                            <div class="municipality-icon">
-                                <i class="fas fa-city"></i>
-                            </div>
-                            <div class="municipality-info">
-                                <h3>Corregidora</h3>
-                                <p>Estadísticas educativas del municipio de Corregidora.</p>
-                                <div class="municipality-stats">
-                                    <div class="stat">
-                                        <i class="fas fa-school"></i>
-                                        <?php echo number_format($totalEscuelas, 0, '.', ','); ?>
-                                    </div>
-                                    <div class="stat">
-                                        <i class="fas fa-user-graduate"></i>
-                                        <?php echo number_format($totalAlumnos, 0, '.', ','); ?>
-                                    </div>
-                                    <div class="stat">
-                                        <i class="fas fa-percentage"></i>
-                                        <span class="stat-number">7.98 </span>
-                                        <span class="stat-label"> Estatal</span>
+                    <div class="dashboard-grid animate-sequence">
+                        <?php
+                        // Generar tarjetas para municipios principales
+                        foreach ($municipiosPrincipales as $municipio) {
+                            $municipioNormalizado = formatearNombreMunicipio($municipio);
+                            $isCorregidora = (strtoupper($municipio) === 'CORREGIDORA');
+                            ?>
+                            <div class="municipality-card">
+                                <div class="municipality-icon">
+                                    <i class="fas fa-city"></i>
+                                </div>
+                                <div class="municipality-info">
+                                    <h3><?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?></h3>
+                                    <p>Estadísticas educativas del municipio de
+                                        <?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?>.
+                                    </p>
+                                    <div class="municipality-stats">
+                                        <div class="stat">
+                                            <i class="fas fa-school"></i>
+                                            <?php
+                                            if ($isCorregidora) {
+                                                echo number_format($totalEscuelas, 0, '.', ',');
+                                            } else {
+                                                echo '<span class="coming-soon">Pendiente</span>';
+                                            }
+                                            ?>
+                                        </div>
+                                        <div class="stat">
+                                            <i class="fas fa-user-graduate"></i>
+                                            <?php
+                                            if ($isCorregidora) {
+                                                echo number_format($totalAlumnos, 0, '.', ',');
+                                            } else {
+                                                echo '<span class="coming-soon">Pendiente</span>';
+                                            }
+                                            ?>
+                                        </div>
+                                        <div class="stat">
+                                            <i class="fas fa-percentage"></i>
+                                            <?php if ($isCorregidora): ?>
+                                                <span class="stat-number">7.98 </span>
+                                                <span class="stat-label"> Estatal</span>
+                                            <?php else: ?>
+                                                <span class="coming-soon">Pendiente</span>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 </div>
+                                <a href="<?php echo $isCorregidora ? './resumen.php' : '#'; ?>"
+                                    class="municipality-link <?php echo !$isCorregidora ? 'disabled' : ''; ?>">
+                                    <?php if ($isCorregidora): ?>
+                                        Ver Dashboard <i class="fas fa-arrow-right"></i>
+                                    <?php else: ?>
+                                        Pendiente <i class="fas fa-clock"></i>
+                                    <?php endif; ?>
+                                </a>
                             </div>
-                            <a href="./resumen.php" class="municipality-link">
-                                Ver Dashboard <i class="fas fa-arrow-right"></i>
-                            </a>
-                        </div>
+                            <?php
+                        }
+                        ?>
 
-                        <!-- Tarjeta de municipio - Querétaro -->
-                        <div class="municipality-card">
-                            <div class="municipality-icon">
-                                <i class="fas fa-city"></i>
-                            </div>
-                            <div class="municipality-info">
-                                <h3>Querétaro</h3>
-                                <p>Estadísticas educativas del municipio de Querétaro.</p>
-                                <div class="municipality-stats">
-                                    <div class="stat">
-                                        <i class="fas fa-school"></i> 752
+                        <!-- Municipios adicionales (ocultos inicialmente, pero directamente en el grid) -->
+                        <?php
+                        if (!empty($municipiosAdicionales)) {
+                            foreach ($municipiosAdicionales as $municipio) {
+                                $municipioNormalizado = formatearNombreMunicipio($municipio);
+                                ?>
+                                <div class="municipality-card municipio-adicional" style="display: none;">
+                                    <div class="municipality-icon">
+                                        <i class="fas fa-city"></i>
                                     </div>
-                                    <div class="stat">
-                                        <i class="fas fa-user-graduate"></i> 307,645
+                                    <div class="municipality-info">
+                                        <h3><?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?></h3>
+                                        <p>Estadísticas educativas del municipio de
+                                            <?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?>.
+                                        </p>
+                                        <div class="municipality-stats">
+                                            <div class="stat">
+                                                <i class="fas fa-school"></i>
+                                                <span class="coming-soon">Pendiente</span>
+                                            </div>
+                                            <div class="stat">
+                                                <i class="fas fa-user-graduate"></i>
+                                                <span class="coming-soon">Pendiente</span>
+                                            </div>
+                                            <div class="stat">
+                                                <i class="fas fa-percentage"></i>
+                                                <span class="coming-soon">Pendiente</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="stat">
-                                        <i class="fas fa-percentage"></i>
-                                        <span class="stat-number">32.45 </span>
-                                        <span class="stat-label"> Estatal</span>
-                                    </div>
+                                    <a href="#" class="municipality-link disabled">
+                                        Pendiente <i class="fas fa-clock"></i>
+                                    </a>
+                                </div>
+                                <?php
+                            }
+                        }
+                        ?>
+
+                        <!-- Tarjeta "Ver más municipios" -->
+                        <?php if (!empty($municipiosAdicionales)): ?>
+                            <div class="municipality-card view-more-card" id="btn-ver-mas" onclick="mostrarMasMunicipios()"
+                                style="cursor: pointer;">
+                                <div class="view-more-icon">
+                                    <i class="fas fa-plus-circle"></i>
+                                </div>
+                                <h3>Ver más municipios</h3>
+                                <p>Accede a la información de todos los municipios del estado.</p>
+                                <div class="view-more-link">
+                                    Ver todos <i class="fas fa-arrow-right"></i>
                                 </div>
                             </div>
-                            <a href="#" class="municipality-link">
-                                Ver Dashboard <i class="fas fa-arrow-right"></i>
-                            </a>
-                        </div>
-
-                        <!-- Tarjeta de municipio - El Marqués -->
-                        <div class="municipality-card">
-                            <div class="municipality-icon">
-                                <i class="fas fa-city"></i>
-                            </div>
-                            <div class="municipality-info">
-                                <h3>El Marqués</h3>
-                                <p>Estadísticas educativas del municipio de El Marqués.</p>
-                                <div class="municipality-stats">
-                                    <div class="stat">
-                                        <i class="fas fa-school"></i> 165
-                                    </div>
-                                    <div class="stat">
-                                        <i class="fas fa-user-graduate"></i> 42,183
-                                    </div>
-                                    <div class="stat">
-                                        <i class="fas fa-percentage"></i>
-                                        <span class="stat-number">4.23 </span>
-                                        <span class="stat-label"> Estatal</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="#" class="municipality-link">
-                                Ver Dashboard <i class="fas fa-arrow-right"></i>
-                            </a>
-                        </div>
-
-                        <!-- Tarjeta de municipio - San Juan del Río -->
-                        <div class="municipality-card">
-                            <div class="municipality-icon">
-                                <i class="fas fa-city"></i>
-                            </div>
-                            <div class="municipality-info">
-                                <h3>San Juan del Río</h3>
-                                <p>Estadísticas educativas del municipio de San Juan del Río.</p>
-                                <div class="municipality-stats">
-                                    <div class="stat">
-                                        <i class="fas fa-school"></i> 284
-                                    </div>
-                                    <div class="stat">
-                                        <i class="fas fa-user-graduate"></i> 73,945
-                                    </div>
-                                    <div class="stat">
-                                        <i class="fas fa-percentage"></i>
-                                        <span class="stat-number">7.41 </span>
-                                        <span class="stat-label"> Estatal</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="#" class="municipality-link">
-                                Ver Dashboard <i class="fas fa-arrow-right"></i>
-                            </a>
-                        </div>
-
-                        <!-- Tarjeta "Ver más" -->
-                        <div class="municipality-card view-more-card">
-                            <div class="view-more-icon">
-                                <i class="fas fa-plus-circle"></i>
-                            </div>
-                            <h3>Ver más municipios</h3>
-                            <p>Accede a la información de todos los municipios del estado.</p>
-                            <a href="#" class="view-more-link">
-                                Ver todos <i class="fas fa-arrow-right"></i>
-                            </a>
-                        </div>
+                        <?php endif; ?>
                     </div>
-                </section> <!-- Sección de análisis rápidos -->
+                </section> <!-- Sección de municipios -->
                 <section class="quick-access-section animate-up delay-3">
                     <h2 class="section-title"><i class="fas fa-bolt"></i> Acceso Rápido</h2>
                     <div class="quick-access-grid animate-sequence">
