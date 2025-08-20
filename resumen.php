@@ -63,9 +63,9 @@ $totalAlumnos = $totales['alumnos'];
                 <span>Estudiantes</span></a>
             <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i>
                 <span>Docentes</span></a>
-            <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
+            <!--   <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
             <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
-                    Históricos</span></a>
+                    Históricos</span></a> -->
 
         </div>
     </div>
@@ -76,7 +76,7 @@ $totalAlumnos = $totales['alumnos'];
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title">
-                <h1 class="section-title">Dashboard Estadístico Educativo Corregidora Ciclo 2023 - 2024</h1>
+                <h1 class="section-title">Dashboard Estadístico Educativo Corregidora Ciclo 2024 - 2025</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -102,7 +102,7 @@ $totalAlumnos = $totales['alumnos'];
                             <p class="metric-value" id="metricDecline">
                                 <?php echo number_format($totalAlumnos, 0, '.', ','); ?>
                             </p>
-                            <p class="metric-change" id="metricDeclineChange">Ciclo escolar 2023-2024</p>
+                            <p class="metric-change" id="metricDeclineChange">Ciclo escolar 2024-2025</p>
                         </div>
                     </div>
                     <div class="metric animate-left delay-2">
@@ -117,7 +117,7 @@ $totalAlumnos = $totales['alumnos'];
                             <p class="metric-value" id="metricGrowth">
                                 <?php echo number_format($totalEscuelas, 0, '.', ','); ?>
                             </p>
-                            <p class="metric-change" id="metricGrowthChange">Ciclo escolar 2023-2024</p>
+                            <p class="metric-change" id="metricGrowthChange">Ciclo escolar 2024-2025</p>
                         </div>
                     </div>
                     <div class="metric">
@@ -132,7 +132,7 @@ $totalAlumnos = $totales['alumnos'];
                                 Personal docente activo ciclo 2023-2024"></i>
                             </h3>
                             <p class="metric-value"><?php echo number_format($totalDocentes, 0, '.', ','); ?></p>
-                            <p class="metric-change">Ciclo escolar 2023-2024</p>
+                            <p class="metric-change">Ciclo escolar 2024-2025</p>
                         </div>
                     </div>
                 </div>
@@ -145,7 +145,8 @@ $totalAlumnos = $totales['alumnos'];
                     <p id="analisisDinamico" class="animate-up delay-4">
                         El análisis muestra que <span class="highlight">Primaria</span> tiene el mayor número de
                         escuelas con <span class="highlight">180</span>
-                        instituciones y <span class="highlight">45,000</span> alumnos en total. El nivel <span
+                        instituciones y <span class="highlight">Primaria</span> cuenta con el mayor número de estudianes
+                        con<span class="highlight">45,000</span> alumnos en total. El nivel <span
                             class="highlight">Superior</span> cuenta con menos
                         planteles (<span class="highlight">25</span>) pero mantiene una proporción alta de alumnos por
                         escuela.

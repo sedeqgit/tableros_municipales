@@ -1485,7 +1485,7 @@ function mostrar_tabla_munic_usq($link, $filtro_pub, $filtro_priv)
 
 		$filtro_mun = " AND cv_mun='" . $num_munic . "' ";
 		$nombre_munic = nombre_municipio($num_munic);
-		armar_tabla_munic_usbq($link, $nombre_munic, "AMBOS", arreglos_datos("USBQ_MUNICIPIO", $link, "23", $filtro_mun, $filtro_pub, $filtro_priv), $filtro_pub, $filtro_priv);
+		armar_tabla_munic_usbq($link, $nombre_munic, "AMBOS", arreglos_datos("USBQ_MUNICIPIO", $link, "24", $filtro_mun, $filtro_pub, $filtro_priv), $filtro_pub, $filtro_priv);
 	}
 	echo "</TABLE>";
 }

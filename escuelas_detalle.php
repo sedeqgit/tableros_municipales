@@ -200,9 +200,9 @@ $datosEficiencia = [
             <a href="alumnos.php" class="sidebar-link"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
             <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i>
                 <span>Docentes</span></a>
-            <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
+            <!--   <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
             <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
-                    Históricos</span></a>
+                    Históricos</span></a> -->
         </div>
     </div>
     <div class="main-content">
@@ -211,7 +211,7 @@ $datosEficiencia = [
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>Detalle de Escuelas Ciclo 2023 - 2024</h1>
+                <h1>Detalle de Escuelas Ciclo 2024 - 2025 </h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -298,6 +298,19 @@ $datosEficiencia = [
                                     <span
                                         class="escuelas-count"><?php echo $escuelasPorNivel['Especial (CAM)']; ?></span>
                                     <?php if (isset($escuelasNivelSostenimiento['Especial (CAM)'])): ?>
+
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <span class="level-percent"><?php echo $porcentajes['Especial (CAM)']; ?>%</span>
+                        </div>
+                        <div class="level-bar">
+                            <span class="level-name">Especial (USAER)</span>
+                            <div class="level-track">
+                                <div class="level-fill" style="width: <?php echo $porcentajes['Especial (USAER)']; ?>%">
+                                    <span
+                                        class="escuelas-count"><?php echo $escuelasPorNivel['Especial (USAER)']; ?></span>
+                                    <?php if (isset($escuelasNivelSostenimiento['Especial (USAER)'])): ?>
 
                                     <?php endif; ?>
                                 </div>
@@ -491,7 +504,7 @@ $datosEficiencia = [
                 </div>
             </div>
 
-            <!-- Panel de eficiencia educativa -->
+            <!-- Panel de eficiencia educativa 
             <div class="panel animate-up delay-2">
                 <div class="panel-header">
                     <h3 class="panel-title"><i class="fas fa-chart-line"></i> Eficiencia del Sistema Educativo en
@@ -510,316 +523,318 @@ $datosEficiencia = [
                 <div class="panel-body">
                     <div id="efficiency-diagram-view" class="education-flow">
                         <div id="flow-container">
-                            <!-- El diagrama de flujo se renderizará aquí con JS -->
                         </div>
                     </div>
                     <div id="efficiency-chart-view" style="display:none; height:350px;">
                         <div id="efficiency-chart" style="width:100%; height:100%;"></div>
                     </div>
                 </div>
-            </div> <!-- Panel de análisis de trayectorias -->
-            <div class="panel animate-up delay-3">
-                <div class="panel-header">
-                    <h3 class="panel-title"><i class="fa-solid fa-magnifying-glass"></i> Análisis de Trayectorias
-                        Educativas</h3>
+            </div>
+                -->
+        </div> <!-- Panel de análisis de trayectorias 
+        <div class="panel animate-up delay-3">
+            <div class="panel-header">
+                <h3 class="panel-title"><i class="fa-solid fa-magnifying-glass"></i> Análisis de Trayectorias
+                    Educativas</h3>
+            </div>
+            <div class="panel-body">
+                <div class="analysis-tabs animate-fade delay-3">
+                    <div class="tab active animate-hover" data-tab="primaria-tab">Primaria</div>
+                    <div class="tab animate-hover" data-tab="secundaria-tab">Secundaria</div>
+                    <div class="tab animate-hover" data-tab="bachillerato-tab">Bachillerato</div>
+                    <div class="tab animate-hover" data-tab="superior-tab">Superior</div>
                 </div>
-                <div class="panel-body">
-                    <div class="analysis-tabs animate-fade delay-3">
-                        <div class="tab active animate-hover" data-tab="primaria-tab">Primaria</div>
-                        <div class="tab animate-hover" data-tab="secundaria-tab">Secundaria</div>
-                        <div class="tab animate-hover" data-tab="bachillerato-tab">Bachillerato</div>
-                        <div class="tab animate-hover" data-tab="superior-tab">Superior</div>
-                    </div>
 
-                    <div id="primaria-tab" class="tab-content active">
-                        <div class="stats-card">
-                            <div class="stat-indicator up">
-                                <i class="fas fa-arrow-up"></i>
-                            </div>
-                            <div>
-                                <strong>Incremento:</strong> +11 estudiantes<br>
-                            </div>
+                <div id="primaria-tab" class="tab-content active">
+                    <div class="stats-card">
+                        <div class="stat-indicator up">
+                            <i class="fas fa-arrow-up"></i>
                         </div>
-                        <h4>Primaria (2006-2007 → 2011-2012)</h4>
-                        <p><strong>Ingreso:</strong> 100 estudiantes en 1° grado</p>
-                        <p><strong>Egreso:</strong> 111 estudiantes de 6° grado</p>
-                        <div class="interpretation">
-                            <strong>Interpretación:</strong> En primaria hay un ligero incremento en la transición de
-                            ingreso a egreso, lo que indica una muy buena retención en esos seis años.
+                        <div>
+                            <strong>Incremento:</strong> +11 estudiantes<br>
                         </div>
                     </div>
+                    <h4>Primaria (2006-2007 → 2011-2012)</h4>
+                    <p><strong>Ingreso:</strong> 100 estudiantes en 1° grado</p>
+                    <p><strong>Egreso:</strong> 111 estudiantes de 6° grado</p>
+                    <div class="interpretation">
+                        <strong>Interpretación:</strong> En primaria hay un ligero incremento en la transición de
+                        ingreso a egreso, lo que indica una muy buena retención en esos seis años.
+                    </div>
+                </div>
 
-                    <div id="secundaria-tab" class="tab-content">
-                        <div class="stats-card">
-                            <div class="stat-indicator down">
-                                <i class="fas fa-arrow-down"></i>
-                            </div>
-                            <div>
-                                <strong>Transición:</strong> -43 estudiantes<br>
-                                <strong>Incremento Interno:</strong> +22 estudiantes<br>
-                            </div>
+                <div id="secundaria-tab" class="tab-content">
+                    <div class="stats-card">
+                        <div class="stat-indicator down">
+                            <i class="fas fa-arrow-down"></i>
                         </div>
-                        <h4>Secundaria (2012-2013 → 2014-2015)</h4>
-                        <p><strong>Ingreso:</strong> 68 estudiantes en 1° grado</p>
-                        <p><strong>Egreso:</strong> 90 estudiantes de 3° grado</p>
-                        <div class="interpretation">
-                            <strong>Interpretación:</strong> Hay una fuga importante al inicio de secundaria
-                            (posiblemente por cambio de escuela, traslados o abandono), pero de quienes sí inician, la
-                            mayoría alcanza el egreso de tercer grado.
+                        <div>
+                            <strong>Transición:</strong> -43 estudiantes<br>
+                            <strong>Incremento Interno:</strong> +22 estudiantes<br>
                         </div>
                     </div>
+                    <h4>Secundaria (2012-2013 → 2014-2015)</h4>
+                    <p><strong>Ingreso:</strong> 68 estudiantes en 1° grado</p>
+                    <p><strong>Egreso:</strong> 90 estudiantes de 3° grado</p>
+                    <div class="interpretation">
+                        <strong>Interpretación:</strong> Hay una fuga importante al inicio de secundaria
+                        (posiblemente por cambio de escuela, traslados o abandono), pero de quienes sí inician, la
+                        mayoría alcanza el egreso de tercer grado.
+                    </div>
+                </div>
 
-                    <div id="bachillerato-tab" class="tab-content">
-                        <div class="stats-card">
-                            <div class="stat-indicator up">
-                                <i class="fas fa-arrow-up"></i>
-                            </div>
-                            <div>
-                                <strong>Transición:</strong> +60 estudiantes<br>
-                                <strong>Decremento Interno:</strong> -45 estudiantes<br>
-                            </div>
+                <div id="bachillerato-tab" class="tab-content">
+                    <div class="stats-card">
+                        <div class="stat-indicator up">
+                            <i class="fas fa-arrow-up"></i>
                         </div>
-                        <h4>Bachillerato (2015-2016 → 2017-2018)</h4>
-                        <p><strong>Ingreso:</strong> 150 estudiantes en 1° semestre</p>
-                        <p><strong>Egreso:</strong> 105 estudiantes de 3° año</p>
-                        <div class="interpretation">
-                            <strong>Interpretación:</strong> La atracción hacia el bachillerato es fuerte (quizá por
-                            oferta o convenios), pero la deserción durante los años de preparación técnica o
-                            preuniversitaria es significativa.
+                        <div>
+                            <strong>Transición:</strong> +60 estudiantes<br>
+                            <strong>Decremento Interno:</strong> -45 estudiantes<br>
                         </div>
                     </div>
+                    <h4>Bachillerato (2015-2016 → 2017-2018)</h4>
+                    <p><strong>Ingreso:</strong> 150 estudiantes en 1° semestre</p>
+                    <p><strong>Egreso:</strong> 105 estudiantes de 3° año</p>
+                    <div class="interpretation">
+                        <strong>Interpretación:</strong> La atracción hacia el bachillerato es fuerte (quizá por
+                        oferta o convenios), pero la deserción durante los años de preparación técnica o
+                        preuniversitaria es significativa.
+                    </div>
+                </div>
 
-                    <div id="superior-tab" class="tab-content">
-                        <div class="stats-card">
-                            <div class="stat-indicator down">
-                                <i class="fas fa-arrow-down"></i>
-                            </div>
-                            <div>
-                                <strong>Transición:</strong> -73 estudiantes<br>
-                                <strong>Incremento Interno:</strong> +2 estudiantes<br>
-                            </div>
+                <div id="superior-tab" class="tab-content">
+                    <div class="stats-card">
+                        <div class="stat-indicator down">
+                            <i class="fas fa-arrow-down"></i>
                         </div>
-                        <h4>Educación Superior (2018-2019 → 2022-2023)</h4>
-                        <p><strong>Ingreso:</strong> 32 estudiantes en 1° año</p>
-                        <p><strong>Egreso:</strong> 34 estudiantes graduados</p>
-                        <div class="interpretation">
-                            <strong>Interpretación:</strong> Existe una enorme brecha entre quienes finalizan
-                            bachillerato y quienes acceden a la universidad dentro del municipio (posiblemente por
-                            traslado a otras ciudades o falta de oferta local). Sin embargo, quienes sí entran tienen
-                            muy buena probabilidad de graduarse.
+                        <div>
+                            <strong>Transición:</strong> -73 estudiantes<br>
+                            <strong>Incremento Interno:</strong> +2 estudiantes<br>
                         </div>
+                    </div>
+                    <h4>Educación Superior (2018-2019 → 2022-2023)</h4>
+                    <p><strong>Ingreso:</strong> 32 estudiantes en 1° año</p>
+                    <p><strong>Egreso:</strong> 34 estudiantes graduados</p>
+                    <div class="interpretation">
+                        <strong>Interpretación:</strong> Existe una enorme brecha entre quienes finalizan
+                        bachillerato y quienes acceden a la universidad dentro del municipio (posiblemente por
+                        traslado a otras ciudades o falta de oferta local). Sin embargo, quienes sí entran tienen
+                        muy buena probabilidad de graduarse.
                     </div>
                 </div>
             </div>
+        </div>
+        -->
 
-            <!-- Panel de Directorio de Escuelas Públicas -->
-            <div class="matricula-panel animate-fade delay-4">
-                <div class="matricula-header">
-                    <h3 class="matricula-title"><i class="fas fa-landmark"></i> Directorio de Escuelas Públicas</h3>
-                </div>
-                <div class="matricula-body">
-                    <div class="directorio-filters">
-                        <input type="text" id="search-publicas" placeholder="Buscar escuela pública..."
-                            class="search-input">
-                        <select id="nivel-filter-publicas" class="nivel-filter">
-                            <option value="">Todos los niveles</option>
-                            <?php
-                            // Definir orden específico de los niveles educativos
-                            $ordenNivelesEducativos = [
-                                'Inicial (Escolarizado)',
-                                'Inicial (No Escolarizado)',
-                                'Especial (CAM)',
-                                'Preescolar',
-                                'Primaria',
-                                'Secundaria',
-                                'Media Superior',
-                                'Superior'
-                            ];
+        <!-- Panel de Directorio de Escuelas Públicas -->
+        <div class="matricula-panel animate-fade delay-4">
+            <div class="matricula-header">
+                <h3 class="matricula-title"><i class="fas fa-landmark"></i> Directorio de Escuelas Públicas</h3>
+            </div>
+            <div class="matricula-body">
+                <div class="directorio-filters">
+                    <input type="text" id="search-publicas" placeholder="Buscar escuela pública..."
+                        class="search-input">
+                    <select id="nivel-filter-publicas" class="nivel-filter">
+                        <option value="">Todos los niveles</option>
+                        <?php
+                        // Definir orden específico de los niveles educativos
+                        $ordenNivelesEducativos = [
+                            'Inicial (Escolarizado)',
+                            'Inicial (No Escolarizado)',
+                            'Especial (CAM)',
+                            'Preescolar',
+                            'Primaria',
+                            'Secundaria',
+                            'Media Superior',
+                            'Superior'
+                        ];
 
-                            $nivelesPublicas = array_unique(array_column($escuelasPublicasDirectorio, 'nivel'));
+                        $nivelesPublicas = array_unique(array_column($escuelasPublicasDirectorio, 'nivel'));
 
-                            // Ordenar según el orden educativo específico
-                            $nivelesOrdenados = [];
-                            foreach ($ordenNivelesEducativos as $nivelOrden) {
-                                foreach ($nivelesPublicas as $nivel) {
-                                    if (
-                                        $nivel === $nivelOrden ||
-                                        ($nivelOrden === 'Especial (CAM)' && stripos($nivel, 'CAM') !== false) ||
-                                        ($nivelOrden === 'Inicial (Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'Escolar') !== false) ||
-                                        ($nivelOrden === 'Inicial (No Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'No Escolar') !== false)
-                                    ) {
-                                        $nivelesOrdenados[] = $nivel;
-                                        break;
-                                    }
+                        // Ordenar según el orden educativo específico
+                        $nivelesOrdenados = [];
+                        foreach ($ordenNivelesEducativos as $nivelOrden) {
+                            foreach ($nivelesPublicas as $nivel) {
+                                if (
+                                    $nivel === $nivelOrden ||
+                                    ($nivelOrden === 'Especial (CAM)' && stripos($nivel, 'CAM') !== false) ||
+                                    ($nivelOrden === 'Inicial (Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'Escolar') !== false) ||
+                                    ($nivelOrden === 'Inicial (No Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'No Escolar') !== false)
+                                ) {
+                                    $nivelesOrdenados[] = $nivel;
+                                    break;
                                 }
                             }
+                        }
 
-                            foreach ($nivelesOrdenados as $nivel): ?>
-                                <option value="<?php echo $nivel; ?>"><?php echo $nivel; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <div class="school-count">
-                            <span class="count-label">Total:</span>
-                            <span class="count-number"
-                                id="count-publicas"><?php echo count($escuelasPublicasDirectorio); ?></span>
-                            <span class="count-text">escuelas</span>
-                        </div>
+                        foreach ($nivelesOrdenados as $nivel): ?>
+                            <option value="<?php echo $nivel; ?>"><?php echo $nivel; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <div class="school-count">
+                        <span class="count-label">Total:</span>
+                        <span class="count-number"
+                            id="count-publicas"><?php echo count($escuelasPublicasDirectorio); ?></span>
+                        <span class="count-text">escuelas</span>
                     </div>
+                </div>
 
-                    <div class="table-container">
-                        <table class="data-table" id="tabla-publicas">
-                            <thead>
-                                <tr>
-                                    <th>Nivel Educativo</th>
-                                    <th>CCT</th>
-                                    <th>Nombre de la Escuela</th>
-                                    <th>Localidad</th>
-                                    <th>Total Alumnos</th>
+                <div class="table-container">
+                    <table class="data-table" id="tabla-publicas">
+                        <thead>
+                            <tr>
+                                <th>Nivel Educativo</th>
+                                <th>CCT</th>
+                                <th>Nombre de la Escuela</th>
+                                <th>Localidad</th>
+                                <th>Total Alumnos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($escuelasPublicasDirectorio as $escuela): ?>
+                                <tr data-nivel="<?php echo $escuela['nivel']; ?>">
+                                    <td class="nivel-nombre"><?php echo $escuela['nivel']; ?></td>
+                                    <td class="cct-codigo"><?php echo $escuela['cct']; ?></td>
+                                    <td class="escuela-nombre"><?php echo $escuela['nombre']; ?></td>
+                                    <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
+                                    <td class="sector-publico"><?php echo number_format($escuela['total_alumnos']); ?>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($escuelasPublicasDirectorio as $escuela): ?>
-                                    <tr data-nivel="<?php echo $escuela['nivel']; ?>">
-                                        <td class="nivel-nombre"><?php echo $escuela['nivel']; ?></td>
-                                        <td class="cct-codigo"><?php echo $escuela['cct']; ?></td>
-                                        <td class="escuela-nombre"><?php echo $escuela['nombre']; ?></td>
-                                        <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
-                                        <td class="sector-publico"><?php echo number_format($escuela['total_alumnos']); ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
 
-            <!-- Panel de Directorio de Escuelas Privadas -->
-            <div class="matricula-panel animate-fade delay-5">
-                <div class="matricula-header">
-                    <h3 class="matricula-title"><i class="fas fa-building"></i> Directorio de Escuelas Privadas</h3>
-                </div>
-                <div class="matricula-body">
-                    <div class="directorio-filters">
-                        <input type="text" id="search-privadas" placeholder="Buscar escuela privada..."
-                            class="search-input">
-                        <select id="nivel-filter-privadas" class="nivel-filter">
-                            <option value="">Todos los niveles</option>
-                            <?php
-                            // Definir orden específico de los niveles educativos
-                            $ordenNivelesEducativos = [
-                                'Inicial (Escolarizado)',
-                                'Inicial (No Escolarizado)',
-                                'Especial (CAM)',
-                                'Preescolar',
-                                'Primaria',
-                                'Secundaria',
-                                'Media Superior',
-                                'Superior'
-                            ];
+        <!-- Panel de Directorio de Escuelas Privadas -->
+        <div class="matricula-panel animate-fade delay-5">
+            <div class="matricula-header">
+                <h3 class="matricula-title"><i class="fas fa-building"></i> Directorio de Escuelas Privadas</h3>
+            </div>
+            <div class="matricula-body">
+                <div class="directorio-filters">
+                    <input type="text" id="search-privadas" placeholder="Buscar escuela privada..."
+                        class="search-input">
+                    <select id="nivel-filter-privadas" class="nivel-filter">
+                        <option value="">Todos los niveles</option>
+                        <?php
+                        // Definir orden específico de los niveles educativos
+                        $ordenNivelesEducativos = [
+                            'Inicial (Escolarizado)',
+                            'Inicial (No Escolarizado)',
+                            'Especial (CAM)',
+                            'Preescolar',
+                            'Primaria',
+                            'Secundaria',
+                            'Media Superior',
+                            'Superior'
+                        ];
 
-                            $nivelesPrivadas = array_unique(array_column($escuelasPrivadasDirectorio, 'nivel'));
+                        $nivelesPrivadas = array_unique(array_column($escuelasPrivadasDirectorio, 'nivel'));
 
-                            // Ordenar según el orden educativo específico
-                            $nivelesOrdenados = [];
-                            foreach ($ordenNivelesEducativos as $nivelOrden) {
-                                foreach ($nivelesPrivadas as $nivel) {
-                                    if (
-                                        $nivel === $nivelOrden ||
-                                        ($nivelOrden === 'Especial (CAM)' && stripos($nivel, 'CAM') !== false) ||
-                                        ($nivelOrden === 'Inicial (Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'Escolar') !== false) ||
-                                        ($nivelOrden === 'Inicial (No Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'No Escolar') !== false)
-                                    ) {
-                                        $nivelesOrdenados[] = $nivel;
-                                        break;
-                                    }
+                        // Ordenar según el orden educativo específico
+                        $nivelesOrdenados = [];
+                        foreach ($ordenNivelesEducativos as $nivelOrden) {
+                            foreach ($nivelesPrivadas as $nivel) {
+                                if (
+                                    $nivel === $nivelOrden ||
+                                    ($nivelOrden === 'Especial (CAM)' && stripos($nivel, 'CAM') !== false) ||
+                                    ($nivelOrden === 'Inicial (Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'Escolar') !== false) ||
+                                    ($nivelOrden === 'Inicial (No Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'No Escolar') !== false)
+                                ) {
+                                    $nivelesOrdenados[] = $nivel;
+                                    break;
                                 }
                             }
+                        }
 
-                            foreach ($nivelesOrdenados as $nivel): ?>
-                                <option value="<?php echo $nivel; ?>"><?php echo $nivel; ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <div class="school-count">
-                            <span class="count-label">Total:</span>
-                            <span class="count-number"
-                                id="count-privadas"><?php echo count($escuelasPrivadasDirectorio); ?></span>
-                            <span class="count-text">escuelas</span>
-                        </div>
+                        foreach ($nivelesOrdenados as $nivel): ?>
+                            <option value="<?php echo $nivel; ?>"><?php echo $nivel; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <div class="school-count">
+                        <span class="count-label">Total:</span>
+                        <span class="count-number"
+                            id="count-privadas"><?php echo count($escuelasPrivadasDirectorio); ?></span>
+                        <span class="count-text">escuelas</span>
                     </div>
+                </div>
 
-                    <div class="table-container">
-                        <table class="data-table" id="tabla-privadas">
-                            <thead>
-                                <tr>
-                                    <th>Nivel Educativo</th>
-                                    <th>CCT</th>
-                                    <th>Nombre de la Escuela</th>
-                                    <th>Localidad</th>
-                                    <th>Total Alumnos</th>
+                <div class="table-container">
+                    <table class="data-table" id="tabla-privadas">
+                        <thead>
+                            <tr>
+                                <th>Nivel Educativo</th>
+                                <th>CCT</th>
+                                <th>Nombre de la Escuela</th>
+                                <th>Localidad</th>
+                                <th>Total Alumnos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($escuelasPrivadasDirectorio as $escuela): ?>
+                                <tr data-nivel="<?php echo $escuela['nivel']; ?>">
+                                    <td class="nivel-nombre"><?php echo $escuela['nivel']; ?></td>
+                                    <td class="cct-codigo"><?php echo $escuela['cct']; ?></td>
+                                    <td class="escuela-nombre"><?php echo $escuela['nombre']; ?></td>
+                                    <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
+                                    <td class="sector-privado"><?php echo number_format($escuela['total_alumnos']); ?>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($escuelasPrivadasDirectorio as $escuela): ?>
-                                    <tr data-nivel="<?php echo $escuela['nivel']; ?>">
-                                        <td class="nivel-nombre"><?php echo $escuela['nivel']; ?></td>
-                                        <td class="cct-codigo"><?php echo $escuela['cct']; ?></td>
-                                        <td class="escuela-nombre"><?php echo $escuela['nombre']; ?></td>
-                                        <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
-                                        <td class="sector-privado"><?php echo number_format($escuela['total_alumnos']); ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
 
-            <!-- Panel de conclusiones -->
-            <div class="panel animate-up delay-4">
-                <div class="panel-header">
-                    <h3 class="panel-title"><i class="fas fa-clipboard-check"></i> Conclusiones del Análisis</h3>
-                </div>
-                <div class="panel-body">
-                    <div class="conclusion-list">
-                        <div class="conclusion-item animate-left delay-5">
-                            <div class="conclusion-icon strength">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div>
-                                <h4>Fortalezas</h4>
-                                <ul>
-                                    <li>Alta retención en educación primaria</li>
-                                    <li>Excelente retención al final de secundaria</li>
-                                    <li>Fuerte atracción inicial en bachillerato</li>
-                                    <li>Alta tasa de graduación universitaria para quienes ingresan</li>
-                                </ul>
-                            </div>
+        <!-- Panel de conclusiones -->
+        <div class="panel animate-up delay-4">
+            <div class="panel-header">
+                <h3 class="panel-title"><i class="fas fa-clipboard-check"></i> Conclusiones del Análisis</h3>
+            </div>
+            <div class="panel-body">
+                <div class="conclusion-list">
+                    <div class="conclusion-item animate-left delay-5">
+                        <div class="conclusion-icon strength">
+                            <i class="fas fa-check-circle"></i>
                         </div>
-                        <div class="conclusion-item animate-right delay-5">
-                            <div class="conclusion-icon weakness">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <div>
-                                <h4>Áreas de Oportunidad</h4>
-                                <ul>
-                                    <li>Deserción significativa al entrar a secundaria</li>
-                                    <li>Pérdida importante de matrícula durante bachillerato</li>
-                                    <li>Gran brecha entre egresados de bachillerato y acceso a educación superior local
-                                    </li>
-                                </ul>
-                            </div>
+                        <div>
+                            <h4>Fortalezas</h4>
+                            <ul>
+                                <li>Alta retención en educación primaria</li>
+                                <li>Excelente retención al final de secundaria</li>
+                                <li>Fuerte atracción inicial en bachillerato</li>
+                                <li>Alta tasa de graduación universitaria para quienes ingresan</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="conclusion-item animate-right delay-5">
+                        <div class="conclusion-icon weakness">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div>
+                            <h4>Áreas de Oportunidad</h4>
+                            <ul>
+                                <li>Deserción significativa al entrar a secundaria</li>
+                                <li>Pérdida importante de matrícula durante bachillerato</li>
+                                <li>Gran brecha entre egresados de bachillerato y acceso a educación superior local
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <footer class="dashboard-footer">
-            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
-                reservados</p>
-        </footer>
+    <footer class="dashboard-footer">
+        <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
+            reservados</p>
+    </footer>
     </div>
     <script>
         <?php
