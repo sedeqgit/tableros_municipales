@@ -76,7 +76,7 @@ $totalAlumnos = $totales['alumnos'];
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title">
-                <h1 class="section-title">Dashboard Estadístico Educativo Corregidora Ciclo 2024 - 2025</h1>
+                <h1 class="section-title">Dashboard Estadístico Educativo Querétaro Ciclo 2024 - 2025</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -143,13 +143,7 @@ $totalAlumnos = $totales['alumnos'];
                 </div>
                 <div class="card-body">
                     <p id="analisisDinamico" class="animate-up delay-4">
-                        El análisis muestra que <span class="highlight">Primaria</span> tiene el mayor número de
-                        escuelas con <span class="highlight">180</span>
-                        instituciones y <span class="highlight">Primaria</span> cuenta con el mayor número de estudianes
-                        con<span class="highlight">45,000</span> alumnos en total. El nivel <span
-                            class="highlight">Superior</span> cuenta con menos
-                        planteles (<span class="highlight">25</span>) pero mantiene una proporción alta de alumnos por
-                        escuela.
+                        El análisis se actualizará dinámicamente...
                     </p>
                 </div>
             </div>

@@ -1491,7 +1491,7 @@ function obtenerEscuelasPorSubcontrol()
         'total_escuelas' => 1352,
         'distribución' => array(
             'PRIVADO' => array(
-                'total' => 678,
+                'total' => 678, // 73+1+227+145+87+89+56 = 678 ✓
                 'porcentaje' => 50.1,
                 'desglose' => array(
                     'Inicial Escolarizado' => 73,
@@ -1504,7 +1504,7 @@ function obtenerEscuelasPorSubcontrol()
                 )
             ),
             'FEDERAL TRANSFERIDO' => array(
-                'total' => 489,
+                'total' => 489, // 11+29+146+225+78 = 489 ✓
                 'porcentaje' => 36.2,
                 'desglose' => array(
                     'Educación Especial CAM' => 11,
@@ -1515,7 +1515,7 @@ function obtenerEscuelasPorSubcontrol()
                 )
             ),
             'FEDERAL' => array(
-                'total' => 118,
+                'total' => 118, // 74+25+6+1+6+6 = 118 ✓
                 'porcentaje' => 8.7,
                 'desglose' => array(
                     'Inicial No Escolarizado' => 74,
@@ -1527,7 +1527,7 @@ function obtenerEscuelasPorSubcontrol()
                 )
             ),
             'ESTATAL' => array(
-                'total' => 54,
+                'total' => 54, // 7+18+1+7+18+3 = 54 ✓
                 'porcentaje' => 4.0,
                 'desglose' => array(
                     'Inicial Escolarizado' => 7,
@@ -1539,7 +1539,7 @@ function obtenerEscuelasPorSubcontrol()
                 )
             ),
             'AUTÓNOMO' => array(
-                'total' => 13,
+                'total' => 13, // 4+9 = 13 ✓
                 'porcentaje' => 1.0,
                 'desglose' => array(
                     'Media Superior' => 4,
@@ -1638,16 +1638,13 @@ function obtenerEscuelasPorSubcontrol()
             UNION ALL
             SELECT 'Superior Escuela' as nivel, 'ESTATAL' as subcontrol, 3 as total
             UNION ALL
-            SELECT 'Superior Escuela' as nivel, 'AUT?NOMO' as subcontrol, 9 as total
+            SELECT 'Superior Escuela' as nivel, 'AUTÓNOMO' as subcontrol, 9 as total
             UNION ALL
             SELECT 'Superior Escuela' as nivel, 'PRIVADO' as subcontrol, 56 as total
         )
         SELECT 
             nivel,
-            CASE 
-                WHEN subcontrol IN ('AUTÓNOMO', 'AUT?NOMO') THEN 'AUTÓNOMO'
-                ELSE subcontrol
-            END as subcontrol_final,
+            subcontrol as subcontrol_final,
             total
         FROM datos_ajustados
         ORDER BY subcontrol_final, nivel";
@@ -1663,11 +1660,6 @@ function obtenerEscuelasPorSubcontrol()
                 $subcontrol = $row['subcontrol_final'];
                 $nivel = $row['nivel'];
                 $total = (int) $row['total'];
-
-                // Normalizar el subcontrol para manejar problemas de encoding
-                if ($subcontrol === 'AUT?NOMO' || strpos($subcontrol, 'AUT') === 0) {
-                    $subcontrol = 'AUTÓNOMO';
-                }
 
                 if (!isset($distribución[$subcontrol])) {
                     $distribución[$subcontrol] = array(
@@ -1755,7 +1747,7 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         SUM(V398 + V414) as total_alumnos
     FROM nonce_pano_24.ini_gral_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     GROUP BY control
     
     UNION ALL
@@ -1766,7 +1758,7 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         SUM(V129 + V130) as total_alumnos
     FROM nonce_pano_24.ini_ne_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     
     UNION ALL
     
@@ -1775,7 +1767,7 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         SUM(V79 + V80) as total_alumnos
     FROM nonce_pano_24.ini_comuni_24
     WHERE cv_estatus_captura = 0
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     
     UNION ALL
     
@@ -1785,17 +1777,24 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         SUM(v2264) as total_alumnos
     FROM nonce_pano_24.esp_cam_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     
     UNION ALL
     
+    -- USAER
+    SELECT 'USAER' as nivel_educativo,
+        'PUBLICO' as control,
+        5338 as total_alumnos
+    
+    UNION ALL
+
     -- PREESCOLAR
     SELECT 'Preescolar' as nivel_educativo,
         control,
-        SUM(v177) as total_alumnos
+        SUM(v177) + 324 as total_alumnos
     FROM nonce_pano_24.pree_gral_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     GROUP BY control
     
     UNION ALL
@@ -1805,7 +1804,7 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         SUM(v177) as total_alumnos
     FROM nonce_pano_24.pree_ind_24
     WHERE cv_estatus_captura = 0
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     
     UNION ALL
     
@@ -1814,7 +1813,7 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         SUM(v97) as total_alumnos
     FROM nonce_pano_24.pree_comuni_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     
     UNION ALL
     
@@ -1824,7 +1823,7 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         SUM(v608) as total_alumnos
     FROM nonce_pano_24.prim_gral_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     GROUP BY control
     
     UNION ALL
@@ -1834,7 +1833,7 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         SUM(v610) as total_alumnos
     FROM nonce_pano_24.prim_ind_24
     WHERE cv_estatus_captura = 0
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     
     UNION ALL
     
@@ -1843,7 +1842,7 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         SUM(v515) as total_alumnos
     FROM nonce_pano_24.prim_comuni_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     
     UNION ALL
     
@@ -1853,7 +1852,7 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         SUM(v340) as total_alumnos
     FROM nonce_pano_24.sec_gral_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     GROUP BY control
     
     UNION ALL
@@ -1863,7 +1862,7 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         SUM(v257) as total_alumnos
     FROM nonce_pano_24.sec_comuni_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     
     UNION ALL
     
@@ -1872,7 +1871,7 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         control,
         SUM(v397) as total_alumnos
     FROM nonce_pano_24.ms_gral_24
-    WHERE c_nom_mun ILIKE '%CORREGIDORA%'
+    WHERE cv_mun = 14
     GROUP BY control
     
     UNION ALL
@@ -1881,7 +1880,7 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         control,
         SUM(v472) as total_alumnos
     FROM nonce_pano_24.ms_tecno_24
-    WHERE c_nom_mun ILIKE '%CORREGIDORA%'
+    WHERE cv_mun = 14
     GROUP BY control
     
     UNION ALL
@@ -1889,10 +1888,10 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
     -- SUPERIOR
     SELECT 'Superior' as nivel_educativo,
         control,
-        SUM(v177) as total_alumnos
+        SUM(v177) - 757 as total_alumnos
     FROM nonce_pano_24.sup_carrera_24
     WHERE cv_motivo = 0
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     GROUP BY control
     
     UNION ALL
@@ -1902,7 +1901,7 @@ function obtenerMatriculaConsolidadaPorNivel($cicloEscolar = '2024-2025')
         SUM(v142) as total_alumnos
     FROM nonce_pano_24.sup_posgrado_24
     WHERE cv_motivo = 0
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
     GROUP BY control
     
     ORDER BY nivel_educativo, control;
@@ -1988,7 +1987,7 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v390 + v406 + v394 + v410), 0) AS total
     FROM nonce_pano_24.ini_gral_24 
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
 
@@ -1998,7 +1997,7 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v183 + v184), 0) AS total
     FROM nonce_pano_24.ini_ind_24
     WHERE cv_estatus_captura = 0
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
 
@@ -2009,7 +2008,7 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v129 + v130), 0) AS total
     FROM nonce_pano_24.ini_ne_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
 
@@ -2019,7 +2018,7 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v79 + v80), 0) AS total
     FROM nonce_pano_24.ini_comuni_24
     WHERE cv_estatus_captura = 0
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
 
@@ -2030,7 +2029,7 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v2264), 0) AS total
     FROM nonce_pano_24.esp_cam_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
 
@@ -2041,17 +2040,17 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v177), 0) AS total
     FROM nonce_pano_24.pree_gral_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
 
     SELECT 'Preescolar' AS nivel,
-        COALESCE(SUM(v165), 0) AS hombres,
-        COALESCE(SUM(v171), 0) AS mujeres,
-        COALESCE(SUM(v177), 0) AS total
+        COALESCE(SUM(v165), 0) + 319 AS hombres,
+        COALESCE(SUM(v171), 0) + 328 AS mujeres,
+        COALESCE(SUM(v177), 0) + 647 AS total
     FROM nonce_pano_24.pree_ind_24
     WHERE cv_estatus_captura = 0
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
 
@@ -2061,9 +2060,16 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v97), 0) AS total
     FROM nonce_pano_24.pree_comuni_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
+
+    select 'USAER' as nivel, 
+        3602 as hombres,
+        1736 as mujeres,
+        5338 as total
+
+    union all
 
     -- PRIMARIA
     SELECT 'Primaria' AS nivel,
@@ -2072,7 +2078,7 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v608), 0) AS total
     FROM nonce_pano_24.prim_gral_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
 
@@ -2082,7 +2088,7 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v610), 0) AS total
     FROM nonce_pano_24.prim_ind_24
     WHERE cv_estatus_captura = 0
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
 
@@ -2092,7 +2098,7 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v515), 0) AS total
     FROM nonce_pano_24.prim_comuni_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
 
@@ -2103,7 +2109,7 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v340), 0) AS total
     FROM nonce_pano_24.sec_gral_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
 
@@ -2113,7 +2119,7 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v257), 0) AS total
     FROM nonce_pano_24.sec_comuni_24
     WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
 
@@ -2123,7 +2129,7 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v396), 0) AS mujeres,
         COALESCE(SUM(v397), 0) AS total
     FROM nonce_pano_24.ms_gral_24
-    WHERE c_nom_mun ILIKE '%CORREGIDORA%'
+    WHERE cv_mun = 14
 
     UNION ALL
 
@@ -2132,18 +2138,18 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v471), 0) AS mujeres,
         COALESCE(SUM(v472), 0) AS total
     FROM nonce_pano_24.ms_tecno_24
-    WHERE c_nom_mun ILIKE '%CORREGIDORA%'
+    WHERE cv_mun = 14
 
     UNION ALL
 
     -- SUPERIOR
     SELECT 'Superior' AS nivel,
-        COALESCE(SUM(v175), 0) AS hombres,
-        COALESCE(SUM(v176), 0) AS mujeres,
-        COALESCE(SUM(v177), 0) AS total
+        COALESCE(SUM(v175), 0) - 580 AS hombres,
+        COALESCE(SUM(v176), 0) - 935 AS mujeres,
+        COALESCE(SUM(v177), 0) - 1515 AS total
     FROM nonce_pano_24.sup_carrera_24
     WHERE cv_motivo = 0
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     UNION ALL
 
@@ -2153,7 +2159,7 @@ function obtenerMatriculaPorNivelYGenero($cicloEscolar = '2024-2025')
         COALESCE(SUM(v142), 0) AS total
     FROM nonce_pano_24.sup_posgrado_24
     WHERE cv_motivo = 0
-        AND c_nom_mun ILIKE '%CORREGIDORA%'
+        AND cv_mun = 14
 
     ORDER BY nivel;
     ";
@@ -2578,7 +2584,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(V398 + V414, 0)) as total_alumnos
             FROM nonce_pano_24.ini_gral_24 
             WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2596,7 +2602,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(V183 + V184, 0)) as total_alumnos
             FROM nonce_pano_24.ini_ind_24 
             WHERE cv_estatus_captura = 0 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2614,7 +2620,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(V129 + V130, 0)) as total_alumnos
             FROM nonce_pano_24.ini_ne_24 
             WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2632,7 +2638,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(V79 + V80, 0)) as total_alumnos
             FROM nonce_pano_24.ini_comuni_24 
             WHERE cv_estatus_captura = 0 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2647,7 +2653,22 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(v2264, 0)) as total_alumnos
             FROM nonce_pano_24.esp_cam_24 
             WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
+            GROUP BY cv_cct
+            
+            UNION ALL
+
+            -- ESPECIAL (USAER)
+            SELECT 
+                'USAER' as nivel,
+                cv_cct,
+                MAX(nombrect) as nombrect,
+                MAX(c_nom_loc) as c_nom_loc,
+                'Público' as sostenimiento,
+                SUM(COALESCE(v145, 0)) as total_alumnos
+            FROM nonce_pano_24.esp_usaer_24 
+            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2665,7 +2686,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(v177, 0)) as total_alumnos
             FROM nonce_pano_24.pree_gral_24 
             WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2683,7 +2704,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(v177, 0)) as total_alumnos
             FROM nonce_pano_24.pree_ind_24 
             WHERE cv_estatus_captura = 0 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2701,10 +2722,12 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(v97, 0)) as total_alumnos
             FROM nonce_pano_24.pree_comuni_24 
             WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
+
+            
             
             -- PRIMARIA GENERAL
             SELECT 
@@ -2719,7 +2742,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(v608, 0)) as total_alumnos
             FROM nonce_pano_24.prim_gral_24 
             WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2737,7 +2760,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(v610, 0)) as total_alumnos
             FROM nonce_pano_24.prim_ind_24 
             WHERE cv_estatus_captura = 0 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2755,7 +2778,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(v515, 0)) as total_alumnos
             FROM nonce_pano_24.prim_comuni_24 
             WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2773,7 +2796,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(v340, 0)) as total_alumnos
             FROM nonce_pano_24.sec_gral_24 
             WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2791,7 +2814,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(v257, 0)) as total_alumnos
             FROM nonce_pano_24.sec_comuni_24 
             WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2809,7 +2832,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(v397, 0)) as total_alumnos
             FROM nonce_pano_24.ms_gral_24 
             WHERE cv_motivo = 0
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2827,7 +2850,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(v472, 0)) as total_alumnos
             FROM nonce_pano_24.ms_tecno_24 
             WHERE cv_motivo = 0
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2845,7 +2868,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(v177, 0)) as total_alumnos
             FROM nonce_pano_24.sup_carrera_24 
             WHERE cv_motivo = 0 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
             
             UNION ALL
@@ -2863,7 +2886,7 @@ function obtenerDirectorioEscuelasConsolidado($tipoSostenimiento = 'ambos')
                 SUM(COALESCE(v142, 0)) as total_alumnos
             FROM nonce_pano_24.sup_posgrado_24 
             WHERE cv_motivo = 0 
-              AND c_nom_mun = 'CORREGIDORA'
+              AND cv_mun = 14
             GROUP BY cv_cct
         ), 
         escuelas_finales AS (

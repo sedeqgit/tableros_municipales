@@ -225,7 +225,7 @@ $datosEficiencia = [
             <!-- Panel de resumen de escuelas -->
             <div class="panel animate-up">
                 <div class="panel-header">
-                    <h3 class="panel-title"><i class="fas fa-school"></i> Resumen de Escuelas en Corregidora</h3>
+                    <h3 class="panel-title"><i class="fas fa-school"></i> Resumen de Escuelas en Querétaro</h3>
                 </div>
                 <div class="panel-body">
                     <div class="stats-row">
@@ -425,30 +425,54 @@ $datosEficiencia = [
                                             'Inicial Escolarizado' => 1,
                                             'Inicial No Escolarizado' => 2,
                                             'Especial (CAM)' => 3,
-                                            'Preescolar' => 4,
-                                            'Primaria' => 5,
-                                            'Secundaria' => 6,
-                                            'Media Superior' => 7,
-                                            'Superior' => 8
+                                            'Especial (USAER)' => 4,
+                                            'Preescolar' => 5,
+                                            'Primaria' => 6,
+                                            'Secundaria' => 7,
+                                            'Media Superior' => 8,
+                                            'Superior' => 9
                                         ];
 
                                         // Crear array ordenado de niveles con sus cantidades
                                         $nivelesOrdenados = [];
+                                        
                                         foreach ($ordenNiveles as $nivel => $indice) {
-                                            // Buscar coincidencias flexibles para el nivel
+                                            // Buscar coincidencias exactas para evitar duplicados
                                             foreach ($datos['desglose'] as $nivelOriginal => $cantidad) {
-                                                if (
-                                                    stripos($nivelOriginal, $nivel) !== false ||
-                                                    stripos($nivel, $nivelOriginal) !== false ||
-                                                    ($nivel === 'Inicial Escolarizado' && stripos($nivelOriginal, 'Inicial') !== false && stripos($nivelOriginal, 'Escolar') !== false) ||
-                                                    ($nivel === 'Inicial No Escolarizado' && stripos($nivelOriginal, 'Inicial') !== false && stripos($nivelOriginal, 'No Escolar') !== false) ||
-                                                    ($nivel === 'Especial (CAM)' && (stripos($nivelOriginal, 'CAM') !== false || stripos($nivelOriginal, 'Especial') !== false)) ||
-                                                    ($nivel === 'Preescolar' && stripos($nivelOriginal, 'Preescolar') !== false) ||
-                                                    ($nivel === 'Primaria' && stripos($nivelOriginal, 'Primaria') !== false) ||
-                                                    ($nivel === 'Secundaria' && stripos($nivelOriginal, 'Secundaria') !== false) ||
-                                                    ($nivel === 'Media Superior' && stripos($nivelOriginal, 'Media Superior') !== false) ||
-                                                    ($nivel === 'Superior' && stripos($nivelOriginal, 'Superior') !== false && stripos($nivelOriginal, 'Media') === false)
-                                                ) {
+                                                $coincideNivel = false;
+                                                
+                                                // Matching exacto y específico para evitar confusiones
+                                                switch ($nivel) {
+                                                    case 'Inicial Escolarizado':
+                                                        if ($nivelOriginal === 'Inicial Escolarizado') $coincideNivel = true;
+                                                        break;
+                                                    case 'Inicial No Escolarizado':
+                                                        if ($nivelOriginal === 'Inicial No Escolarizado') $coincideNivel = true;
+                                                        break;
+                                                    case 'Especial (CAM)':
+                                                        if ($nivelOriginal === 'Educación Especial CAM' || $nivelOriginal === 'CAM') $coincideNivel = true;
+                                                        break;
+                                                    case 'Especial (USAER)':
+                                                        if ($nivelOriginal === 'Educación Especial USAER' || $nivelOriginal === 'USAER') $coincideNivel = true;
+                                                        break;
+                                                    case 'Preescolar':
+                                                        if (stripos($nivelOriginal, 'Preescolar') !== false) $coincideNivel = true;
+                                                        break;
+                                                    case 'Primaria':
+                                                        if (stripos($nivelOriginal, 'Primaria') !== false) $coincideNivel = true;
+                                                        break;
+                                                    case 'Secundaria':
+                                                        if (stripos($nivelOriginal, 'Secundaria') !== false) $coincideNivel = true;
+                                                        break;
+                                                    case 'Media Superior':
+                                                        if ($nivelOriginal === 'Media Superior') $coincideNivel = true;
+                                                        break;
+                                                    case 'Superior':
+                                                        if (stripos($nivelOriginal, 'Superior') !== false && stripos($nivelOriginal, 'Media') === false) $coincideNivel = true;
+                                                        break;
+                                                }
+                                                
+                                                if ($coincideNivel) {
                                                     $nivelesOrdenados[$indice] = [
                                                         'nombre' => $nivelOriginal,
                                                         'cantidad' => $cantidad
@@ -630,7 +654,8 @@ $datosEficiencia = [
         <!-- Panel de Directorio de Escuelas Públicas -->
         <div class="matricula-panel animate-fade delay-4">
             <div class="matricula-header">
-                <h3 class="matricula-title"><i class="fas fa-landmark"></i> Directorio de Escuelas Públicas</h3>
+                <h3 class="matricula-title"><i class="fas fa-landmark"></i> Directorio de Escuelas Públicas (No incluye
+                    USAER)</h3>
             </div>
             <div class="matricula-body">
                 <div class="directorio-filters">
@@ -644,6 +669,7 @@ $datosEficiencia = [
                             'Inicial (Escolarizado)',
                             'Inicial (No Escolarizado)',
                             'Especial (CAM)',
+                            'Especial (USAER)',
                             'Preescolar',
                             'Primaria',
                             'Secundaria',
@@ -669,14 +695,25 @@ $datosEficiencia = [
                             }
                         }
 
+                        // Agregar USAER manualmente para escuelas públicas
+                        if (!in_array('Especial (USAER)', $nivelesOrdenados)) {
+                            // Insertar USAER después de CAM
+                            $pos = array_search('Especial (CAM)', $nivelesOrdenados);
+                            if ($pos !== false) {
+                                array_splice($nivelesOrdenados, $pos + 1, 0, 'Especial (USAER)');
+                            } else {
+                                $nivelesOrdenados[] = 'Especial (USAER)';
+                            }
+                        }
+
                         foreach ($nivelesOrdenados as $nivel): ?>
                             <option value="<?php echo $nivel; ?>"><?php echo $nivel; ?></option>
                         <?php endforeach; ?>
                     </select>
                     <div class="school-count">
                         <span class="count-label">Total:</span>
-                        <span class="count-number"
-                            id="count-publicas"><?php echo count($escuelasPublicasDirectorio); ?></span>
+                        <span class="count-number" id="count-publicas"><?php echo count($escuelasPublicasDirectorio) + 34;
+                        ?></span>
                         <span class="count-text">escuelas</span>
                     </div>
                 </div>
@@ -726,6 +763,7 @@ $datosEficiencia = [
                             'Inicial (Escolarizado)',
                             'Inicial (No Escolarizado)',
                             'Especial (CAM)',
+                            'Especial (USAER)',
                             'Preescolar',
                             'Primaria',
                             'Secundaria',

@@ -125,7 +125,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>Detalle de Docentes Ciclo 2023 - 2024</h1>
+                <h1>Detalle de Docentes Ciclo 2024 - 2025</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -139,7 +139,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
             <!-- Panel de resumen de docentes -->
             <div class="panel animate-up">
                 <div class="panel-header">
-                    <h3 class="panel-title"><i class="fas fa-chalkboard-teacher"></i> Resumen de docentes en Corregidora
+                    <h3 class="panel-title"><i class="fas fa-chalkboard-teacher"></i> Resumen de docentes en Querétaro
                     </h3>
                 </div>
                 <div class="panel-body"> <?php

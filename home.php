@@ -63,7 +63,7 @@ $totalAlumnos = $totales['alumnos'];
 $todosLosMunicipios = obtenerMunicipios();
 
 // Definir municipios principales que se mostrarán inicialmente
-$municipiosPrincipales = ['CORREGIDORA', 'QUERÉTARO', 'EL MARQUÉS', 'SAN JUAN DEL RÍO'];
+$municipiosPrincipales = ['QUERÉTARO', 'CORREGIDORA', 'EL MARQUÉS', 'SAN JUAN DEL RÍO'];
 
 // Filtrar municipios adicionales (excluyendo los principales)
 $municipiosAdicionales = array_filter($todosLosMunicipios, function ($municipio) use ($municipiosPrincipales) {
@@ -216,7 +216,7 @@ function formatearNombreMunicipio($municipio)
                         // Generar tarjetas para municipios principales
                         foreach ($municipiosPrincipales as $municipio) {
                             $municipioNormalizado = formatearNombreMunicipio($municipio);
-                            $isCorregidora = (strtoupper($municipio) === 'CORREGIDORA');
+                            $isQueretaro = (strtoupper($municipio) === 'QUERÉTARO');
                             ?>
                             <div class="municipality-card">
                                 <div class="municipality-icon">
@@ -231,7 +231,7 @@ function formatearNombreMunicipio($municipio)
                                         <div class="stat">
                                             <i class="fas fa-school"></i>
                                             <?php
-                                            if ($isCorregidora) {
+                                            if ($isQueretaro) {
                                                 echo number_format($totalEscuelas, 0, '.', ',');
                                             } else {
                                                 echo '<span class="coming-soon">Pendiente</span>';
@@ -241,7 +241,7 @@ function formatearNombreMunicipio($municipio)
                                         <div class="stat">
                                             <i class="fas fa-user-graduate"></i>
                                             <?php
-                                            if ($isCorregidora) {
+                                            if ($isQueretaro) {
                                                 echo number_format($totalAlumnos, 0, '.', ',');
                                             } else {
                                                 echo '<span class="coming-soon">Pendiente</span>';
@@ -250,8 +250,8 @@ function formatearNombreMunicipio($municipio)
                                         </div>
                                         <div class="stat">
                                             <i class="fas fa-percentage"></i>
-                                            <?php if ($isCorregidora): ?>
-                                                <span class="stat-number">7.98 </span>
+                                            <?php if ($isQueretaro): ?>
+                                                <span class="stat-number">62.11 </span>
                                                 <span class="stat-label"> Estatal</span>
                                             <?php else: ?>
                                                 <span class="coming-soon">Pendiente</span>
@@ -259,9 +259,9 @@ function formatearNombreMunicipio($municipio)
                                         </div>
                                     </div>
                                 </div>
-                                <a href="<?php echo $isCorregidora ? './resumen.php' : '#'; ?>"
-                                    class="municipality-link <?php echo !$isCorregidora ? 'disabled' : ''; ?>">
-                                    <?php if ($isCorregidora): ?>
+                                <a href="<?php echo $isQueretaro ? './resumen.php' : '#'; ?>"
+                                    class="municipality-link <?php echo !$isQueretaro ? 'disabled' : ''; ?>">
+                                    <?php if ($isQueretaro): ?>
                                         Ver Dashboard <i class="fas fa-arrow-right"></i>
                                     <?php else: ?>
                                         Pendiente <i class="fas fa-clock"></i>

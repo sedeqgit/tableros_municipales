@@ -312,7 +312,7 @@ function actualizarAnalisis() {
     const analisisHTML = `
         El análisis muestra que <span class="highlight">${maxEscuelas.tipo}</span> tiene el mayor número de
         escuelas con <span class="highlight">${maxEscuelas.valor.toLocaleString()}</span>
-        instituciones y <span class="highlight">${maxEscuelas.tipo}</span> cuenta con la mayor cantidad de estudiantes con <span class="highlight">${maxAlumnos.valor.toLocaleString()}</span> alumnos en total. El nivel <span
+        instituciones y <span class="highlight">${maxAlumnos.tipo}</span> cuenta con la mayor cantidad de estudiantes con <span class="highlight">${maxAlumnos.valor.toLocaleString()}</span> alumnos en total. El nivel <span
             class="highlight">${maxRelacion.tipo}</span> cuenta con la proporción más alta de alumnos por
         escuela (<span class="highlight">${Math.round(maxRelacion.valor).toLocaleString()}</span> alumnos por escuela).
     `;
