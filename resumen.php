@@ -27,7 +27,7 @@ $totalAlumnos = $totales['alumnos'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Estadístico Educativo Corregidora | SEDEQ</title>
+    <title>Tablero Estadístico Educativo Corregidora | SEDEQ</title>
 
     <!-- ========================================== -->
     <!-- HOJAS DE ESTILO MODULARIZADAS             -->
@@ -57,17 +57,16 @@ $totalAlumnos = $totales['alumnos'];
         </div>
         <div class="sidebar-links">
             <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
-            <a href="#" class="sidebar-link active"><i class="fas fa-chart-bar"></i> <span>Resumen</span></a>
+            <a href="resumen.php" class="sidebar-link active"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
+            <a href="alumnos.php" class="sidebar-link"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
             <a href="escuelas_detalle.php" class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
-            <a href="alumnos.php" class="sidebar-link"><i class="fas fa-user-graduate"></i>
-                <span>Estudiantes</span></a>
             <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i>
                 <span>Docentes</span></a>
-            <!--   <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
-            <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
+            <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
+            <!-- <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
                     Históricos</span></a> -->
-
         </div>
+    </div>
     </div>
 
     <div class="main-content">
@@ -76,7 +75,7 @@ $totalAlumnos = $totales['alumnos'];
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title">
-                <h1 class="section-title">Dashboard Estadístico Educativo Querétaro Ciclo 2024 - 2025</h1>
+                <h1 class="section-title">Tablero Estadístico Educativo Querétaro Ciclo 2024 - 2025</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">

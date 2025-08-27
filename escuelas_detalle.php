@@ -196,12 +196,40 @@ $datosEficiencia = [
         <div class="sidebar-links">
             <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
             <a href="resumen.php" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
-            <a href="#" class="sidebar-link active"><i class="fas fa-school"></i> <span>Escuelas</span></a>
             <a href="alumnos.php" class="sidebar-link"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
+            <div class="sidebar-link-with-submenu">
+                <a href="escuelas_detalle.php" class="sidebar-link active has-submenu">
+                    <i class="fas fa-school"></i>
+                    <span>Escuelas</span>
+                    <i class="fas fa-chevron-down submenu-arrow"></i>
+                </a>
+                <div class="submenu active">
+                    <a href="#resumen-escuelas" class="submenu-link">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Resumen General</span>
+                    </a>
+                    <a href="#subcontrol-educativo" class="submenu-link">
+                        <i class="fas fa-building"></i>
+                        <span>Subcontrol Educativo</span>
+                    </a>
+                    <a href="#directorio-publicas" class="submenu-link">
+                        <i class="fas fa-landmark"></i>
+                        <span>Escuelas Públicas</span>
+                    </a>
+                    <a href="#directorio-privadas" class="submenu-link">
+                        <i class="fas fa-building"></i>
+                        <span>Escuelas Privadas</span>
+                    </a>
+                    <a href="#conclusiones" class="submenu-link">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Conclusiones</span>
+                    </a>
+                </div>
+            </div>
             <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i>
                 <span>Docentes</span></a>
-            <!--   <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
-            <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
+            <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
+            <!-- <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
                     Históricos</span></a> -->
         </div>
     </div>
@@ -223,7 +251,7 @@ $datosEficiencia = [
 
         <div class="container-fluid">
             <!-- Panel de resumen de escuelas -->
-            <div class="panel animate-up">
+            <div id="resumen-escuelas" class="panel animate-up">
                 <div class="panel-header">
                     <h3 class="panel-title"><i class="fas fa-school"></i> Resumen de Escuelas en Querétaro</h3>
                 </div>
@@ -378,7 +406,7 @@ $datosEficiencia = [
             </div>
 
             <!-- Panel de distribución por subcontrol educativo -->
-            <div class="panel animate-up delay-1">
+            <div id="subcontrol-educativo" class="panel animate-up delay-1">
                 <div class="panel-header">
                     <h3 class="panel-title"><i class="fas fa-building"></i> Distribución por Subcontrol Educativo</h3>
                 </div>
@@ -435,43 +463,52 @@ $datosEficiencia = [
 
                                         // Crear array ordenado de niveles con sus cantidades
                                         $nivelesOrdenados = [];
-                                        
+
                                         foreach ($ordenNiveles as $nivel => $indice) {
                                             // Buscar coincidencias exactas para evitar duplicados
                                             foreach ($datos['desglose'] as $nivelOriginal => $cantidad) {
                                                 $coincideNivel = false;
-                                                
+
                                                 // Matching exacto y específico para evitar confusiones
                                                 switch ($nivel) {
                                                     case 'Inicial Escolarizado':
-                                                        if ($nivelOriginal === 'Inicial Escolarizado') $coincideNivel = true;
+                                                        if ($nivelOriginal === 'Inicial Escolarizado')
+                                                            $coincideNivel = true;
                                                         break;
                                                     case 'Inicial No Escolarizado':
-                                                        if ($nivelOriginal === 'Inicial No Escolarizado') $coincideNivel = true;
+                                                        if ($nivelOriginal === 'Inicial No Escolarizado')
+                                                            $coincideNivel = true;
                                                         break;
                                                     case 'Especial (CAM)':
-                                                        if ($nivelOriginal === 'Educación Especial CAM' || $nivelOriginal === 'CAM') $coincideNivel = true;
+                                                        if ($nivelOriginal === 'Educación Especial CAM' || $nivelOriginal === 'CAM')
+                                                            $coincideNivel = true;
                                                         break;
                                                     case 'Especial (USAER)':
-                                                        if ($nivelOriginal === 'Educación Especial USAER' || $nivelOriginal === 'USAER') $coincideNivel = true;
+                                                        if ($nivelOriginal === 'Educación Especial USAER' || $nivelOriginal === 'USAER')
+                                                            $coincideNivel = true;
                                                         break;
                                                     case 'Preescolar':
-                                                        if (stripos($nivelOriginal, 'Preescolar') !== false) $coincideNivel = true;
+                                                        if (stripos($nivelOriginal, 'Preescolar') !== false)
+                                                            $coincideNivel = true;
                                                         break;
                                                     case 'Primaria':
-                                                        if (stripos($nivelOriginal, 'Primaria') !== false) $coincideNivel = true;
+                                                        if (stripos($nivelOriginal, 'Primaria') !== false)
+                                                            $coincideNivel = true;
                                                         break;
                                                     case 'Secundaria':
-                                                        if (stripos($nivelOriginal, 'Secundaria') !== false) $coincideNivel = true;
+                                                        if (stripos($nivelOriginal, 'Secundaria') !== false)
+                                                            $coincideNivel = true;
                                                         break;
                                                     case 'Media Superior':
-                                                        if ($nivelOriginal === 'Media Superior') $coincideNivel = true;
+                                                        if ($nivelOriginal === 'Media Superior')
+                                                            $coincideNivel = true;
                                                         break;
                                                     case 'Superior':
-                                                        if (stripos($nivelOriginal, 'Superior') !== false && stripos($nivelOriginal, 'Media') === false) $coincideNivel = true;
+                                                        if (stripos($nivelOriginal, 'Superior') !== false && stripos($nivelOriginal, 'Media') === false)
+                                                            $coincideNivel = true;
                                                         break;
                                                 }
-                                                
+
                                                 if ($coincideNivel) {
                                                     $nivelesOrdenados[$indice] = [
                                                         'nombre' => $nivelOriginal,
@@ -652,7 +689,7 @@ $datosEficiencia = [
         -->
 
         <!-- Panel de Directorio de Escuelas Públicas -->
-        <div class="matricula-panel animate-fade delay-4">
+        <div id="directorio-publicas" class="matricula-panel animate-fade delay-4">
             <div class="matricula-header">
                 <h3 class="matricula-title"><i class="fas fa-landmark"></i> Directorio de Escuelas Públicas (No incluye
                     USAER)</h3>
@@ -747,7 +784,7 @@ $datosEficiencia = [
         </div>
 
         <!-- Panel de Directorio de Escuelas Privadas -->
-        <div class="matricula-panel animate-fade delay-5">
+        <div id="directorio-privadas" class="matricula-panel animate-fade delay-5">
             <div class="matricula-header">
                 <h3 class="matricula-title"><i class="fas fa-building"></i> Directorio de Escuelas Privadas</h3>
             </div>
@@ -830,7 +867,7 @@ $datosEficiencia = [
         </div>
 
         <!-- Panel de conclusiones -->
-        <div class="panel animate-up delay-4">
+        <div id="conclusiones" class="panel animate-up delay-4">
             <div class="panel-header">
                 <h3 class="panel-title"><i class="fas fa-clipboard-check"></i> Conclusiones del Análisis</h3>
             </div>

@@ -109,14 +109,34 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
         <div class="sidebar-links">
             <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
             <a href="resumen.php" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
-            <a href="escuelas_detalle.php" class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
             <a href="alumnos.php" class="sidebar-link"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
-            <a href="#" class="sidebar-link active"><i class="fas fa-chalkboard-teacher"></i> <span>Docentes</span></a>
-            <!--  <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
-            <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
+            <a href="escuelas_detalle.php" class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
+            <div class="sidebar-link-with-submenu">
+                <a href="docentes.php" class="sidebar-link active has-submenu">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Docentes</span>
+                    <i class="fas fa-chevron-down submenu-arrow"></i>
+                </a>
+                <div class="submenu active">
+                    <a href="#resumen-docentes" class="submenu-link">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Resumen General</span>
+                    </a>
+                    <a href="#distribucion-nivel" class="submenu-link">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Distribución por Nivel</span>
+                    </a>
+                    <a href="#tabla-detallada" class="submenu-link">
+                        <i class="fas fa-table"></i>
+                        <span>Tabla Detallada</span>
+                    </a>
+                </div>
+            </div>
+            <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
+            <!-- <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
                     Históricos</span></a> -->
-
         </div>
+    </div>
     </div>
 
     <div class="main-content">
@@ -137,7 +157,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
 
         <div class="container-fluid">
             <!-- Panel de resumen de docentes -->
-            <div class="panel animate-up">
+            <div id="resumen-docentes" class="panel animate-up">
                 <div class="panel-header">
                     <h3 class="panel-title"><i class="fas fa-chalkboard-teacher"></i> Resumen de docentes en Querétaro
                     </h3>
@@ -203,7 +223,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                     </div>
 
                     <!-- Barras de progreso por nivel -->
-                    <div class="level-bars animate-sequence">
+                    <div id="distribucion-nivel" class="level-bars animate-sequence">
                         <h4>Distribución Detallada por Nivel</h4> <?php
                         // Función para determinar el orden educativo basado en palabras clave
                         function obtenerOrdenEducativo($nivel)
@@ -254,7 +274,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                     </div>
 
                     <!-- Tabla detallada -->
-                    <div class="detailed-table animate-fade delay-4">
+                    <div id="tabla-detallada" class="detailed-table animate-fade delay-4">
                         <h4>Detalle por Subnivel Educativo</h4>
                         <div class="table-responsive">
                             <table class="data-table">

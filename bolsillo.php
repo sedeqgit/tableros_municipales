@@ -10,7 +10,7 @@ $link = Conectarse();
 $sin_filtro_extra = " ";
 $filtro_pub = " AND control<>'PRIVADO' ";
 $filtro_priv = " AND control='PRIVADO' ";
-
+//Cambiar INICIO CICLO PARA EL AÑO	armar_tabla_munic_usbq
 function str_consulta($str_consulta, $ini_ciclo, $filtro)
 {
 	$consulta = "";
@@ -325,7 +325,7 @@ function str_consulta($str_consulta, $ini_ciclo, $filtro)
 							SUM(V944+V768) AS total_docentes,SUM(V942+V766) AS doc_hombres,SUM(V943+V767) AS doc_mujeres,
 							COUNT(cct_ins_pla) AS escuelas,SUM(0) AS grupos 
 							FROM nonce_pano_" . $ini_ciclo . ".sup_escuela_" . $ini_ciclo . " 
-							WHERE cv_motivo = '0' AND (V944>'0' OR V768>'0') AND (nombre_ins_pla LIKE '%NORMAL%' OR nombre_ins_pla LIKE '%INSTITUTO LA PAZ%') " . $filtro . " ;";
+							WHERE cv_motivo = '0' AND (V944>'0' OR V768>'0') AND (nombre_ins LIKE '%NORMAL%' OR nombre_ins LIKE '%INSTITUTO LA PAZ%') " . $filtro . " ;";
 		//echo $qr_esc_sup_lic_normal;
 		$consulta = $qr_esc_sup_lic_normal;
 	}
@@ -335,7 +335,7 @@ function str_consulta($str_consulta, $ini_ciclo, $filtro)
 							SUM(V944+V768) AS total_docentes,SUM(V942+V766) AS doc_hombres,SUM(V943+V767) AS doc_mujeres,
 							COUNT(cct_ins_pla) AS escuelas,SUM(0) AS grupos 
 							FROM nonce_pano_" . $ini_ciclo . ".sup_escuela_" . $ini_ciclo . " 
-							WHERE cv_motivo = '0' AND (V944>'0' OR V768>'0') AND (nombre_ins_pla NOT LIKE '%NORMAL%' AND nombre_ins_pla NOT LIKE '%INSTITUTO LA PAZ%')  " . $filtro . " ;";
+							WHERE cv_motivo = '0' AND (V944>'0' OR V768>'0') AND (nombre_ins NOT LIKE '%NORMAL%' AND nombre_ins NOT LIKE '%INSTITUTO LA PAZ%')  " . $filtro . " ;";
 		//echo $qr_esc_sup_lic_tecno;
 		$consulta = $qr_esc_sup_lic_tecno;
 	}
@@ -407,7 +407,7 @@ function str_consulta($str_consulta, $ini_ciclo, $filtro)
 							SUM(V962+V799) AS total_docentes,SUM(V961+V798) AS doc_hombres,SUM(V960+V797) AS doc_mujeres,
 							COUNT(cct_ins_pla) AS escuelas,SUM(0) AS grupos 
 							FROM nonce_pano_" . $ini_ciclo . ".sup_escuela_" . $ini_ciclo . " 
-							WHERE cv_motivo = '0' AND (V962>'0' OR V799>'0') AND (nombre_ins_pla LIKE '%NORMAL%' OR nombre_ins_pla LIKE '%INSTITUTO LA PAZ%') " . $filtro . " ;";
+							WHERE cv_motivo = '0' AND (V962>'0' OR V799>'0') AND (nombre_ins LIKE '%NORMAL%' OR nombre_ins LIKE '%INSTITUTO LA PAZ%') " . $filtro . " ;";
 		//echo $qr_esc_sup_lic_normal_ne;
 		$consulta = $qr_esc_sup_lic_normal_ne;
 	}
@@ -417,7 +417,7 @@ function str_consulta($str_consulta, $ini_ciclo, $filtro)
 							SUM(V962+V799) AS total_docentes,SUM(V961+V798) AS doc_hombres,SUM(V960+V797) AS doc_mujeres,
 							COUNT(cct_ins_pla) AS escuelas,SUM(0) AS grupos 
 							FROM nonce_pano_" . $ini_ciclo . ".sup_escuela_" . $ini_ciclo . " 
-							WHERE cv_motivo = '0' AND (V962>'0' OR V799>'0') AND (nombre_ins_pla NOT LIKE '%NORMAL%' AND nombre_ins_pla NOT LIKE '%INSTITUTO LA PAZ%') " . $filtro . " ;";
+							WHERE cv_motivo = '0' AND (V962>'0' OR V799>'0') AND (nombre_ins NOT LIKE '%NORMAL%' AND nombre_ins NOT LIKE '%INSTITUTO LA PAZ%') " . $filtro . " ;";
 		//echo $qr_esc_sup_lic_tecno_ne;
 		$consulta = $qr_esc_sup_lic_tecno_ne;
 	}

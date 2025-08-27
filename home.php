@@ -91,7 +91,7 @@ function formatearNombreMunicipio($municipio)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centro de Dashboards | SEDEQ - Estadística Educativa</title>
+    <title>Centro de Tableros | SEDEQ - Estadística Educativa</title>
 
     <!-- ========================================== -->
     <!-- HOJAS DE ESTILO MODULARIZADAS             -->
@@ -162,7 +162,7 @@ function formatearNombreMunicipio($municipio)
 
                 <!-- Título principal de la sección -->
                 <div class="top-bar-title">
-                    <h1>Centro de Dashboards Estadísticos</h1>
+                    <h1>Centro de Tableros Estadísticos</h1>
                 </div>
 
                 <!-- Menú de usuario con avatar y opciones -->
@@ -198,7 +198,7 @@ function formatearNombreMunicipio($municipio)
                     <div class="welcome-card animate-fade">
                         <div class="welcome-text">
                             <h2>Bienvenido al Sistema de Estadística Educativa</h2>
-                            <p>Accede a los dashboards estadísticos de los diferentes municipios del Estado de
+                            <p>Accede a los tableros estadísticos de los diferentes municipios del Estado de
                                 Querétaro.</p>
                             <!-- Fecha dinámica del sistema -->
                             <p class="welcome-date"><?php echo fechaEnEspanol('d \d\e F \d\e Y'); ?></p>
@@ -210,7 +210,7 @@ function formatearNombreMunicipio($municipio)
                     </div>
                 </section><!-- Sección de municipios -->
                 <section class="dashboard-section animate-up delay-2">
-                    <h2 class="section-title"><i class="fas fa-map-marker-alt"></i> Dashboards por Municipio</h2>
+                    <h2 class="section-title"><i class="fas fa-map-marker-alt"></i> Tableros por Municipio</h2>
                     <div class="dashboard-grid animate-sequence">
                         <?php
                         // Generar tarjetas para municipios principales
@@ -262,7 +262,7 @@ function formatearNombreMunicipio($municipio)
                                 <a href="<?php echo $isQueretaro ? './resumen.php' : '#'; ?>"
                                     class="municipality-link <?php echo !$isQueretaro ? 'disabled' : ''; ?>">
                                     <?php if ($isQueretaro): ?>
-                                        Ver Dashboard <i class="fas fa-arrow-right"></i>
+                                        Ver Tablero <i class="fas fa-arrow-right"></i>
                                     <?php else: ?>
                                         Pendiente <i class="fas fa-clock"></i>
                                     <?php endif; ?>

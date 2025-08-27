@@ -317,3 +317,101 @@
     font-weight: bold;
     border-left: 4px solid var(--accent-gold);
 }
+
+/* === ESTILOS PARA SUBMENÚS === */
+
+/* Contenedor de enlace con submenú */
+.sidebar-link-with-submenu {
+  position: relative;
+}
+
+/* Enlace principal con indicador de submenú */
+.sidebar-link.has-submenu {
+  position: relative;
+  padding-right: 45px;
+}
+
+.sidebar-link .submenu-arrow {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  transition: transform var(--transition-speed);
+}
+
+.sidebar-link.has-submenu.expanded .submenu-arrow {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+/* Contenedor del submenú */
+.submenu {
+  background-color: transparent;
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
+  margin-left: 15px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-speed) ease-out;
+}
+
+.submenu.active {
+  max-height: 300px;
+  transition: max-height var(--transition-speed) ease-in;
+}
+
+/* Enlaces del submenú */
+.submenu-link {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  padding: 8px 15px 8px 25px;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  transition: all var(--transition-speed);
+  border-radius: 0 15px 15px 0;
+  margin-right: 15px;
+  position: relative;
+}
+
+.submenu-link i {
+  margin-right: 8px;
+  width: 14px;
+  text-align: center;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.submenu-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  transform: translateX(5px);
+  border-left: 3px solid var(--accent-gold);
+}
+
+.submenu-link:hover i {
+  opacity: 1;
+  color: var(--accent-gold);
+}
+
+.submenu-link.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: var(--white);
+  font-weight: 500;
+  border-left: 3px solid var(--accent-gold);
+}
+
+.submenu-link.active i {
+  color: var(--accent-gold);
+  opacity: 1;
+}
+
+/* Responsive para submenús */
+@media (max-width: 992px) {
+  .sidebar.collapsed .submenu {
+    display: none;
+  }
+
+  .sidebar.collapsed .sidebar-link .submenu-arrow {
+    display: none;
+  }
+}
