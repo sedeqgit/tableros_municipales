@@ -296,7 +296,7 @@ function formatearNumero($numero)
             <h1><i class="fas fa-database"></i> Sistema de Consultas Dinámicas 2024 - 2025</h1>
             <p><strong>Municipio:</strong>
                 <?php echo htmlspecialchars($datosMunicipio['municipio'], ENT_QUOTES, 'UTF-8'); ?></p>
-            <p><strong>Esquema utilizado:</strong> nonce_pano_24 (Datos 2024) - Estructura bolsillo</p>
+            <p><strong>Esquema utilizado:</strong> nonce_pano_24 (Datos 2024)</p>
             <?php if (!$datosMunicipio['tiene_datos']): ?>
                 <p style="color: #856404; background-color: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 10px;">
                     <i class="fas fa-info-circle"></i> Este municipio no tiene datos disponibles en el ciclo escolar 2024
