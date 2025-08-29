@@ -13,56 +13,90 @@
  * @since 2024
  */
 
-// Incluir el archivo de conexión de prueba y session helper
+// Incluir solo el archivo de conexión de prueba
 require_once 'conexion_prueba_2024.php';
-require_once 'session_helper.php';
 
-// Inicializar sesión demo
-iniciarSesionDemo();
+// Inicializar sesión simple para pruebas
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 // Obtener lista de municipios usando la función de prueba
 $todosLosMunicipios = obtenerMunicipiosPrueba2024();
 
-// Definir municipios principales que se mostrarán inicialmente
+// Definir municipios principales que se mostrarán inicialmente (en mayúsculas para coincidir con nuestro mapeo)
 $municipiosPrincipales = ['CORREGIDORA', 'QUERÉTARO', 'EL MARQUÉS', 'SAN JUAN DEL RÍO'];
 
 // Filtrar municipios adicionales (excluyendo los principales)
 $municipiosAdicionales = array_filter($todosLosMunicipios, function ($municipio) use ($municipiosPrincipales) {
-    return !in_array(strtoupper($municipio), $municipiosPrincipales);
+    return !in_array($municipio, $municipiosPrincipales);
 });
+
+// Ordenar alfabéticamente los municipios adicionales
+sort($municipiosAdicionales);
 
 /**
  * Formatea nombres de municipios para display en formato título
+ * Convierte de MAYÚSCULAS (nuestro formato interno) a Formato Título para mostrar
  */
 function formatearNombreMunicipioPrueba($municipio)
 {
-    // Convertir a minúsculas y luego aplicar ucwords
+    // Convertir de mayúsculas a formato título
     $formatted = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
-    
-    // Corrección específica para preposiciones que deben estar en minúsculas
-    $formatted = str_replace([' De ', ' Del '], [' de ', ' del '], $formatted);
-    
+
+    // Correcciones específicas para preposiciones y artículos
+    $formatted = str_replace([' De ', ' Del ', ' El '], [' de ', ' del ', ' El '], $formatted);
+
     return $formatted;
 }
 
 /**
- * Obtiene datos básicos de un municipio para la tarjeta
+ * Obtiene datos básicos de un municipio usando la nueva estructura bolsillo
  */
 function obtenerDatosMunicipioPrueba($municipio)
 {
-    if (strtoupper($municipio) === 'CORREGIDORA') {
-        $datos = obtenerDatosCompletos2024($municipio);
+    try {
+        // Usar la nueva función de resumen completo que replica la lógica de bolsillo
+        $resumenCompleto = obtenerResumenMunicipioCompleto($municipio, '24');
+
+        if (!$resumenCompleto) {
+            // Si no hay datos, devolver estructura vacía
+            return [
+                'escuelas' => 0,
+                'alumnos' => 0,
+                'docentes' => 0,
+                'ciclo_escolar' => '24',
+                'tiene_error' => true
+            ];
+        }
+
         return [
-            'escuelas' => $datos['datos_educativos']['total_escuelas'] ?? 0,
-            'alumnos' => $datos['datos_educativos']['total_alumnos'] ?? 0,
-            'docentes' => $datos['docentes']['total_general'] ?? 0
+            'escuelas' => $resumenCompleto['total_escuelas'],
+            'alumnos' => $resumenCompleto['total_matricula'],
+            'docentes' => $resumenCompleto['total_docentes'],
+            'ciclo_escolar' => '24',
+            'tiene_error' => false,
+            // Datos adicionales por nivel (para uso futuro)
+            'detalle_niveles' => [
+                'inicial_esc' => $resumenCompleto['inicial_esc'],
+                'inicial_no_esc' => $resumenCompleto['inicial_no_esc'],
+                'preescolar' => $resumenCompleto['preescolar'],
+                'primaria' => $resumenCompleto['primaria'],
+                'secundaria' => $resumenCompleto['secundaria'],
+                'media_sup' => $resumenCompleto['media_sup'],
+                'superior' => $resumenCompleto['superior'],
+                'especial' => $resumenCompleto['especial']
+            ]
         ];
-    } else {
-        // Datos de placeholder para otros municipios
+    } catch (Exception $e) {
+        // Manejo de errores para municipios sin datos
+        error_log("Error obteniendo datos para $municipio: " . $e->getMessage());
         return [
             'escuelas' => 0,
             'alumnos' => 0,
-            'docentes' => 0
+            'docentes' => 0,
+            'ciclo_escolar' => '24',
+            'tiene_error' => true
         ];
     }
 }
@@ -161,6 +195,26 @@ function obtenerDatosMunicipioPrueba($municipio)
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 25px;
         }
+
+        /* Estilos uniformes para todas las tarjetas de municipio */
+        .municipality-card {
+            transition: all var(--transition-speed);
+        }
+
+        .municipality-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(51, 153, 204, 0.3);
+        }
+
+        /* Indicador visual para municipios con datos */
+        .municipality-card.has-data {
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .municipality-card.no-data {
+            opacity: 0.7;
+            border-left: 4px solid var(--text-secondary);
+        }
     </style>
 </head>
 
@@ -169,7 +223,7 @@ function obtenerDatosMunicipioPrueba($municipio)
         <!-- Header de la página -->
         <div class="municipios-header">
             <h1><i class="fas fa-map-marker-alt"></i> Municipios de Querétaro</h1>
-            <p>Sistema de prueba con datos del esquema 2024</p>
+            <p>Datos educativos usando consultas dinámicas del esquema 2024</p>
         </div>
 
         <!-- Botón para regresar -->
@@ -181,15 +235,15 @@ function obtenerDatosMunicipioPrueba($municipio)
         <div class="municipios-stats">
             <div class="stat-item">
                 <div class="stat-number"><?php echo count($todosLosMunicipios); ?></div>
-                <div class="stat-label">Municipios</div>
+                <div class="stat-label">Municipios Disponibles</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">4</div>
-                <div class="stat-label">Con datos activos</div>
+                <div class="stat-number">24</div>
+                <div class="stat-label">Ciclo Escolar</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">14</div>
-                <div class="stat-label">En desarrollo</div>
+                <div class="stat-number">2024</div>
+                <div class="stat-label">Esquema DB</div>
             </div>
         </div>
 
@@ -199,48 +253,31 @@ function obtenerDatosMunicipioPrueba($municipio)
             // Generar tarjetas para municipios principales
             foreach ($municipiosPrincipales as $municipio) {
                 $municipioNormalizado = formatearNombreMunicipioPrueba($municipio);
-                $isCorregidora = (strtoupper($municipio) === 'CORREGIDORA');
                 $datosMunicipio = obtenerDatosMunicipioPrueba($municipio);
+                $tieneDatos = ($datosMunicipio['alumnos'] > 0 || $datosMunicipio['escuelas'] > 0);
+                $claseCard = $tieneDatos ? 'has-data' : 'no-data';
                 ?>
-                <div class="municipality-card">
+                <div class="municipality-card <?php echo $claseCard; ?>">
                     <div class="municipality-icon">
                         <i class="fas fa-city"></i>
                     </div>
                     <div class="municipality-info">
                         <h3><?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?></h3>
-                        <p>Estadísticas educativas del municipio de
+                        <p>Estadísticas educativas usando consultas tipo bolsillo para
                             <?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?>.
                         </p>
                         <div class="municipality-stats">
                             <div class="stat">
                                 <i class="fas fa-school"></i>
-                                <?php
-                                if ($isCorregidora) {
-                                    echo number_format($datosMunicipio['escuelas'], 0, '.', ',');
-                                } else {
-                                    echo '<span class="coming-soon">Próximamente</span>';
-                                }
-                                ?>
+                                <?php echo number_format($datosMunicipio['escuelas'], 0, '.', ','); ?>
                             </div>
                             <div class="stat">
                                 <i class="fas fa-user-graduate"></i>
-                                <?php
-                                if ($isCorregidora) {
-                                    echo number_format($datosMunicipio['alumnos'], 0, '.', ',');
-                                } else {
-                                    echo '<span class="coming-soon">Próximamente</span>';
-                                }
-                                ?>
+                                <?php echo number_format($datosMunicipio['alumnos'], 0, '.', ','); ?>
                             </div>
                             <div class="stat">
                                 <i class="fas fa-chalkboard-teacher"></i>
-                                <?php
-                                if ($isCorregidora) {
-                                    echo number_format($datosMunicipio['docentes'], 0, '.', ',');
-                                } else {
-                                    echo '<span class="coming-soon">Próximamente</span>';
-                                }
-                                ?>
+                                <?php echo number_format($datosMunicipio['docentes'], 0, '.', ','); ?>
                             </div>
                         </div>
                     </div>
@@ -255,28 +292,31 @@ function obtenerDatosMunicipioPrueba($municipio)
             // Mostrar municipios adicionales
             foreach ($municipiosAdicionales as $municipio) {
                 $municipioNormalizado = formatearNombreMunicipioPrueba($municipio);
+                $datosMunicipio = obtenerDatosMunicipioPrueba($municipio);
+                $tieneDatos = ($datosMunicipio['alumnos'] > 0 || $datosMunicipio['escuelas'] > 0);
+                $claseCard = $tieneDatos ? 'has-data' : 'no-data';
                 ?>
-                <div class="municipality-card">
+                <div class="municipality-card <?php echo $claseCard; ?>">
                     <div class="municipality-icon">
                         <i class="fas fa-city"></i>
                     </div>
                     <div class="municipality-info">
                         <h3><?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?></h3>
-                        <p>Estadísticas educativas del municipio de
+                        <p>Estadísticas educativas usando consultas tipo bolsillo para
                             <?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?>.
                         </p>
                         <div class="municipality-stats">
                             <div class="stat">
                                 <i class="fas fa-school"></i>
-                                <span class="coming-soon">Pendiente</span>
+                                <?php echo number_format($datosMunicipio['escuelas'], 0, '.', ','); ?>
                             </div>
                             <div class="stat">
                                 <i class="fas fa-user-graduate"></i>
-                                <span class="coming-soon">Pendiente</span>
+                                <?php echo number_format($datosMunicipio['alumnos'], 0, '.', ','); ?>
                             </div>
                             <div class="stat">
                                 <i class="fas fa-chalkboard-teacher"></i>
-                                <span class="coming-soon">Pendiente</span>
+                                <?php echo number_format($datosMunicipio['docentes'], 0, '.', ','); ?>
                             </div>
                         </div>
                     </div>
@@ -291,9 +331,12 @@ function obtenerDatosMunicipioPrueba($municipio)
         </div>
 
         <!-- Footer informativo -->
-        <div style="background-color: var(--white); border-radius: var(--card-border-radius); padding: 20px; margin-top: 30px; box-shadow: var(--shadow-sm); text-align: center; color: var(--text-secondary);">
-            <p><strong>Nota:</strong> Esta es una versión de prueba que utiliza el esquema de datos 2024.</p>
-            <p><strong>Municipios encontrados:</strong> <?php echo count($todosLosMunicipios); ?> de 18 oficiales</p>
+        <div
+            style="background-color: var(--white); border-radius: var(--card-border-radius); padding: 20px; margin-top: 30px; box-shadow: var(--shadow-sm); text-align: center; color: var(--text-secondary);">
+            <p><strong>Municipios disponibles:</strong> <?php echo count($todosLosMunicipios); ?> de 18 oficiales de
+                Querétaro</p>
+            <p><strong>Esquema utilizado:</strong> nonce_pano_24 (Datos 2024)</p>
+            <p><strong>Estructura de datos:</strong> nivel_detalle como bolsillo (tot_mat, tot_doc, tot_esc)</p>
             <p><strong>Fecha de consulta:</strong> <?php echo date('d/m/Y H:i:s'); ?></p>
         </div>
     </div>

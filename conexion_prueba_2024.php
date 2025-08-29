@@ -1,810 +1,1764 @@
 <?php
 /**
  * =============================================================================
- * CONEXIÓN DE PRUEBA PARA ESQUEMA 2024
+ * CONEXIÓN DE PRUEBA REESTRUCTURADA - BASADA EN BOLSILLO (1)(1).PHP
  * Sistema de Dashboard Estadístico - SEDEQ Corregidora
  * =============================================================================
  * 
- * Este archivo contiene las consultas actualizadas al esquema 2024 para pruebas
- * específicas de consultas de docentes, escuelas, matrícula de alumnos y municipios.
+ * Este archivo replica exactamente la estructura y consultas del archivo bolsillo
+ * pero con parámetros seguros y estructura moderna para consultas dinámicas
+ * por municipio.
  * 
  * @author Sistema SEDEQ
- * @version 1.1
- * @since 2024
+ * @version 2.0.0
+ * @since 2025
  */
 
 // =============================================================================
 // CONFIGURACIÓN DE CONEXIÓN
 // =============================================================================
 
-/**
- * Establece conexión a PostgreSQL usando la misma configuración que conexion.php
- * 
- * @return resource|false Conexión a PostgreSQL o false en caso de error
- */
-function ConectarsePrueba() 
+function ConectarsePrueba()
 {
-    // Verificar si las funciones de PostgreSQL están disponibles
     if (!function_exists('pg_connect')) {
-        error_log('SEDEQ Prueba: Extensiones PostgreSQL no disponibles en el servidor');
+        error_log('SEDEQ: Extensiones PostgreSQL no disponibles');
         return false;
     }
-    
+
     try {
-        // Usar la misma configuración que conexion.php
-        $connectionString = "host=localhost port=5433 dbname=bd_nonce user=postgres password=postgres options='--client_encoding=LATIN1'";
-        
+        $connectionString = "host=localhost port=5433 dbname=bd_nonce user=postgres password=postgres options='--client_encoding=UTF8'";
         $conn = pg_connect($connectionString);
-        
+
         if (!$conn) {
-            error_log('SEDEQ Prueba: Error de conexión a PostgreSQL - ' . pg_last_error());
+            error_log('SEDEQ: Error de conexión - ' . pg_last_error());
             return false;
         }
-        
+
+        // Establecer el encoding para manejar caracteres acentuados correctamente
+        pg_set_client_encoding($conn, "UTF8");
+
         return $conn;
-        
     } catch (Exception $e) {
-        error_log('SEDEQ Prueba: Excepción en conexión: ' . $e->getMessage());
+        error_log('SEDEQ: Excepción en conexión: ' . $e->getMessage());
         return false;
     }
 }
 
-// =============================================================================
-// CONSULTA DE DOCENTES - ESQUEMA 2024
-// =============================================================================
-
-/**
- * Obtiene datos consolidados de escuelas y alumnos usando la consulta proporcionada
- * 
- * @param string $municipio Nombre del municipio (opcional, por defecto 'CORREGIDORA')
- * @return array Información completa de escuelas y alumnos por tipo educativo
- */
-function obtenerDatosEducativosPrueba2024($municipio = 'CORREGIDORA')
+// Mantener compatibilidad con función original
+function Conectarse()
 {
-    $conn = ConectarsePrueba();
-    if (!$conn) {
-        return ['error' => 'No se pudo conectar a la base de datos'];
-    }
-    
-    try {
-        // Consulta exacta proporcionada por el usuario
-        $query = "
-        WITH datos_alumnos AS (
-            -- INICIAL ESCOLARIZADO
-            SELECT 'Inicial (Escolarizado)' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v390 + v406 + v394 + v410), 0) as alumnos
-            FROM nonce_pano_24.ini_gral_24
-            WHERE (
-                    cv_estatus_captura = 0
-                    OR cv_estatus_captura = 10
-                )
-                AND c_nom_mun = $1
-            UNION ALL
-            SELECT 'Inicial (Escolarizado)' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v183 + v184), 0) as alumnos
-            FROM nonce_pano_24.ini_ind_24
-            WHERE cv_estatus_captura = 0
-                AND c_nom_mun = $1
-            UNION ALL
-            -- INICIAL NO ESCOLARIZADO
-            SELECT 'Inicial (No Escolarizado)' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v129 + v130), 0) as alumnos
-            FROM nonce_pano_24.ini_ne_24
-            WHERE (
-                    cv_estatus_captura = 0
-                    OR cv_estatus_captura = 10
-                )
-                AND c_nom_mun = $1
-            UNION ALL
-            SELECT 'Inicial (No Escolarizado)' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v79 + v80), 0) as alumnos
-            FROM nonce_pano_24.ini_comuni_24
-            WHERE cv_estatus_captura = 0
-                AND c_nom_mun = $1
-            UNION ALL
-            -- CAM (ESPECIAL)
-            SELECT 'Especial (CAM)' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v2264), 0) as alumnos
-            FROM nonce_pano_24.esp_cam_24
-            WHERE (
-                    cv_estatus_captura = 0
-                    OR cv_estatus_captura = 10
-                )
-                AND c_nom_mun = $1
-            UNION ALL
-            -- PREESCOLAR
-            SELECT 'Preescolar' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v177), 0) as alumnos
-            FROM nonce_pano_24.pree_gral_24
-            WHERE (
-                    cv_estatus_captura = 0
-                    OR cv_estatus_captura = 10
-                )
-                AND c_nom_mun = $1
-            UNION ALL
-            SELECT 'Preescolar' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v177), 0) as alumnos
-            FROM nonce_pano_24.pree_ind_24
-            WHERE cv_estatus_captura = 0
-                AND c_nom_mun = $1
-            UNION ALL
-            SELECT 'Preescolar' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v97), 0) as alumnos
-            FROM nonce_pano_24.pree_comuni_24
-            WHERE (
-                    cv_estatus_captura = 0
-                    OR cv_estatus_captura = 10
-                )
-                AND c_nom_mun = $1
-            UNION ALL
-            -- PRIMARIA
-            SELECT 'Primaria' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v608), 0) as alumnos
-            FROM nonce_pano_24.prim_gral_24
-            WHERE (
-                    cv_estatus_captura = 0
-                    OR cv_estatus_captura = 10
-                )
-                AND c_nom_mun = $1
-            UNION ALL
-            SELECT 'Primaria' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v610), 0) as alumnos
-            FROM nonce_pano_24.prim_ind_24
-            WHERE cv_estatus_captura = 0
-                AND c_nom_mun = $1
-            UNION ALL
-            SELECT 'Primaria' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v515), 0) as alumnos
-            FROM nonce_pano_24.prim_comuni_24
-            WHERE (
-                    cv_estatus_captura = 0
-                    OR cv_estatus_captura = 10
-                )
-                AND c_nom_mun = $1
-            UNION ALL
-            -- SECUNDARIA
-            SELECT 'Secundaria' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v340), 0) as alumnos
-            FROM nonce_pano_24.sec_gral_24
-            WHERE (
-                    cv_estatus_captura = 0
-                    OR cv_estatus_captura = 10
-                )
-                AND c_nom_mun = $1
-            UNION ALL
-            SELECT 'Secundaria' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v257), 0) as alumnos
-            FROM nonce_pano_24.sec_comuni_24
-            WHERE (
-                    cv_estatus_captura = 0
-                    OR cv_estatus_captura = 10
-                )
-                AND c_nom_mun = $1
-            UNION ALL
-            -- MEDIA SUPERIOR
-            SELECT 'Media Superior' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v397), 0) as alumnos
-            FROM nonce_pano_24.ms_gral_24
-            WHERE c_nom_mun = $1
-            UNION ALL
-            SELECT 'Media Superior' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v472), 0) as alumnos
-            FROM nonce_pano_24.ms_tecno_24
-            WHERE c_nom_mun = $1
-            UNION ALL
-            -- SUPERIOR
-            SELECT 'Superior' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v177), 0) as alumnos
-            FROM nonce_pano_24.sup_carrera_24
-            WHERE cv_motivo = 0
-                AND c_nom_mun = $1
-            UNION ALL
-            SELECT 'Superior' as tipo_educativo,
-                COUNT(DISTINCT cv_cct) as escuelas,
-                COALESCE(SUM(v142), 0) as alumnos
-            FROM nonce_pano_24.sup_posgrado_24
-            WHERE cv_motivo = 0
-                AND c_nom_mun = $1
-        )
-        SELECT tipo_educativo,
-            SUM(escuelas) as escuelas,
-            SUM(alumnos) as alumnos
-        FROM datos_alumnos
-        GROUP BY tipo_educativo
-        ORDER BY CASE
-                WHEN tipo_educativo = 'Inicial (Escolarizado)' THEN 1
-                WHEN tipo_educativo = 'Inicial (No Escolarizado)' THEN 2
-                WHEN tipo_educativo = 'Especial (CAM)' THEN 3
-                WHEN tipo_educativo = 'Preescolar' THEN 4
-                WHEN tipo_educativo = 'Primaria' THEN 5
-                WHEN tipo_educativo = 'Secundaria' THEN 6
-                WHEN tipo_educativo = 'Media Superior' THEN 7
-                WHEN tipo_educativo = 'Superior' THEN 8
-                ELSE 9
-            END";
-        
-        $result = pg_query_params($conn, $query, array($municipio));
-        $datos = [];
-        $totalEscuelas = 0;
-        $totalAlumnos = 0;
-        
-        if ($result) {
-            while ($row = pg_fetch_assoc($result)) {
-                $datos[] = [
-                    'tipo_educativo' => $row['tipo_educativo'],
-                    'escuelas' => (int)$row['escuelas'],
-                    'alumnos' => (int)$row['alumnos']
-                ];
-                $totalEscuelas += (int)$row['escuelas'];
-                $totalAlumnos += (int)$row['alumnos'];
-            }
-            pg_free_result($result);
-        }
-        
-        pg_close($conn);
-        
-        return [
-            'municipio' => $municipio,
-            'total_escuelas' => $totalEscuelas,
-            'total_alumnos' => $totalAlumnos,
-            'datos' => $datos,
-            'fecha_consulta' => date('Y-m-d H:i:s')
-        ];
-        
-    } catch (Exception $e) {
-        pg_close($conn);
-        return ['error' => 'Error en consulta de datos educativos: ' . $e->getMessage()];
-    }
+    return ConectarsePrueba();
 }
 
 // =============================================================================
-// CONSULTA DE ESCUELAS - ESQUEMA 2024
+// MAPEO DE MUNICIPIOS (IGUAL QUE BOLSILLO)
 // =============================================================================
 
 /**
- * Obtiene la matrícula total de alumnos por municipio usando el esquema 2024
- * Basado en las consultas reales del archivo conexion.php
- * 
- * @param string $municipio Nombre del municipio (opcional, por defecto 'CORREGIDORA')
- * @return array Información de matrícula por nivel educativo
+ * Mapeo exacto de municipios como en bolsillo - nombres con acentos correctos
+ * @param string $num_munic Número del municipio (1-18)
+ * @return string Nombre del municipio
  */
-function obtenerMatriculaPrueba2024($municipio = 'CORREGIDORA')
+function nombre_municipio($num_munic)
 {
-    $conn = ConectarsePrueba();
-    if (!$conn) {
-        return ['error' => 'No se pudo conectar a la base de datos'];
-    }
-    
-    try {
-        // Consulta basada exactamente en las columnas v* de conexion.php
-        $query = "
-        WITH datos_alumnos AS (
-            -- INICIAL ESCOLARIZADO
-            SELECT 'Inicial' as nivel,
-                COALESCE(SUM(v390 + v406 + v394 + v410), 0) as total_alumnos
-            FROM nonce_pano_24.ini_gral_24 
-            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) 
-                AND c_nom_mun = $1
-            
-            UNION ALL
-            
-            SELECT 'Inicial' as nivel,
-                COALESCE(SUM(v183 + v184), 0) as total_alumnos
-            FROM nonce_pano_24.ini_ind_24
-            WHERE cv_estatus_captura = 0
-                AND c_nom_mun = $1
-
-            UNION ALL
-
-            -- PREESCOLAR
-            SELECT 'Preescolar' as nivel,
-                COALESCE(SUM(v177), 0) as total_alumnos
-            FROM nonce_pano_24.pree_gral_24
-            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-                AND c_nom_mun = $1
-
-            UNION ALL
-
-            SELECT 'Preescolar' as nivel,
-                COALESCE(SUM(v177), 0) as total_alumnos
-            FROM nonce_pano_24.pree_ind_24
-            WHERE cv_estatus_captura = 0
-                AND c_nom_mun = $1
-
-            UNION ALL
-
-            SELECT 'Preescolar' as nivel,
-                COALESCE(SUM(v97), 0) as total_alumnos
-            FROM nonce_pano_24.pree_comuni_24
-            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-                AND c_nom_mun = $1
-
-            UNION ALL
-
-            -- PRIMARIA
-            SELECT 'Primaria' as nivel,
-                COALESCE(SUM(v608), 0) as total_alumnos
-            FROM nonce_pano_24.prim_gral_24
-            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-                AND c_nom_mun = $1
-
-            UNION ALL
-
-            SELECT 'Primaria' as nivel,
-                COALESCE(SUM(v610), 0) as total_alumnos
-            FROM nonce_pano_24.prim_ind_24
-            WHERE cv_estatus_captura = 0
-                AND c_nom_mun = $1
-
-            UNION ALL
-
-            SELECT 'Primaria' as nivel,
-                COALESCE(SUM(v384), 0) as total_alumnos
-            FROM nonce_pano_24.prim_comuni_24
-            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-                AND c_nom_mun = $1
-
-            UNION ALL
-
-            -- SECUNDARIA
-            SELECT 'Secundaria' as nivel,
-                COALESCE(SUM(v340), 0) as total_alumnos
-            FROM nonce_pano_24.sec_gral_24
-            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-                AND c_nom_mun = $1
-
-            UNION ALL
-
-            SELECT 'Secundaria' as nivel,
-                COALESCE(SUM(v257), 0) as total_alumnos
-            FROM nonce_pano_24.sec_comuni_24
-            WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-                AND c_nom_mun = $1
-
-            UNION ALL
-
-            -- MEDIA SUPERIOR
-            SELECT 'Media Superior' as nivel,
-                COALESCE(SUM(v397), 0) as total_alumnos
-            FROM nonce_pano_24.ms_gral_24
-            WHERE c_nom_mun = $1
-
-            UNION ALL
-
-            SELECT 'Media Superior' as nivel,
-                COALESCE(SUM(v472), 0) as total_alumnos
-            FROM nonce_pano_24.ms_tecno_24
-            WHERE c_nom_mun = $1
-
-            UNION ALL
-
-            -- SUPERIOR
-            SELECT 'Superior' as nivel,
-                COALESCE(SUM(v177), 0) as total_alumnos
-            FROM nonce_pano_24.sup_carrera_24
-            WHERE cv_motivo = 0
-                AND c_nom_mun = $1
-
-            UNION ALL
-
-            SELECT 'Superior' as nivel,
-                COALESCE(SUM(v142), 0) as total_alumnos
-            FROM nonce_pano_24.sup_posgrado_24
-            WHERE cv_motivo = 0
-                AND c_nom_mun = $1
-        )
-        SELECT 
-            nivel,
-            SUM(total_alumnos) as total_alumnos
-        FROM datos_alumnos
-        GROUP BY nivel
-        ORDER BY 
-            CASE nivel 
-                WHEN 'Inicial' THEN 1
-                WHEN 'Preescolar' THEN 2  
-                WHEN 'Primaria' THEN 3
-                WHEN 'Secundaria' THEN 4
-                WHEN 'Media Superior' THEN 5
-                WHEN 'Superior' THEN 6
-                ELSE 7
-            END";
-        
-        $result = pg_query_params($conn, $query, array($municipio));
-        $matricula = [];
-        $totalGeneral = 0;
-        
-        if ($result) {
-            while ($row = pg_fetch_assoc($result)) {
-                $matricula[] = [
-                    'nivel' => $row['nivel'],
-                    'total_alumnos' => (int)$row['total_alumnos']
-                ];
-                $totalGeneral += (int)$row['total_alumnos'];
-            }
-            pg_free_result($result);
-        }
-        
-        pg_close($conn);
-        
-        return [
-            'municipio' => $municipio,
-            'total_general' => $totalGeneral,
-            'por_nivel' => $matricula,
-            'fecha_consulta' => date('Y-m-d H:i:s')
-        ];
-        
-    } catch (Exception $e) {
-        pg_close($conn);
-        return ['error' => 'Error en consulta de matrícula: ' . $e->getMessage()];
-    }
-}
-
-// =============================================================================
-// CONSULTA DE MATRÍCULA DE ALUMNOS - ESQUEMA 2024
-// =============================================================================
-
-/**
- * Obtiene datos reales de docentes usando la consulta de obtenerDocentesPorNivel
- * Basada en la función obtenerDocentesPorNivel del archivo conexion.php
- * 
- * @param string $municipio Nombre del municipio
- * @return array Información real de docentes por nivel educativo
- */
-function obtenerDocentesPrueba2024($municipio = 'CORREGIDORA')
-{
-    $conn = ConectarsePrueba();
-    if (!$conn) {
-        return ['error' => 'No se pudo conectar a la base de datos'];
-    }
-    
-    try {
-        // Consulta exacta de la función obtenerDocentesPorNivel en conexion.php
-        $query = "
-        -- EDUCACIÓN INICIAL ESCOLARIZADA
-        SELECT 
-            'Inicial Escolarizada' as nivel_educativo,
-            'General' as subnivel,
-            COALESCE(SUM(V509+V516+V523+V511+V518+V525+V785+V510+V517+V524+V512+V519+V526+V786), 0) as total_docentes
-        FROM nonce_pano_24.ini_gral_24 
-        WHERE c_nom_mun = $1
-          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-
-        UNION ALL
-
-        -- EDUCACIÓN INICIAL NO ESCOLARIZADA
-        SELECT 
-            'Inicial No Escolarizada' as nivel_educativo,
-            'Comunitario' as subnivel,
-            COALESCE(SUM(v124 + V125), 0) as total_docentes
-        FROM nonce_pano_24.ini_comuni_24 
-        WHERE c_nom_mun = $1
-          AND cv_estatus_captura = 0
-
-        UNION ALL
-
-        -- CAM (CENTRO DE ATENCIÓN MÚLTIPLE) - Dato fijo como en la consulta original
-        SELECT 
-            'CAM' as nivel_educativo,
-            'Especial' as subnivel,
-            22 as total_docentes
-
-        UNION ALL
-
-        -- PREESCOLAR GENERAL
-        SELECT 
-            'Preescolar' as nivel_educativo,
-            'General' as subnivel,
-            COALESCE(SUM(v909), 0) as total_docentes
-        FROM nonce_pano_24.pree_gral_24 
-        WHERE c_nom_mun = $1
-          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-
-        UNION ALL
-
-        -- PREESCOLAR COMUNITARIO
-        SELECT 
-            'Preescolar' as nivel_educativo,
-            'Comunitario' as subnivel,
-            COALESCE(SUM(v151), 0) as total_docentes
-        FROM nonce_pano_24.pree_comuni_24 
-        WHERE c_nom_mun = $1
-          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-
-        UNION ALL
-
-        -- PRIMARIA GENERAL
-        SELECT 
-            'Primaria' as nivel_educativo,
-            'General' as subnivel,
-            COALESCE(SUM(v1676), 0) as total_docentes
-        FROM nonce_pano_24.prim_gral_24 
-        WHERE c_nom_mun = $1
-          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-
-        UNION ALL
-
-        -- PRIMARIA COMUNITARIO
-        SELECT 
-            'Primaria' as nivel_educativo,
-            'Comunitario' as subnivel,
-            COALESCE(SUM(v585), 0) as total_docentes
-        FROM nonce_pano_24.prim_comuni_24 
-        WHERE c_nom_mun = $1
-          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-
-        UNION ALL
-
-        -- SECUNDARIA
-        SELECT 
-            'Secundaria' as nivel_educativo,
-            'General' as subnivel,
-            COALESCE(SUM(v1401), 0) as total_docentes
-        FROM nonce_pano_24.sec_gral_24 
-        WHERE c_nom_mun = $1
-          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-
-        UNION ALL
-
-        -- MEDIA SUPERIOR
-        SELECT 
-            'Media Superior' as nivel_educativo,
-            'Plantel' as subnivel,
-            COALESCE(SUM(v169), 0) as total_docentes
-        FROM nonce_pano_24.ms_plantel_24 
-        WHERE c_nom_mun = $1
-          AND cv_motivo = 0
-
-        UNION ALL
-
-        -- SUPERIOR
-        SELECT 
-            'Superior' as nivel_educativo,
-            'Licenciatura' as subnivel,
-            COALESCE(SUM(v83), 0) as total_docentes
-        FROM nonce_pano_24.sup_escuela_24 
-        WHERE c_nom_mun = $1
-          AND cv_motivo = 0";
-        
-        $result = pg_query_params($conn, $query, array($municipio));
-        $docentes = [];
-        $totalGeneral = 0;
-        
-        if ($result) {
-            while ($row = pg_fetch_assoc($result)) {
-                $docentes[] = [
-                    'nivel_educativo' => $row['nivel_educativo'],
-                    'subnivel' => $row['subnivel'],
-                    'total_docentes' => (int)$row['total_docentes']
-                ];
-                $totalGeneral += (int)$row['total_docentes'];
-            }
-            pg_free_result($result);
-        }
-        
-        pg_close($conn);
-        
-        return [
-            'municipio' => $municipio,
-            'total_general' => $totalGeneral,
-            'por_nivel' => $docentes,
-            'fecha_consulta' => date('Y-m-d H:i:s')
-        ];
-        
-    } catch (Exception $e) {
-        pg_close($conn);
-        return ['error' => 'Error en consulta de docentes: ' . $e->getMessage()];
-    }
-}
-
-// =============================================================================
-// FUNCIÓN CONSOLIDADA PARA OBTENER TODOS LOS DATOS
-// =============================================================================
-
-/**
- * Obtiene todos los datos educativos consolidados para un municipio
- * 
- * @param string $municipio Nombre del municipio
- * @return array Datos completos del municipio (docentes, escuelas, matrícula)
- */
-function obtenerDatosCompletos2024($municipio = 'CORREGIDORA')
-{
-    // Obtener datos educativos consolidados usando la consulta exacta
-    $datosEducativos = obtenerDatosEducativosPrueba2024($municipio);
-    
-    return [
-        'municipio' => $municipio,
-        'docentes' => obtenerDocentesPrueba2024($municipio),
-        'datos_educativos' => $datosEducativos,
-        'fecha_consulta' => date('Y-m-d H:i:s')
+    $nom_munic = [
+        "1" => "AMEALCO DE BONFIL",
+        "2" => "PINAL DE AMOLES",
+        "3" => "ARROYO SECO",
+        "4" => "CADEREYTA DE MONTES",
+        "5" => "COLÓN",
+        "6" => "CORREGIDORA",
+        "7" => "EZEQUIEL MONTES",
+        "8" => "HUIMILPAN",
+        "9" => "JALPAN DE SERRA",
+        "10" => "LANDA DE MATAMOROS",
+        "11" => "EL MARQUÉS",
+        "12" => "PEDRO ESCOBEDO",
+        "13" => "PEÑAMILLER",
+        "14" => "QUERÉTARO",
+        "15" => "SAN JOAQUÍN",
+        "16" => "SAN JUAN DEL RÍO",
+        "17" => "TEQUISQUIAPAN",
+        "18" => "TOLIMÁN"
     ];
+
+    return isset($nom_munic[$num_munic]) ? $nom_munic[$num_munic] : null;
 }
 
-// =============================================================================
-// CONSULTA DE MUNICIPIOS - ESQUEMA 2024
-// =============================================================================
-
 /**
- * Obtiene la lista de municipios disponibles - Copiado de conexion.php
- * 
- * @return array Lista de municipios normalizados
+ * Obtiene todos los municipios usando el mapeo local (no la base de datos)
+ * Esto evita problemas de encoding que teníamos obteniendo desde PostgreSQL
+ * @return array Array con todos los municipios correctamente nombrados
  */
 function obtenerMunicipiosPrueba2024()
 {
-    // Lista de fallback en caso de problemas de conexión
-    $municipiosFallback = ['CORREGIDORA', 'QUERÉTARO', 'EL MARQUÉS', 'SAN JUAN DEL RÍO'];
-    
-    // Verificar disponibilidad de PostgreSQL
-    if (!function_exists('pg_connect')) {
-        error_log('SEDEQ Prueba: PostgreSQL no disponible para consulta de municipios, usando datos de fallback');
-        return $municipiosFallback;
+    $municipios = [];
+    for ($i = 1; $i <= 18; $i++) {
+        $nombre = nombre_municipio((string) $i);
+        if ($nombre) {
+            $municipios[] = $nombre;
+        }
+    }
+    return $municipios;
+}
+
+// =============================================================================
+// SISTEMA DE CONSULTAS DINÁMICAS BASADO EN BOLSILLO
+// =============================================================================
+
+/**
+ * Replica exactamente la función str_consulta de bolsillo pero con parámetros seguros
+ * 
+ * @param string $str_consulta Tipo de consulta
+ * @param string $ini_ciclo Ciclo escolar
+ * @param string $filtroMunicipio Filtro preparado para municipio
+ * @return string|false SQL generado
+ */
+function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
+{
+    // Replicar exactamente como bolsillo: filtro base + filtro (que ya incluye AND)
+    $filtroBase = "(cv_estatus_captura = 0 OR cv_estatus_captura = 10)";
+
+    switch ($str_consulta) {
+        case 'gral_ini':
+            return "SELECT CONCAT('GENERAL') AS titulo_fila,
+                        SUM(V398+V414) AS total_matricula,
+                        SUM(V390+V406) AS mat_hombres,
+                        SUM(V394+V410) AS mat_mujeres,
+                        SUM(V509+V516+V523+V511+V518+V525+V510+V517+V524+V512+V519+V526) AS total_docentes,
+                        SUM(V509+V516+V523+V511+V518+V525) AS doc_hombres,
+                        SUM(V510+V517+V524+V512+V519+V526) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V402+V418) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        case 'gral_ini_dir_grp':
+            return "SELECT CONCAT('GENERAL DIR CON GRUPO') AS titulo_fila, 
+                        SUM(0) AS total_matricula,
+                        SUM(0) AS mat_hombres,
+                        SUM(0) AS mat_mujeres, 
+                        SUM(v787) AS total_docentes,
+                        SUM(v785) AS doc_hombres,
+                        SUM(v786) AS doc_mujeres, 
+                        SUM(0) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo 
+                    WHERE $filtroBase AND V478='0' $filtro";
+
+        case 'ind_ini':
+            return "SELECT CONCAT('INDIGENA') AS titulo_fila,
+                        SUM(V183+V184) AS total_matricula,
+                        SUM(V183) AS mat_hombres,
+                        SUM(V184) AS mat_mujeres,
+                        SUM(V291) AS total_docentes,
+                        SUM(V211) AS doc_hombres,
+                        SUM(V212) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V100) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ini_ind_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        case 'lact_ini':
+            return "SELECT CONCAT('LACTANTE') AS titulo_fila,
+                        SUM(V398) AS total_matricula,
+                        SUM(V390) AS mat_hombres,
+                        SUM(V394) AS mat_mujeres,
+                        SUM(V509+V516+V523+V510+V517+V524) AS total_docentes,
+                        SUM(V509+V516+V523) AS doc_hombres,
+                        SUM(V510+V517+V524) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V402) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        case 'mater_ini':
+            return "SELECT CONCAT('MATERNAL') AS titulo_fila,
+                        SUM(V414) AS total_matricula,
+                        SUM(V406) AS mat_hombres,
+                        SUM(V410) AS mat_mujeres,
+                        SUM(V511+V518+V525+V512+V519+V526) AS total_docentes,
+                        SUM(V511+V518+V525) AS doc_hombres,
+                        SUM(V512+V519+V526) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V418) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        case 'comuni_ini':
+            return "SELECT CONCAT('GENERAL') AS titulo_fila,
+                        SUM(V81) AS total_matricula,
+                        SUM(V79) AS mat_hombres,
+                        SUM(V80) AS mat_mujeres,
+                        SUM(V126) AS total_docentes,
+                        SUM(V124) AS doc_hombres,
+                        SUM(V125) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ini_comuni_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        case 'ne_ini':
+            return "SELECT CONCAT('NO ESCOLARIZADA') AS titulo_fila,
+                        SUM(V129 + V130) AS total_matricula,
+                        SUM(V129) AS mat_hombres,
+                        SUM(V130) AS mat_mujeres,
+                        SUM(V183 + V184) AS total_docentes,
+                        SUM(V183) AS doc_hombres,
+                        SUM(V184) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ini_ne_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        case 'gral_pree':
+            return "SELECT CONCAT('GENERAL') AS titulo_fila,
+                        SUM(V177) AS total_matricula,
+                        SUM(V165) AS mat_hombres,
+                        SUM(V171) AS mat_mujeres,
+                        SUM(V867+V868+V859+V860) AS total_docentes,
+                        SUM(V859+V868) AS doc_hombres,
+                        SUM(V860+V868) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V182) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.pree_gral_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        case 'ind_pree':
+            return "SELECT CONCAT('INDIGENA') AS titulo_fila,
+                        SUM(V177) AS total_matricula,
+                        SUM(V165) AS mat_hombres,
+                        SUM(V171) AS mat_mujeres,
+                        SUM(V795+V803+V796+V804) AS total_docentes,
+                        SUM(V795+V803) AS doc_hombres,
+                        SUM(V796+V804) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V182) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.pree_ind_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        case 'comuni_pree':
+            return "SELECT CONCAT('COMUNITARIO') AS titulo_fila,
+                        SUM(V97) AS total_matricula,
+                        SUM(V85) AS mat_hombres,
+                        SUM(V91) AS mat_mujeres,
+                        SUM(V151) AS total_docentes,
+                        SUM(V149) AS doc_hombres,
+                        SUM(V150) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        (COUNT(cv_cct)-SUM(V78)) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.pree_comuni_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        case 'gral_prim':
+            return "SELECT CONCAT('GENERAL') AS titulo_fila,
+                        SUM(V608) AS total_matricula,
+                        SUM(V562+V573) AS mat_hombres,
+                        SUM(V585+V596) AS mat_mujeres,
+                        SUM(V1575+V1576+V1567+V1568) AS total_docentes,
+                        SUM(V1575+V1567) AS doc_hombres,
+                        SUM(V1576+V1568) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V616) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.prim_gral_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        case 'ind_prim':
+            return "SELECT CONCAT('INDIGENA') AS titulo_fila,
+                        SUM(V610) AS total_matricula,
+                        SUM(V564+V575) AS mat_hombres,
+                        SUM(V587+V598) AS mat_mujeres,
+                        SUM(V1507+V1499+V1508+V1500) AS total_docentes,
+                        SUM(V1507+V1499) AS doc_hombres,
+                        SUM(V1508+V1500) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V1052) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.prim_ind_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        case 'comuni_prim':
+            return "SELECT CONCAT('COMUNITARIO') AS titulo_fila,
+                        SUM(V515) AS total_matricula,
+                        SUM(V469+V480) AS mat_hombres,
+                        SUM(V492+V503) AS mat_mujeres,
+                        SUM(V585) AS total_docentes,
+                        SUM(V583) AS doc_hombres,
+                        SUM(V584) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        COUNT(cv_cct) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.prim_comuni_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        case 'gral_sec':
+            return "SELECT CONCAT('GENERAL') AS titulo_fila,
+                        SUM(V340) AS total_matricula,
+                        SUM(V306+V314) AS mat_hombres,
+                        SUM(V323+V331) AS mat_mujeres,
+                        SUM(V1401) AS total_docentes,
+                        SUM(V1297+V1303+V1307+V1309+V1311+V1313) AS doc_hombres,
+                        SUM(V1298+V1304+V1308+V1310+V1312+V1314) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V341) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sec_gral_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        case 'comuni_sec':
+            return "SELECT CONCAT('COMUNITARIO') AS titulo_fila,
+                        SUM(V257) AS total_matricula,
+                        SUM(V223+V231) AS mat_hombres,
+                        SUM(V240+V248) AS mat_mujeres,
+                        SUM(V386) AS total_docentes,
+                        SUM(V384) AS doc_hombres,
+                        SUM(V385) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        COUNT(cv_cct) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sec_comuni_$ini_ciclo 
+                    WHERE $filtroBase $filtro";
+
+        // ===== CONSULTAS SECUNDARIA DETALLADAS =====
+        case 'ini_1ro_pree':
+            return "SELECT CONCAT('INI_1ro') AS titulo_fila,
+                        SUM(V478) AS total_matricula,
+                        SUM(V466) AS mat_hombres,
+                        SUM(V472) AS mat_mujeres,
+                        SUM(V787+V513+V520+V527+V514+V521+V528) AS total_docentes,
+                        SUM(V785+V513+V520+V527) AS doc_hombres,
+                        SUM(V786+V514+V521+V528) AS doc_mujeres,
+                        SUM(0) AS escuelas,
+                        SUM(V479) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo 
+                    WHERE $filtroBase $filtro AND V478>'0'";
+
+        case 'sec_gral_gral':
+            return "SELECT CONCAT('GENERAL') AS titulo_fila,
+                        SUM(V340) AS total_matricula,
+                        SUM(V306+V314) AS mat_hombres,
+                        SUM(V323+V331) AS mat_mujeres,
+                        SUM(V1401) AS total_docentes,
+                        SUM(V1297+V1303+V1307+V1309+V1311+V1313) AS doc_hombres,
+                        SUM(V1298+V1304+V1308+V1310+V1312+V1314) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V341) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sec_gral_$ini_ciclo 
+                    WHERE $filtroBase $filtro AND subnivel='GENERAL'";
+
+        case 'sec_gral_tele':
+            return "SELECT CONCAT('TELESECUNDARIA') AS titulo_fila,
+                        SUM(V340) AS total_matricula,
+                        SUM(V306+V314) AS mat_hombres,
+                        SUM(V323+V331) AS mat_mujeres,
+                        SUM(V1401) AS total_docentes,
+                        SUM(V1297+V1303+V1307+V1309+V1311+V1313) AS doc_hombres,
+                        SUM(V1298+V1304+V1308+V1310+V1312+V1314) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V813) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sec_gral_$ini_ciclo 
+                    WHERE $filtroBase $filtro AND subnivel='TELESECUNDARIA'";
+
+        case 'sec_gral_tec':
+            return "SELECT CONCAT('TECNICA') AS titulo_fila,
+                        SUM(V340) AS total_matricula,
+                        SUM(V306+V314) AS mat_hombres,
+                        SUM(V323+V331) AS mat_mujeres,
+                        SUM(V1401) AS total_docentes,
+                        SUM(V1297+V1303+V1307+V1309+V1311+V1313) AS doc_hombres,
+                        SUM(V1298+V1304+V1308+V1310+V1312+V1314) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V341) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sec_gral_$ini_ciclo 
+                    WHERE $filtroBase $filtro AND subnivel<>'TELESECUNDARIA' AND subnivel<>'GENERAL'";
+
+        // ===== CONSULTAS MEDIA SUPERIOR =====
+        case 'bgral_msup':
+            return "SELECT CONCAT('BACHILLERATO GENERAL') AS titulo_fila,
+                        SUM(V397) AS total_matricula,
+                        SUM(V395) AS mat_hombres,
+                        SUM(V396) AS mat_mujeres,
+                        SUM(V960) AS total_docentes,
+                        SUM(V958) AS doc_hombres,
+                        SUM(V959) AS doc_mujeres,
+                        COUNT(DISTINCT CONCAT(cct_ins_pla,'-',cv_cct,'-',c_turno)) AS escuelas,
+                        SUM(V401) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo 
+                    WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro";
+
+        case 'btecno_msup':
+            return "SELECT CONCAT('BACHILLERATO TECNOLOGICO') AS titulo_fila,
+                        SUM(V472) AS total_matricula,
+                        SUM(V470) AS mat_hombres,
+                        SUM(V471) AS mat_mujeres,
+                        SUM(V1059) AS total_docentes,
+                        SUM(V1057) AS doc_hombres,
+                        SUM(V1058) AS doc_mujeres,
+                        COUNT(DISTINCT CONCAT(cct_ins_pla,'-',cv_cct,'-',c_turno)) AS escuelas,
+                        SUM(V476) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo 
+                    WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro";
+
+        case 'btecno_tecno_msup':
+            return "SELECT CONCAT('BACHILLERATO TECNOLOGICO') AS titulo_fila,
+                        SUM(V472) AS total_matricula,
+                        SUM(V470) AS mat_hombres,
+                        SUM(V471) AS mat_mujeres,
+                        SUM(V1059) AS total_docentes,
+                        SUM(V1057) AS doc_hombres,
+                        SUM(V1058) AS doc_mujeres,
+                        COUNT(DISTINCT CONCAT(cct_ins_pla,'-',cv_cct,'-',c_turno)) AS escuelas,
+                        SUM(V476) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo 
+                    WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') AND cv_servicion3='2' $filtro";
+
+        case 'btecno_pbach_msup':
+            return "SELECT CONCAT('PROFESIONAL TECNICO BACHILLER') AS titulo_fila,
+                        SUM(V472) AS total_matricula,
+                        SUM(V470) AS mat_hombres,
+                        SUM(V471) AS mat_mujeres,
+                        SUM(V1059) AS total_docentes,
+                        SUM(V1057) AS doc_hombres,
+                        SUM(V1058) AS doc_mujeres,
+                        COUNT(DISTINCT CONCAT(cct_ins_pla,'-',cv_cct,'-',c_turno)) AS escuelas,
+                        SUM(V476) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo 
+                    WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') AND cv_servicion3='3' $filtro";
+
+        case 'btecno_ptecno_msup':
+            return "SELECT CONCAT('PROFESIONAL TECNICO') AS titulo_fila,
+                        SUM(V472) AS total_matricula,
+                        SUM(V470) AS mat_hombres,
+                        SUM(V471) AS mat_mujeres,
+                        SUM(V1059) AS total_docentes,
+                        SUM(V1057) AS doc_hombres,
+                        SUM(V1058) AS doc_mujeres,
+                        COUNT(DISTINCT CONCAT(cct_ins_pla,'-',cv_cct,'-',c_turno)) AS escuelas,
+                        SUM(V476) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo 
+                    WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') AND cv_servicion3='4' $filtro";
+
+        case 'plant_doc_esc_msup':
+            return "SELECT CONCAT('DOCENTES PLANTEL') AS titulo_fila,
+                        SUM(0) AS total_matricula,
+                        SUM(0) AS mat_hombres,
+                        SUM(0) AS mat_mujeres,
+                        SUM(V106+V101) AS total_docentes,
+                        SUM(V104+V99) AS doc_hombres,
+                        SUM(V105+V100) AS doc_mujeres,
+                        COUNT(cct_ins_pla) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.ms_plantel_$ini_ciclo 
+                    WHERE cv_motivo = '0' $filtro";
+
+        // ===== CONSULTAS SUPERIOR =====
+        case 'carr_lic_sup':
+            return "SELECT CONCAT('LICENCIATURA') AS titulo_fila,
+                        SUM(V177) AS total_matricula,
+                        SUM(V175) AS mat_hombres,
+                        SUM(V176) AS mat_mujeres,
+                        SUM(0) AS total_docentes,
+                        SUM(0) AS doc_hombres,
+                        SUM(0) AS doc_mujeres,
+                        COUNT(cct_ins_pla) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo 
+                    WHERE cv_motivo = '0' $filtro";
+
+        case 'carr_normal_sup':
+            return "SELECT CONCAT('NORMAL') AS titulo_fila,
+                        SUM(V177) AS total_matricula,
+                        SUM(V175) AS mat_hombres,
+                        SUM(V176) AS mat_mujeres,
+                        SUM(0) AS total_docentes,
+                        SUM(0) AS doc_hombres,
+                        SUM(0) AS doc_mujeres,
+                        COUNT(cct_ins_pla) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo 
+                    WHERE cv_motivo = '0' AND (subsistema_3 LIKE '%Normal%' OR subsistema_3 LIKE '%NORMAL%') $filtro";
+
+        case 'carr_tecno_sup':
+            return "SELECT CONCAT('UNIVERSITARIA Y TECNOLOGICA') AS titulo_fila,
+                        SUM(V177) AS total_matricula,
+                        SUM(V175) AS mat_hombres,
+                        SUM(V176) AS mat_mujeres,
+                        SUM(0) AS total_docentes,
+                        SUM(0) AS doc_hombres,
+                        SUM(0) AS doc_mujeres,
+                        COUNT(cct_ins_pla) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo 
+                    WHERE cv_motivo = '0' AND (subsistema_3 NOT LIKE '%Normal%' AND subsistema_3 NOT LIKE '%NORMAL%') $filtro";
+
+        case 'posgr_sup':
+            return "SELECT CONCAT('POSGRADO') AS titulo_fila,
+                        SUM(V142) AS total_matricula,
+                        SUM(V140) AS mat_hombres,
+                        SUM(V141) AS mat_mujeres,
+                        SUM(0) AS total_docentes,
+                        SUM(0) AS doc_hombres,
+                        SUM(0) AS doc_mujeres,
+                        COUNT(cct_ins_pla) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sup_posgrado_$ini_ciclo 
+                    WHERE cv_motivo = '0' $filtro";
+
+        case 'esc_lic_sup':
+            return "SELECT CONCAT('ESCUELA LICENCIATURA') AS titulo_fila,
+                        SUM(V214+V218) AS total_matricula,
+                        SUM(0) AS mat_hombres,
+                        SUM(0) AS mat_mujeres,
+                        SUM(V944+V768) AS total_docentes,
+                        SUM(V942+V766) AS doc_hombres,
+                        SUM(V943+V767) AS doc_mujeres,
+                        COUNT(cct_ins_pla) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sup_escuela_$ini_ciclo 
+                    WHERE cv_motivo = '0' AND (V944>'0' OR V768>'0') $filtro";
+
+        case 'esc_docentes_sup':
+            return "SELECT CONCAT('DOCENTES SUPERIOR') AS titulo_fila,
+                        SUM(0) AS total_matricula,
+                        SUM(0) AS mat_hombres,
+                        SUM(0) AS mat_mujeres,
+                        SUM(V83) AS total_docentes,
+                        SUM(V81) AS doc_hombres,
+                        SUM(V82) AS doc_mujeres,
+                        COUNT(cct_ins_pla) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sup_escuela_$ini_ciclo 
+                    WHERE cv_motivo = '0' $filtro";
+
+        case 'carr_usbq_tsu_sup':
+            return "SELECT CONCAT('TECNICO SUPERIOR') AS titulo_fila,
+                        SUM(V177) AS total_matricula,
+                        SUM(V175) AS mat_hombres,
+                        SUM(V176) AS mat_mujeres,
+                        SUM(0) AS total_docentes,
+                        SUM(0) AS doc_hombres,
+                        SUM(0) AS doc_mujeres,
+                        COUNT(cct_ins_pla) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo 
+                    WHERE cv_motivo = '0' AND cv_carrera LIKE '4%' $filtro";
+
+        case 'carr_usbq_lic_sup':
+            return "SELECT CONCAT('LICENCIATURA USBQ') AS titulo_fila,
+                        SUM(V177) AS total_matricula,
+                        SUM(V175) AS mat_hombres,
+                        SUM(V176) AS mat_mujeres,
+                        SUM(0) AS total_docentes,
+                        SUM(0) AS doc_hombres,
+                        SUM(0) AS doc_mujeres,
+                        COUNT(cct_ins_pla) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo 
+                    WHERE cv_motivo = '0' AND cv_carrera LIKE '5%' $filtro";
+
+        // ===== CONSULTAS ESPECIALES =====
+        case 'especial_tot':
+            return "SELECT CONCAT('ESPECIAL TOTAL') AS titulo_fila,
+                        SUM(V2257) AS total_matricula,
+                        SUM(V2255) AS mat_hombres,
+                        SUM(V2256) AS mat_mujeres,
+                        SUM(V2496) AS total_docentes,
+                        SUM(V2302) AS doc_hombres,
+                        SUM(V2303) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V1343+V1418+V1511+V1586+V1765) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo 
+                    WHERE cv_estatus_captura = 0 $filtro";
+
+        case 'especial_ini':
+            return "SELECT CONCAT('ESPECIAL INICIAL') AS titulo_fila,
+                        SUM(V1338+V1340+V1339+V1341) AS total_matricula,
+                        SUM(V1338+V1340) AS mat_hombres,
+                        SUM(V1339+V1341) AS mat_mujeres,
+                        SUM(V2496) AS total_docentes,
+                        SUM(V2302) AS doc_hombres,
+                        SUM(V2303) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V1343) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo 
+                    WHERE cv_estatus_captura = 0 $filtro";
+
+        case 'especial_pree':
+            return "SELECT CONCAT('ESPECIAL PREESCOLAR') AS titulo_fila,
+                        SUM(V1413+V1415+V1414+V1416) AS total_matricula,
+                        SUM(V1413+V1415) AS mat_hombres,
+                        SUM(V1414+V1416) AS mat_mujeres,
+                        SUM(V2496) AS total_docentes,
+                        SUM(V2302) AS doc_hombres,
+                        SUM(V2303) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V1418) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo 
+                    WHERE cv_estatus_captura = 0 $filtro";
+
+        case 'especial_prim':
+            return "SELECT CONCAT('ESPECIAL PRIMARIA') AS titulo_fila,
+                        SUM(V1506+V1508+V1507+V1509) AS total_matricula,
+                        SUM(V1506+V1508) AS mat_hombres,
+                        SUM(V1507+V1509) AS mat_mujeres,
+                        SUM(V2496) AS total_docentes,
+                        SUM(V2302) AS doc_hombres,
+                        SUM(V2303) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V1511) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo 
+                    WHERE cv_estatus_captura = 0 $filtro";
+
+        case 'especial_sec':
+            return "SELECT CONCAT('ESPECIAL SECUNDARIA') AS titulo_fila,
+                        SUM(V1581+V1583+V1582+V1584) AS total_matricula,
+                        SUM(V1581+V1583) AS mat_hombres,
+                        SUM(V1582+V1584) AS mat_mujeres,
+                        SUM(V2496) AS total_docentes,
+                        SUM(V2302) AS doc_hombres,
+                        SUM(V2303) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V1586) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo 
+                    WHERE cv_estatus_captura = 0 $filtro";
+
+        case 'especial_usaer':
+            return "SELECT CONCAT('ESPECIAL USAER') AS titulo_fila,
+                        SUM(v2827) AS total_matricula,
+                        SUM(V2814+V2816+V2818+V2820) AS mat_hombres,
+                        SUM(V2815+V2817+V2819+V2821) AS mat_mujeres,
+                        SUM(v2828+V2973+V2974) AS total_docentes,
+                        SUM(V2973) AS doc_hombres,
+                        SUM(V2974) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.esp_usaer_$ini_ciclo 
+                    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) $filtro";
+
+        // CONSULTAS AGREGADAS (como en bolsillo para obtenerResumenMunicipioCompleto)
+        case 'inicial_esc':
+            return "SELECT 'INICIAL ESCOLARIZADA' AS titulo_fila,
+                        SUM(V398+V414+V183+V184) AS total_matricula,
+                        SUM(V390+V406+V183) AS mat_hombres,
+                        SUM(V394+V410+V184) AS mat_mujeres,
+                        SUM(V509+V516+V523+V511+V518+V525+V510+V517+V524+V512+V519+V526+V291) AS total_docentes,
+                        SUM(V509+V516+V523+V511+V518+V525+V211) AS doc_hombres,
+                        SUM(V510+V517+V524+V512+V519+V526+V212) AS doc_mujeres,
+                        COUNT(DISTINCT cv_cct) AS escuelas,
+                        SUM(V402+V418+V100) AS grupos
+                    FROM (
+                        SELECT cv_cct, c_nom_mun, control, V398,V414,V390,V406,V394,V410,
+                               V509,V516,V523,V511,V518,V525,V510,V517,V524,V512,V519,V526,
+                               V402,V418, 0 as V183, 0 as V184, 0 as V291, 0 as V211, 0 as V212, 0 as V100
+                        FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo 
+                        WHERE $filtroBase $filtro
+                        UNION ALL
+                        SELECT cv_cct, c_nom_mun, control, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                               V183,V184,V291,V211,V212,V100
+                        FROM nonce_pano_$ini_ciclo.ini_ind_$ini_ciclo 
+                        WHERE $filtroBase $filtro
+                    ) AS inicial_esc";
+
+        case 'inicial_no_esc':
+            return "SELECT 'INICIAL NO ESCOLARIZADA' AS titulo_fila,
+                        SUM(V81+V129+V130) AS total_matricula,
+                        SUM(V79+V129) AS mat_hombres,
+                        SUM(V80+V130) AS mat_mujeres,
+                        SUM(V126+V183+V184) AS total_docentes,
+                        SUM(V124+V183) AS doc_hombres,
+                        SUM(V125+V184) AS doc_mujeres,
+                        COUNT(DISTINCT cv_cct) AS escuelas,
+                        SUM(0) AS grupos
+                    FROM (
+                        SELECT cv_cct, c_nom_mun, control, V81,V79,V80,V126,V124,V125,
+                               0 as V129, 0 as V130, 0 as V183, 0 as V184
+                        FROM nonce_pano_$ini_ciclo.ini_comuni_$ini_ciclo 
+                        WHERE $filtroBase $filtro
+                        UNION ALL
+                        SELECT cv_cct, c_nom_mun, control, 0,0,0,0,0,0,V129,V130,V183,V184
+                        FROM nonce_pano_$ini_ciclo.ini_ne_$ini_ciclo 
+                        WHERE $filtroBase $filtro
+                    ) AS inicial_no_esc";
+
+        case 'preescolar':
+            return "SELECT 'PREESCOLAR' AS titulo_fila,
+                        SUM(V177+V97) AS total_matricula,
+                        SUM(V165+V85) AS mat_hombres,
+                        SUM(V171+V91) AS mat_mujeres,
+                        SUM(V867+V868+V859+V860+V795+V803+V796+V804+V151) AS total_docentes,
+                        SUM(V859+V868+V795+V803+V149) AS doc_hombres,
+                        SUM(V860+V868+V796+V804+V150) AS doc_mujeres,
+                        COUNT(DISTINCT cv_cct) AS escuelas,
+                        SUM(V182) AS grupos
+                    FROM (
+                        SELECT cv_cct, c_nom_mun, control, V177,V165,V171,V867,V868,V859,V860,V182,
+                               0 as V97, 0 as V85, 0 as V91, 0 as V151, 0 as V149, 0 as V150,
+                               0 as V795, 0 as V803, 0 as V796, 0 as V804
+                        FROM nonce_pano_$ini_ciclo.pree_gral_$ini_ciclo 
+                        WHERE $filtroBase $filtro
+                        UNION ALL
+                        SELECT cv_cct, c_nom_mun, control, V177,V165,V171,0,0,0,0,V182,
+                               0,0,0,0,0,0,V795,V803,V796,V804
+                        FROM nonce_pano_$ini_ciclo.pree_ind_$ini_ciclo 
+                        WHERE $filtroBase $filtro
+                        UNION ALL
+                        SELECT cv_cct, c_nom_mun, control, 0,0,0,0,0,0,0,0,V97,V85,V91,V151,V149,V150,0,0,0,0
+                        FROM nonce_pano_$ini_ciclo.pree_comuni_$ini_ciclo 
+                        WHERE $filtroBase $filtro
+                    ) AS preescolar";
+
+        case 'primaria':
+            return "SELECT 'PRIMARIA' AS titulo_fila,
+                        SUM(V608+V610+V515) AS total_matricula,
+                        SUM(V562+V573+V564+V575+V469+V480) AS mat_hombres,
+                        SUM(V585+V596+V587+V598+V492+V503) AS mat_mujeres,
+                        SUM(V1575+V1576+V1567+V1568+V1507+V1499+V1508+V1500+V585) AS total_docentes,
+                        SUM(V1575+V1567+V1507+V1499+V583) AS doc_hombres,
+                        SUM(V1576+V1568+V1508+V1500+V584) AS doc_mujeres,
+                        COUNT(DISTINCT cv_cct) AS escuelas,
+                        SUM(V616+V1052) AS grupos
+                    FROM (
+                        SELECT cv_cct, c_nom_mun, control, V608,V562,V573,V585,V596,V1575,V1576,V1567,V1568,V616,
+                               0 as V610, 0 as V564, 0 as V575, 0 as V587, 0 as V598, 0 as V1507, 0 as V1499, 0 as V1508, 0 as V1500, 0 as V1052,
+                               0 as V515, 0 as V469, 0 as V480, 0 as V492, 0 as V503, 0 as V585_com, 0 as V583, 0 as V584
+                        FROM nonce_pano_$ini_ciclo.prim_gral_$ini_ciclo 
+                        WHERE $filtroBase $filtro
+                        UNION ALL
+                        SELECT cv_cct, c_nom_mun, control, 0,0,0,0,0,0,0,0,0,0,V610,V564,V575,V587,V598,V1507,V1499,V1508,V1500,V1052,0,0,0,0,0,0,0,0
+                        FROM nonce_pano_$ini_ciclo.prim_ind_$ini_ciclo 
+                        WHERE $filtroBase $filtro
+                        UNION ALL
+                        SELECT cv_cct, c_nom_mun, control, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,V515,V469,V480,V492,V503,V585,V583,V584
+                        FROM nonce_pano_$ini_ciclo.prim_comuni_$ini_ciclo 
+                        WHERE $filtroBase $filtro
+                    ) AS primaria";
+
+        case 'secundaria':
+            return "SELECT 'SECUNDARIA' AS titulo_fila,
+                        SUM(V340+V257) AS total_matricula,
+                        SUM(V306+V314+V223+V231) AS mat_hombres,
+                        SUM(V323+V331+V240+V248) AS mat_mujeres,
+                        SUM(V1401+V386) AS total_docentes,
+                        SUM(V1297+V1303+V1307+V1309+V1311+V1313+V384) AS doc_hombres,
+                        SUM(V1298+V1304+V1308+V1310+V1312+V1314+V385) AS doc_mujeres,
+                        COUNT(DISTINCT cv_cct) AS escuelas,
+                        SUM(V341) AS grupos
+                    FROM (
+                        SELECT cv_cct, c_nom_mun, control, V340,V306,V314,V323,V331,V1401,
+                               V1297,V1303,V1307,V1309,V1311,V1313,V1298,V1304,V1308,V1310,V1312,V1314,V341,
+                               0 as V257, 0 as V223, 0 as V231, 0 as V240, 0 as V248, 0 as V386, 0 as V384, 0 as V385
+                        FROM nonce_pano_$ini_ciclo.sec_gral_$ini_ciclo 
+                        WHERE $filtroBase $filtro
+                        UNION ALL
+                        SELECT cv_cct, c_nom_mun, control, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,V257,V223,V231,V240,V248,V386,V384,V385
+                        FROM nonce_pano_$ini_ciclo.sec_comuni_$ini_ciclo 
+                        WHERE $filtroBase $filtro
+                    ) AS secundaria";
+
+        case 'media_sup':
+            return "SELECT 'MEDIA SUPERIOR' AS titulo_fila,
+                        SUM(V397+V472) AS total_matricula,
+                        SUM(V395+V470) AS mat_hombres,
+                        SUM(V396+V471) AS mat_mujeres,
+                        SUM(V960+V1059) AS total_docentes,
+                        SUM(V958+V1057) AS doc_hombres,
+                        SUM(V959+V1058) AS doc_mujeres,
+                        COUNT(DISTINCT CONCAT(cct_ins_pla,'-',cv_cct,'-',c_turno)) AS escuelas,
+                        SUM(V401+V476) AS grupos
+                    FROM (
+                        SELECT cct_ins_pla, cv_cct, c_turno, c_nom_mun, control, V397,V395,V396,V960,V958,V959,V401,
+                               0 as V472, 0 as V470, 0 as V471, 0 as V1059, 0 as V1057, 0 as V1058, 0 as V476
+                        FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo 
+                        WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro
+                        UNION ALL
+                        SELECT cct_ins_pla, cv_cct, c_turno, c_nom_mun, control, 0,0,0,0,0,0,0,V472,V470,V471,V1059,V1057,V1058,V476
+                        FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo 
+                        WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro
+                    ) AS media_superior";
+
+        case 'superior':
+            return "SELECT 'SUPERIOR' AS titulo_fila,
+                        SUM(V177+V142) AS total_matricula,
+                        SUM(V175+V140) AS mat_hombres,
+                        SUM(V176+V141) AS mat_mujeres,
+                        SUM(0) AS total_docentes,
+                        SUM(0) AS doc_hombres,
+                        SUM(0) AS doc_mujeres,
+                        COUNT(DISTINCT cct_ins_pla) AS escuelas,
+                        SUM(0) AS grupos
+                    FROM (
+                        SELECT cct_ins_pla, c_nom_mun, control, V177,V175,V176, 0 as V142, 0 as V140, 0 as V141
+                        FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo 
+                        WHERE cv_motivo = '0' $filtro
+                        UNION ALL
+                        SELECT cct_ins_pla, c_nom_mun, control, 0,0,0,V142,V140,V141
+                        FROM nonce_pano_$ini_ciclo.sup_posgrado_$ini_ciclo 
+                        WHERE cv_motivo = '0' $filtro
+                    ) AS superior";
+
+        case 'especial_tot':
+            return "SELECT 'ESPECIAL TOTAL' AS titulo_fila,
+                        SUM(V2257) AS total_matricula,
+                        SUM(V2255) AS mat_hombres,
+                        SUM(V2256) AS mat_mujeres,
+                        SUM(V2496) AS total_docentes,
+                        SUM(V2302) AS doc_hombres,
+                        SUM(V2303) AS doc_mujeres,
+                        COUNT(cv_cct) AS escuelas,
+                        SUM(V1343+V1418+V1511+V1586+V1765) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo 
+                    WHERE cv_estatus_captura = 0 $filtro";
+
+        default:
+            return false;
+    }
+}
+
+// Variables globales como en bolsillo
+$sin_filtro_extra = " ";
+$filtro_pub = " AND control<>'PRIVADO' ";
+$filtro_priv = " AND control='PRIVADO' ";
+
+/**
+ * Función rs_consulta adaptada exactamente de bolsillo
+ */
+function rs_consulta_segura($link, $str_consulta, $ini_ciclo, $filtro)
+{
+    $consulta = str_consulta_segura($str_consulta, $ini_ciclo, $filtro);
+
+    if (!$consulta) {
+        return false;
     }
 
-    try {
-        // Establecer conexión usando la función de prueba
-        $conn = ConectarsePrueba();
-        
-        if (!$conn) {
-            error_log('SEDEQ Prueba: Error al conectar con PostgreSQL para municipios');
-            return $municipiosFallback;
-        }
-        
-        // Consulta dinámica copiada exactamente de conexion.php
-        $query = "SELECT DISTINCT TRIM(UPPER(c_nom_mun)) AS municipio
-                  FROM (
-                      SELECT c_nom_mun FROM nonce_pano_24.ini_gral_24 
-                      WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-                      UNION
-                      SELECT c_nom_mun FROM nonce_pano_24.ini_ind_24 
-                      WHERE cv_estatus_captura = 0
-                      UNION
-                      SELECT c_nom_mun FROM nonce_pano_24.pree_gral_24 
-                      WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-                      UNION
-                      SELECT c_nom_mun FROM nonce_pano_24.prim_gral_24 
-                      WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-                      UNION
-                      SELECT c_nom_mun FROM nonce_pano_24.sec_gral_24 
-                      WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-                      UNION
-                      SELECT c_nom_mun FROM nonce_pano_24.ms_gral_24
-                      UNION
-                      SELECT c_nom_mun FROM nonce_pano_24.sup_carrera_24 
-                      WHERE cv_motivo = 0
-                  ) AS municipios
-                  WHERE TRIM(c_nom_mun) != '' AND c_nom_mun IS NOT NULL
-                  ORDER BY municipio;";
-        
-        $result = pg_query($conn, $query);
-        $municipios = [];
-        
-        if ($result) {
-            $municipiosUnicos = []; // Array para evitar duplicados
-            while ($row = pg_fetch_assoc($result)) {
-                // Obtener el municipio y normalizarlo para display
-                $municipioNormalizado = normalizarNombreMunicipioPrueba($row['municipio']);
-                if (!empty($municipioNormalizado) && !in_array($municipioNormalizado, $municipiosUnicos)) {
-                    $municipiosUnicos[] = $municipioNormalizado;
-                    $municipios[] = $municipioNormalizado;
-                }
-            }
-            pg_free_result($result);
-        }
-        
-        pg_close($conn);
-        
-        // Asegurar que tenemos los 18 municipios oficiales de Querétaro
-        $municipiosOficiales = [
-            'AMEALCO DE BONFIL', 'ARROYO SECO', 'CADEREYTA DE MONTES', 'COLÓN', 
-            'CORREGIDORA', 'EL MARQUÉS', 'EZEQUIEL MONTES', 'HUIMILPAN', 
-            'JALPAN DE SERRA', 'LANDA DE MATAMOROS', 'PEÑAMILLER', 'PEDRO ESCOBEDO', 
-            'PINAL DE AMOLES', 'QUERÉTARO', 'SAN JOAQUÍN', 'SAN JUAN DEL RÍO', 
-            'TEQUISQUIAPAN', 'TOLIMÁN'
+    $rs_nivel = pg_query($link, $consulta);
+    if (!$rs_nivel) {
+        error_log('Error en consulta ' . $str_consulta . ': ' . pg_last_error($link));
+        return false;
+    }
+
+    $cant_nivel = pg_num_rows($rs_nivel);
+    if ($cant_nivel > 0) {
+        $row_nivel = pg_fetch_assoc($rs_nivel);
+        $titulo_fila = $row_nivel["titulo_fila"];
+        $tot_mat_nivel = $row_nivel["total_matricula"];
+        $mat_h_nivel = $row_nivel["mat_hombres"];
+        $mat_m_nivel = $row_nivel["mat_mujeres"];
+        $tot_doc_nivel = $row_nivel["total_docentes"];
+        $doc_h_nivel = $row_nivel["doc_hombres"];
+        $doc_m_nivel = $row_nivel["doc_mujeres"];
+        $tot_esc_nivel = $row_nivel["escuelas"];
+        $tot_grp_nivel = $row_nivel["grupos"];
+
+        $nivel_detalle = [
+            "titulo_fila" => $titulo_fila,
+            "tot_mat" => $tot_mat_nivel,
+            "mat_h" => $mat_h_nivel,
+            "mat_m" => $mat_m_nivel,
+            "tot_doc" => $tot_doc_nivel,
+            "doc_h" => $doc_h_nivel,
+            "doc_m" => $doc_m_nivel,
+            "tot_esc" => $tot_esc_nivel,
+            "tot_grp" => $tot_grp_nivel
         ];
-        
-        // Agregar municipios faltantes que no estén en los datos
-        foreach ($municipiosOficiales as $oficial) {
-            if (!in_array($oficial, $municipios)) {
-                $municipios[] = $oficial;
+
+        pg_free_result($rs_nivel);
+        return $nivel_detalle;
+    }
+
+    pg_free_result($rs_nivel);
+    return false;
+}
+
+/**
+ * Función subnivel adaptada de bolsillo - obtiene datos total, públicos y privados
+ * 
+ * @param resource $link Conexión a la base de datos
+ * @param string $titulo_fila Título descriptivo
+ * @param string $ini_ciclo Ciclo escolar
+ * @param string $str_consulta Tipo de consulta
+ * @param string $filtro_extra Filtro adicional (municipio)
+ * @return array Datos consolidados con desglose público/privado
+ */
+function subnivel_con_control($link, $titulo_fila, $ini_ciclo, $str_consulta, $filtro_extra)
+{
+    global $filtro_pub, $filtro_priv;
+
+    // 3 consultas: total, público, privado
+    $subnivel_tot = rs_consulta_segura($link, $str_consulta, $ini_ciclo, $filtro_extra);
+    $subnivel_pub = rs_consulta_segura($link, $str_consulta, $ini_ciclo, $filtro_pub . " " . $filtro_extra);
+    $subnivel_priv = rs_consulta_segura($link, $str_consulta, $ini_ciclo, $filtro_priv . " " . $filtro_extra);
+
+    // Si no hay datos, devolver estructura vacía
+    if (!$subnivel_tot) {
+        $subnivel_tot = subnivel_cero();
+    }
+    if (!$subnivel_pub) {
+        $subnivel_pub = subnivel_cero();
+    }
+    if (!$subnivel_priv) {
+        $subnivel_priv = subnivel_cero();
+    }
+
+    $total_subnivel = [
+        "titulo_fila" => $titulo_fila,
+        "tot_mat" => $subnivel_tot["tot_mat"],
+        "tot_mat_pub" => $subnivel_pub["tot_mat"],
+        "tot_mat_priv" => $subnivel_priv["tot_mat"],
+        "mat_h" => $subnivel_tot["mat_h"],
+        "mat_h_pub" => $subnivel_pub["mat_h"],
+        "mat_h_priv" => $subnivel_priv["mat_h"],
+        "mat_m" => $subnivel_tot["mat_m"],
+        "mat_m_pub" => $subnivel_pub["mat_m"],
+        "mat_m_priv" => $subnivel_priv["mat_m"],
+        "tot_doc" => $subnivel_tot["tot_doc"],
+        "tot_doc_pub" => $subnivel_pub["tot_doc"],
+        "tot_doc_priv" => $subnivel_priv["tot_doc"],
+        "doc_h" => $subnivel_tot["doc_h"],
+        "doc_h_pub" => $subnivel_pub["doc_h"],
+        "doc_h_priv" => $subnivel_priv["doc_h"],
+        "doc_m" => $subnivel_tot["doc_m"],
+        "doc_m_pub" => $subnivel_pub["doc_m"],
+        "doc_m_priv" => $subnivel_priv["doc_m"],
+        "tot_esc" => $subnivel_tot["tot_esc"],
+        "tot_esc_pub" => $subnivel_pub["tot_esc"],
+        "tot_esc_priv" => $subnivel_priv["tot_esc"],
+        "tot_grp" => $subnivel_tot["tot_grp"],
+        "tot_grp_pub" => $subnivel_pub["tot_grp"],
+        "tot_grp_priv" => $subnivel_priv["tot_grp"]
+    ];
+
+    return $total_subnivel;
+}
+
+/**
+ * Función subnivel_cero adaptada de bolsillo - devuelve estructura vacía
+ */
+function subnivel_cero()
+{
+    $total_subnivel_cero = [
+        "titulo_fila" => "SIN DATOS",
+        "tot_mat" => 0,
+        "mat_h" => 0,
+        "mat_m" => 0,
+        "tot_doc" => 0,
+        "doc_h" => 0,
+        "doc_m" => 0,
+        "tot_esc" => 0,
+        "tot_grp" => 0
+    ];
+
+    return $total_subnivel_cero;
+}
+
+/**
+ * Función que obtiene datos con desglose público/privado para TODOS los niveles educativos
+ * @param string $municipio Nombre del municipio
+ * @param string $ini_ciclo Ciclo escolar
+ * @return array Datos consolidados con desglose público/privado por nivel
+ */
+function obtenerDatosPublicoPrivado($municipio = 'CORREGIDORA', $ini_ciclo = '24')
+{
+    global $filtro_pub, $filtro_priv;
+
+    try {
+        $link = ConectarsePrueba();
+        if (!$link) {
+            throw new Exception("No se pudo conectar a la base de datos");
+        }
+
+        // Obtener número de municipio para el filtro
+        $num_munic = nombre_a_numero_municipio($municipio);
+        $filtro_mun = " AND cv_mun='" . $num_munic . "' ";
+
+        $niveles_educativos = [
+            'inicial_esc' => 'INICIAL ESCOLARIZADA',
+            'inicial_no_esc' => 'INICIAL NO ESCOLARIZADA',
+            'preescolar' => 'PREESCOLAR',
+            'primaria' => 'PRIMARIA',
+            'secundaria' => 'SECUNDARIA',
+            'media_sup' => 'MEDIA SUPERIOR',
+            'superior' => 'SUPERIOR',
+            'especial_tot' => 'ESPECIAL TOTAL'
+        ];
+        $datos_consolidados = [];
+
+        foreach ($niveles_educativos as $consulta => $nombre_nivel) {
+            $datos_nivel = subnivel_con_control($link, $nombre_nivel, $ini_ciclo, $consulta, $filtro_mun);
+            if ($datos_nivel) {
+                $datos_consolidados[$consulta] = $datos_nivel;
             }
         }
-        
-        // Ordenar alfabéticamente
-        sort($municipios);
-        
-        // Si no se encontraron municipios, usar fallback
-        return empty($municipios) ? $municipiosFallback : $municipios;
-        
+
+        pg_close($link);
+        return $datos_consolidados;
+
     } catch (Exception $e) {
-        // Log del error para debugging
-        error_log('SEDEQ Prueba: Error en consulta de municipios: ' . $e->getMessage());
-        return $municipiosFallback;
+        error_log("Error obteniendo datos público/privado para $municipio: " . $e->getMessage());
+        return [];
+    }
+}
+
+// =============================================================================
+// MAPEO Y UTILIDADES DE MUNICIPIOS
+// =============================================================================
+// MAPEO Y UTILIDADES DE MUNICIPIOS
+// =============================================================================
+
+/**
+ * Convierte nombre de municipio a número para filtro cv_mun
+ */
+function nombre_a_numero_municipio($nombre_municipio)
+{
+    $municipios = [
+        "AMEALCO DE BONFIL" => "1",
+        "PINAL DE AMOLES" => "2",
+        "ARROYO SECO" => "3",
+        "CADEREYTA DE MONTES" => "4",
+        "COLÓN" => "5",
+        "CORREGIDORA" => "6",
+        "EZEQUIEL MONTES" => "7",
+        "HUIMILPAN" => "8",
+        "JALPAN DE SERRA" => "9",
+        "LANDA DE MATAMOROS" => "10",
+        "EL MARQUÉS" => "11",
+        "PEDRO ESCOBEDO" => "12",
+        "PEÑAMILLER" => "13",
+        "QUERÉTARO" => "14",
+        "SAN JOAQUÍN" => "15",
+        "SAN JUAN DEL RÍO" => "16",
+        "TEQUISQUIAPAN" => "17",
+        "TOLIMÁN" => "18"
+    ];
+
+    $nombre_normalizado = strtoupper(trim($nombre_municipio));
+    return isset($municipios[$nombre_normalizado]) ? $municipios[$nombre_normalizado] : "6"; // Default Corregidora
+}
+
+/**
+ * Obtiene datos educativos consolidados replicando la lógica de bolsillo
+ * 
+ * @param string $municipio Municipio a consultar
+ * @param string $ciclo_escolar Ciclo escolar
+ * @return array Datos consolidados por nivel educativo
+ */
+function obtenerDatosEducativosCompletos($municipio = 'CORREGIDORA', $ciclo_escolar = '24')
+{
+    $link = ConectarsePrueba();
+    if (!$link) {
+        return [
+            'error' => 'No se pudo conectar a la base de datos',
+            'municipio' => $municipio,
+            'datos' => []
+        ];
+    }
+
+    $municipio = normalizarNombreMunicipio($municipio);
+
+    try {
+        $datos_consolidados = [];
+
+        // EDUCACIÓN INICIAL
+        $inicial_general = rs_consulta_segura($link, 'gral_ini', $ciclo_escolar, $municipio);
+        if ($inicial_general) {
+            $datos_consolidados[] = [
+                'nivel_educativo' => 'Inicial',
+                'subnivel' => 'General',
+                'tipo_educativo' => 'Inicial General',
+                'total_escuelas' => $inicial_general['tot_esc'],
+                'total_alumnos' => $inicial_general['tot_mat'],
+                'alumnos_hombres' => $inicial_general['mat_h'],
+                'alumnos_mujeres' => $inicial_general['mat_m'],
+                'total_docentes' => $inicial_general['tot_doc'],
+                'docentes_hombres' => $inicial_general['doc_h'],
+                'docentes_mujeres' => $inicial_general['doc_m'],
+                'total_grupos' => $inicial_general['tot_grp']
+            ];
+        }
+
+        $inicial_indigena = rs_consulta_segura($link, 'ind_ini', $ciclo_escolar, $municipio);
+        if ($inicial_indigena) {
+            $datos_consolidados[] = [
+                'nivel_educativo' => 'Inicial',
+                'subnivel' => 'Indígena',
+                'tipo_educativo' => 'Inicial Indígena',
+                'total_escuelas' => $inicial_indigena['tot_esc'],
+                'total_alumnos' => $inicial_indigena['tot_mat'],
+                'alumnos_hombres' => $inicial_indigena['mat_h'],
+                'alumnos_mujeres' => $inicial_indigena['mat_m'],
+                'total_docentes' => $inicial_indigena['tot_doc'],
+                'docentes_hombres' => $inicial_indigena['doc_h'],
+                'docentes_mujeres' => $inicial_indigena['doc_m'],
+                'total_grupos' => $inicial_indigena['tot_grp']
+            ];
+        }
+
+        $inicial_comunitario = rs_consulta_segura($link, 'comuni_ini', $ciclo_escolar, $municipio);
+        if ($inicial_comunitario) {
+            $datos_consolidados[] = [
+                'nivel_educativo' => 'Inicial',
+                'subnivel' => 'Comunitario',
+                'tipo_educativo' => 'Inicial Comunitario',
+                'total_escuelas' => $inicial_comunitario['tot_esc'],
+                'total_alumnos' => $inicial_comunitario['tot_mat'],
+                'alumnos_hombres' => $inicial_comunitario['mat_h'],
+                'alumnos_mujeres' => $inicial_comunitario['mat_m'],
+                'total_docentes' => $inicial_comunitario['tot_doc'],
+                'docentes_hombres' => $inicial_comunitario['doc_h'],
+                'docentes_mujeres' => $inicial_comunitario['doc_m'],
+                'total_grupos' => $inicial_comunitario['tot_grp']
+            ];
+        }
+
+        $inicial_no_escolar = rs_consulta_segura($link, 'ne_ini', $ciclo_escolar, $municipio);
+        if ($inicial_no_escolar) {
+            $datos_consolidados[] = [
+                'nivel_educativo' => 'Inicial',
+                'subnivel' => 'No Escolarizada',
+                'tipo_educativo' => 'Inicial No Escolarizada',
+                'total_escuelas' => $inicial_no_escolar['tot_esc'],
+                'total_alumnos' => $inicial_no_escolar['tot_mat'],
+                'alumnos_hombres' => $inicial_no_escolar['mat_h'],
+                'alumnos_mujeres' => $inicial_no_escolar['mat_m'],
+                'total_docentes' => $inicial_no_escolar['tot_doc'],
+                'docentes_hombres' => $inicial_no_escolar['doc_h'],
+                'docentes_mujeres' => $inicial_no_escolar['doc_m'],
+                'total_grupos' => $inicial_no_escolar['tot_grp']
+            ];
+        }
+
+        // EDUCACIÓN PREESCOLAR
+        $preescolar_general = rs_consulta_segura($link, 'gral_pree', $ciclo_escolar, $municipio);
+        if ($preescolar_general) {
+            $datos_consolidados[] = [
+                'nivel_educativo' => 'Preescolar',
+                'subnivel' => 'General',
+                'tipo_educativo' => 'Preescolar General',
+                'total_escuelas' => $preescolar_general['tot_esc'],
+                'total_alumnos' => $preescolar_general['tot_mat'],
+                'alumnos_hombres' => $preescolar_general['mat_h'],
+                'alumnos_mujeres' => $preescolar_general['mat_m'],
+                'total_docentes' => $preescolar_general['tot_doc'],
+                'docentes_hombres' => $preescolar_general['doc_h'],
+                'docentes_mujeres' => $preescolar_general['doc_m'],
+                'total_grupos' => $preescolar_general['tot_grp']
+            ];
+        }
+
+        $preescolar_indigena = rs_consulta_segura($link, 'ind_pree', $ciclo_escolar, $municipio);
+        if ($preescolar_indigena) {
+            $datos_consolidados[] = [
+                'nivel_educativo' => 'Preescolar',
+                'subnivel' => 'Indígena',
+                'tipo_educativo' => 'Preescolar Indígena',
+                'total_escuelas' => $preescolar_indigena['tot_esc'],
+                'total_alumnos' => $preescolar_indigena['tot_mat'],
+                'alumnos_hombres' => $preescolar_indigena['mat_h'],
+                'alumnos_mujeres' => $preescolar_indigena['mat_m'],
+                'total_docentes' => $preescolar_indigena['tot_doc'],
+                'docentes_hombres' => $preescolar_indigena['doc_h'],
+                'docentes_mujeres' => $preescolar_indigena['doc_m'],
+                'total_grupos' => $preescolar_indigena['tot_grp']
+            ];
+        }
+
+        $preescolar_comunitario = rs_consulta_segura($link, 'comuni_pree', $ciclo_escolar, $municipio);
+        if ($preescolar_comunitario) {
+            $datos_consolidados[] = [
+                'nivel_educativo' => 'Preescolar',
+                'subnivel' => 'Comunitario',
+                'tipo_educativo' => 'Preescolar Comunitario',
+                'total_escuelas' => $preescolar_comunitario['tot_esc'],
+                'total_alumnos' => $preescolar_comunitario['tot_mat'],
+                'alumnos_hombres' => $preescolar_comunitario['mat_h'],
+                'alumnos_mujeres' => $preescolar_comunitario['mat_m'],
+                'total_docentes' => $preescolar_comunitario['tot_doc'],
+                'docentes_hombres' => $preescolar_comunitario['doc_h'],
+                'docentes_mujeres' => $preescolar_comunitario['doc_m'],
+                'total_grupos' => $preescolar_comunitario['tot_grp']
+            ];
+        }
+
+        // EDUCACIÓN PRIMARIA
+        $primaria_general = rs_consulta_segura($link, 'gral_prim', $ciclo_escolar, $municipio);
+        if ($primaria_general) {
+            $datos_consolidados[] = [
+                'nivel_educativo' => 'Primaria',
+                'subnivel' => 'General',
+                'tipo_educativo' => 'Primaria General',
+                'total_escuelas' => $primaria_general['tot_esc'],
+                'total_alumnos' => $primaria_general['tot_mat'],
+                'alumnos_hombres' => $primaria_general['mat_h'],
+                'alumnos_mujeres' => $primaria_general['mat_m'],
+                'total_docentes' => $primaria_general['tot_doc'],
+                'docentes_hombres' => $primaria_general['doc_h'],
+                'docentes_mujeres' => $primaria_general['doc_m'],
+                'total_grupos' => $primaria_general['tot_grp']
+            ];
+        }
+
+        $primaria_indigena = rs_consulta_segura($link, 'ind_prim', $ciclo_escolar, $municipio);
+        if ($primaria_indigena) {
+            $datos_consolidados[] = [
+                'nivel_educativo' => 'Primaria',
+                'subnivel' => 'Indígena',
+                'tipo_educativo' => 'Primaria Indígena',
+                'total_escuelas' => $primaria_indigena['tot_esc'],
+                'total_alumnos' => $primaria_indigena['tot_mat'],
+                'alumnos_hombres' => $primaria_indigena['mat_h'],
+                'alumnos_mujeres' => $primaria_indigena['mat_m'],
+                'total_docentes' => $primaria_indigena['tot_doc'],
+                'docentes_hombres' => $primaria_indigena['doc_h'],
+                'docentes_mujeres' => $primaria_indigena['doc_m'],
+                'total_grupos' => $primaria_indigena['tot_grp']
+            ];
+        }
+
+        $primaria_comunitaria = rs_consulta_segura($link, 'comuni_prim', $ciclo_escolar, $municipio);
+        if ($primaria_comunitaria) {
+            $datos_consolidados[] = [
+                'nivel_educativo' => 'Primaria',
+                'subnivel' => 'Comunitaria',
+                'tipo_educativo' => 'Primaria Comunitaria',
+                'total_escuelas' => $primaria_comunitaria['tot_esc'],
+                'total_alumnos' => $primaria_comunitaria['tot_mat'],
+                'alumnos_hombres' => $primaria_comunitaria['mat_h'],
+                'alumnos_mujeres' => $primaria_comunitaria['mat_m'],
+                'total_docentes' => $primaria_comunitaria['tot_doc'],
+                'docentes_hombres' => $primaria_comunitaria['doc_h'],
+                'docentes_mujeres' => $primaria_comunitaria['doc_m'],
+                'total_grupos' => $primaria_comunitaria['tot_grp']
+            ];
+        }
+
+        // EDUCACIÓN SECUNDARIA
+        $secundaria_general = rs_consulta_segura($link, 'gral_sec', $ciclo_escolar, $municipio);
+        if ($secundaria_general) {
+            $datos_consolidados[] = [
+                'nivel_educativo' => 'Secundaria',
+                'subnivel' => 'General',
+                'tipo_educativo' => 'Secundaria General',
+                'total_escuelas' => $secundaria_general['tot_esc'],
+                'total_alumnos' => $secundaria_general['tot_mat'],
+                'alumnos_hombres' => $secundaria_general['mat_h'],
+                'alumnos_mujeres' => $secundaria_general['mat_m'],
+                'total_docentes' => $secundaria_general['tot_doc'],
+                'docentes_hombres' => $secundaria_general['doc_h'],
+                'docentes_mujeres' => $secundaria_general['doc_m'],
+                'total_grupos' => $secundaria_general['tot_grp']
+            ];
+        }
+
+        $secundaria_comunitaria = rs_consulta_segura($link, 'comuni_sec', $ciclo_escolar, $municipio);
+        if ($secundaria_comunitaria) {
+            $datos_consolidados[] = [
+                'nivel_educativo' => 'Secundaria',
+                'subnivel' => 'Comunitaria',
+                'tipo_educativo' => 'Secundaria Comunitaria',
+                'total_escuelas' => $secundaria_comunitaria['tot_esc'],
+                'total_alumnos' => $secundaria_comunitaria['tot_mat'],
+                'alumnos_hombres' => $secundaria_comunitaria['mat_h'],
+                'alumnos_mujeres' => $secundaria_comunitaria['mat_m'],
+                'total_docentes' => $secundaria_comunitaria['tot_doc'],
+                'docentes_hombres' => $secundaria_comunitaria['doc_h'],
+                'docentes_mujeres' => $secundaria_comunitaria['doc_m'],
+                'total_grupos' => $secundaria_comunitaria['tot_grp']
+            ];
+        }
+
+        pg_close($link);
+
+        // Calcular totales
+        $total_escuelas = array_sum(array_column($datos_consolidados, 'total_escuelas'));
+        $total_alumnos = array_sum(array_column($datos_consolidados, 'total_alumnos'));
+        $total_docentes = array_sum(array_column($datos_consolidados, 'total_docentes'));
+
+        return [
+            'municipio' => $municipio,
+            'ciclo_escolar' => $ciclo_escolar,
+            'datos' => $datos_consolidados,
+            'totales' => [
+                'total_escuelas' => $total_escuelas,
+                'total_alumnos' => $total_alumnos,
+                'total_docentes' => $total_docentes
+            ],
+            'fecha_consulta' => date('Y-m-d H:i:s')
+        ];
+
+    } catch (Exception $e) {
+        pg_close($link);
+        error_log('Error en obtenerDatosEducativosCompletos: ' . $e->getMessage());
+
+        return [
+            'error' => 'Error al procesar datos educativos',
+            'municipio' => $municipio,
+            'datos' => []
+        ];
     }
 }
 
 /**
- * Normaliza nombres de municipios - Copiado de conexion.php
- * 
- * @param string $nombreMunicipio Nombre del municipio desde la base de datos
- * @return string Nombre normalizado del municipio
+ * Función para datos vacíos (cuando no hay información)
  */
-function normalizarNombreMunicipioPrueba($nombreMunicipio) {
-    // Eliminar espacios extra y convertir a string
-    $nombre = trim((string)$nombreMunicipio);
-    
-    // Si está vacío, retornar vacío
-    if (empty($nombre)) {
-        return '';
-    }
-    
-    // Lista oficial de los 18 municipios de Querétaro con sus variantes
-    $municipiosQueretaro = [
-        // Patrones principales - sin acentos para matching
-        'AMEALCO DE BONFIL' => 'AMEALCO DE BONFIL',
-        'ARROYO SECO' => 'ARROYO SECO',
-        'CADEREYTA DE MONTES' => 'CADEREYTA DE MONTES',
-        'COLON' => 'COLÓN',
-        'CORREGIDORA' => 'CORREGIDORA',
-        'EL MARQUES' => 'EL MARQUÉS',
-        'EZEQUIEL MONTES' => 'EZEQUIEL MONTES',
-        'HUIMILPAN' => 'HUIMILPAN',
-        'JALPAN DE SERRA' => 'JALPAN DE SERRA',
-        'LANDA DE MATAMOROS' => 'LANDA DE MATAMOROS',
-        'PENAMILLER' => 'PEÑAMILLER',
-        'PEDRO ESCOBEDO' => 'PEDRO ESCOBEDO',
-        'PINAL DE AMOLES' => 'PINAL DE AMOLES',
-        'QUERETARO' => 'QUERÉTARO',
-        'SAN JOAQUIN' => 'SAN JOAQUÍN',
-        'SAN JUAN DEL RIO' => 'SAN JUAN DEL RÍO',
-        'TEQUISQUIAPAN' => 'TEQUISQUIAPAN',
-        'TOLIMAN' => 'TOLIMÁN',
-        
-        // Variantes con caracteres problemáticos
-        'SAN JOAQUN' => 'SAN JOAQUÍN',
-        'SAN JUAN DEL RO' => 'SAN JUAN DEL RÍO',
-        'PEAMILLER' => 'PEÑAMILLER'
+function datos_vacion()
+{
+    return [
+        "titulo_fila" => "",
+        "tot_mat" => 0,
+        "mat_h" => 0,
+        "mat_m" => 0,
+        "tot_doc" => 0,
+        "doc_h" => 0,
+        "doc_m" => 0,
+        "tot_esc" => 0,
+        "tot_grp" => 0
     ];
-    
-    // Limpiar caracteres problemáticos pero preservar estructura
-    $nombreLimpio = strtoupper(trim($nombre));
-    $nombreLimpio = preg_replace('/[^\w\s]/u', '', $nombreLimpio);
-    $nombreLimpio = preg_replace('/\s+/', ' ', $nombreLimpio);
-    
-    // Buscar coincidencia directa
-    if (isset($municipiosQueretaro[$nombreLimpio])) {
-        return $municipiosQueretaro[$nombreLimpio];
-    }
-    
-    // Buscar por similitud (para casos de caracteres perdidos)
-    foreach ($municipiosQueretaro as $patron => $oficial) {
-        if (levenshtein($nombreLimpio, $patron) <= 2) {
-            return $oficial;
-        }
-    }
-    
-    // Verificar si contiene palabras clave de municipios conocidos
-    if (strpos($nombreLimpio, 'JOAQU') !== false) return 'SAN JOAQUÍN';
-    if (strpos($nombreLimpio, 'JUAN') !== false && strpos($nombreLimpio, 'DEL') !== false) return 'SAN JUAN DEL RÍO';
-    if (strpos($nombreLimpio, 'MILLER') !== false) return 'PEÑAMILLER';
-    if (strpos($nombreLimpio, 'TOLIM') !== false) return 'TOLIMÁN';
-    
-    // Como último recurso, retornar el nombre limpio
-    return $nombreLimpio;
 }
 
-?>
+/**
+ * Función para obtener datos de un nivel con separación público/privado
+ * Adaptada de la función subnivel de bolsillo
+ */
+function subnivel($titulo_fila, $ini_ciclo, $str_consulta, $municipio)
+{
+    $link = ConectarsePrueba();
+    if (!$link) {
+        return datos_vacion();
+    }
+
+    $resultado = subnivel_con_control($link, $titulo_fila, $ini_ciclo, $str_consulta, $municipio);
+    pg_close($link);
+
+    return $resultado;
+}
+
+/**
+ * Función principal para obtener todos los niveles educativos
+ * Adaptada de la función nivel() de bolsillo
+ */
+function obtenerNiveles($municipio, $ini_ciclo, $con_detalle = true, $con_especial = true)
+{
+    $link = ConectarsePrueba();
+    if (!$link) {
+        return [];
+    }
+
+    // Niveles principales adaptados de bolsillo
+    $inicial_esc = rs_consulta_segura($link, "inicial_esc", $ini_ciclo, $municipio);
+    $inicial_no_esc = rs_consulta_segura($link, "inicial_no_esc", $ini_ciclo, $municipio);
+    $preescolar = rs_consulta_segura($link, "preescolar", $ini_ciclo, $municipio);
+    $primaria = rs_consulta_segura($link, "primaria", $ini_ciclo, $municipio);
+    $secundaria = rs_consulta_segura($link, "secundaria", $ini_ciclo, $municipio);
+    $media_sup = rs_consulta_segura($link, "media_sup", $ini_ciclo, $municipio);
+    $superior = rs_consulta_segura($link, "superior", $ini_ciclo, $municipio);
+
+    // Especial si se requiere
+    $especial = null;
+    if ($con_especial) {
+        $especial = rs_consulta_segura($link, "especial_tot", $ini_ciclo, $municipio);
+    }
+
+    $niveles = [
+        "inicial_esc" => $inicial_esc ?: datos_vacion(),
+        "inicial_no_esc" => $inicial_no_esc ?: datos_vacion(),
+        "preescolar" => $preescolar ?: datos_vacion(),
+        "primaria" => $primaria ?: datos_vacion(),
+        "secundaria" => $secundaria ?: datos_vacion(),
+        "media_sup" => $media_sup ?: datos_vacion(),
+        "superior" => $superior ?: datos_vacion()
+    ];
+
+    if ($especial) {
+        $niveles["especial"] = $especial;
+    }
+
+    pg_close($link);
+    return $niveles;
+}
+
+/**
+ * Función principal para obtener resumen completo de municipio
+ * Adaptada de la función obtenerDatosMunicipio de bolsillo
+ */
+function obtenerResumenMunicipioCompleto($municipio, $ini_ciclo = "24")
+{
+    $link = ConectarsePrueba();
+    if (!$link) {
+        return false;
+    }
+
+    try {
+        // Generar filtro de municipio exacto como bolsillo
+        $num_muni = nombre_a_numero_municipio($municipio);
+        $filtro_mun = ($num_muni !== false) ? " AND cv_mun='$num_muni' " : "";
+
+        // Obtener totales básicos (replicando bolsillo exactamente)
+        $inicial_esc = rs_consulta_segura($link, "inicial_esc", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $inicial_no_esc = rs_consulta_segura($link, "inicial_no_esc", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $preescolar = rs_consulta_segura($link, "preescolar", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $primaria = rs_consulta_segura($link, "primaria", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $secundaria = rs_consulta_segura($link, "secundaria", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $media_sup = rs_consulta_segura($link, "media_sup", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $superior = rs_consulta_segura($link, "superior", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $especial = rs_consulta_segura($link, "especial_tot", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+
+        // Calcular totales (como en bolsillo)
+        $total_matricula = $inicial_esc["tot_mat"] + $inicial_no_esc["tot_mat"] +
+            $preescolar["tot_mat"] + $primaria["tot_mat"] +
+            $secundaria["tot_mat"] + $media_sup["tot_mat"] +
+            $superior["tot_mat"] + $especial["tot_mat"];
+
+        $total_docentes = $inicial_esc["tot_doc"] + $inicial_no_esc["tot_doc"] +
+            $preescolar["tot_doc"] + $primaria["tot_doc"] +
+            $secundaria["tot_doc"] + $media_sup["tot_doc"] +
+            $superior["tot_doc"] + $especial["tot_doc"];
+
+        $total_escuelas = $inicial_esc["tot_esc"] + $inicial_no_esc["tot_esc"] +
+            $preescolar["tot_esc"] + $primaria["tot_esc"] +
+            $secundaria["tot_esc"] + $media_sup["tot_esc"] +
+            $superior["tot_esc"] + $especial["tot_esc"];
+
+        $resumen = [
+            "municipio" => $municipio,
+            "total_matricula" => $total_matricula,
+            "total_docentes" => $total_docentes,
+            "total_escuelas" => $total_escuelas,
+            "inicial_esc" => $inicial_esc,
+            "inicial_no_esc" => $inicial_no_esc,
+            "preescolar" => $preescolar,
+            "primaria" => $primaria,
+            "secundaria" => $secundaria,
+            "media_sup" => $media_sup,
+            "superior" => $superior,
+            "especial" => $especial
+        ];
+
+        pg_close($link);
+        return $resumen;
+
+    } catch (Exception $e) {
+        error_log("Error en obtenerResumenMunicipioCompleto: " . $e->getMessage());
+        if ($link)
+            pg_close($link);
+        return false;
+    }
+}
+
+/**
+ * Obtiene resumen consolidado para tarjetas
+ */
+function obtenerResumenMunicipio($municipio = 'CORREGIDORA', $ciclo_escolar = '24')
+{
+    $datos_completos = obtenerDatosEducativosCompletos($municipio, $ciclo_escolar);
+
+    if (isset($datos_completos['error'])) {
+        return [
+            'escuelas' => 0,
+            'alumnos' => 0,
+            'docentes' => 0,
+            'error' => $datos_completos['error']
+        ];
+    }
+
+    return [
+        'escuelas' => $datos_completos['totales']['total_escuelas'],
+        'alumnos' => $datos_completos['totales']['total_alumnos'],
+        'docentes' => $datos_completos['totales']['total_docentes'],
+        'municipio' => $municipio,
+        'ciclo_escolar' => $ciclo_escolar
+    ];
+}
+
+/**
+ * Obtiene datos agrupados por nivel educativo principal
+ */
+function obtenerDatosPorNivel($municipio = 'CORREGIDORA', $ciclo_escolar = '24')
+{
+    $link = ConectarsePrueba();
+    if (!$link) {
+        return [
+            'error' => 'No se pudo conectar a la base de datos',
+            'niveles' => []
+        ];
+    }
+
+    $municipio = normalizarNombreMunicipio($municipio);
+    $niveles_bolsillo = [];
+
+    try {
+        // EDUCACIÓN INICIAL - Replicando exactamente como bolsillo
+        $inicial_general = rs_consulta_segura($link, 'gral_ini', $ciclo_escolar, $municipio);
+        if ($inicial_general && $inicial_general['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $inicial_general;
+        }
+
+        $inicial_indigena = rs_consulta_segura($link, 'ind_ini', $ciclo_escolar, $municipio);
+        if ($inicial_indigena && $inicial_indigena['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $inicial_indigena;
+        }
+
+        $inicial_lactante = rs_consulta_segura($link, 'lact_ini', $ciclo_escolar, $municipio);
+        if ($inicial_lactante && $inicial_lactante['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $inicial_lactante;
+        }
+
+        $inicial_maternal = rs_consulta_segura($link, 'mater_ini', $ciclo_escolar, $municipio);
+        if ($inicial_maternal && $inicial_maternal['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $inicial_maternal;
+        }
+
+        // EDUCACIÓN PREESCOLAR
+        $preescolar_general = rs_consulta_segura($link, 'gral_pree', $ciclo_escolar, $municipio);
+        if ($preescolar_general && $preescolar_general['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $preescolar_general;
+        }
+
+        $preescolar_indigena = rs_consulta_segura($link, 'ind_pree', $ciclo_escolar, $municipio);
+        if ($preescolar_indigena && $preescolar_indigena['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $preescolar_indigena;
+        }
+
+        $preescolar_comunitario = rs_consulta_segura($link, 'comuni_pree', $ciclo_escolar, $municipio);
+        if ($preescolar_comunitario && $preescolar_comunitario['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $preescolar_comunitario;
+        }
+
+        // EDUCACIÓN PRIMARIA
+        $primaria_general = rs_consulta_segura($link, 'gral_prim', $ciclo_escolar, $municipio);
+        if ($primaria_general && $primaria_general['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $primaria_general;
+        }
+
+        $primaria_indigena = rs_consulta_segura($link, 'ind_prim', $ciclo_escolar, $municipio);
+        if ($primaria_indigena && $primaria_indigena['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $primaria_indigena;
+        }
+
+        $primaria_comunitario = rs_consulta_segura($link, 'comuni_prim', $ciclo_escolar, $municipio);
+        if ($primaria_comunitario && $primaria_comunitario['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $primaria_comunitario;
+        }
+
+        // EDUCACIÓN SECUNDARIA
+        $secundaria_general = rs_consulta_segura($link, 'sec_gral_gral', $ciclo_escolar, $municipio);
+        if ($secundaria_general && $secundaria_general['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $secundaria_general;
+        }
+
+        $secundaria_telesecundaria = rs_consulta_segura($link, 'sec_gral_tele', $ciclo_escolar, $municipio);
+        if ($secundaria_telesecundaria && $secundaria_telesecundaria['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $secundaria_telesecundaria;
+        }
+
+        $secundaria_tecnica = rs_consulta_segura($link, 'sec_gral_tec', $ciclo_escolar, $municipio);
+        if ($secundaria_tecnica && $secundaria_tecnica['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $secundaria_tecnica;
+        }
+
+        $secundaria_comunitario = rs_consulta_segura($link, 'comuni_sec', $ciclo_escolar, $municipio);
+        if ($secundaria_comunitario && $secundaria_comunitario['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $secundaria_comunitario;
+        }
+
+        // EDUCACIÓN MEDIA SUPERIOR
+        $bachillerato_general = rs_consulta_segura($link, 'bgral_msup', $ciclo_escolar, $municipio);
+        if ($bachillerato_general && $bachillerato_general['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $bachillerato_general;
+        }
+
+        $bachillerato_tecnologico = rs_consulta_segura($link, 'btecno_msup', $ciclo_escolar, $municipio);
+        if ($bachillerato_tecnologico && $bachillerato_tecnologico['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $bachillerato_tecnologico;
+        }
+
+        // EDUCACIÓN SUPERIOR
+        $licenciatura = rs_consulta_segura($link, 'carr_lic_sup', $ciclo_escolar, $municipio);
+        if ($licenciatura && $licenciatura['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $licenciatura;
+        }
+
+        $posgrado = rs_consulta_segura($link, 'posgr_sup', $ciclo_escolar, $municipio);
+        if ($posgrado && $posgrado['tot_mat'] > 0) {
+            $niveles_bolsillo[] = $posgrado;
+        }
+
+        pg_close($link);
+
+        return [
+            'municipio' => $municipio,
+            'ciclo_escolar' => $ciclo_escolar,
+            'niveles' => $niveles_bolsillo,
+            'fecha_consulta' => date('Y-m-d H:i:s')
+        ];
+
+    } catch (Exception $e) {
+        error_log("Error obteniendo datos por nivel para $municipio: " . $e->getMessage());
+        if ($link)
+            pg_close($link);
+
+        return [
+            'error' => 'Error al obtener datos por nivel',
+            'municipio' => $municipio,
+            'niveles' => []
+        ];
+    }
+}
+
+/**
+ * Obtiene lista de municipios disponibles
+ */
+function obtenerMunicipios()
+{
+    $municipiosQueretaro = [
+        'AMEALCO DE BONFIL',
+        'ARROYO SECO',
+        'CADEREYTA DE MONTES',
+        'COLÓN',
+        'CORREGIDORA',
+        'EL MARQUÉS',
+        'EZEQUIEL MONTES',
+        'HUIMILPAN',
+        'JALPAN DE SERRA',
+        'LANDA DE MATAMOROS',
+        'PEÑAMILLER',
+        'PEDRO ESCOBEDO',
+        'PINAL DE AMOLES',
+        'QUERÉTARO',
+        'SAN JOAQUÍN',
+        'SAN JUAN DEL RÍO',
+        'TEQUISQUIAPAN',
+        'TOLIMÁN'
+    ];
+
+    $link = ConectarsePrueba();
+    if (!$link) {
+        return $municipiosQueretaro;
+    }
+
+    try {
+        $query = "SELECT DISTINCT TRIM(UPPER(c_nom_mun)) AS municipio
+                  FROM nonce_pano_24.ini_gral_24 
+                  WHERE c_nom_mun IS NOT NULL
+                  UNION
+                  SELECT DISTINCT TRIM(UPPER(c_nom_mun)) AS municipio
+                  FROM nonce_pano_24.pree_gral_24 
+                  WHERE c_nom_mun IS NOT NULL
+                  ORDER BY municipio";
+
+        $result = pg_query($link, $query);
+
+        if ($result) {
+            $municipios = [];
+            while ($row = pg_fetch_assoc($result)) {
+                $municipio_normalizado = normalizarNombreMunicipio($row['municipio']);
+                if ($municipio_normalizado && !in_array($municipio_normalizado, $municipios)) {
+                    $municipios[] = $municipio_normalizado;
+                }
+            }
+            pg_free_result($result);
+            pg_close($link);
+
+            // Agregar municipios faltantes
+            foreach ($municipiosQueretaro as $oficial) {
+                if (!in_array($oficial, $municipios)) {
+                    $municipios[] = $oficial;
+                }
+            }
+
+            sort($municipios);
+            return $municipios;
+        }
+
+    } catch (Exception $e) {
+        error_log('Error obteniendo municipios: ' . $e->getMessage());
+    }
+
+    if ($link)
+        pg_close($link);
+    return $municipiosQueretaro;
+}
+
+/**
+ * Normaliza nombres de municipios para consistencia
+ */
+function normalizarNombreMunicipio($nombreMunicipio)
+{
+    $nombre = trim(strtoupper((string) $nombreMunicipio));
+
+    $normalizaciones = [
+        'QUER?TARO' => 'QUERÉTARO',
+        'QUERETARO' => 'QUERÉTARO',
+        'EL MARQU?S' => 'EL MARQUÉS',
+        'EL MARQUES' => 'EL MARQUÉS',
+        'SAN JUAN DEL R??O' => 'SAN JUAN DEL RÍO',
+        'SAN JUAN DEL RIO' => 'SAN JUAN DEL RÍO',
+        'SAN JUAN DEL R?O' => 'SAN JUAN DEL RÍO',
+        'SAN JOAQU?N' => 'SAN JOAQUÍN',
+        'SAN JOAQUIN' => 'SAN JOAQUÍN',
+        'PE?AMILLER' => 'PEÑAMILLER',
+        'PENAMILLER' => 'PEÑAMILLER',
+        'TOLIM?N' => 'TOLIMÁN',
+        'TOLIMAN' => 'TOLIMÁN',
+        'COL?N' => 'COLÓN',
+        'COLON' => 'COLÓN'
+    ];
+
+    return isset($normalizaciones[$nombre]) ? $normalizaciones[$nombre] : $nombre;
+}
+
+/**
+ * Convierte nombres normalizados a formato de base de datos para consultas
+ */
+function convertirParaConsultaDB($nombreMunicipio)
+{
+    $nombre = trim(strtoupper((string) $nombreMunicipio));
+
+    // Mapeo inverso: de nombres limpios a como están en la DB
+    $mapeoInverso = [
+        'QUERÉTARO' => 'QUER?TARO',
+        'EL MARQUÉS' => 'EL MARQU?S',
+        'SAN JUAN DEL RÍO' => 'SAN JUAN DEL R??O',
+        'SAN JOAQUÍN' => 'SAN JOAQU?N',
+        'PEÑAMILLER' => 'PE?AMILLER',
+        'TOLIMÁN' => 'TOLIM?N',
+        'COLÓN' => 'COL?N'
+    ];
+
+    return isset($mapeoInverso[$nombre]) ? $mapeoInverso[$nombre] : $nombre;
+}
+
+/**
+ * Función principal de arreglos_datos replicando exactamente bolsillo
+ * @param string $ini_ciclo 
+ * @param string $str_consulta
+ * @param string $muni
+ * @return array|false
+ */
+function arreglos_datos_segura($ini_ciclo, $str_consulta, $muni)
+{
+    global $sin_filtro_extra, $filtro_pub, $filtro_priv;
+
+    // Generar filtro de municipio como bolsillo
+    $num_muni = nombre_a_numero_municipio($muni);
+    $filtro = ($num_muni !== false) ? " AND cv_mun='$num_muni' " : "";
+
+    // Obtener conexión
+    $link = ConectarsePrueba();
+    if (!$link)
+        return false;
+
+    // Base de datos - usar función rs_consulta_segura con argumentos correctos
+    $c = rs_consulta_segura($link, $str_consulta, $ini_ciclo, $filtro);
+    if (!$c) {
+        pg_close($link);
+        return false;
+    }
+
+    // Aplica subniveles como bolsillo con argumentos correctos  
+    $resultado = array();
+    $c_pub = subnivel_seguro($link, $str_consulta, $ini_ciclo, $filtro . $filtro_pub, "", "", "");
+    $c_priv = subnivel_seguro($link, $str_consulta, $ini_ciclo, $filtro . $filtro_priv, "", "", "");
+
+    // Estructura de resultado igual que bolsillo
+    $resultado['total'] = $c;
+    $resultado['publico'] = $c_pub;
+    $resultado['privado'] = $c_priv;
+
+    pg_close($link);
+    return $resultado;
+}
