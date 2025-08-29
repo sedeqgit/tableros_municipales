@@ -293,8 +293,7 @@ function formatearNumero($numero)
     <div class="prueba-container">
         <!-- Header de la página -->
         <div class="prueba-header">
-            <h1><i class="fas fa-database"></i> Sistema de Consultas Dinámicas 2024</h1>
-            <p>Datos educativos usando las mismas consultas del archivo bolsillo con parámetros seguros</p>
+            <h1><i class="fas fa-database"></i> Sistema de Consultas Dinámicas 2024 - 2025</h1>
             <p><strong>Municipio:</strong>
                 <?php echo htmlspecialchars($datosMunicipio['municipio'], ENT_QUOTES, 'UTF-8'); ?></p>
             <p><strong>Esquema utilizado:</strong> nonce_pano_24 (Datos 2024) - Estructura bolsillo</p>
@@ -457,7 +456,8 @@ function formatearNumero($numero)
                                     <i class="fas fa-school"></i>
                                 </div>
                                 <h3 class="card-title">
-                                    <?php echo htmlspecialchars($datos['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                                    <?php echo htmlspecialchars($datos['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?>
+                                </h3>
                             </div>
 
                             <!-- Totales -->
@@ -544,7 +544,8 @@ function formatearNumero($numero)
                                         <i class="fas fa-users"></i>
                                     </div>
                                     <h3 class="card-title">
-                                        <?php echo htmlspecialchars($datos['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?></h3>
+                                        <?php echo htmlspecialchars($datos['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </h3>
                                 </div>
 
                                 <!-- ALUMNOS POR SEXO -->
