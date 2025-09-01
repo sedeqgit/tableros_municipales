@@ -293,7 +293,7 @@ function formatearNumero($numero)
     <div class="prueba-container">
         <!-- Header de la página -->
         <div class="prueba-header">
-            <h1><i class="fas fa-database"></i> Sistema de Consultas Dinámicas 2024 - 2025</h1>
+            <h1><i class="fas fa-database"></i> Sistema de Consultas Dinámicas 2024 - 2025 (No incluye USAER)</h1>
             <p><strong>Municipio:</strong>
                 <?php echo htmlspecialchars($datosMunicipio['municipio'], ENT_QUOTES, 'UTF-8'); ?></p>
             <p><strong>Esquema utilizado:</strong> nonce_pano_24 (Datos 2024)</p>

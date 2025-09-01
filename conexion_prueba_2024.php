@@ -107,7 +107,7 @@ function obtenerMunicipiosPrueba2024()
 // =============================================================================
 
 /**
- * Replica exactamente la función str_consulta de bolsillo pero con parámetros seguros
+ * Replica exactamente la función str_consulta de bolsillo
  * 
  * @param string $str_consulta Tipo de consulta
  * @param string $ini_ciclo Ciclo escolar
@@ -116,7 +116,7 @@ function obtenerMunicipiosPrueba2024()
  */
 function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
 {
-    // Replicar exactamente como bolsillo: filtro base + filtro (que ya incluye AND)
+    // Replicar exactamente como bolsillo: filtro base + filtro
     $filtroBase = "(cv_estatus_captura = 0 OR cv_estatus_captura = 10)";
 
     switch ($str_consulta) {
@@ -151,7 +151,7 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         SUM(V183+V184) AS total_matricula,
                         SUM(V183) AS mat_hombres,
                         SUM(V184) AS mat_mujeres,
-                        SUM(V291) AS total_docentes,
+                        SUM(V291) AS total_docentes, 
                         SUM(V211) AS doc_hombres,
                         SUM(V212) AS doc_mujeres,
                         COUNT(cv_cct) AS escuelas,
