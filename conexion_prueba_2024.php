@@ -14,6 +14,35 @@
  * @since 2025
  */
 
+
+define('CICLO_ESCOLAR_ACTUAL', '24');
+
+/**
+ * Función para obtener el ciclo escolar actual
+ * Punto centralizado para toda la aplicación
+ */
+function obtenerCicloEscolarActual()
+{
+    return CICLO_ESCOLAR_ACTUAL;
+}
+
+/**
+ * Función para obtener información del ciclo escolar
+ */
+function obtenerInfoCicloEscolar()
+{
+    $ciclo = CICLO_ESCOLAR_ACTUAL;
+    $anio_inicio = 2000 + intval($ciclo);
+    $anio_fin = $anio_inicio + 1;
+
+    return [
+        'ciclo_corto' => $ciclo,
+        'ciclo_completo' => "$anio_inicio-$anio_fin",
+        'esquema_bd' => "nonce_pano_$ciclo",
+        'descripcion' => "Ciclo Escolar $anio_inicio-$anio_fin"
+    ];
+}
+
 // =============================================================================
 // CONFIGURACIÓN DE CONEXIÓN
 // =============================================================================
@@ -554,7 +583,7 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
 
         // ===== CONSULTAS ESPECIALES =====
         case 'especial_tot':
-            return "SELECT CONCAT('ESPECIAL TOTAL') AS titulo_fila,
+            return "SELECT CONCAT('ESPECIAL (CAM)') AS titulo_fila,
                         SUM(V2257) AS total_matricula,
                         SUM(V2255) AS mat_hombres,
                         SUM(V2256) AS mat_mujeres,
@@ -684,7 +713,7 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         SUM(V867+V868+V859+V860+V795+V803+V796+V804+V151) AS total_docentes,
                         SUM(V859+V868+V795+V803+V149) AS doc_hombres,
                         SUM(V860+V868+V796+V804+V150) AS doc_mujeres,
-                        COUNT(DISTINCT cv_cct) AS escuelas,
+                        COUNT(cv_cct) AS escuelas,
                         SUM(V182) AS grupos
                     FROM (
                         SELECT cv_cct, c_nom_mun, control, V177,V165,V171,V867,V868,V859,V860,V182,
@@ -711,7 +740,7 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         SUM(V1575+V1576+V1567+V1568+V1507+V1499+V1508+V1500+V585) AS total_docentes,
                         SUM(V1575+V1567+V1507+V1499+V583) AS doc_hombres,
                         SUM(V1576+V1568+V1508+V1500+V584) AS doc_mujeres,
-                        COUNT(DISTINCT cv_cct) AS escuelas,
+                        COUNT(cv_cct) AS escuelas,
                         SUM(V616+V1052) AS grupos
                     FROM (
                         SELECT cv_cct, c_nom_mun, control, V608,V562,V573,V585,V596,V1575,V1576,V1567,V1568,V616,
@@ -737,7 +766,7 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         SUM(V1401+V386) AS total_docentes,
                         SUM(V1297+V1303+V1307+V1309+V1311+V1313+V384) AS doc_hombres,
                         SUM(V1298+V1304+V1308+V1310+V1312+V1314+V385) AS doc_mujeres,
-                        COUNT(DISTINCT cv_cct) AS escuelas,
+                        COUNT(cv_cct) AS escuelas,
                         SUM(V341) AS grupos
                     FROM (
                         SELECT cv_cct, c_nom_mun, control, V340,V306,V314,V323,V331,V1401,
@@ -793,17 +822,16 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                     ) AS superior";
 
         case 'especial_tot':
-            return "SELECT 'ESPECIAL TOTAL' AS titulo_fila,
-                        SUM(V2257) AS total_matricula,
-                        SUM(V2255) AS mat_hombres,
-                        SUM(V2256) AS mat_mujeres,
-                        SUM(V2496) AS total_docentes,
-                        SUM(V2302) AS doc_hombres,
-                        SUM(V2303) AS doc_mujeres,
-                        COUNT(cv_cct) AS escuelas,
-                        SUM(V1343+V1418+V1511+V1586+V1765) AS grupos 
-                    FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo 
-                    WHERE cv_estatus_captura = 0 $filtro";
+            // PRUEBA TEMPORAL: Forzar valor para verificar cache
+            return "SELECT 'ESPECIAL (CAM)' AS titulo_fila,
+                        999 AS total_matricula,
+                        500 AS mat_hombres,
+                        499 AS mat_mujeres,
+                        50 AS total_docentes,
+                        25 AS doc_hombres,
+                        25 AS doc_mujeres,
+                        10 AS escuelas,
+                        100 AS grupos";
 
         default:
             return false;
@@ -816,7 +844,7 @@ $filtro_pub = " AND control<>'PRIVADO' ";
 $filtro_priv = " AND control='PRIVADO' ";
 
 /**
- * Función rs_consulta adaptada exactamente de bolsillo
+ * Función rs_consulta adaptada de bolsillo
  */
 function rs_consulta_segura($link, $str_consulta, $ini_ciclo, $filtro)
 {
@@ -824,6 +852,11 @@ function rs_consulta_segura($link, $str_consulta, $ini_ciclo, $filtro)
 
     if (!$consulta) {
         return false;
+    }
+
+    // DEBUG TEMPORAL: Log para especial_tot
+    if ($str_consulta === 'especial_tot') {
+        error_log("DEBUG ESPECIAL_TOT: " . substr($consulta, 0, 200) . "...");
     }
 
     $rs_nivel = pg_query($link, $consulta);
@@ -952,8 +985,12 @@ function subnivel_cero()
  * @param string $ini_ciclo Ciclo escolar
  * @return array Datos consolidados con desglose público/privado por nivel
  */
-function obtenerDatosPublicoPrivado($municipio = 'CORREGIDORA', $ini_ciclo = '24')
+function obtenerDatosPublicoPrivado($municipio = 'CORREGIDORA', $ini_ciclo = null)
 {
+    // Usar ciclo escolar actual si no se especifica
+    if ($ini_ciclo === null) {
+        $ini_ciclo = obtenerCicloEscolarActual();
+    }
     global $filtro_pub, $filtro_priv;
 
     try {
@@ -1037,8 +1074,12 @@ function nombre_a_numero_municipio($nombre_municipio)
  * @param string $ciclo_escolar Ciclo escolar
  * @return array Datos consolidados por nivel educativo
  */
-function obtenerDatosEducativosCompletos($municipio = 'CORREGIDORA', $ciclo_escolar = '24')
+function obtenerDatosEducativosCompletos($municipio = 'CORREGIDORA', $ciclo_escolar = null)
 {
+    // Usar ciclo escolar actual si no se especifica
+    if ($ciclo_escolar === null) {
+        $ciclo_escolar = obtenerCicloEscolarActual();
+    }
     $link = ConectarsePrueba();
     if (!$link) {
         return [
@@ -1375,8 +1416,13 @@ function obtenerNiveles($municipio, $ini_ciclo, $con_detalle = true, $con_especi
  * Función principal para obtener resumen completo de municipio
  * Adaptada de la función obtenerDatosMunicipio de bolsillo
  */
-function obtenerResumenMunicipioCompleto($municipio, $ini_ciclo = "24")
+function obtenerResumenMunicipioCompleto($municipio, $ini_ciclo = null)
 {
+    // Usar ciclo escolar actual si no se especifica
+    if ($ini_ciclo === null) {
+        $ini_ciclo = obtenerCicloEscolarActual();
+    }
+
     $link = ConectarsePrueba();
     if (!$link) {
         return false;
@@ -1442,8 +1488,12 @@ function obtenerResumenMunicipioCompleto($municipio, $ini_ciclo = "24")
 /**
  * Obtiene resumen consolidado para tarjetas
  */
-function obtenerResumenMunicipio($municipio = 'CORREGIDORA', $ciclo_escolar = '24')
+function obtenerResumenMunicipio($municipio = 'CORREGIDORA', $ciclo_escolar = null)
 {
+    // Usar ciclo escolar actual si no se especifica
+    if ($ciclo_escolar === null) {
+        $ciclo_escolar = obtenerCicloEscolarActual();
+    }
     $datos_completos = obtenerDatosEducativosCompletos($municipio, $ciclo_escolar);
 
     if (isset($datos_completos['error'])) {
@@ -1467,8 +1517,12 @@ function obtenerResumenMunicipio($municipio = 'CORREGIDORA', $ciclo_escolar = '2
 /**
  * Obtiene datos agrupados por nivel educativo principal
  */
-function obtenerDatosPorNivel($municipio = 'CORREGIDORA', $ciclo_escolar = '24')
+function obtenerDatosPorNivel($municipio = 'CORREGIDORA', $ciclo_escolar = null)
 {
+    // Usar ciclo escolar actual si no se especifica
+    if ($ciclo_escolar === null) {
+        $ciclo_escolar = obtenerCicloEscolarActual();
+    }
     $link = ConectarsePrueba();
     if (!$link) {
         return [
@@ -1760,5 +1814,214 @@ function arreglos_datos_segura($ini_ciclo, $str_consulta, $muni)
     $resultado['privado'] = $c_priv;
 
     pg_close($link);
+    return $resultado;
+}
+
+/**
+ * Obtiene el resumen completo de todos los municipios del estado (totales estatales)
+ * Para calcular porcentajes municipio vs estado
+ * 
+ * @param string $ini_ciclo Ciclo escolar (opcional, usa el actual por defecto)
+ * @return array|false Datos totales del estado o false en caso de error
+ */
+function obtenerResumenEstadoCompleto($ini_ciclo = null)
+{
+    // Usar ciclo escolar actual si no se especifica
+    if ($ini_ciclo === null) {
+        $ini_ciclo = obtenerCicloEscolarActual();
+    }
+
+    $link = ConectarsePrueba();
+    if (!$link) {
+        return false;
+    }
+
+    try {
+        // Sin filtro de municipio para obtener datos de todo el estado
+        $filtro_mun = "";
+
+        // Obtener totales por nivel (igual que obtenerResumenMunicipioCompleto pero sin filtro)
+        $inicial_esc = rs_consulta_segura($link, "inicial_esc", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $inicial_no_esc = rs_consulta_segura($link, "inicial_no_esc", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $preescolar = rs_consulta_segura($link, "preescolar", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $primaria = rs_consulta_segura($link, "primaria", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $secundaria = rs_consulta_segura($link, "secundaria", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $media_sup = rs_consulta_segura($link, "media_sup", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $superior = rs_consulta_segura($link, "superior", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $especial = rs_consulta_segura($link, "especial_tot", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+
+        // Calcular totales estatales (como en bolsillo)
+        $total_matricula = $inicial_esc["tot_mat"] + $inicial_no_esc["tot_mat"] +
+            $preescolar["tot_mat"] + $primaria["tot_mat"] +
+            $secundaria["tot_mat"] + $media_sup["tot_mat"] +
+            $superior["tot_mat"] + $especial["tot_mat"];
+
+        $total_docentes = $inicial_esc["tot_doc"] + $inicial_no_esc["tot_doc"] +
+            $preescolar["tot_doc"] + $primaria["tot_doc"] +
+            $secundaria["tot_doc"] + $media_sup["tot_doc"] +
+            $superior["tot_doc"] + $especial["tot_doc"];
+
+        $total_escuelas = $inicial_esc["tot_esc"] + $inicial_no_esc["tot_esc"] +
+            $preescolar["tot_esc"] + $primaria["tot_esc"] +
+            $secundaria["tot_esc"] + $media_sup["tot_esc"] +
+            $superior["tot_esc"] + $especial["tot_esc"];
+
+        $resultado = [
+            'total_matricula' => $total_matricula,
+            'total_docentes' => $total_docentes,
+            'total_escuelas' => $total_escuelas,
+            'niveles' => [
+                'inicial_esc' => [
+                    'titulo_fila' => 'INICIAL ESCOLARIZADA',
+                    'tot_mat' => $inicial_esc["tot_mat"],
+                    'tot_doc' => $inicial_esc["tot_doc"],
+                    'tot_esc' => $inicial_esc["tot_esc"]
+                ],
+                'inicial_no_esc' => [
+                    'titulo_fila' => 'INICIAL NO ESCOLARIZADA',
+                    'tot_mat' => $inicial_no_esc["tot_mat"],
+                    'tot_doc' => $inicial_no_esc["tot_doc"],
+                    'tot_esc' => $inicial_no_esc["tot_esc"]
+                ],
+                'preescolar' => [
+                    'titulo_fila' => 'PREESCOLAR',
+                    'tot_mat' => $preescolar["tot_mat"],
+                    'tot_doc' => $preescolar["tot_doc"],
+                    'tot_esc' => $preescolar["tot_esc"]
+                ],
+                'primaria' => [
+                    'titulo_fila' => 'PRIMARIA',
+                    'tot_mat' => $primaria["tot_mat"],
+                    'tot_doc' => $primaria["tot_doc"],
+                    'tot_esc' => $primaria["tot_esc"]
+                ],
+                'secundaria' => [
+                    'titulo_fila' => 'SECUNDARIA',
+                    'tot_mat' => $secundaria["tot_mat"],
+                    'tot_doc' => $secundaria["tot_doc"],
+                    'tot_esc' => $secundaria["tot_esc"]
+                ],
+                'media_superior' => [
+                    'titulo_fila' => 'MEDIA SUPERIOR',
+                    'tot_mat' => $media_sup["tot_mat"],
+                    'tot_doc' => $media_sup["tot_doc"],
+                    'tot_esc' => $media_sup["tot_esc"]
+                ],
+                'superior' => [
+                    'titulo_fila' => 'SUPERIOR',
+                    'tot_mat' => $superior["tot_mat"],
+                    'tot_doc' => $superior["tot_doc"],
+                    'tot_esc' => $superior["tot_esc"]
+                ],
+                'especial_tot' => [
+                    'titulo_fila' => 'ESPECIAL TOTAL',
+                    'tot_mat' => $especial["tot_mat"],
+                    'tot_doc' => $especial["tot_doc"],
+                    'tot_esc' => $especial["tot_esc"]
+                ]
+            ]
+        ];
+
+        pg_close($link);
+        return $resultado;
+
+    } catch (Exception $e) {
+        error_log("Error en obtenerResumenEstadoCompleto: " . $e->getMessage());
+        if ($link)
+            pg_close($link);
+        return false;
+    }
+}/**
+ * Calcula los porcentajes de un municipio respecto al estado
+ * 
+ * @param array $datosMunicipio Datos del municipio
+ * @param array $datosEstado Datos del estado completo
+ * @return array Datos con porcentajes calculados
+ */
+function calcularPorcentajesMunicipioEstado($datosMunicipio, $datosEstado)
+{
+    if (
+        !$datosMunicipio || !$datosEstado ||
+        !isset($datosMunicipio['datos_completos']) ||
+        !isset($datosEstado['niveles'])
+    ) {
+        return [];
+    }
+
+    $resultado = [
+        'porcentajes_totales' => [
+            'matricula' => 0,
+            'docentes' => 0,
+            'escuelas' => 0
+        ],
+        'porcentajes_por_nivel' => []
+    ];
+
+    // Calcular porcentajes totales
+    if ($datosEstado['total_matricula'] > 0) {
+        $resultado['porcentajes_totales']['matricula'] = round(
+            ($datosMunicipio['datos_completos']['totales']['total_alumnos'] / $datosEstado['total_matricula']) * 100,
+            2
+        );
+    }
+
+    if ($datosEstado['total_docentes'] > 0) {
+        $resultado['porcentajes_totales']['docentes'] = round(
+            ($datosMunicipio['datos_completos']['totales']['total_docentes'] / $datosEstado['total_docentes']) * 100,
+            2
+        );
+    }
+
+    if ($datosEstado['total_escuelas'] > 0) {
+        $resultado['porcentajes_totales']['escuelas'] = round(
+            ($datosMunicipio['datos_completos']['totales']['total_escuelas'] / $datosEstado['total_escuelas']) * 100,
+            2
+        );
+    }
+
+    // Calcular porcentajes por nivel educativo
+    if (isset($datosMunicipio['datos_por_nivel']['niveles'])) {
+        foreach ($datosMunicipio['datos_por_nivel']['niveles'] as $nivel) {
+            $titulo = $nivel['titulo_fila'];
+
+            // Buscar el nivel correspondiente en datos del estado
+            foreach ($datosEstado['niveles'] as $codigo => $nivelEstado) {
+                if ($nivelEstado['titulo_fila'] === $titulo) {
+                    $porcentajeMatricula = 0;
+                    $porcentajeDocentes = 0;
+                    $porcentajeEscuelas = 0;
+
+                    if ($nivelEstado['tot_mat'] > 0) {
+                        $porcentajeMatricula = round(($nivel['tot_mat'] / $nivelEstado['tot_mat']) * 100, 2);
+                    }
+                    if ($nivelEstado['tot_doc'] > 0) {
+                        $porcentajeDocentes = round(($nivel['tot_doc'] / $nivelEstado['tot_doc']) * 100, 2);
+                    }
+                    if ($nivelEstado['tot_esc'] > 0) {
+                        $porcentajeEscuelas = round(($nivel['tot_esc'] / $nivelEstado['tot_esc']) * 100, 2);
+                    }
+
+                    $resultado['porcentajes_por_nivel'][] = [
+                        'titulo_fila' => $titulo,
+                        'porcentaje_matricula' => $porcentajeMatricula,
+                        'porcentaje_docentes' => $porcentajeDocentes,
+                        'porcentaje_escuelas' => $porcentajeEscuelas,
+                        'datos_municipio' => [
+                            'matricula' => $nivel['tot_mat'],
+                            'docentes' => $nivel['tot_doc'],
+                            'escuelas' => $nivel['tot_esc']
+                        ],
+                        'datos_estado' => [
+                            'matricula' => $nivelEstado['tot_mat'],
+                            'docentes' => $nivelEstado['tot_doc'],
+                            'escuelas' => $nivelEstado['tot_esc']
+                        ]
+                    ];
+                    break;
+                }
+            }
+        }
+    }
+
     return $resultado;
 }

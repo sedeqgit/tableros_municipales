@@ -16,6 +16,39 @@
 // Incluir solo el archivo de conexión de prueba
 require_once 'conexion_prueba_2024.php';
 
+/**
+ * Función para obtener la fecha y hora actual en formato español para México
+ */
+function obtenerFechaEspanol()
+{
+    // Configurar zona horaria de México
+    date_default_timezone_set('America/Mexico_City');
+
+    // Definir nombres de meses en español
+    $meses = [
+        1 => 'enero',
+        2 => 'febrero',
+        3 => 'marzo',
+        4 => 'abril',
+        5 => 'mayo',
+        6 => 'junio',
+        7 => 'julio',
+        8 => 'agosto',
+        9 => 'septiembre',
+        10 => 'octubre',
+        11 => 'noviembre',
+        12 => 'diciembre'
+    ];
+
+    // Obtener componentes de fecha
+    $dia = date('j');
+    $mes = $meses[(int) date('n')];
+    $año = date('Y');
+    $hora = date('H:i:s');
+
+    return "$dia de $mes de $año a las $hora";
+}
+
 // Inicializar sesión simple para pruebas
 if (!isset($_SESSION)) {
     session_start();
@@ -32,7 +65,20 @@ if (!in_array($municipioSeleccionado, $municipiosValidos)) {
 
 try {
     // Obtener datos completos usando la nueva función que replica bolsillo exactamente
-    $datosCompletos = obtenerResumenMunicipioCompleto($municipioSeleccionado, '24');
+    $datosCompletos = obtenerResumenMunicipioCompleto($municipioSeleccionado);
+
+    // DEBUG TEMPORAL: Mostrar datos de especial
+    echo "<!-- DEBUG ESPECIAL: ";
+    if ($datosCompletos && isset($datosCompletos['especial'])) {
+        echo "Matricula especial: " . $datosCompletos['especial']['tot_mat'];
+        echo ", Escuelas especial: " . $datosCompletos['especial']['tot_esc'];
+    } else {
+        echo "No hay datos especiales";
+    }
+    echo " -->";
+
+    // Obtener datos del estado completo para calcular porcentajes
+    $datosEstado = obtenerResumenEstadoCompleto();
 
     // Verificar si hay datos
     $hayError = !$datosCompletos;
@@ -53,26 +99,32 @@ try {
                 'niveles' => [
                     $datosCompletos['inicial_esc'],
                     $datosCompletos['inicial_no_esc'],
+                    $datosCompletos['especial'],
                     $datosCompletos['preescolar'],
                     $datosCompletos['primaria'],
                     $datosCompletos['secundaria'],
                     $datosCompletos['media_sup'],
-                    $datosCompletos['superior'],
-                    $datosCompletos['especial']
+                    $datosCompletos['superior']
                 ]
             ],
-            'fecha_consulta' => date('Y-m-d H:i:s'),
+            'fecha_consulta' => obtenerFechaEspanol(),
             'tiene_datos' => true
         ];
+
+        // Calcular porcentajes respecto al estado
+        $porcentajesMunicipioEstado = calcularPorcentajesMunicipioEstado($datosMunicipio, $datosEstado);
     } else {
         $datosMunicipio = [
             'municipio' => $municipioSeleccionado,
             'datos_completos' => ['totales' => ['total_alumnos' => 0, 'total_docentes' => 0, 'total_escuelas' => 0]],
             'datos_por_nivel' => ['niveles' => []],
-            'fecha_consulta' => date('Y-m-d H:i:s'),
+            'fecha_consulta' => obtenerFechaEspanol(),
             'tiene_datos' => false,
             'error' => 'No se encontraron datos para este municipio'
         ];
+
+        // Inicializar porcentajes vacíos cuando no hay datos
+        $porcentajesMunicipioEstado = [];
     }
 
 } catch (Exception $e) {
@@ -82,10 +134,13 @@ try {
         'municipio' => $municipioSeleccionado,
         'datos_completos' => ['totales' => ['total_alumnos' => 0, 'total_docentes' => 0, 'total_escuelas' => 0]],
         'datos_por_nivel' => ['niveles' => []],
-        'fecha_consulta' => date('Y-m-d H:i:s'),
+        'fecha_consulta' => obtenerFechaEspanol(),
         'tiene_datos' => false,
         'error' => $e->getMessage()
     ];
+
+    // Inicializar porcentajes vacíos en caso de error
+    $porcentajesMunicipioEstado = [];
 }
 
 // Función auxiliar para formatear números
@@ -286,6 +341,129 @@ function formatearNumero($numero)
             font-weight: 600;
             text-transform: uppercase;
         }
+
+        /* Estilos específicos para la sección de porcentajes */
+        .porcentajes-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .porcentajes-resumen {
+            margin-bottom: 40px;
+        }
+
+        .porcentajes-totales-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .porcentaje-total-card {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #28a745;
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .porcentaje-total-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .porcentaje-icono {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .porcentaje-contenido {
+            flex: 1;
+        }
+
+        .porcentaje-tipo {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .porcentaje-valor {
+            display: block;
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #28a745;
+            line-height: 1;
+        }
+
+        .porcentajes-detalle {
+            margin-top: 40px;
+        }
+
+        .porcentajes-niveles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .porcentaje-nivel-card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #28a745;
+            transition: transform 0.2s ease;
+        }
+
+        .porcentaje-nivel-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .nivel-header h4 {
+            margin: 0 0 15px 0;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .nivel-porcentajes-detalle {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .porcentaje-item-detalle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .porcentaje-label {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .porcentaje-valor-detalle {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 1.1rem;
+        }
     </style>
 </head>
 
@@ -293,13 +471,17 @@ function formatearNumero($numero)
     <div class="prueba-container">
         <!-- Header de la página -->
         <div class="prueba-header">
-            <h1><i class="fas fa-database"></i> Sistema de Consultas Dinámicas 2024 - 2025 (No incluye USAER)</h1>
+            <?php
+            $infoCiclo = obtenerInfoCicloEscolar();
+            ?>
+            <h1><i class="fas fa-database"></i> ESTADÍSTICA DE INICIO DE CICLO ESCOLAR 2024-2025
+            </h1>
             <p><strong>Municipio:</strong>
                 <?php echo htmlspecialchars($datosMunicipio['municipio'], ENT_QUOTES, 'UTF-8'); ?></p>
-            <p><strong>Esquema utilizado:</strong> nonce_pano_24 (Datos 2024)</p>
             <?php if (!$datosMunicipio['tiene_datos']): ?>
                 <p style="color: #856404; background-color: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 10px;">
-                    <i class="fas fa-info-circle"></i> Este municipio no tiene datos disponibles en el ciclo escolar 2024
+                    <i class="fas fa-info-circle"></i> Este municipio no tiene datos disponibles en el
+                    <?php echo $infoCiclo['descripcion']; ?>
                 </p>
             <?php endif; ?>
         </div>
@@ -311,6 +493,88 @@ function formatearNumero($numero)
 
         <!-- Grid principal de datos -->
         <div class="datos-grid">
+            <!-- Tarjeta de Matrícula -->
+            <div class="datos-card matricula-card <?php echo !$datosMunicipio['tiene_datos'] ? 'no-data' : ''; ?>">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3 class="card-title">Matrícula de Alumnos (No incluye USAER)</h3>
+                </div>
+
+                <div class="bolsillo-indicator">Bolsillo</div>
+
+                <div class="total-general">
+                    <?php
+                    $totalAlumnos = isset($datosMunicipio['datos_completos']['totales']['total_alumnos'])
+                        ? $datosMunicipio['datos_completos']['totales']['total_alumnos']
+                        : 0;
+                    echo formatearNumero($totalAlumnos);
+                    ?>
+                </div>
+
+                <?php if (isset($datosMunicipio['datos_por_nivel']['niveles']) && !empty($datosMunicipio['datos_por_nivel']['niveles'])): ?>
+                    <div class="detalles-niveles">
+                        <?php foreach ($datosMunicipio['datos_por_nivel']['niveles'] as $nivel): ?>
+                            <?php if (isset($nivel['tot_mat']) && $nivel['tot_mat'] > 0): ?>
+                                <div class="detalle-nivel">
+                                    <span
+                                        class="nivel-nombre"><?php echo htmlspecialchars($nivel['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                    <span class="nivel-cantidad"><?php echo formatearNumero($nivel['tot_mat']); ?></span>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="error-message"
+                        style="background-color: #fff3cd; color: #856404; border-left-color: #ffc107;">
+                        <i class="fas fa-info-circle"></i>
+                        No hay datos disponibles para este municipio.
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Tarjeta de Escuelas -->
+            <div class="datos-card escuelas-card <?php echo !$datosMunicipio['tiene_datos'] ? 'no-data' : ''; ?>">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-school"></i>
+                    </div>
+                    <h3 class="card-title">Escuelas (No Incluye USAER)</h3>
+                </div>
+
+                <div class="bolsillo-indicator">Bolsillo</div>
+
+                <div class="total-general">
+                    <?php
+                    $totalEscuelas = isset($datosMunicipio['datos_completos']['totales']['total_escuelas'])
+                        ? $datosMunicipio['datos_completos']['totales']['total_escuelas']
+                        : 0;
+                    echo formatearNumero($totalEscuelas);
+                    ?>
+                </div>
+
+                <?php if (isset($datosMunicipio['datos_por_nivel']['niveles']) && !empty($datosMunicipio['datos_por_nivel']['niveles'])): ?>
+                    <div class="detalles-niveles">
+                        <?php foreach ($datosMunicipio['datos_por_nivel']['niveles'] as $nivel): ?>
+                            <?php if (isset($nivel['tot_esc']) && $nivel['tot_esc'] > 0): ?>
+                                <div class="detalle-nivel">
+                                    <span
+                                        class="nivel-nombre"><?php echo htmlspecialchars($nivel['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                    <span class="nivel-cantidad"><?php echo formatearNumero($nivel['tot_esc']); ?></span>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="error-message"
+                        style="background-color: #fff3cd; color: #856404; border-left-color: #ffc107;">
+                        <i class="fas fa-info-circle"></i>
+                        No hay datos disponibles para este municipio.
+                    </div>
+                <?php endif; ?>
+            </div>
+
             <!-- Tarjeta de Docentes -->
             <div class="datos-card docentes-card">
                 <div class="card-header">
@@ -348,89 +612,7 @@ function formatearNumero($numero)
                     <div class="error-message"
                         style="background-color: #fff3cd; color: #856404; border-left-color: #ffc107;">
                         <i class="fas fa-info-circle"></i>
-                        No hay datos disponibles para este municipio en el ciclo 2024.
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <!-- Tarjeta de Escuelas -->
-            <div class="datos-card escuelas-card <?php echo !$datosMunicipio['tiene_datos'] ? 'no-data' : ''; ?>">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="fas fa-school"></i>
-                    </div>
-                    <h3 class="card-title">Escuelas</h3>
-                </div>
-
-                <div class="bolsillo-indicator">Bolsillo</div>
-
-                <div class="total-general">
-                    <?php
-                    $totalEscuelas = isset($datosMunicipio['datos_completos']['totales']['total_escuelas'])
-                        ? $datosMunicipio['datos_completos']['totales']['total_escuelas']
-                        : 0;
-                    echo formatearNumero($totalEscuelas);
-                    ?>
-                </div>
-
-                <?php if (isset($datosMunicipio['datos_por_nivel']['niveles']) && !empty($datosMunicipio['datos_por_nivel']['niveles'])): ?>
-                    <div class="detalles-niveles">
-                        <?php foreach ($datosMunicipio['datos_por_nivel']['niveles'] as $nivel): ?>
-                            <?php if (isset($nivel['tot_esc']) && $nivel['tot_esc'] > 0): ?>
-                                <div class="detalle-nivel">
-                                    <span
-                                        class="nivel-nombre"><?php echo htmlspecialchars($nivel['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                    <span class="nivel-cantidad"><?php echo formatearNumero($nivel['tot_esc']); ?></span>
-                                </div>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </div>
-                <?php else: ?>
-                    <div class="error-message"
-                        style="background-color: #fff3cd; color: #856404; border-left-color: #ffc107;">
-                        <i class="fas fa-info-circle"></i>
-                        No hay datos disponibles para este municipio.
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <!-- Tarjeta de Matrícula -->
-            <div class="datos-card matricula-card <?php echo !$datosMunicipio['tiene_datos'] ? 'no-data' : ''; ?>">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-                    <h3 class="card-title">Matrícula de Alumnos</h3>
-                </div>
-
-                <div class="bolsillo-indicator">Bolsillo</div>
-
-                <div class="total-general">
-                    <?php
-                    $totalAlumnos = isset($datosMunicipio['datos_completos']['totales']['total_alumnos'])
-                        ? $datosMunicipio['datos_completos']['totales']['total_alumnos']
-                        : 0;
-                    echo formatearNumero($totalAlumnos);
-                    ?>
-                </div>
-
-                <?php if (isset($datosMunicipio['datos_por_nivel']['niveles']) && !empty($datosMunicipio['datos_por_nivel']['niveles'])): ?>
-                    <div class="detalles-niveles">
-                        <?php foreach ($datosMunicipio['datos_por_nivel']['niveles'] as $nivel): ?>
-                            <?php if (isset($nivel['tot_mat']) && $nivel['tot_mat'] > 0): ?>
-                                <div class="detalle-nivel">
-                                    <span
-                                        class="nivel-nombre"><?php echo htmlspecialchars($nivel['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                    <span class="nivel-cantidad"><?php echo formatearNumero($nivel['tot_mat']); ?></span>
-                                </div>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </div>
-                <?php else: ?>
-                    <div class="error-message"
-                        style="background-color: #fff3cd; color: #856404; border-left-color: #ffc107;">
-                        <i class="fas fa-info-circle"></i>
-                        No hay datos disponibles para este municipio.
+                        No hay datos disponibles para este municipio en el <?php echo $infoCiclo['descripcion']; ?>.
                     </div>
                 <?php endif; ?>
             </div>
@@ -444,7 +626,7 @@ function formatearNumero($numero)
 
             <?php
             // Obtener datos con desglose público/privado
-            $datosPublicoPrivado = obtenerDatosPublicoPrivado($municipioSeleccionado, '24');
+            $datosPublicoPrivado = obtenerDatosPublicoPrivado($municipioSeleccionado);
             ?>
 
             <?php if (!empty($datosPublicoPrivado)): ?>
@@ -480,10 +662,11 @@ function formatearNumero($numero)
                                         <i class="fas fa-university"></i> Públicas
                                     </h4>
                                     <div style="font-weight: bold; color: #155724; font-size: 1.2rem;">
-                                        <?php echo formatearNumero($datos['tot_esc_pub']); ?> escuelas
+                                        <?php echo formatearNumero($datos['tot_mat_pub']); ?> alumnos
+
                                     </div>
                                     <div style="font-size: 0.9rem; color: #155724; margin-top: 5px;">
-                                        <?php echo formatearNumero($datos['tot_mat_pub']); ?> alumnos<br>
+                                        <?php echo formatearNumero($datos['tot_esc_pub']); ?> escuelas<br>
                                         <?php echo formatearNumero($datos['tot_doc_pub']); ?> docentes
                                     </div>
                                 </div>
@@ -494,22 +677,15 @@ function formatearNumero($numero)
                                         <i class="fas fa-building"></i> Privadas
                                     </h4>
                                     <div style="font-weight: bold; color: #856404; font-size: 1.2rem;">
-                                        <?php echo formatearNumero($datos['tot_esc_priv']); ?> escuelas
+                                        <?php echo formatearNumero($datos['tot_mat_priv']); ?> alumnos
+
                                     </div>
                                     <div style="font-size: 0.9rem; color: #856404; margin-top: 5px;">
-                                        <?php echo formatearNumero($datos['tot_mat_priv']); ?> alumnos<br>
+                                        <?php echo formatearNumero($datos['tot_esc_priv']); ?> escuelas<br>
                                         <?php echo formatearNumero($datos['tot_doc_priv']); ?> docentes
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Porcentajes -->
-                            <?php if ($datos['tot_esc'] > 0): ?>
-                                <div style="margin-top: 15px; font-size: 0.9rem; color: var(--text-secondary); text-align: center;">
-                                    Público: <?php echo round(($datos['tot_esc_pub'] / $datos['tot_esc']) * 100, 1); ?>% |
-                                    Privado: <?php echo round(($datos['tot_esc_priv'] / $datos['tot_esc']) * 100, 1); ?>%
-                                </div>
-                            <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -521,154 +697,170 @@ function formatearNumero($numero)
             <?php endif; ?>
         </div>
 
-        <!-- NUEVA SECCIÓN: Desglose por Sexo -->
+        <!-- NUEVA SECCIÓN: Porcentajes Respecto al Estado -->
         <div style="margin-top: 40px;">
             <h2 style="text-align: center; color: var(--primary-blue); margin-bottom: 25px;">
-                <i class="fas fa-venus-mars"></i> Desglose por Sexo - Alumnos y Docentes
+                <i class="fas fa-percentage"></i> Porcentaje Respecto al Estado de Querétaro
+            </h2>
+
+            <?php if (isset($porcentajesMunicipioEstado) && !empty($porcentajesMunicipioEstado)): ?>
+                <div class="porcentajes-container">
+                    <!-- Resumen de Porcentajes Totales -->
+                    <div class="porcentajes-resumen">
+                        <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                            <i class="fas fa-chart-bar"></i> Resumen General
+                        </h3>
+                        <div class="porcentajes-totales-grid">
+                            <div class="porcentaje-total-card">
+                                <div class="porcentaje-icono">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="porcentaje-contenido">
+                                    <span class="porcentaje-tipo">Matrícula</span>
+                                    <span
+                                        class="porcentaje-valor"><?php echo $porcentajesMunicipioEstado['porcentajes_totales']['matricula']; ?>%</span>
+                                </div>
+                            </div>
+                            <div class="porcentaje-total-card">
+                                <div class="porcentaje-icono">
+                                    <i class="fas fa-school"></i>
+                                </div>
+                                <div class="porcentaje-contenido">
+                                    <span class="porcentaje-tipo">Escuelas</span>
+                                    <span
+                                        class="porcentaje-valor"><?php echo $porcentajesMunicipioEstado['porcentajes_totales']['escuelas']; ?>%</span>
+                                </div>
+                            </div>
+                            <div class="porcentaje-total-card">
+                                <div class="porcentaje-icono">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <div class="porcentaje-contenido">
+                                    <span class="porcentaje-tipo">Docentes</span>
+                                    <span
+                                        class="porcentaje-valor"><?php echo $porcentajesMunicipioEstado['porcentajes_totales']['docentes']; ?>%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desglose por Nivel Educativo -->
+                    <?php if (!empty($porcentajesMunicipioEstado['porcentajes_por_nivel'])): ?>
+                        <div class="porcentajes-detalle">
+                            <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                                <i class="fas fa-chart-line"></i> Desglose por Nivel Educativo
+                            </h3>
+                            <div class="porcentajes-niveles-grid">
+                                <?php foreach ($porcentajesMunicipioEstado['porcentajes_por_nivel'] as $nivel): ?>
+                                    <?php if ($nivel['porcentaje_matricula'] > 0): ?>
+                                        <div class="porcentaje-nivel-card">
+                                            <div class="nivel-header">
+                                                <h4><?php echo htmlspecialchars($nivel['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?></h4>
+                                            </div>
+                                            <div class="nivel-porcentajes-detalle">
+                                                <div class="porcentaje-item-detalle">
+                                                    <span class="porcentaje-label">Matrícula:</span>
+                                                    <span
+                                                        class="porcentaje-valor-detalle"><?php echo $nivel['porcentaje_matricula']; ?>%</span>
+                                                </div>
+                                                <div class="porcentaje-item-detalle">
+                                                    <span class="porcentaje-label">Escuelas:</span>
+                                                    <span
+                                                        class="porcentaje-valor-detalle"><?php echo $nivel['porcentaje_escuelas']; ?>%</span>
+                                                </div>
+                                                <div class="porcentaje-item-detalle">
+                                                    <span class="porcentaje-label">Docentes:</span>
+                                                    <span
+                                                        class="porcentaje-valor-detalle"><?php echo $nivel['porcentaje_docentes']; ?>%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php else: ?>
+                <div class="error-message"
+                    style="text-align: center; background-color: #fff3cd; color: #856404; border-left-color: #ffc107; padding: 20px; border-radius: 8px;">
+                    <i class="fas fa-info-circle"></i>
+                    No hay datos suficientes para calcular porcentajes respecto al estado.
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- SECCIÓN: Desglose de Alumnos por Sexo -->
+        <div style="margin-top: 40px;">
+            <h2 style="text-align: center; color: var(--primary-blue); margin-bottom: 25px;">
+                <i class="fas fa-user-graduate"></i> Desglose de Alumnos por Sexo
             </h2>
 
             <?php if (!empty($datosPublicoPrivado)): ?>
                 <div class="datos-grid">
                     <?php foreach ($datosPublicoPrivado as $nivel => $datos): ?>
                         <?php
-                        // Calcular totales de alumnos y docentes
+                        // Calcular total de alumnos
                         $totalAlumnos = $datos['tot_mat'];
-                        $totalDocentes = $datos['tot_doc'];
 
-                        // Solo mostrar si hay datos
-                        if ($totalAlumnos > 0 || $totalDocentes > 0):
+                        // Solo mostrar si hay alumnos
+                        if ($totalAlumnos > 0):
                             ?>
                             <div class="datos-card">
                                 <div class="card-header">
                                     <div class="card-icon">
-                                        <i class="fas fa-users"></i>
+                                        <i class="fas fa-user-graduate"></i>
                                     </div>
                                     <h3 class="card-title">
                                         <?php echo htmlspecialchars($datos['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?>
                                     </h3>
                                 </div>
 
-                                <!-- ALUMNOS POR SEXO -->
-                                <?php if ($totalAlumnos > 0): ?>
-                                    <div style="margin-bottom: 25px;">
-                                        <h4 style="text-align: center; color: var(--secondary-blue); margin-bottom: 15px;">
-                                            <i class="fas fa-user-graduate"></i> Alumnos
-                                        </h4>
+                                <!-- Total de Alumnos -->
+                                <div style="text-align: center; margin-bottom: 15px;">
+                                    <div style="font-size: 1.7rem; font-weight: bold; color: var(--primary-blue);">
+                                        Total: <?php echo formatearNumero($totalAlumnos); ?>
+                                    </div>
+                                </div>
 
-                                        <!-- Total de Alumnos -->
-                                        <div style="text-align: center; margin-bottom: 15px;">
-                                            <div style="font-size: 1.3rem; font-weight: bold; color: var(--primary-blue);">
-                                                Total: <?php echo formatearNumero($totalAlumnos); ?>
-                                            </div>
+                                <!-- Desglose Hombres/Mujeres -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                    <!-- Hombres -->
+                                    <div style="background-color: #e3f2fd; padding: 15px; border-radius: 8px; text-align: center;">
+                                        <h5 style="color: #1565c0; margin-bottom: 8px;">
+                                            <i class="fas fa-mars"></i> Hombres
+                                        </h5>
+                                        <div style="font-weight: bold; color: #1565c0; font-size: 1.5rem;">
+                                            <?php echo formatearNumero($datos['mat_h']); ?>
                                         </div>
-
-                                        <!-- Desglose Hombres/Mujeres -->
-                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                                            <!-- Hombres -->
-                                            <div
-                                                style="background-color: #e3f2fd; padding: 12px; border-radius: 8px; text-align: center;">
-                                                <h5 style="color: #1565c0; margin-bottom: 8px;">
-                                                    <i class="fas fa-mars"></i> Hombres
-                                                </h5>
-                                                <div style="font-weight: bold; color: #1565c0; font-size: 1.1rem;">
-                                                    <?php echo formatearNumero($datos['mat_h']); ?>
-                                                </div>
-                                                <div style="font-size: 0.85rem; color: #1565c0;">
-                                                    <?php echo $totalAlumnos > 0 ? round(($datos['mat_h'] / $totalAlumnos) * 100, 1) : 0; ?>%
-                                                </div>
-                                                <!-- Desglose público/privado -->
-                                                <div style="font-size: 0.75rem; color: #1565c0; margin-top: 5px;">
-                                                    Púb: <?php echo formatearNumero($datos['mat_h_pub']); ?> |
-                                                    Priv: <?php echo formatearNumero($datos['mat_h_priv']); ?>
-                                                </div>
-                                            </div>
-
-                                            <!-- Mujeres -->
-                                            <div
-                                                style="background-color: #fce4ec; padding: 12px; border-radius: 8px; text-align: center;">
-                                                <h5 style="color: #c2185b; margin-bottom: 8px;">
-                                                    <i class="fas fa-venus"></i> Mujeres
-                                                </h5>
-                                                <div style="font-weight: bold; color: #c2185b; font-size: 1.1rem;">
-                                                    <?php echo formatearNumero($datos['mat_m']); ?>
-                                                </div>
-                                                <div style="font-size: 0.85rem; color: #c2185b;">
-                                                    <?php echo $totalAlumnos > 0 ? round(($datos['mat_m'] / $totalAlumnos) * 100, 1) : 0; ?>%
-                                                </div>
-                                                <!-- Desglose público/privado -->
-                                                <div style="font-size: 0.75rem; color: #c2185b; margin-top: 5px;">
-                                                    Púb: <?php echo formatearNumero($datos['mat_m_pub']); ?> |
-                                                    Priv: <?php echo formatearNumero($datos['mat_m_priv']); ?>
-                                                </div>
-                                            </div>
+                                        <div style="font-size: 0.9rem; color: #1565c0; margin-bottom: 8px;">
+                                            <?php echo $totalAlumnos > 0 ? round(($datos['mat_h'] / $totalAlumnos) * 100, 1) : 0; ?>%
+                                        </div>
+                                        <!-- Desglose público/privado -->
+                                        <div style="font-size: 1rem; color: #1565c0;font-weight: bold">
+                                            <div>Público: <?php echo formatearNumero($datos['mat_h_pub']); ?></div>
+                                            <div>Privado: <?php echo formatearNumero($datos['mat_h_priv']); ?></div>
                                         </div>
                                     </div>
-                                <?php endif; ?>
 
-                                <!-- DOCENTES POR SEXO -->
-                                <?php if ($totalDocentes > 0): ?>
-                                    <div>
-                                        <h4 style="text-align: center; color: var(--secondary-blue); margin-bottom: 15px;">
-                                            <i class="fas fa-chalkboard-teacher"></i> Docentes
-                                        </h4>
-
-                                        <!-- Total de Docentes -->
-                                        <div style="text-align: center; margin-bottom: 15px;">
-                                            <div style="font-size: 1.3rem; font-weight: bold; color: var(--primary-blue);">
-                                                Total: <?php echo formatearNumero($totalDocentes); ?>
-                                            </div>
+                                    <!-- Mujeres -->
+                                    <div style="background-color: #fce4ec; padding: 15px; border-radius: 8px; text-align: center;">
+                                        <h5 style="color: #610c76; margin-bottom: 8px;">
+                                            <i class="fas fa-venus"></i> Mujeres
+                                        </h5>
+                                        <div style="font-weight: bold; color: #610c76; font-size: 1.5rem;">
+                                            <?php echo formatearNumero($datos['mat_m']); ?>
                                         </div>
-
-                                        <!-- Desglose Hombres/Mujeres -->
-                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                                            <!-- Hombres -->
-                                            <div
-                                                style="background-color: #e8f5e8; padding: 12px; border-radius: 8px; text-align: center;">
-                                                <h5 style="color: #2e7d32; margin-bottom: 8px;">
-                                                    <i class="fas fa-mars"></i> Hombres
-                                                </h5>
-                                                <div style="font-weight: bold; color: #2e7d32; font-size: 1.1rem;">
-                                                    <?php echo formatearNumero($datos['doc_h']); ?>
-                                                </div>
-                                                <div style="font-size: 0.85rem; color: #2e7d32;">
-                                                    <?php echo $totalDocentes > 0 ? round(($datos['doc_h'] / $totalDocentes) * 100, 1) : 0; ?>%
-                                                </div>
-                                                <!-- Desglose público/privado -->
-                                                <div style="font-size: 0.75rem; color: #2e7d32; margin-top: 5px;">
-                                                    Púb: <?php echo formatearNumero($datos['doc_h_pub']); ?> |
-                                                    Priv: <?php echo formatearNumero($datos['doc_h_priv']); ?>
-                                                </div>
-                                            </div>
-
-                                            <!-- Mujeres -->
-                                            <div
-                                                style="background-color: #fff3e0; padding: 12px; border-radius: 8px; text-align: center;">
-                                                <h5 style="color: #f57c00; margin-bottom: 8px;">
-                                                    <i class="fas fa-venus"></i> Mujeres
-                                                </h5>
-                                                <div style="font-weight: bold; color: #f57c00; font-size: 1.1rem;">
-                                                    <?php echo formatearNumero($datos['doc_m']); ?>
-                                                </div>
-                                                <div style="font-size: 0.85rem; color: #f57c00;">
-                                                    <?php echo $totalDocentes > 0 ? round(($datos['doc_m'] / $totalDocentes) * 100, 1) : 0; ?>%
-                                                </div>
-                                                <!-- Desglose público/privado -->
-                                                <div style="font-size: 0.75rem; color: #f57c00; margin-top: 5px;">
-                                                    Púb: <?php echo formatearNumero($datos['doc_m_pub']); ?> |
-                                                    Priv: <?php echo formatearNumero($datos['doc_m_priv']); ?>
-                                                </div>
-                                            </div>
+                                        <div style="font-size: 0.9rem; color: #610c76; margin-bottom: 8px;">
+                                            <?php echo $totalAlumnos > 0 ? round(($datos['mat_m'] / $totalAlumnos) * 100, 1) : 0; ?>%
+                                        </div>
+                                        <!-- Desglose público/privado -->
+                                        <div style="font-size: 1rem; color: #610c76; font-weight: bold">
+                                            <div>Público: <?php echo formatearNumero($datos['mat_m_pub']); ?></div>
+                                            <div>Privado: <?php echo formatearNumero($datos['mat_m_priv']); ?></div>
                                         </div>
                                     </div>
-                                <?php endif; ?>
-
-                                <!-- Mensaje si no hay datos -->
-                                <?php if ($totalAlumnos == 0 && $totalDocentes == 0): ?>
-                                    <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
-                                        <i class="fas fa-info-circle"></i>
-                                        No hay datos de alumnos ni docentes para este nivel.
-                                    </div>
-                                <?php endif; ?>
+                                </div>
                             </div>
                         <?php endif; ?>
                     <?php endforeach; ?>
@@ -676,7 +868,90 @@ function formatearNumero($numero)
             <?php else: ?>
                 <div class="error-message">
                     <i class="fas fa-exclamation-triangle"></i>
-                    No se pudieron obtener datos de desglose por sexo para este municipio.
+                    No se pudieron obtener datos de alumnos por sexo para este municipio.
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- SECCIÓN: Desglose de Docentes por Sexo -->
+        <div style="margin-top: 40px;">
+            <h2 style="text-align: center; color: var(--primary-blue); margin-bottom: 25px;">
+                <i class="fas fa-chalkboard-teacher"></i> Desglose de Docentes por Sexo
+            </h2>
+
+            <?php if (!empty($datosPublicoPrivado)): ?>
+                <div class="datos-grid">
+                    <?php foreach ($datosPublicoPrivado as $nivel => $datos): ?>
+                        <?php
+                        // Calcular total de docentes
+                        $totalDocentes = $datos['tot_doc'];
+
+                        // Solo mostrar si hay docentes
+                        if ($totalDocentes > 0):
+                            ?>
+                            <div class="datos-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-chalkboard-teacher"></i>
+                                    </div>
+                                    <h3 class="card-title">
+                                        <?php echo htmlspecialchars($datos['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </h3>
+                                </div>
+
+                                <!-- Total de Docentes -->
+                                <div style="text-align: center; margin-bottom: 15px;">
+                                    <div style="font-size: 1.4rem; font-weight: bold; color: var(--primary-blue);">
+                                        Total: <?php echo formatearNumero($totalDocentes); ?>
+                                    </div>
+                                </div>
+
+                                <!-- Desglose Hombres/Mujeres -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                    <!-- Hombres -->
+                                    <div style="background-color: #e8f5e8; padding: 15px; border-radius: 8px; text-align: center;">
+                                        <h5 style="color: #2e7d32; margin-bottom: 8px;">
+                                            <i class="fas fa-mars"></i> Hombres
+                                        </h5>
+                                        <div style="font-weight: bold; color: #2e7d32; font-size: 1.5rem;">
+                                            <?php echo formatearNumero($datos['doc_h']); ?>
+                                        </div>
+                                        <div style="font-size: 0.9rem; color: #2e7d32; margin-bottom: 8px;">
+                                            <?php echo $totalDocentes > 0 ? round(($datos['doc_h'] / $totalDocentes) * 100, 1) : 0; ?>%
+                                        </div>
+                                        <!-- Desglose público/privado -->
+                                        <div style="font-size: 1rem; color: #2e7d32;font-weight: bold ">
+                                            <div>Público: <?php echo formatearNumero($datos['doc_h_pub']); ?></div>
+                                            <div>Privado: <?php echo formatearNumero($datos['doc_h_priv']); ?></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Mujeres -->
+                                    <div style="background-color: #fff3e0; padding: 15px; border-radius: 8px; text-align: center;">
+                                        <h5 style="color: #f57c00; margin-bottom: 8px;">
+                                            <i class="fas fa-venus"></i> Mujeres
+                                        </h5>
+                                        <div style="font-weight: bold; color: #f57c00; font-size: 1.5rem;">
+                                            <?php echo formatearNumero($datos['doc_m']); ?>
+                                        </div>
+                                        <div style="font-size: 0.9rem; color: #f57c00; margin-bottom: 8px;">
+                                            <?php echo $totalDocentes > 0 ? round(($datos['doc_m'] / $totalDocentes) * 100, 1) : 0; ?>%
+                                        </div>
+                                        <!-- Desglose público/privado -->
+                                        <div style="font-size: 1rem; color: #f57c00;font-weight: bold">
+                                            <div>Público: <?php echo formatearNumero($datos['doc_m_pub']); ?></div>
+                                            <div>Privado: <?php echo formatearNumero($datos['doc_m_priv']); ?></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    No se pudieron obtener datos de docentes por sexo para este municipio.
                 </div>
             <?php endif; ?>
         </div>
