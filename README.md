@@ -16,7 +16,7 @@
 ![Cobertura](https://img.shields.io/badge/🏫_Cobertura-Estado_Completo-blue?style=flat-square)
 ![Ciclo](https://img.shields.io/badge/📅_Ciclo-2024--2025-orange?style=flat-square)
 ![Licencia](https://img.shields.io/badge/⚖️_Licencia-Gobierno_QRO-red?style=flat-square)
-
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/EmilianoLedesma/Corregidora)
 </div>
 
 ---
