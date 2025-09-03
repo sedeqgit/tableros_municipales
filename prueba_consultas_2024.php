@@ -10,7 +10,7 @@
  * 
  * @author Sistema SEDEQ
  * @version 1.0
- * @since 2024
+ * @since 2025
  */
 
 // Incluir solo el archivo de conexión de prueba
