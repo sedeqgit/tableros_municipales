@@ -697,99 +697,6 @@ function formatearNumero($numero)
             <?php endif; ?>
         </div>
 
-        <!-- NUEVA SECCIÓN: Porcentajes Respecto al Estado -->
-        <div style="margin-top: 40px;">
-            <h2 style="text-align: center; color: var(--primary-blue); margin-bottom: 25px;">
-                <i class="fas fa-percentage"></i> Porcentaje Respecto al Estado de Querétaro
-            </h2>
-
-            <?php if (isset($porcentajesMunicipioEstado) && !empty($porcentajesMunicipioEstado)): ?>
-                <div class="porcentajes-container">
-                    <!-- Resumen de Porcentajes Totales -->
-                    <div class="porcentajes-resumen">
-                        <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
-                            <i class="fas fa-chart-bar"></i> Resumen General
-                        </h3>
-                        <div class="porcentajes-totales-grid">
-                            <div class="porcentaje-total-card">
-                                <div class="porcentaje-icono">
-                                    <i class="fas fa-user-graduate"></i>
-                                </div>
-                                <div class="porcentaje-contenido">
-                                    <span class="porcentaje-tipo">Matrícula</span>
-                                    <span
-                                        class="porcentaje-valor"><?php echo $porcentajesMunicipioEstado['porcentajes_totales']['matricula']; ?>%</span>
-                                </div>
-                            </div>
-                            <div class="porcentaje-total-card">
-                                <div class="porcentaje-icono">
-                                    <i class="fas fa-school"></i>
-                                </div>
-                                <div class="porcentaje-contenido">
-                                    <span class="porcentaje-tipo">Escuelas</span>
-                                    <span
-                                        class="porcentaje-valor"><?php echo $porcentajesMunicipioEstado['porcentajes_totales']['escuelas']; ?>%</span>
-                                </div>
-                            </div>
-                            <div class="porcentaje-total-card">
-                                <div class="porcentaje-icono">
-                                    <i class="fas fa-chalkboard-teacher"></i>
-                                </div>
-                                <div class="porcentaje-contenido">
-                                    <span class="porcentaje-tipo">Docentes</span>
-                                    <span
-                                        class="porcentaje-valor"><?php echo $porcentajesMunicipioEstado['porcentajes_totales']['docentes']; ?>%</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Desglose por Nivel Educativo -->
-                    <?php if (!empty($porcentajesMunicipioEstado['porcentajes_por_nivel'])): ?>
-                        <div class="porcentajes-detalle">
-                            <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
-                                <i class="fas fa-chart-line"></i> Desglose por Nivel Educativo
-                            </h3>
-                            <div class="porcentajes-niveles-grid">
-                                <?php foreach ($porcentajesMunicipioEstado['porcentajes_por_nivel'] as $nivel): ?>
-                                    <?php if ($nivel['porcentaje_matricula'] > 0): ?>
-                                        <div class="porcentaje-nivel-card">
-                                            <div class="nivel-header">
-                                                <h4><?php echo htmlspecialchars($nivel['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?></h4>
-                                            </div>
-                                            <div class="nivel-porcentajes-detalle">
-                                                <div class="porcentaje-item-detalle">
-                                                    <span class="porcentaje-label">Matrícula:</span>
-                                                    <span
-                                                        class="porcentaje-valor-detalle"><?php echo $nivel['porcentaje_matricula']; ?>%</span>
-                                                </div>
-                                                <div class="porcentaje-item-detalle">
-                                                    <span class="porcentaje-label">Escuelas:</span>
-                                                    <span
-                                                        class="porcentaje-valor-detalle"><?php echo $nivel['porcentaje_escuelas']; ?>%</span>
-                                                </div>
-                                                <div class="porcentaje-item-detalle">
-                                                    <span class="porcentaje-label">Docentes:</span>
-                                                    <span
-                                                        class="porcentaje-valor-detalle"><?php echo $nivel['porcentaje_docentes']; ?>%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            <?php else: ?>
-                <div class="error-message"
-                    style="text-align: center; background-color: #fff3cd; color: #856404; border-left-color: #ffc107; padding: 20px; border-radius: 8px;">
-                    <i class="fas fa-info-circle"></i>
-                    No hay datos suficientes para calcular porcentajes respecto al estado.
-                </div>
-            <?php endif; ?>
-        </div>
-
         <!-- SECCIÓN: Desglose de Alumnos por Sexo -->
         <div style="margin-top: 40px;">
             <h2 style="text-align: center; color: var(--primary-blue); margin-bottom: 25px;">
@@ -844,7 +751,8 @@ function formatearNumero($numero)
                                     </div>
 
                                     <!-- Mujeres -->
-                                    <div style="background-color: #fce4ec; padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div
+                                        style="background-color: #ceafe0ff; padding: 15px; border-radius: 8px; text-align: center;">
                                         <h5 style="color: #610c76; margin-bottom: 8px;">
                                             <i class="fas fa-venus"></i> Mujeres
                                         </h5>
@@ -952,6 +860,99 @@ function formatearNumero($numero)
                 <div class="error-message">
                     <i class="fas fa-exclamation-triangle"></i>
                     No se pudieron obtener datos de docentes por sexo para este municipio.
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- NUEVA SECCIÓN: Porcentajes Respecto al Estado -->
+        <div style="margin-top: 40px;">
+            <h2 style="text-align: center; color: var(--primary-blue); margin-bottom: 25px;">
+                <i class="fas fa-percentage"></i> Porcentaje Respecto al Estado de Querétaro
+            </h2>
+
+            <?php if (isset($porcentajesMunicipioEstado) && !empty($porcentajesMunicipioEstado)): ?>
+                <div class="porcentajes-container">
+                    <!-- Resumen de Porcentajes Totales -->
+                    <div class="porcentajes-resumen">
+                        <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                            <i class="fas fa-chart-bar"></i> Resumen General
+                        </h3>
+                        <div class="porcentajes-totales-grid">
+                            <div class="porcentaje-total-card">
+                                <div class="porcentaje-icono">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="porcentaje-contenido">
+                                    <span class="porcentaje-tipo">Matrícula</span>
+                                    <span
+                                        class="porcentaje-valor"><?php echo $porcentajesMunicipioEstado['porcentajes_totales']['matricula']; ?>%</span>
+                                </div>
+                            </div>
+                            <div class="porcentaje-total-card">
+                                <div class="porcentaje-icono">
+                                    <i class="fas fa-school"></i>
+                                </div>
+                                <div class="porcentaje-contenido">
+                                    <span class="porcentaje-tipo">Escuelas</span>
+                                    <span
+                                        class="porcentaje-valor"><?php echo $porcentajesMunicipioEstado['porcentajes_totales']['escuelas']; ?>%</span>
+                                </div>
+                            </div>
+                            <div class="porcentaje-total-card">
+                                <div class="porcentaje-icono">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <div class="porcentaje-contenido">
+                                    <span class="porcentaje-tipo">Docentes</span>
+                                    <span
+                                        class="porcentaje-valor"><?php echo $porcentajesMunicipioEstado['porcentajes_totales']['docentes']; ?>%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desglose por Nivel Educativo -->
+                    <?php if (!empty($porcentajesMunicipioEstado['porcentajes_por_nivel'])): ?>
+                        <div class="porcentajes-detalle">
+                            <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                                <i class="fas fa-chart-line"></i> Desglose por Nivel Educativo
+                            </h3>
+                            <div class="porcentajes-niveles-grid">
+                                <?php foreach ($porcentajesMunicipioEstado['porcentajes_por_nivel'] as $nivel): ?>
+                                    <?php if ($nivel['porcentaje_matricula'] > 0): ?>
+                                        <div class="porcentaje-nivel-card">
+                                            <div class="nivel-header">
+                                                <h4><?php echo htmlspecialchars($nivel['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?></h4>
+                                            </div>
+                                            <div class="nivel-porcentajes-detalle">
+                                                <div class="porcentaje-item-detalle">
+                                                    <span class="porcentaje-label">Matrícula:</span>
+                                                    <span
+                                                        class="porcentaje-valor-detalle"><?php echo $nivel['porcentaje_matricula']; ?>%</span>
+                                                </div>
+                                                <div class="porcentaje-item-detalle">
+                                                    <span class="porcentaje-label">Escuelas:</span>
+                                                    <span
+                                                        class="porcentaje-valor-detalle"><?php echo $nivel['porcentaje_escuelas']; ?>%</span>
+                                                </div>
+                                                <div class="porcentaje-item-detalle">
+                                                    <span class="porcentaje-label">Docentes:</span>
+                                                    <span
+                                                        class="porcentaje-valor-detalle"><?php echo $nivel['porcentaje_docentes']; ?>%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php else: ?>
+                <div class="error-message"
+                    style="text-align: center; background-color: #fff3cd; color: #856404; border-left-color: #ffc107; padding: 20px; border-radius: 8px;">
+                    <i class="fas fa-info-circle"></i>
+                    No hay datos suficientes para calcular porcentajes respecto al estado.
                 </div>
             <?php endif; ?>
         </div>
