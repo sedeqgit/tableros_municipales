@@ -493,46 +493,6 @@ function formatearNumero($numero)
 
         <!-- Grid principal de datos -->
         <div class="datos-grid">
-            <!-- Tarjeta de Matrícula -->
-            <div class="datos-card matricula-card <?php echo !$datosMunicipio['tiene_datos'] ? 'no-data' : ''; ?>">
-                <div class="card-header">
-                    <div class="card-icon">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-                    <h3 class="card-title">Matrícula de Alumnos (No incluye USAER)</h3>
-                </div>
-
-                <div class="bolsillo-indicator">Bolsillo</div>
-
-                <div class="total-general">
-                    <?php
-                    $totalAlumnos = isset($datosMunicipio['datos_completos']['totales']['total_alumnos'])
-                        ? $datosMunicipio['datos_completos']['totales']['total_alumnos']
-                        : 0;
-                    echo formatearNumero($totalAlumnos);
-                    ?>
-                </div>
-
-                <?php if (isset($datosMunicipio['datos_por_nivel']['niveles']) && !empty($datosMunicipio['datos_por_nivel']['niveles'])): ?>
-                    <div class="detalles-niveles">
-                        <?php foreach ($datosMunicipio['datos_por_nivel']['niveles'] as $nivel): ?>
-                            <?php if (isset($nivel['tot_mat']) && $nivel['tot_mat'] > 0): ?>
-                                <div class="detalle-nivel">
-                                    <span
-                                        class="nivel-nombre"><?php echo htmlspecialchars($nivel['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?></span>
-                                    <span class="nivel-cantidad"><?php echo formatearNumero($nivel['tot_mat']); ?></span>
-                                </div>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </div>
-                <?php else: ?>
-                    <div class="error-message"
-                        style="background-color: #fff3cd; color: #856404; border-left-color: #ffc107;">
-                        <i class="fas fa-info-circle"></i>
-                        No hay datos disponibles para este municipio.
-                    </div>
-                <?php endif; ?>
-            </div>
 
             <!-- Tarjeta de Escuelas -->
             <div class="datos-card escuelas-card <?php echo !$datosMunicipio['tiene_datos'] ? 'no-data' : ''; ?>">
@@ -540,10 +500,9 @@ function formatearNumero($numero)
                     <div class="card-icon">
                         <i class="fas fa-school"></i>
                     </div>
-                    <h3 class="card-title">Escuelas (No Incluye USAER)</h3>
+                    <h3 class="card-title">Escuelas</h3>
                 </div>
-
-                <div class="bolsillo-indicator">Bolsillo</div>
+                <div style="font-size: 1.1rem; color: var(--text-secondary);">No incluye USAER</div>
 
                 <div class="total-general">
                     <?php
@@ -575,6 +534,47 @@ function formatearNumero($numero)
                 <?php endif; ?>
             </div>
 
+            <!-- Tarjeta de Matrícula -->
+            <div class="datos-card matricula-card <?php echo !$datosMunicipio['tiene_datos'] ? 'no-data' : ''; ?>">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3 class="card-title">Matrícula de Alumnos</h3>
+                </div>
+
+                <div style="font-size: 1.1rem; color: var(--text-secondary);">No incluye USAER</div>
+
+                <div class="total-general">
+                    <?php
+                    $totalAlumnos = isset($datosMunicipio['datos_completos']['totales']['total_alumnos'])
+                        ? $datosMunicipio['datos_completos']['totales']['total_alumnos']
+                        : 0;
+                    echo formatearNumero($totalAlumnos);
+                    ?>
+                </div>
+
+                <?php if (isset($datosMunicipio['datos_por_nivel']['niveles']) && !empty($datosMunicipio['datos_por_nivel']['niveles'])): ?>
+                    <div class="detalles-niveles">
+                        <?php foreach ($datosMunicipio['datos_por_nivel']['niveles'] as $nivel): ?>
+                            <?php if (isset($nivel['tot_mat']) && $nivel['tot_mat'] > 0): ?>
+                                <div class="detalle-nivel">
+                                    <span
+                                        class="nivel-nombre"><?php echo htmlspecialchars($nivel['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                    <span class="nivel-cantidad"><?php echo formatearNumero($nivel['tot_mat']); ?></span>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="error-message"
+                        style="background-color: #fff3cd; color: #856404; border-left-color: #ffc107;">
+                        <i class="fas fa-info-circle"></i>
+                        No hay datos disponibles para este municipio.
+                    </div>
+                <?php endif; ?>
+            </div>
+
             <!-- Tarjeta de Docentes -->
             <div class="datos-card docentes-card">
                 <div class="card-header">
@@ -583,8 +583,7 @@ function formatearNumero($numero)
                     </div>
                     <h3 class="card-title">Docentes</h3>
                 </div>
-
-                <div class="bolsillo-indicator">Bolsillo</div>
+                <div style="font-size: 1.1rem; color: var(--text-secondary);">No incluye superior</div>
 
                 <div class="total-general">
                     <?php
@@ -662,11 +661,11 @@ function formatearNumero($numero)
                                         <i class="fas fa-university"></i> Públicas
                                     </h4>
                                     <div style="font-weight: bold; color: #155724; font-size: 1.2rem;">
-                                        <?php echo formatearNumero($datos['tot_mat_pub']); ?> alumnos
+                                        <?php echo formatearNumero($datos['tot_esc_pub']); ?> escuelas
 
                                     </div>
                                     <div style="font-size: 0.9rem; color: #155724; margin-top: 5px;">
-                                        <?php echo formatearNumero($datos['tot_esc_pub']); ?> escuelas<br>
+                                        <?php echo formatearNumero($datos['tot_mat_pub']); ?> alumnos <br>
                                         <?php echo formatearNumero($datos['tot_doc_pub']); ?> docentes
                                     </div>
                                 </div>
@@ -677,11 +676,11 @@ function formatearNumero($numero)
                                         <i class="fas fa-building"></i> Privadas
                                     </h4>
                                     <div style="font-weight: bold; color: #856404; font-size: 1.2rem;">
-                                        <?php echo formatearNumero($datos['tot_mat_priv']); ?> alumnos
+                                        <?php echo formatearNumero($datos['tot_esc_priv']); ?> escuelas
 
                                     </div>
                                     <div style="font-size: 0.9rem; color: #856404; margin-top: 5px;">
-                                        <?php echo formatearNumero($datos['tot_esc_priv']); ?> escuelas<br>
+                                        <?php echo formatearNumero($datos['tot_mat_priv']); ?> alumnos <br>
                                         <?php echo formatearNumero($datos['tot_doc_priv']); ?> docentes
                                     </div>
                                 </div>

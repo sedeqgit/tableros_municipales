@@ -151,7 +151,7 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
     switch ($str_consulta) {
         case 'gral_ini':
             return "SELECT CONCAT('GENERAL') AS titulo_fila,
-                        SUM(V398+V414) AS total_matricula,
+                        SUM(V398+V414) AS total_matricula, 6210 2584+3108
                         SUM(V390+V406) AS mat_hombres,
                         SUM(V394+V410) AS mat_mujeres,
                         SUM(V509+V516+V523+V511+V518+V525+V510+V517+V524+V512+V519+V526) AS total_docentes,
@@ -284,7 +284,7 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         SUM(V608) AS total_matricula,
                         SUM(V562+V573) AS mat_hombres,
                         SUM(V585+V596) AS mat_mujeres,
-                        SUM(V1575+V1576+V1567+V1568) AS total_docentes,
+                         SUM(V1575+V1576+V1567+V1568+V1507+V1499+V1508+V1500+V583+V584) AS total_docentes
                         SUM(V1575+V1567) AS doc_hombres,
                         SUM(V1576+V1568) AS doc_mujeres,
                         COUNT(cv_cct) AS escuelas,
@@ -737,7 +737,7 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         SUM(V608+V610+V515) AS total_matricula,
                         SUM(V562+V573+V564+V575+V469+V480) AS mat_hombres,
                         SUM(V585+V596+V587+V598+V492+V503) AS mat_mujeres,
-                        SUM(V1575+V1576+V1567+V1568+V1507+V1499+V1508+V1500+V585) AS total_docentes,
+                        SUM(V1575+V1576+V1567+V1568+V1507+V1499+V1508+V1500+V583+V584) AS total_docentes,
                         SUM(V1575+V1567+V1507+V1499+V583) AS doc_hombres,
                         SUM(V1576+V1568+V1508+V1500+V584) AS doc_mujeres,
                         COUNT(cv_cct) AS escuelas,
@@ -782,44 +782,71 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
 
         case 'media_sup':
             return "SELECT 'MEDIA SUPERIOR' AS titulo_fila,
-                        SUM(V397+V472) AS total_matricula,
-                        SUM(V395+V470) AS mat_hombres,
-                        SUM(V396+V471) AS mat_mujeres,
-                        SUM(V960+V1059) AS total_docentes,
-                        SUM(V958+V1057) AS doc_hombres,
-                        SUM(V959+V1058) AS doc_mujeres,
-                        COUNT(DISTINCT CONCAT(cct_ins_pla,'-',cv_cct,'-',c_turno)) AS escuelas,
-                        SUM(V401+V476) AS grupos
-                    FROM (
-                        SELECT cct_ins_pla, cv_cct, c_turno, c_nom_mun, control, V397,V395,V396,V960,V958,V959,V401,
-                               0 as V472, 0 as V470, 0 as V471, 0 as V1059, 0 as V1057, 0 as V1058, 0 as V476
-                        FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo 
-                        WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro
-                        UNION ALL
-                        SELECT cct_ins_pla, cv_cct, c_turno, c_nom_mun, control, 0,0,0,0,0,0,0,V472,V470,V471,V1059,V1057,V1058,V476
-                        FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo 
-                        WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro
-                    ) AS media_superior";
+                        (SELECT SUM(V397+V472) FROM (
+                            SELECT V397, 0 as V472 FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo 
+                            WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro
+                            UNION ALL
+                            SELECT 0, V472 FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo 
+                            WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro
+                        ) AS matricula_ms) AS total_matricula,
+                        (SELECT SUM(V395+V470) FROM (
+                            SELECT V395, 0 as V470 FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo 
+                            WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro
+                            UNION ALL
+                            SELECT 0, V470 FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo 
+                            WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro
+                        ) AS mat_h_ms) AS mat_hombres,
+                        (SELECT SUM(V396+V471) FROM (
+                            SELECT V396, 0 as V471 FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo 
+                            WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro
+                            UNION ALL
+                            SELECT 0, V471 FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo 
+                            WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro
+                        ) AS mat_m_ms) AS mat_mujeres,
+                        SUM(V106+V101) AS total_docentes,
+                        SUM(V104+V99) AS doc_hombres,
+                        SUM(V105+V100) AS doc_mujeres,
+                        COUNT(cct_ins_pla) AS escuelas,
+                        (SELECT SUM(V401+V476) FROM (
+                            SELECT V401, 0 as V476 FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo 
+                            WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro
+                            UNION ALL
+                            SELECT 0, V476 FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo 
+                            WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro
+                        ) AS grupos_ms) AS grupos
+                    FROM nonce_pano_$ini_ciclo.ms_plantel_$ini_ciclo 
+                    WHERE cv_motivo = '0' $filtro";
 
         case 'superior':
             return "SELECT 'SUPERIOR' AS titulo_fila,
-                        SUM(V177+V142) AS total_matricula,
-                        SUM(V175+V140) AS mat_hombres,
-                        SUM(V176+V141) AS mat_mujeres,
-                        SUM(0) AS total_docentes,
-                        SUM(0) AS doc_hombres,
-                        SUM(0) AS doc_mujeres,
-                        COUNT(DISTINCT cct_ins_pla) AS escuelas,
+                        (SELECT SUM(V177+V142) FROM (
+                            SELECT V177, 0 as V142 FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo 
+                            WHERE cv_motivo = '0' $filtro
+                            UNION ALL
+                            SELECT 0, V142 FROM nonce_pano_$ini_ciclo.sup_posgrado_$ini_ciclo 
+                            WHERE cv_motivo = '0' $filtro
+                        ) AS matricula_sup) AS total_matricula,
+                        (SELECT SUM(V175+V140) FROM (
+                            SELECT V175, 0 as V140 FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo 
+                            WHERE cv_motivo = '0' $filtro
+                            UNION ALL
+                            SELECT 0, V140 FROM nonce_pano_$ini_ciclo.sup_posgrado_$ini_ciclo 
+                            WHERE cv_motivo = '0' $filtro
+                        ) AS mat_h_sup) AS mat_hombres,
+                        (SELECT SUM(V176+V141) FROM (
+                            SELECT V176, 0 as V141 FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo 
+                            WHERE cv_motivo = '0' $filtro
+                            UNION ALL
+                            SELECT 0, V141 FROM nonce_pano_$ini_ciclo.sup_posgrado_$ini_ciclo 
+                            WHERE cv_motivo = '0' $filtro
+                        ) AS mat_m_sup) AS mat_mujeres,
+                        SUM(V83) AS total_docentes,
+                        SUM(V81) AS doc_hombres,
+                        SUM(V82) AS doc_mujeres,
+                        COUNT(cct_ins_pla) AS escuelas,
                         SUM(0) AS grupos
-                    FROM (
-                        SELECT cct_ins_pla, c_nom_mun, control, V177,V175,V176, 0 as V142, 0 as V140, 0 as V141
-                        FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo 
-                        WHERE cv_motivo = '0' $filtro
-                        UNION ALL
-                        SELECT cct_ins_pla, c_nom_mun, control, 0,0,0,V142,V140,V141
-                        FROM nonce_pano_$ini_ciclo.sup_posgrado_$ini_ciclo 
-                        WHERE cv_motivo = '0' $filtro
-                    ) AS superior";
+                    FROM nonce_pano_$ini_ciclo.sup_escuela_$ini_ciclo 
+                    WHERE cv_motivo = '0' $filtro";
 
         case 'especial_tot':
             // PRUEBA TEMPORAL: Forzar valor para verificar cache
