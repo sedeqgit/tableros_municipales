@@ -581,6 +581,19 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                     FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo 
                     WHERE cv_motivo = '0' AND cv_carrera LIKE '5%' $filtro";
 
+        case 'unidades_sup':
+            return "SELECT CONCAT('UNIDADES SUPERIOR') AS titulo_fila,
+                        SUM(total_matricula) AS total_matricula,
+                        SUM(mat_hombres) AS mat_hombres,
+                        SUM(mat_mujeres) AS mat_mujeres,
+                        SUM(total_docentes) AS total_docentes,
+                        SUM(doc_hombres) AS doc_hombres,
+                        SUM(doc_mujeres) AS doc_mujeres,
+                        COUNT(DISTINCT cct_ins_pla) AS escuelas,
+                        SUM(0) AS grupos 
+                    FROM nonce_pano_$ini_ciclo.sup_unidades_$ini_ciclo 
+                    WHERE 1=1 $filtro";
+
         // ===== CONSULTAS ESPECIALES =====
         case 'especial_tot':
             return "SELECT CONCAT('ESPECIAL (CAM)') AS titulo_fila,
@@ -848,6 +861,11 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                     FROM nonce_pano_$ini_ciclo.sup_escuela_$ini_ciclo 
                     WHERE cv_motivo = '0' $filtro";
 
+        case 'superior_muni_unidades':
+            // Este caso requiere procesamiento especial con acum_unidades()
+            // No se puede resolver con una consulta SQL directa
+            return 'SPECIAL_PROCESSING_REQUIRED';
+
         case 'especial_tot':
             // PRUEBA TEMPORAL: Forzar valor para verificar cache
             return "SELECT 'ESPECIAL (CAM)' AS titulo_fila,
@@ -871,13 +889,361 @@ $filtro_pub = " AND control<>'PRIVADO' ";
 $filtro_priv = " AND control='PRIVADO' ";
 
 /**
+ * Función para aplicar ajustes de unidades al nivel superior
+ * Replica la lógica de acum_unidades de bolsillo_unidades.php
+ * 
+ * @param resource $link Conexión a la base de datos
+ * @param string $ini_ciclo Ciclo escolar
+ * @param string $filtro_pub Filtro para escuelas públicas
+ * @param string $filtro_priv Filtro para escuelas privadas
+ * @param string $filtro_extra Filtro municipal
+ * @param array $arr_nivel1 Datos del nivel superior base
+ * @param array $arr_nivel2 Datos de unidades
+ * @return array Datos ajustados
+ */
+function acum_unidades_superior($link, $ini_ciclo, $filtro_pub, $filtro_priv, $filtro_extra, $arr_nivel1, $arr_nivel2)
+{
+    // Extraer el número de municipio del filtro
+    $datos_filtro_s1 = explode('=', $filtro_extra);
+    if (count($datos_filtro_s1) < 2) {
+        return $arr_nivel1; // Si no hay filtro municipal, devolver datos base
+    }
+
+    $datos_filtro_s2 = explode("'", $datos_filtro_s1[1]);
+    if (count($datos_filtro_s2) < 2) {
+        return $arr_nivel1; // Si no se puede extraer el municipio, devolver datos base
+    }
+
+    $municipio = $datos_filtro_s2[1];
+
+    if (strcmp($municipio, '14') == 0) {
+        // Para Querétaro (municipio 14): RESTAR unidades estatales para evitar doble conteo
+        // Obtener unidades estatales (sin filtro municipal)
+        $consulta_unidades_estatales = str_consulta_segura('unidades_sup', $ini_ciclo, '');
+        if (!$consulta_unidades_estatales) {
+            return $arr_nivel1;
+        }
+
+        $rs_unidades = pg_query($link, $consulta_unidades_estatales);
+        if (!$rs_unidades || pg_num_rows($rs_unidades) == 0) {
+            return $arr_nivel1;
+        }
+
+        $unidades_estatales = pg_fetch_assoc($rs_unidades);
+
+        return [
+            "titulo_fila" => "SUPERIOR",
+            "tot_mat" => $arr_nivel1['tot_mat'] - $unidades_estatales['total_matricula'],
+            "tot_mat_pub" => $arr_nivel1['tot_mat_pub'] - $unidades_estatales['total_matricula'],
+            "tot_mat_priv" => $arr_nivel1['tot_mat_priv'],
+            "mat_h" => $arr_nivel1['mat_h'] - $unidades_estatales['mat_hombres'],
+            "mat_h_pub" => $arr_nivel1['mat_h_pub'] - $unidades_estatales['mat_hombres'],
+            "mat_h_priv" => $arr_nivel1['mat_h_priv'],
+            "mat_m" => $arr_nivel1['mat_m'] - $unidades_estatales['mat_mujeres'],
+            "mat_m_pub" => $arr_nivel1['mat_m_pub'] - $unidades_estatales['mat_mujeres'],
+            "mat_m_priv" => $arr_nivel1['mat_m_priv'],
+            "tot_doc" => $arr_nivel1['tot_doc'] - $unidades_estatales['total_docentes'],
+            "tot_doc_pub" => $arr_nivel1['tot_doc_pub'] - $unidades_estatales['total_docentes'],
+            "tot_doc_priv" => $arr_nivel1['tot_doc_priv'],
+            "doc_h" => $arr_nivel1['doc_h'] - $unidades_estatales['doc_hombres'],
+            "doc_h_pub" => $arr_nivel1['doc_h_pub'] - $unidades_estatales['doc_hombres'],
+            "doc_h_priv" => $arr_nivel1['doc_h_priv'],
+            "doc_m" => $arr_nivel1['doc_m'] - $unidades_estatales['doc_mujeres'],
+            "doc_m_pub" => $arr_nivel1['doc_m_pub'] - $unidades_estatales['doc_mujeres'],
+            "doc_m_priv" => $arr_nivel1['doc_m_priv'],
+            "tot_esc" => $arr_nivel1['tot_esc'], // Las escuelas no se restan
+            "tot_esc_pub" => $arr_nivel1['tot_esc_pub'],
+            "tot_esc_priv" => $arr_nivel1['tot_esc_priv'],
+            "tot_grp" => $arr_nivel1['tot_grp'] - $unidades_estatales['grupos'],
+            "tot_grp_pub" => $arr_nivel1['tot_grp_pub'] - $unidades_estatales['grupos'],
+            "tot_grp_priv" => $arr_nivel1['tot_grp_priv']
+        ];
+    } else {
+        // Para otros municipios: SUMAR unidades municipales
+        return [
+            "titulo_fila" => "SUPERIOR",
+            "tot_mat" => $arr_nivel1['tot_mat'] + $arr_nivel2['total_matricula'],
+            "tot_mat_pub" => $arr_nivel1['tot_mat_pub'] + $arr_nivel2['total_matricula'],
+            "tot_mat_priv" => $arr_nivel1['tot_mat_priv'],
+            "mat_h" => $arr_nivel1['mat_h'] + $arr_nivel2['mat_hombres'],
+            "mat_h_pub" => $arr_nivel1['mat_h_pub'] + $arr_nivel2['mat_hombres'],
+            "mat_h_priv" => $arr_nivel1['mat_h_priv'],
+            "mat_m" => $arr_nivel1['mat_m'] + $arr_nivel2['mat_mujeres'],
+            "mat_m_pub" => $arr_nivel1['mat_m_pub'] + $arr_nivel2['mat_mujeres'],
+            "mat_m_priv" => $arr_nivel1['mat_m_priv'],
+            "tot_doc" => $arr_nivel1['tot_doc'] + $arr_nivel2['total_docentes'],
+            "tot_doc_pub" => $arr_nivel1['tot_doc_pub'] + $arr_nivel2['total_docentes'],
+            "tot_doc_priv" => $arr_nivel1['tot_doc_priv'],
+            "doc_h" => $arr_nivel1['doc_h'] + $arr_nivel2['doc_hombres'],
+            "doc_h_pub" => $arr_nivel1['doc_h_pub'] + $arr_nivel2['doc_hombres'],
+            "doc_h_priv" => $arr_nivel1['doc_h_priv'],
+            "doc_m" => $arr_nivel1['doc_m'] + $arr_nivel2['doc_mujeres'],
+            "doc_m_pub" => $arr_nivel1['doc_m_pub'] + $arr_nivel2['doc_mujeres'],
+            "doc_m_priv" => $arr_nivel1['doc_m_priv'],
+            "tot_esc" => $arr_nivel1['tot_esc'] + $arr_nivel2['escuelas'],
+            "tot_esc_pub" => $arr_nivel1['tot_esc_pub'] + $arr_nivel2['escuelas'],
+            "tot_esc_priv" => $arr_nivel1['tot_esc_priv'],
+            "tot_grp" => $arr_nivel1['tot_grp'] + $arr_nivel2['grupos'],
+            "tot_grp_pub" => $arr_nivel1['tot_grp_pub'] + $arr_nivel2['grupos'],
+            "tot_grp_priv" => $arr_nivel1['tot_grp_priv']
+        ];
+    }
+}
+
+/**
+ * Función para aplicar ajustes de unidades al nivel superior
+ * Replica la lógica de acum_unidades de bolsillo_unidades.php
+ * 
+ * @param resource $link Conexión a la base de datos
+ * @param string $ini_ciclo Ciclo escolar
+ * @param string $filtro_pub Filtro para escuelas públicas
+ * @param string $filtro_priv Filtro para escuelas privadas
+ * @param string $filtro_extra Filtro municipal
+ * @param string $titulo_fila Título de la fila
+ * @param array $arr_nivel1 Datos del nivel superior base
+ * @param array $arr_nivel2 Datos de unidades
+ * @return array Datos ajustados
+ */
+function acum_unidades($link, $ini_ciclo, $filtro_pub, $filtro_priv, $filtro_extra, $titulo_fila, $arr_nivel1, $arr_nivel2)
+{
+    // Extraer el número de municipio del filtro
+    $datos_filtro_s1 = explode('=', $filtro_extra);
+    if (count($datos_filtro_s1) < 2) {
+        return $arr_nivel1; // Si no hay filtro válido, retornar datos originales
+    }
+
+    $datos_filtro_s2 = explode('\'', $datos_filtro_s1[1]);
+    if (count($datos_filtro_s2) < 2) {
+        return $arr_nivel1; // Si no hay municipio válido, retornar datos originales
+    }
+
+    $municipio = $datos_filtro_s2[1];
+
+    if (strcmp($municipio, '14') == 0) {
+        // Para Querétaro (municipio 14): RESTAR unidades estatales
+        $arr_nivel2_estatal = rs_consulta_segura($link, 'unidades_sup', $ini_ciclo, " ");
+
+        if (!$arr_nivel2_estatal) {
+            $arr_nivel2_estatal = [
+                'tot_mat' => 0,
+                'tot_mat_pub' => 0,
+                'tot_mat_priv' => 0,
+                'mat_h' => 0,
+                'mat_h_pub' => 0,
+                'mat_h_priv' => 0,
+                'mat_m' => 0,
+                'mat_m_pub' => 0,
+                'mat_m_priv' => 0,
+                'tot_doc' => 0,
+                'tot_doc_pub' => 0,
+                'tot_doc_priv' => 0,
+                'doc_h' => 0,
+                'doc_h_pub' => 0,
+                'doc_h_priv' => 0,
+                'doc_m' => 0,
+                'doc_m_pub' => 0,
+                'doc_m_priv' => 0,
+                'tot_esc' => 0,
+                'tot_esc_pub' => 0,
+                'tot_esc_priv' => 0,
+                'tot_grp' => 0,
+                'tot_grp_pub' => 0,
+                'tot_grp_priv' => 0
+            ];
+        }
+
+        $acum_niveles = [
+            "titulo_fila" => $titulo_fila,
+            "tot_mat" => $arr_nivel1['tot_mat'] - $arr_nivel2_estatal['tot_mat'],
+            "tot_mat_pub" => $arr_nivel1['tot_mat_pub'] - $arr_nivel2_estatal['tot_mat_pub'],
+            "tot_mat_priv" => $arr_nivel1['tot_mat_priv'] - $arr_nivel2_estatal['tot_mat_priv'],
+            "mat_h" => $arr_nivel1['mat_h'] - $arr_nivel2_estatal['mat_h'],
+            "mat_h_pub" => $arr_nivel1['mat_h_pub'] - $arr_nivel2_estatal['mat_h_pub'],
+            "mat_h_priv" => $arr_nivel1['mat_h_priv'] - $arr_nivel2_estatal['mat_h_priv'],
+            "mat_m" => $arr_nivel1['mat_m'] - $arr_nivel2_estatal['mat_m'],
+            "mat_m_pub" => $arr_nivel1['mat_m_pub'] - $arr_nivel2_estatal['mat_m_pub'],
+            "mat_m_priv" => $arr_nivel1['mat_m_priv'] - $arr_nivel2_estatal['mat_m_priv'],
+            "tot_doc" => $arr_nivel1['tot_doc'] - $arr_nivel2_estatal['tot_doc'],
+            "tot_doc_pub" => $arr_nivel1['tot_doc_pub'] - $arr_nivel2_estatal['tot_doc_pub'],
+            "tot_doc_priv" => $arr_nivel1['tot_doc_priv'] - $arr_nivel2_estatal['tot_doc_priv'],
+            "doc_h" => $arr_nivel1['doc_h'] - $arr_nivel2_estatal['doc_h'],
+            "doc_h_pub" => $arr_nivel1['doc_h_pub'] - $arr_nivel2_estatal['doc_h_pub'],
+            "doc_h_priv" => $arr_nivel1['doc_h_priv'] - $arr_nivel2_estatal['doc_h_priv'],
+            "doc_m" => $arr_nivel1['doc_m'] - $arr_nivel2_estatal['doc_m'],
+            "doc_m_pub" => $arr_nivel1['doc_m_pub'] - $arr_nivel2_estatal['doc_m_pub'],
+            "doc_m_priv" => $arr_nivel1['doc_m_priv'] - $arr_nivel2_estatal['doc_m_priv'],
+            "tot_esc" => $arr_nivel1['tot_esc'], // Las escuelas no se restan
+            "tot_esc_pub" => $arr_nivel1['tot_esc_pub'],
+            "tot_esc_priv" => $arr_nivel1['tot_esc_priv'],
+            "tot_grp" => $arr_nivel1['tot_grp'] - $arr_nivel2_estatal['tot_grp'],
+            "tot_grp_pub" => $arr_nivel1['tot_grp_pub'] - $arr_nivel2_estatal['tot_grp_pub'],
+            "tot_grp_priv" => $arr_nivel1['tot_grp_priv'] - $arr_nivel2_estatal['tot_grp_priv']
+        ];
+    } else {
+        // Para otros municipios: SUMAR unidades municipales
+        $acum_niveles = [
+            "titulo_fila" => $titulo_fila,
+            "tot_mat" => $arr_nivel1['tot_mat'] + $arr_nivel2['tot_mat'],
+            "tot_mat_pub" => $arr_nivel1['tot_mat_pub'] + $arr_nivel2['tot_mat_pub'],
+            "tot_mat_priv" => $arr_nivel1['tot_mat_priv'] + $arr_nivel2['tot_mat_priv'],
+            "mat_h" => $arr_nivel1['mat_h'] + $arr_nivel2['mat_h'],
+            "mat_h_pub" => $arr_nivel1['mat_h_pub'] + $arr_nivel2['mat_h_pub'],
+            "mat_h_priv" => $arr_nivel1['mat_h_priv'] + $arr_nivel2['mat_h_priv'],
+            "mat_m" => $arr_nivel1['mat_m'] + $arr_nivel2['mat_m'],
+            "mat_m_pub" => $arr_nivel1['mat_m_pub'] + $arr_nivel2['mat_m_pub'],
+            "mat_m_priv" => $arr_nivel1['mat_m_priv'] + $arr_nivel2['mat_m_priv'],
+            "tot_doc" => $arr_nivel1['tot_doc'] + $arr_nivel2['tot_doc'],
+            "tot_doc_pub" => $arr_nivel1['tot_doc_pub'] + $arr_nivel2['tot_doc_pub'],
+            "tot_doc_priv" => $arr_nivel1['tot_doc_priv'] + $arr_nivel2['tot_doc_priv'],
+            "doc_h" => $arr_nivel1['doc_h'] + $arr_nivel2['doc_h'],
+            "doc_h_pub" => $arr_nivel1['doc_h_pub'] + $arr_nivel2['doc_h_pub'],
+            "doc_h_priv" => $arr_nivel1['doc_h_priv'] + $arr_nivel2['doc_h_priv'],
+            "doc_m" => $arr_nivel1['doc_m'] + $arr_nivel2['doc_m'],
+            "doc_m_pub" => $arr_nivel1['doc_m_pub'] + $arr_nivel2['doc_m_pub'],
+            "doc_m_priv" => $arr_nivel1['doc_m_priv'] + $arr_nivel2['doc_m_priv'],
+            "tot_esc" => $arr_nivel1['tot_esc'] + $arr_nivel2['tot_esc'],
+            "tot_esc_pub" => $arr_nivel1['tot_esc_pub'] + $arr_nivel2['tot_esc_pub'],
+            "tot_esc_priv" => $arr_nivel1['tot_esc_priv'] + $arr_nivel2['tot_esc_priv'],
+            "tot_grp" => $arr_nivel1['tot_grp'] + $arr_nivel2['tot_grp'],
+            "tot_grp_pub" => $arr_nivel1['tot_grp_pub'] + $arr_nivel2['tot_grp_pub'],
+            "tot_grp_priv" => $arr_nivel1['tot_grp_priv'] + $arr_nivel2['tot_grp_priv']
+        ];
+    }
+
+    return $acum_niveles;
+}
+
+/**
+ * Calcula superior_muni_unidades aplicando la lógica de acum_unidades
+ * Replica exactamente el comportamiento de bolsillo_unidades.php
+ * 
+ * @param resource $link Conexión a la base de datos
+ * @param string $ini_ciclo Ciclo escolar
+ * @param string $filtro Filtro municipal
+ * @return array|false Datos calculados o false en caso de error
+ */
+function calcular_superior_muni_unidades($link, $ini_ciclo, $filtro)
+{
+    global $filtro_pub, $filtro_priv;
+
+    try {
+        // 1. Obtener datos base del superior (equivalente a total_sedeq_sup)
+        $datos_superior_base = rs_consulta_segura($link, 'superior', $ini_ciclo, $filtro);
+        if (!$datos_superior_base) {
+            return false;
+        }
+
+        // 2. Obtener datos de unidades
+        $datos_unidades = rs_consulta_segura($link, 'unidades_sup', $ini_ciclo, $filtro);
+        if (!$datos_unidades) {
+            // Si no hay datos de unidades, inicializar array vacío
+            $datos_unidades = [
+                'tot_mat' => 0,
+                'tot_mat_pub' => 0,
+                'tot_mat_priv' => 0,
+                'mat_h' => 0,
+                'mat_h_pub' => 0,
+                'mat_h_priv' => 0,
+                'mat_m' => 0,
+                'mat_m_pub' => 0,
+                'mat_m_priv' => 0,
+                'tot_doc' => 0,
+                'tot_doc_pub' => 0,
+                'tot_doc_priv' => 0,
+                'doc_h' => 0,
+                'doc_h_pub' => 0,
+                'doc_h_priv' => 0,
+                'doc_m' => 0,
+                'doc_m_pub' => 0,
+                'doc_m_priv' => 0,
+                'tot_esc' => 0,
+                'tot_esc_pub' => 0,
+                'tot_esc_priv' => 0,
+                'tot_grp' => 0,
+                'tot_grp_pub' => 0,
+                'tot_grp_priv' => 0
+            ];
+        }
+
+        // 3. Verificar si hay datos válidos de unidades (lógica de bolsillo)
+        $cantidad_vacios = 0;
+        if (empty($datos_unidades['tot_mat']) || $datos_unidades['tot_mat'] == 0)
+            $cantidad_vacios++;
+        if (empty($datos_unidades['tot_doc']) || $datos_unidades['tot_doc'] == 0)
+            $cantidad_vacios++;
+        if (empty($datos_unidades['tot_esc']) || $datos_unidades['tot_esc'] == 0)
+            $cantidad_vacios++;
+        if (empty($datos_unidades['tot_grp']) || $datos_unidades['tot_grp'] == 0)
+            $cantidad_vacios++;
+
+        // Si hay más de 2 campos vacíos, usar datos cero
+        if ($cantidad_vacios > 2) {
+            $datos_unidades = [
+                'tot_mat' => 0,
+                'tot_mat_pub' => 0,
+                'tot_mat_priv' => 0,
+                'mat_h' => 0,
+                'mat_h_pub' => 0,
+                'mat_h_priv' => 0,
+                'mat_m' => 0,
+                'mat_m_pub' => 0,
+                'mat_m_priv' => 0,
+                'tot_doc' => 0,
+                'tot_doc_pub' => 0,
+                'tot_doc_priv' => 0,
+                'doc_h' => 0,
+                'doc_h_pub' => 0,
+                'doc_h_priv' => 0,
+                'doc_m' => 0,
+                'doc_m_pub' => 0,
+                'doc_m_priv' => 0,
+                'tot_esc' => 0,
+                'tot_esc_pub' => 0,
+                'tot_esc_priv' => 0,
+                'tot_grp' => 0,
+                'tot_grp_pub' => 0,
+                'tot_grp_priv' => 0
+            ];
+        }
+
+        // 4. Aplicar la función acum_unidades
+        $resultado = acum_unidades(
+            $link,
+            $ini_ciclo,
+            $filtro_pub,
+            $filtro_priv,
+            $filtro,
+            "EDUCACIÓN SUPERIOR UNIDADES",
+            $datos_superior_base,
+            $datos_unidades
+        );
+
+        return $resultado;
+
+    } catch (Exception $e) {
+        error_log("Error en calcular_superior_muni_unidades: " . $e->getMessage());
+        return false;
+    }
+}
+
+/**
  * Función rs_consulta adaptada de bolsillo
  */
 function rs_consulta_segura($link, $str_consulta, $ini_ciclo, $filtro)
 {
+    // Caso especial para superior_muni_unidades
+    if ($str_consulta === 'superior_muni_unidades') {
+        return calcular_superior_muni_unidades($link, $ini_ciclo, $filtro);
+    }
+
     $consulta = str_consulta_segura($str_consulta, $ini_ciclo, $filtro);
 
     if (!$consulta) {
+        return false;
+    }
+
+    // Si es el indicador de procesamiento especial, retornar false
+    if ($consulta === 'SPECIAL_PROCESSING_REQUIRED') {
         return false;
     }
 
@@ -904,6 +1270,63 @@ function rs_consulta_segura($link, $str_consulta, $ini_ciclo, $filtro)
         $doc_m_nivel = $row_nivel["doc_mujeres"];
         $tot_esc_nivel = $row_nivel["escuelas"];
         $tot_grp_nivel = $row_nivel["grupos"];
+
+        // Aplicar ajuste de unidades para el nivel superior
+        if ($str_consulta === 'superior' && $filtro != '') {
+            // Obtener datos de unidades para el municipio específico
+            $consulta_unidades = str_consulta_segura('unidades_sup', $ini_ciclo, $filtro);
+            if ($consulta_unidades) {
+                $rs_unidades = pg_query($link, $consulta_unidades);
+                if ($rs_unidades && pg_num_rows($rs_unidades) > 0) {
+                    $row_unidades = pg_fetch_assoc($rs_unidades);
+
+                    // Crear arreglos para la función acum_unidades_superior
+                    $arr_superior_base = [
+                        "titulo_fila" => $titulo_fila,
+                        "tot_mat" => $tot_mat_nivel,
+                        "tot_mat_pub" => $tot_mat_nivel, // Asumiendo que todo es público para matricula
+                        "tot_mat_priv" => 0,
+                        "mat_h" => $mat_h_nivel,
+                        "mat_h_pub" => $mat_h_nivel,
+                        "mat_h_priv" => 0,
+                        "mat_m" => $mat_m_nivel,
+                        "mat_m_pub" => $mat_m_nivel,
+                        "mat_m_priv" => 0,
+                        "tot_doc" => $tot_doc_nivel,
+                        "tot_doc_pub" => $tot_doc_nivel,
+                        "tot_doc_priv" => 0,
+                        "doc_h" => $doc_h_nivel,
+                        "doc_h_pub" => $doc_h_nivel,
+                        "doc_h_priv" => 0,
+                        "doc_m" => $doc_m_nivel,
+                        "doc_m_pub" => $doc_m_nivel,
+                        "doc_m_priv" => 0,
+                        "tot_esc" => $tot_esc_nivel,
+                        "tot_esc_pub" => $tot_esc_nivel,
+                        "tot_esc_priv" => 0,
+                        "tot_grp" => $tot_grp_nivel,
+                        "tot_grp_pub" => $tot_grp_nivel,
+                        "tot_grp_priv" => 0
+                    ];
+
+                    // Aplicar ajuste de unidades
+                    global $filtro_pub, $filtro_priv;
+                    $datos_ajustados = acum_unidades_superior($link, $ini_ciclo, $filtro_pub, $filtro_priv, $filtro, $arr_superior_base, $row_unidades);
+
+                    // Actualizar los valores con los datos ajustados
+                    $tot_mat_nivel = $datos_ajustados['tot_mat'];
+                    $mat_h_nivel = $datos_ajustados['mat_h'];
+                    $mat_m_nivel = $datos_ajustados['mat_m'];
+                    $tot_doc_nivel = $datos_ajustados['tot_doc'];
+                    $doc_h_nivel = $datos_ajustados['doc_h'];
+                    $doc_m_nivel = $datos_ajustados['doc_m'];
+                    $tot_esc_nivel = $datos_ajustados['tot_esc'];
+                    $tot_grp_nivel = $datos_ajustados['tot_grp'];
+
+                    pg_free_result($rs_unidades);
+                }
+            }
+        }
 
         $nivel_detalle = [
             "titulo_fila" => $titulo_fila,
