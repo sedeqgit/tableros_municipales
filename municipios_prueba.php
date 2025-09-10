@@ -27,11 +27,24 @@ $todosLosMunicipios = obtenerMunicipiosPrueba2024();
 // Validar que la lista de municipios sea un array válido
 if (!$todosLosMunicipios || !is_array($todosLosMunicipios)) {
     $todosLosMunicipios = [
-        'AMEALCO DE BONFIL', 'ARROYO SECO', 'CADEREYTA DE MONTES', 'CORREGIDORA',
-        'EL MARQUES', 'EZEQUIEL MONTES', 'HUIMILPAN', 'JALPAN DE SERRA',
-        'LANDA DE MATAMOROS', 'PEDRO ESCOBEDO', 'PEÑON', 'PINAL DE AMOLES',
-        'QUERETARO', 'SAN JOAQUIN', 'SAN JUAN DEL RIO', 'TEQUISQUIAPAN',
-        'TOLIMAN', 'VILLA CORREGIDORA'
+        'AMEALCO DE BONFIL',
+        'ARROYO SECO',
+        'CADEREYTA DE MONTES',
+        'CORREGIDORA',
+        'EL MARQUES',
+        'EZEQUIEL MONTES',
+        'HUIMILPAN',
+        'JALPAN DE SERRA',
+        'LANDA DE MATAMOROS',
+        'PEDRO ESCOBEDO',
+        'PEÑON',
+        'PINAL DE AMOLES',
+        'QUERETARO',
+        'SAN JOAQUIN',
+        'SAN JUAN DEL RIO',
+        'TEQUISQUIAPAN',
+        'TOLIMAN',
+        'VILLA CORREGIDORA'
     ];
 }
 
@@ -327,6 +340,7 @@ function obtenerDatosMunicipioPrueba($municipio)
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -438,7 +452,8 @@ function obtenerDatosMunicipioPrueba($municipio)
             <div class="estadisticas-estado">
                 <div class="estado-header">
                     <h2><i class="fas fa-chart-bar"></i> Estadísticas del Estado de Querétaro</h2>
-                    <p><?php echo isset($infoCiclo['descripcion']) ? $infoCiclo['descripcion'] : 'Ciclo Escolar 2024-2025'; ?> - Totales Estatales</p>
+                    <p><?php echo isset($infoCiclo['descripcion']) ? $infoCiclo['descripcion'] : 'Ciclo Escolar 2024-2025'; ?>
+                        - Totales Estatales</p>
                 </div>
                 <div class="estado-stats-grid">
                     <div class="estado-stat-card">
@@ -498,20 +513,21 @@ function obtenerDatosMunicipioPrueba($municipio)
                 $tieneDatos = ($datosMunicipio['alumnos'] > 0 || $datosMunicipio['escuelas'] > 0);
                 $claseCard = $tieneDatos ? 'has-data' : 'no-data';
                 ?>
-                <div class="municipality-card <?php echo $claseCard; ?>" data-municipio="<?php echo htmlspecialchars($municipio, ENT_QUOTES, 'UTF-8'); ?>">
+                <div class="municipality-card <?php echo $claseCard; ?>"
+                    data-municipio="<?php echo htmlspecialchars($municipio, ENT_QUOTES, 'UTF-8'); ?>">
                     <!-- Checkbox de selección -->
                     <div class="municipality-checkbox">
                         <div class="checkbox-wrapper">
-                            <input type="checkbox" 
-                                   id="municipio_<?php echo htmlspecialchars($municipio, ENT_QUOTES, 'UTF-8'); ?>" 
-                                   class="municipality-selector" 
-                                   value="<?php echo htmlspecialchars($municipio, ENT_QUOTES, 'UTF-8'); ?>">
+                            <input type="checkbox"
+                                id="municipio_<?php echo htmlspecialchars($municipio, ENT_QUOTES, 'UTF-8'); ?>"
+                                class="municipality-selector"
+                                value="<?php echo htmlspecialchars($municipio, ENT_QUOTES, 'UTF-8'); ?>">
                             <label for="municipio_<?php echo htmlspecialchars($municipio, ENT_QUOTES, 'UTF-8'); ?>">
                                 Comparar
                             </label>
                         </div>
                     </div>
-                    
+
                     <div class="municipality-icon">
                         <i class="fas fa-city"></i>
                     </div>
@@ -590,7 +606,7 @@ function obtenerDatosMunicipioPrueba($municipio)
 
     <script>
         // Manejo de selección de municipios para comparación
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const checkboxes = document.querySelectorAll('.municipality-selector');
             const compareButton = document.getElementById('compareButton');
             const selectedCount = document.getElementById('selectedCount');
@@ -600,12 +616,12 @@ function obtenerDatosMunicipioPrueba($municipio)
             function updateCompareButton() {
                 const selectedCheckboxes = document.querySelectorAll('.municipality-selector:checked');
                 const count = selectedCheckboxes.length;
-                
+
                 selectedCount.textContent = count;
-                
+
                 if (count >= 2) {
                     compareButton.classList.add('show');
-                    
+
                     // Construir URL de comparación con hasta 3 municipios seleccionados
                     const params = new URLSearchParams();
                     for (let i = 0; i < Math.min(count, 3); i++) {
@@ -648,14 +664,14 @@ function obtenerDatosMunicipioPrueba($municipio)
 
             // Agregar event listeners a todos los checkboxes
             checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
+                checkbox.addEventListener('change', function () {
                     updateCompareButton();
                     updateCardStyles();
                 });
             });
 
             // Prevenir navegación si no hay municipios seleccionados
-            compareButton.addEventListener('click', function(e) {
+            compareButton.addEventListener('click', function (e) {
                 const selectedCheckboxes = document.querySelectorAll('.municipality-selector:checked');
                 if (selectedCheckboxes.length < 2) {
                     e.preventDefault();
@@ -670,13 +686,13 @@ function obtenerDatosMunicipioPrueba($municipio)
 
         // Funcionalidad adicional: Click en tarjeta también selecciona
         document.querySelectorAll('.municipality-card').forEach(card => {
-            card.addEventListener('click', function(e) {
+            card.addEventListener('click', function (e) {
                 // Solo si no se hizo click en el checkbox, link o label
-                if (!e.target.matches('input[type="checkbox"]') && 
-                    !e.target.matches('a') && 
+                if (!e.target.matches('input[type="checkbox"]') &&
+                    !e.target.matches('a') &&
                     !e.target.matches('label') &&
                     !e.target.closest('a')) {
-                    
+
                     const checkbox = this.querySelector('.municipality-selector');
                     if (!checkbox.disabled) {
                         checkbox.checked = !checkbox.checked;
@@ -687,7 +703,7 @@ function obtenerDatosMunicipioPrueba($municipio)
         });
 
         // Mejorar accesibilidad con teclado
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             // Tecla 'C' para abrir comparación si hay 2-3 seleccionados
             if (e.key.toLowerCase() === 'c' && !e.ctrlKey && !e.altKey) {
                 const selectedCheckboxes = document.querySelectorAll('.municipality-selector:checked');
@@ -695,7 +711,7 @@ function obtenerDatosMunicipioPrueba($municipio)
                     document.getElementById('compareButton').click();
                 }
             }
-            
+
             // Escape para limpiar selección
             if (e.key === 'Escape') {
                 document.querySelectorAll('.municipality-selector:checked').forEach(checkbox => {
@@ -706,9 +722,9 @@ function obtenerDatosMunicipioPrueba($municipio)
         });
 
         // Tooltip informativo
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const cards = document.querySelectorAll('.municipality-card');
-            
+
             cards.forEach(card => {
                 card.title = 'Click para seleccionar/deseleccionar municipio para comparación';
             });

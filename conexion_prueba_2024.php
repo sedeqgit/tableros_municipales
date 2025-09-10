@@ -720,28 +720,37 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
 
         case 'preescolar':
             return "SELECT 'PREESCOLAR' AS titulo_fila,
-                        SUM(V177+V97) AS total_matricula,
-                        SUM(V165+V85) AS mat_hombres,
-                        SUM(V171+V91) AS mat_mujeres,
-                        SUM(V867+V868+V859+V860+V795+V803+V796+V804+V151) AS total_docentes,
-                        SUM(V859+V868+V795+V803+V149) AS doc_hombres,
-                        SUM(V860+V868+V796+V804+V150) AS doc_mujeres,
+                        SUM(V177+V97+V478) AS total_matricula,
+                        SUM(V165+V85+V466) AS mat_hombres,
+                        SUM(V171+V91+V472) AS mat_mujeres,
+                        SUM(V867+V868+V859+V860+V795+V803+V796+V804+V151+V787+V513+V520+V527+V514+V521+V528) AS total_docentes,
+                        SUM(V859+V868+V795+V803+V149+V785+V513+V520+V527) AS doc_hombres,
+                        SUM(V860+V868+V796+V804+V150+V786+V514+V521+V528) AS doc_mujeres,
                         COUNT(cv_cct) AS escuelas,
-                        SUM(V182) AS grupos
+                        SUM(V182+V479) AS grupos
                     FROM (
                         SELECT cv_cct, c_nom_mun, control, V177,V165,V171,V867,V868,V859,V860,V182,
                                0 as V97, 0 as V85, 0 as V91, 0 as V151, 0 as V149, 0 as V150,
-                               0 as V795, 0 as V803, 0 as V796, 0 as V804
+                               0 as V795, 0 as V803, 0 as V796, 0 as V804,
+                               0 as V478, 0 as V466, 0 as V472, 0 as V787, 0 as V513, 0 as V520, 0 as V527,
+                               0 as V514, 0 as V521, 0 as V528, 0 as V785, 0 as V786, 0 as V479
                         FROM nonce_pano_$ini_ciclo.pree_gral_$ini_ciclo 
                         WHERE $filtroBase $filtro
                         UNION ALL
                         SELECT cv_cct, c_nom_mun, control, V177,V165,V171,0,0,0,0,V182,
-                               0,0,0,0,0,0,V795,V803,V796,V804
+                               0,0,0,0,0,0,V795,V803,V796,V804,
+                               0,0,0,0,0,0,0,0,0,0,0,0,0
                         FROM nonce_pano_$ini_ciclo.pree_ind_$ini_ciclo 
                         WHERE $filtroBase $filtro
                         UNION ALL
-                        SELECT cv_cct, c_nom_mun, control, 0,0,0,0,0,0,0,0,V97,V85,V91,V151,V149,V150,0,0,0,0
+                        SELECT cv_cct, c_nom_mun, control, 0,0,0,0,0,0,0,0,V97,V85,V91,V151,V149,V150,0,0,0,0,
+                               0,0,0,0,0,0,0,0,0,0,0,0,0
                         FROM nonce_pano_$ini_ciclo.pree_comuni_$ini_ciclo 
+                        WHERE $filtroBase $filtro
+                        UNION ALL
+                        SELECT cv_cct, c_nom_mun, control, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+                               V478,V466,V472,V787,V513,V520,V527,V514,V521,V528,V785,V786,V479
+                        FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo 
                         WHERE $filtroBase $filtro
                     ) AS preescolar";
 
