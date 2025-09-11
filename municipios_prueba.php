@@ -44,7 +44,6 @@ if (!$todosLosMunicipios || !is_array($todosLosMunicipios)) {
         'SAN JUAN DEL RIO',
         'TEQUISQUIAPAN',
         'TOLIMAN',
-        'VILLA CORREGIDORA'
     ];
 }
 
@@ -493,6 +492,9 @@ function obtenerDatosMunicipioPrueba($municipio)
                         <div class="estado-stat-label">Municipios</div>
                     </div>
                 </div>
+                <div class="estado-header" style="margin-top: 1rem; ">* En el total, se cuantifican escuelas, no planteles
+                    ni
+                    instituciones </div>
             </div>
         <?php else: ?>
             <div class="estadisticas-estado" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">

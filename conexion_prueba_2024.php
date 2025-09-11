@@ -2321,10 +2321,33 @@ function obtenerResumenEstadoCompleto($ini_ciclo = null)
             $secundaria["tot_doc"] + $media_sup["tot_doc"] +
             $superior["tot_doc"] + $especial["tot_doc"];
 
-        $total_escuelas = $inicial_esc["tot_esc"] + $inicial_no_esc["tot_esc"] +
-            $preescolar["tot_esc"] + $primaria["tot_esc"] +
-            $secundaria["tot_esc"] + $media_sup["tot_esc"] +
-            $superior["tot_esc"] + $especial["tot_esc"];
+        // CORRECCIÓN: Calcular escuelas municipio por municipio con ajustes bolsillo
+        // para aplicar los mismos ajustes de unidades superiores que se usan individualmente
+        $total_escuelas = 0;
+        $municipios_validos = obtenerMunicipiosPrueba2024();
+        
+        foreach ($municipios_validos as $municipio) {
+            $num_muni = nombre_a_numero_municipio($municipio);
+            $filtro_mun = ($num_muni !== false) ? " AND cv_mun='$num_muni' " : "";
+            
+            // Obtener datos básicos del municipio (sin llamar a obtenerResumenMunicipioCompleto para evitar recursión)
+            $inicial_esc_mun = rs_consulta_segura($link, "inicial_esc", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+            $inicial_no_esc_mun = rs_consulta_segura($link, "inicial_no_esc", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+            $preescolar_mun = rs_consulta_segura($link, "preescolar", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+            $primaria_mun = rs_consulta_segura($link, "primaria", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+            $secundaria_mun = rs_consulta_segura($link, "secundaria", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+            $media_sup_mun = rs_consulta_segura($link, "media_sup", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+            $superior_mun = rs_consulta_segura($link, "superior", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+            $especial_mun = rs_consulta_segura($link, "especial_tot", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+            
+            // Sumar escuelas del municipio (con ajustes de bolsillo incluidos en rs_consulta_segura)
+            $escuelas_municipio = $inicial_esc_mun["tot_esc"] + $inicial_no_esc_mun["tot_esc"] +
+                                 $preescolar_mun["tot_esc"] + $primaria_mun["tot_esc"] +
+                                 $secundaria_mun["tot_esc"] + $media_sup_mun["tot_esc"] +
+                                 $superior_mun["tot_esc"] + $especial_mun["tot_esc"];
+            
+            $total_escuelas += $escuelas_municipio;
+        }
 
         $resultado = [
             'total_matricula' => $total_matricula,
