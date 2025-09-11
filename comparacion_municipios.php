@@ -496,8 +496,8 @@ $infoCiclo = obtenerInfoCicloEscolar();
         </div>
 
         <!-- Botón de regreso -->
-        <a href="municipios_prueba.php" class="back-button">
-            <i class="fas fa-arrow-left"></i> Regresar a Municipios
+        <a href="home.php" class="back-button">
+            <i class="fas fa-arrow-left"></i> Regresar a home
         </a>
 
         <!-- Formulario de selección -->
