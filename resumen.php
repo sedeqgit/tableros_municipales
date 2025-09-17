@@ -5,21 +5,204 @@ require_once 'session_helper.php';
 // Iniciar sesión y configurar usuario de demo si es necesario
 iniciarSesionDemo();
 
-// Incluir archivo de conexión
-require_once 'conexion.php';
+// Incluir archivo de conexión actualizado
+require_once 'conexion_prueba_2024.php';
 
-// Obtener datos educativos desde la base de datos
-$datosEducativos = obtenerDatosEducativos();
+// Obtener el municipio desde el parámetro GET, por defecto Querétaro (municipio con más datos)
+$municipioSeleccionado = isset($_GET['municipio']) ? strtoupper(trim($_GET['municipio'])) : 'QUERÉTARO';
 
-// Obtener datos de docentes desde la base de datos
-$datosDocentes = obtenerDocentesPorNivel();
-$totalesDocentes = calcularTotalesDocentes($datosDocentes);
-$totalDocentes = $totalesDocentes['total'];
+// Validar que el municipio esté en la lista de municipios válidos
+$municipiosValidos = obtenerMunicipiosPrueba2024();
+if (!in_array($municipioSeleccionado, $municipiosValidos)) {
+    $municipioSeleccionado = 'QUERÉTARO'; // Fallback a Querétaro si el municipio no es válido
+}
 
-// Calcular totales para resumen
+// Obtener datos completos del municipio
+$datosCompletosMunicipio = obtenerResumenMunicipioCompleto($municipioSeleccionado);
+
+// Verificar si hay datos
+$hayError = !$datosCompletosMunicipio;
+$tieneDatos = $datosCompletosMunicipio &&
+    isset($datosCompletosMunicipio['total_matricula']) &&
+    $datosCompletosMunicipio['total_matricula'] > 0;
+
+// Inicializar variables por defecto
+$totalEscuelas = 0;
+$totalAlumnos = 0;
+$totalDocentes = 0;
+$datosEducativos = [['Tipo Educativo', 'Escuelas', 'Alumnos']];
+$datosDocentes = [['Nivel Educativo', 'Subnivel', 'Docentes']];
+
+if ($tieneDatos) {
+    // Extraer totales de manera segura y convertir a enteros
+    $totalEscuelas = isset($datosCompletosMunicipio['total_escuelas']) ? (int) $datosCompletosMunicipio['total_escuelas'] : 0;
+    $totalAlumnos = isset($datosCompletosMunicipio['total_matricula']) ? (int) $datosCompletosMunicipio['total_matricula'] : 0;
+    $totalDocentes = isset($datosCompletosMunicipio['total_docentes']) ? (int) $datosCompletosMunicipio['total_docentes'] : 0;
+
+    // Convertir datos al formato que espera el frontend (compatible con conexion.php)
+    $datosEducativos = [
+        ['Tipo Educativo', 'Escuelas', 'Alumnos']
+    ];
+
+    // Función auxiliar para obtener datos de manera segura y convertir a números
+    $obtenerDatoSeguro = function ($datos, $nivel, $campo, $default = 0) {
+        $valor = isset($datos[$nivel][$campo]) ? $datos[$nivel][$campo] : $default;
+        return is_numeric($valor) ? intval($valor) : $default;
+    };
+
+    // Solo agregar niveles que tengan datos
+    $inicialEscMat = $obtenerDatoSeguro($datosCompletosMunicipio, 'inicial_esc', 'tot_mat');
+    if ($inicialEscMat > 0) {
+        $datosEducativos[] = [
+            'Inicial (Escolarizado)',
+            $obtenerDatoSeguro($datosCompletosMunicipio, 'inicial_esc', 'tot_esc'),
+            $inicialEscMat
+        ];
+    }
+
+    $inicialNoEscMat = $obtenerDatoSeguro($datosCompletosMunicipio, 'inicial_no_esc', 'tot_mat');
+    if ($inicialNoEscMat > 0) {
+        $datosEducativos[] = [
+            'Inicial (No Escolarizado)',
+            $obtenerDatoSeguro($datosCompletosMunicipio, 'inicial_no_esc', 'tot_esc'),
+            $inicialNoEscMat
+        ];
+    }
+
+    $especialMat = $obtenerDatoSeguro($datosCompletosMunicipio, 'especial', 'tot_mat');
+    if ($especialMat > 0) {
+        $datosEducativos[] = [
+            'Especial',
+            $obtenerDatoSeguro($datosCompletosMunicipio, 'especial', 'tot_esc'),
+            $especialMat
+        ];
+    }
+
+    $preescolarMat = $obtenerDatoSeguro($datosCompletosMunicipio, 'preescolar', 'tot_mat');
+    if ($preescolarMat > 0) {
+        $datosEducativos[] = [
+            'Preescolar',
+            $obtenerDatoSeguro($datosCompletosMunicipio, 'preescolar', 'tot_esc'),
+            $preescolarMat
+        ];
+    }
+
+    $primariaMat = $obtenerDatoSeguro($datosCompletosMunicipio, 'primaria', 'tot_mat');
+    if ($primariaMat > 0) {
+        $datosEducativos[] = [
+            'Primaria',
+            $obtenerDatoSeguro($datosCompletosMunicipio, 'primaria', 'tot_esc'),
+            $primariaMat
+        ];
+    }
+
+    $secundariaMat = $obtenerDatoSeguro($datosCompletosMunicipio, 'secundaria', 'tot_mat');
+    if ($secundariaMat > 0) {
+        $datosEducativos[] = [
+            'Secundaria',
+            $obtenerDatoSeguro($datosCompletosMunicipio, 'secundaria', 'tot_esc'),
+            $secundariaMat
+        ];
+    }
+
+    $mediaSupMat = $obtenerDatoSeguro($datosCompletosMunicipio, 'media_sup', 'tot_mat');
+    if ($mediaSupMat > 0) {
+        $datosEducativos[] = [
+            'Media Superior',
+            $obtenerDatoSeguro($datosCompletosMunicipio, 'media_sup', 'tot_esc'),
+            $mediaSupMat
+        ];
+    }
+
+    $superiorMat = $obtenerDatoSeguro($datosCompletosMunicipio, 'superior', 'tot_mat');
+    if ($superiorMat > 0) {
+        $datosEducativos[] = [
+            'Superior',
+            $obtenerDatoSeguro($datosCompletosMunicipio, 'superior', 'tot_esc'),
+            $superiorMat
+        ];
+    }
+
+    // Convertir datos de docentes al formato esperado
+    $datosDocentes = [
+        ['Nivel Educativo', 'Subnivel', 'Docentes']
+    ];
+
+    // Solo agregar niveles que tengan docentes
+    $inicialEscDoc = $obtenerDatoSeguro($datosCompletosMunicipio, 'inicial_esc', 'tot_doc');
+    if ($inicialEscDoc > 0) {
+        $datosDocentes[] = ['Inicial Escolarizada', 'General', $inicialEscDoc];
+    }
+
+    $inicialNoEscDoc = $obtenerDatoSeguro($datosCompletosMunicipio, 'inicial_no_esc', 'tot_doc');
+    if ($inicialNoEscDoc > 0) {
+        $datosDocentes[] = ['Inicial No Escolarizada', 'Comunitario', $inicialNoEscDoc];
+    }
+
+    $especialDoc = $obtenerDatoSeguro($datosCompletosMunicipio, 'especial', 'tot_doc');
+    if ($especialDoc > 0) {
+        $datosDocentes[] = ['Especial', 'CAM/USAER', $especialDoc];
+    }
+
+    $preescolarDoc = $obtenerDatoSeguro($datosCompletosMunicipio, 'preescolar', 'tot_doc');
+    if ($preescolarDoc > 0) {
+        $datosDocentes[] = ['Preescolar', 'General', $preescolarDoc];
+    }
+
+    $primariaDoc = $obtenerDatoSeguro($datosCompletosMunicipio, 'primaria', 'tot_doc');
+    if ($primariaDoc > 0) {
+        $datosDocentes[] = ['Primaria', 'General', $primariaDoc];
+    }
+
+    $secundariaDoc = $obtenerDatoSeguro($datosCompletosMunicipio, 'secundaria', 'tot_doc');
+    if ($secundariaDoc > 0) {
+        $datosDocentes[] = ['Secundaria', 'General', $secundariaDoc];
+    }
+
+    $mediaSupDoc = $obtenerDatoSeguro($datosCompletosMunicipio, 'media_sup', 'tot_doc');
+    if ($mediaSupDoc > 0) {
+        $datosDocentes[] = ['Media Superior', 'Plantel', $mediaSupDoc];
+    }
+
+    $superiorDoc = $obtenerDatoSeguro($datosCompletosMunicipio, 'superior', 'tot_doc');
+    if ($superiorDoc > 0) {
+        $datosDocentes[] = ['Superior', 'Licenciatura', $superiorDoc];
+    }
+}
+
+// Funciones de compatibilidad para que el resto del código funcione igual
+function calcularTotales($datosEducativos)
+{
+    return [
+        'escuelas' => $GLOBALS['totalEscuelas'],
+        'alumnos' => $GLOBALS['totalAlumnos']
+    ];
+}
+
+function calcularTotalesDocentes($datosDocentes)
+{
+    return [
+        'total' => $GLOBALS['totalDocentes']
+    ];
+}
+
+/**
+ * Formatea nombres de municipios para display en formato título
+ */
+function formatearNombreMunicipio($municipio)
+{
+    // Convertir de mayúsculas a formato título
+    $formatted = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
+
+    // Correcciones específicas para preposiciones y artículos
+    $formatted = str_replace([' De ', ' Del ', ' El '], [' de ', ' del ', ' El '], $formatted);
+
+    return $formatted;
+}
+
+// Variables de compatibilidad
 $totales = calcularTotales($datosEducativos);
-$totalEscuelas = $totales['escuelas'];
-$totalAlumnos = $totales['alumnos'];
+$totalesDocentes = calcularTotalesDocentes($datosDocentes);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -27,7 +210,9 @@ $totalAlumnos = $totales['alumnos'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tablero Estadístico Educativo Corregidora | SEDEQ</title>
+    <title>Tablero Estadístico Educativo <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> - Ciclo
+        <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?> | SEDEQ
+    </title>
 
     <!-- ========================================== -->
     <!-- HOJAS DE ESTILO MODULARIZADAS             -->
@@ -75,7 +260,10 @@ $totalAlumnos = $totales['alumnos'];
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title">
-                <h1 class="section-title">Tablero Estadístico Educativo Querétaro Ciclo 2024 - 2025</h1>
+                <h1 class="section-title">Tablero Estadístico Educativo
+                    <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> - Ciclo
+                    <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?>
+                </h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -125,10 +313,9 @@ $totalAlumnos = $totales['alumnos'];
                         </div>
                         <div class="metric-details">
                             <h3 class="metric-title">Total Docentes <i class="fas fa-info-circle info-icon"
-                                    data-tooltip="NÚMERO TOTAL DE DOCENTES EN CORREGIDORA:
+                                    data-tooltip="NÚMERO TOTAL DE DOCENTES
                                 Distribuidos en todos los niveles educativos
-                                Desde educación inicial hasta superior
-                                Personal docente activo ciclo 2023-2024"></i>
+                                Desde educación inicial hasta superior"></i>
                             </h3>
                             <p class="metric-value"><?php echo number_format($totalDocentes, 0, '.', ','); ?></p>
                             <p class="metric-change">Ciclo escolar 2024-2025</p>
@@ -263,13 +450,32 @@ $totalAlumnos = $totales['alumnos'];
     </div> <!-- Script con datos desde PHP -->
     <script>
         <?php
+        // Debugging: Mostrar municipio seleccionado
+        echo "console.log('Municipio seleccionado: " . $municipioSeleccionado . "');\n";
+        echo "console.log('Tiene datos: " . ($tieneDatos ? 'true' : 'false') . "');\n";
+        echo "console.log('Total escuelas: " . $totalEscuelas . "');\n";
+        echo "console.log('Total alumnos: " . $totalAlumnos . "');\n";
+        echo "console.log('Total docentes: " . $totalDocentes . "');\n";
+
+        // Asegurar que tenemos al menos la estructura básica
+        if (count($datosEducativos) <= 1) {
+            // Si no hay datos, crear datos por defecto
+            $datosEducativos = [
+                ['Tipo Educativo', 'Escuelas', 'Alumnos'],
+                ['Sin datos', 0, 0]
+            ];
+        }
+
         // Convertir a formato JSON para usar en JavaScript
-        echo "const datosEducativos = " . json_encode($datosEducativos) . ";\n";
+        echo "const datosEducativos = " . json_encode($datosEducativos, JSON_NUMERIC_CHECK) . ";\n";
         echo "const totalEscuelas = " . $totalEscuelas . ";\n";
         echo "const totalAlumnos = " . $totalAlumnos . ";\n";
+        echo "const totalDocentes = " . $totalDocentes . ";\n";
         echo "const totalEscuelasFormateado = '" . number_format($totalEscuelas, 0, '.', ',') . "';\n";
         echo "const totalAlumnosFormateado = '" . number_format($totalAlumnos, 0, '.', ',') . "';\n";
-        ?>   
+        echo "const totalDocentesFormateado = '" . number_format($totalDocentes, 0, '.', ',') . "';\n";
+        ?>
+
     </script>
 
     <!-- Script para manejar el modal de exportación -->

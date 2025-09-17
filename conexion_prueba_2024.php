@@ -4,10 +4,7 @@
  * CONEXIÓN DE PRUEBA REESTRUCTURADA - BASADA EN BOLSILLO (1)(1).PHP
  * Sistema de Dashboard Estadístico - SEDEQ Corregidora
  * =============================================================================
- * 
- * Este archivo replica exactamente la estructura y consultas del archivo bolsillo
- * pero con parámetros seguros y estructura moderna para consultas dinámicas
- * por municipio.
+ *
  * 
  * @author Sistema SEDEQ
  * @version 2.0.0
@@ -2325,11 +2322,11 @@ function obtenerResumenEstadoCompleto($ini_ciclo = null)
         // para aplicar los mismos ajustes de unidades superiores que se usan individualmente
         $total_escuelas = 0;
         $municipios_validos = obtenerMunicipiosPrueba2024();
-        
+
         foreach ($municipios_validos as $municipio) {
             $num_muni = nombre_a_numero_municipio($municipio);
             $filtro_mun = ($num_muni !== false) ? " AND cv_mun='$num_muni' " : "";
-            
+
             // Obtener datos básicos del municipio (sin llamar a obtenerResumenMunicipioCompleto para evitar recursión)
             $inicial_esc_mun = rs_consulta_segura($link, "inicial_esc", $ini_ciclo, $filtro_mun) ?: datos_vacion();
             $inicial_no_esc_mun = rs_consulta_segura($link, "inicial_no_esc", $ini_ciclo, $filtro_mun) ?: datos_vacion();
@@ -2339,13 +2336,13 @@ function obtenerResumenEstadoCompleto($ini_ciclo = null)
             $media_sup_mun = rs_consulta_segura($link, "media_sup", $ini_ciclo, $filtro_mun) ?: datos_vacion();
             $superior_mun = rs_consulta_segura($link, "superior", $ini_ciclo, $filtro_mun) ?: datos_vacion();
             $especial_mun = rs_consulta_segura($link, "especial_tot", $ini_ciclo, $filtro_mun) ?: datos_vacion();
-            
+
             // Sumar escuelas del municipio (con ajustes de bolsillo incluidos en rs_consulta_segura)
             $escuelas_municipio = $inicial_esc_mun["tot_esc"] + $inicial_no_esc_mun["tot_esc"] +
-                                 $preescolar_mun["tot_esc"] + $primaria_mun["tot_esc"] +
-                                 $secundaria_mun["tot_esc"] + $media_sup_mun["tot_esc"] +
-                                 $superior_mun["tot_esc"] + $especial_mun["tot_esc"];
-            
+                $preescolar_mun["tot_esc"] + $primaria_mun["tot_esc"] +
+                $secundaria_mun["tot_esc"] + $media_sup_mun["tot_esc"] +
+                $superior_mun["tot_esc"] + $especial_mun["tot_esc"];
+
             $total_escuelas += $escuelas_municipio;
         }
 
