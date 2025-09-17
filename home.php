@@ -89,13 +89,11 @@ if (!$datosEstado || !is_array($datosEstado)) {
 $todosLosMunicipiosOrdenados = $todosLosMunicipios;
 sort($todosLosMunicipiosOrdenados);
 
-// Definir municipios principales que se mostrarán inicialmente (mantener funcionalidad existente)
-$municipiosPrincipales = ['QUERÉTARO', 'CORREGIDORA', 'EL MARQUÉS', 'SAN JUAN DEL RÍO'];
+// Tomar los primeros 4 municipios ordenados para mostrar inicialmente
+$municipiosPrincipales = array_slice($todosLosMunicipios, 0, 4);
 
-// Filtrar municipios adicionales (excluyendo los principales)
-$municipiosAdicionales = array_filter($todosLosMunicipios, function ($municipio) use ($municipiosPrincipales) {
-    return !in_array(strtoupper($municipio), $municipiosPrincipales);
-});
+// Filtrar municipios adicionales (excluyendo los primeros 4)
+$municipiosAdicionales = array_slice($todosLosMunicipios, 4);
 
 /**
  * Formatea nombres de municipios para display en formato título
@@ -460,9 +458,6 @@ function obtenerDatosMunicipio($municipio)
                     <li class="nav-item">
                         <a href="settings.php"><i class="fas fa-cog"></i> <span>Configuración</span></a>
                     </li>
-                    <li class="nav-item">
-                        <a href="resumen.php"><i class="fas fa-file-alt"></i> <span>Resumen Querétaro</span></a>
-                    </li>
                 </ul>
             </nav>
             <!-- Pie de la barra lateral con opción de logout -->
@@ -545,21 +540,21 @@ function obtenerDatosMunicipio($municipio)
                         <div class="estado-stats-grid">
                             <div class="estado-stat-card">
                                 <div class="estado-stat-icon">
+                                    <i class="fas fa-school"></i>
+                                </div>
+                                <div class="estado-stat-number">
+                                    <?php echo number_format(isset($datosEstado['total_escuelas']) ? $datosEstado['total_escuelas'] : 0, 0, '.', ','); ?>
+                                </div>
+                                <div class="estado-stat-label">Escuelas * </div>
+                            </div>
+                            <div class="estado-stat-card">
+                                <div class="estado-stat-icon">
                                     <i class="fas fa-user-graduate"></i>
                                 </div>
                                 <div class="estado-stat-number">
                                     <?php echo number_format(isset($datosEstado['total_matricula']) ? $datosEstado['total_matricula'] : 0, 0, '.', ','); ?>
                                 </div>
                                 <div class="estado-stat-label">Alumnos</div>
-                            </div>
-                            <div class="estado-stat-card">
-                                <div class="estado-stat-icon">
-                                    <i class="fas fa-school"></i>
-                                </div>
-                                <div class="estado-stat-number">
-                                    <?php echo number_format(isset($datosEstado['total_escuelas']) ? $datosEstado['total_escuelas'] : 0, 0, '.', ','); ?>
-                                </div>
-                                <div class="estado-stat-label">Escuelas</div>
                             </div>
                             <div class="estado-stat-card">
                                 <div class="estado-stat-icon">
@@ -571,7 +566,8 @@ function obtenerDatosMunicipio($municipio)
                                 <div class="estado-stat-label">Docentes</div>
                             </div>
                         </div>
-                        <div class="estado-note">* En el total, se cuantifican escuelas, no planteles ni instituciones</div>
+                        <div class="estado-note">* En el total de las escuelas, no se cuantifican planteles ni instituciones
+                        </div>
                     </section>
                 <?php endif; ?>
 
@@ -628,16 +624,16 @@ function obtenerDatosMunicipio($municipio)
                                         </div>
                                     </div>
                                 </div>
-                                <a href="prueba_consultas_2024.php?municipio=<?php echo urlencode($municipio); ?>"
+                                <a href="resumen.php?municipio=<?php echo urlencode($municipio); ?>"
                                     class="municipality-link">
-                                    Ver Datos Detallados <i class="fas fa-arrow-right"></i>
+                                    Ver Tablero <i class="fas fa-arrow-right"></i>
                                 </a>
                             </div>
                             <?php
                         }
                         ?>
 
-                        <!-- Municipios adicionales (ocultos inicialmente, pero con datos reales) -->
+                        <!-- Municipios adicionales -->
                         <?php
                         if (!empty($municipiosAdicionales)) {
                             foreach ($municipiosAdicionales as $municipio) {
@@ -686,9 +682,9 @@ function obtenerDatosMunicipio($municipio)
                                             </div>
                                         </div>
                                     </div>
-                                    <a href="prueba_consultas_2024.php?municipio=<?php echo urlencode($municipio); ?>"
+                                    <a href="resumen.php?municipio=<?php echo urlencode($municipio); ?>"
                                         class="municipality-link">
-                                        Ver Datos Detallados <i class="fas fa-arrow-right"></i>
+                                        Ver Tablero <i class="fas fa-arrow-right"></i>
                                     </a>
                                 </div>
                                 <?php

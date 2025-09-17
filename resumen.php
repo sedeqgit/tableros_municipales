@@ -251,6 +251,11 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
             <!-- <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
                     Históricos</span></a> -->
         </div>
+        <div class="sidebar-footer">
+            <a href="logout.php" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
+            </a>
+        </div>
     </div>
     </div>
 
@@ -278,20 +283,6 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                     <h2 class="panel-title"><i class="fas fa-info-circle"></i> Resumen Ejecutivo</h2>
                 </div>
                 <div class="card-body">
-                    <div class="metric animate-left delay-1">
-                        <div class="metric-icon decline">
-                            <i class="fas fa-user-graduate"></i>
-                        </div>
-                        <div class="metric-details">
-                            <h3 class="metric-title">Total Alumnos <i class="fas fa-info-circle info-icon"
-                                    data-tooltip="* Los datos de alumnos y escuelas de los servicios USAER no se suman en básica ya que se cuentan en los niveles correspondientes."></i>
-                            </h3>
-                            <p class="metric-value" id="metricDecline">
-                                <?php echo number_format($totalAlumnos, 0, '.', ','); ?>
-                            </p>
-                            <p class="metric-change" id="metricDeclineChange">Ciclo escolar 2024-2025</p>
-                        </div>
-                    </div>
                     <div class="metric animate-left delay-2">
                         <div class="metric-icon growth">
                             <i class="fas fa-school"></i>
@@ -305,6 +296,20 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                 <?php echo number_format($totalEscuelas, 0, '.', ','); ?>
                             </p>
                             <p class="metric-change" id="metricGrowthChange">Ciclo escolar 2024-2025</p>
+                        </div>
+                    </div>
+                    <div class="metric animate-left delay-1">
+                        <div class="metric-icon decline">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="metric-details">
+                            <h3 class="metric-title">Total Alumnos <i class="fas fa-info-circle info-icon"
+                                    data-tooltip="* Los datos de alumnos y escuelas de los servicios USAER no se suman en básica ya que se cuentan en los niveles correspondientes."></i>
+                            </h3>
+                            <p class="metric-value" id="metricDecline">
+                                <?php echo number_format($totalAlumnos, 0, '.', ','); ?>
+                            </p>
+                            <p class="metric-change" id="metricDeclineChange">Ciclo escolar 2024-2025</p>
                         </div>
                     </div>
                     <div class="metric">
@@ -323,6 +328,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                     </div>
                 </div>
             </div>
+
             <div class="card analysis-card animate-fade delay-3">
                 <div class="card-header">
                     <h2 class="panel-title"><i class="fas fa-analytics"></i> Análisis de Tendencias</h2>
@@ -412,6 +418,145 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                     </table>
                 </div>
             </div>
+        </div>
+
+        <!-- Sección de Datos Detallados por Categoría -->
+        <div class="datos-section-title">
+            <h2>Desglose Detallado por Nivel Educativo</h2>
+            <p>Distribución específica de escuelas, alumnos y docentes según el nivel educativo</p>
+        </div>
+
+        <!-- Grid de tarjetas de datos detallados -->
+        <div class="datos-grid">
+            <?php if ($tieneDatos): ?>
+                <!-- Tarjeta de Escuelas -->
+                <div class="datos-card escuelas-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-school"></i>
+                        </div>
+                        <h3 class="card-title">Escuelas</h3>
+                    </div>
+                    <div class="card-subtitle">No incluye USAER</div>
+                    <div class="total-general">
+                        <?php echo number_format($totalEscuelas, 0, '.', ','); ?>
+                    </div>
+                    <div class="detalles-niveles">
+                        <?php
+                        // Mostrar detalles por nivel educativo para escuelas
+                        $nivelesEscuelas = [
+                            'inicial_esc' => 'Inicial (Escolarizada)',
+                            'inicial_no_esc' => 'Inicial (No Escolarizada)',
+                            'especial' => 'Especial (CAM)',
+                            'preescolar' => 'Preescolar',
+                            'primaria' => 'Primaria',
+                            'secundaria' => 'Secundaria',
+                            'media_sup' => 'Media Superior',
+                            'superior' => 'Superior'
+                        ];
+
+                        foreach ($nivelesEscuelas as $nivel => $nombre) {
+                            $cantidad = $obtenerDatoSeguro($datosCompletosMunicipio, $nivel, 'tot_esc');
+                            if ($cantidad > 0) {
+                                echo "<div class='detalle-nivel'>";
+                                echo "<span class='nivel-nombre'>" . htmlspecialchars($nombre) . "</span>";
+                                echo "<span class='nivel-cantidad'>" . number_format($cantidad, 0, '.', ',') . "</span>";
+                                echo "</div>";
+                            }
+                        }
+                        ?>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de Alumnos -->
+                <div class="datos-card alumnos-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <h3 class="card-title">Alumnos</h3>
+                    </div>
+                    <div class="card-subtitle">No incluye USAER</div>
+                    <div class="total-general">
+                        <?php echo number_format($totalAlumnos, 0, '.', ','); ?>
+                    </div>
+                    <div class="detalles-niveles">
+                        <?php
+                        // Mostrar detalles por nivel educativo para alumnos
+                        $nivelesAlumnos = [
+                            'inicial_esc' => 'Inicial (Escolarizada)',
+                            'inicial_no_esc' => 'Inicial (No Escolarizada)',
+                            'especial' => 'Especial (CAM)',
+                            'preescolar' => 'Preescolar',
+                            'primaria' => 'Primaria',
+                            'secundaria' => 'Secundaria',
+                            'media_sup' => 'Media Superior',
+                            'superior' => 'Superior'
+                        ];
+
+                        foreach ($nivelesAlumnos as $nivel => $nombre) {
+                            $cantidad = $obtenerDatoSeguro($datosCompletosMunicipio, $nivel, 'tot_mat');
+                            if ($cantidad > 0) {
+                                echo "<div class='detalle-nivel'>";
+                                echo "<span class='nivel-nombre'>" . htmlspecialchars($nombre) . "</span>";
+                                echo "<span class='nivel-cantidad'>" . number_format($cantidad, 0, '.', ',') . "</span>";
+                                echo "</div>";
+                            }
+                        }
+                        ?>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de Docentes -->
+                <div class="datos-card docentes-card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <h3 class="card-title">Docentes</h3>
+                    </div>
+                    <div class="card-subtitle">Incluye todos los niveles educativos</div>
+                    <div class="total-general">
+                        <?php echo number_format($totalDocentes, 0, '.', ','); ?>
+                    </div>
+                    <div class="detalles-niveles">
+                        <?php
+                        // Mostrar detalles por nivel educativo para docentes
+                        $nivelesDocentes = [
+                            'inicial_esc' => 'Inicial (Escolarizada)',
+                            'inicial_no_esc' => 'Inicial (No Escolarizada)',
+                            'especial' => 'Especial (CAM)',
+                            'preescolar' => 'Preescolar',
+                            'primaria' => 'Primaria',
+                            'secundaria' => 'Secundaria',
+                            'media_sup' => 'Media Superior',
+                            'superior' => 'Superior'
+                        ];
+
+                        foreach ($nivelesDocentes as $nivel => $nombre) {
+                            $cantidad = $obtenerDatoSeguro($datosCompletosMunicipio, $nivel, 'tot_doc');
+                            if ($cantidad > 0) {
+                                echo "<div class='detalle-nivel'>";
+                                echo "<span class='nivel-nombre'>" . htmlspecialchars($nombre) . "</span>";
+                                echo "<span class='nivel-cantidad'>" . number_format($cantidad, 0, '.', ',') . "</span>";
+                                echo "</div>";
+                            }
+                        }
+                        ?>
+                    </div>
+                </div>
+            <?php else: ?>
+                <!-- Mensaje cuando no hay datos -->
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                    <div
+                        style="background-color: #fff3cd; color: #856404; padding: 20px; border-radius: 10px; border-left: 4px solid #ffc107;">
+                        <i class="fas fa-info-circle" style="font-size: 1.5rem; margin-bottom: 10px;"></i>
+                        <h3>No hay datos disponibles</h3>
+                        <p>No se encontraron datos para el municipio de
+                            <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> en el ciclo escolar actual.</p>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
 
         <footer class="dashboard-footer">
