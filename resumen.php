@@ -242,7 +242,27 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
         </div>
         <div class="sidebar-links">
             <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
-            <a href="resumen.php" class="sidebar-link active"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
+            <div class="sidebar-link-with-submenu">
+                <a href="resumen.php" class="sidebar-link active has-submenu">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Resumen</span>
+                    <i class="fas fa-chevron-down submenu-arrow"></i>
+                </a>
+                <div class="submenu active">
+                    <a href="#resumen-ejecutivo" class="submenu-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Resumen Ejecutivo</span>
+                    </a>
+                    <a href="#desglose-detallado" class="submenu-link">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Desglose Detallado por Nivel</span>
+                    </a>
+                    <a href="#publico-privado" class="submenu-link">
+                        <i class="fas fa-balance-scale"></i>
+                        <span>Desglose Público vs Privado</span>
+                    </a>
+                </div>
+            </div>
             <a href="alumnos.php" class="sidebar-link"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
             <a href="escuelas_detalle.php" class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
             <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i>
@@ -277,7 +297,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                 </div>
             </div>
         </div>
-        <div class="dashboard-grid">
+        <div id="resumen-ejecutivo" class="dashboard-grid">
             <div class="card summary-card animate-fade">
                 <div class="card-header">
                     <h2 class="panel-title"><i class="fas fa-info-circle"></i> Resumen Ejecutivo</h2>
@@ -325,6 +345,10 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                             <p class="metric-value"><?php echo number_format($totalDocentes, 0, '.', ','); ?></p>
                             <p class="metric-change">Ciclo escolar 2024-2025</p>
                         </div>
+                    </div>
+
+                    <div class="class metric">
+                        <div class="class metric-details"></div>
                     </div>
                 </div>
             </div>
@@ -421,7 +445,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
         </div>
 
         <!-- Sección de Datos Detallados por Categoría -->
-        <div class="datos-section-title">
+        <div id="desglose-detallado" class="datos-section-title">
             <h2>Desglose Detallado por Nivel Educativo</h2>
             <p>Distribución específica de escuelas, alumnos y docentes según el nivel educativo</p>
         </div>
@@ -553,8 +577,111 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                         <i class="fas fa-info-circle" style="font-size: 1.5rem; margin-bottom: 10px;"></i>
                         <h3>No hay datos disponibles</h3>
                         <p>No se encontraron datos para el municipio de
-                            <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> en el ciclo escolar actual.</p>
+                            <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> en el ciclo escolar actual.
+                        </p>
                     </div>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Sección de Desglose Público vs Privado -->
+        <div id="publico-privado" class="publico-privado-section">
+            <h2 class="publico-privado-title">
+                <i class="fas fa-chart-pie"></i> Desglose Público vs Privado
+            </h2>
+
+            <?php
+            // Obtener datos con desglose público/privado
+            $datosPublicoPrivado = obtenerDatosPublicoPrivado($municipioSeleccionado);
+            ?>
+
+            <?php if (!empty($datosPublicoPrivado)): ?>
+                <div class="datos-grid">
+                    <?php foreach ($datosPublicoPrivado as $nivel => $datos): ?>
+                        <div class="publico-privado-card">
+                            <div class="publico-privado-header">
+                                <div class="card-icon">
+                                    <i class="fas fa-school"></i>
+                                </div>
+                                <h3 class="card-title">
+                                    <?php echo htmlspecialchars($datos['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?>
+                                </h3>
+                            </div>
+
+                            <!-- Totales -->
+                            <div class="totales-generales">
+                                <div class="total-escuelas">
+                                    Total: <?php echo number_format($datos['tot_esc'], 0, '.', ','); ?> escuelas
+                                </div>
+                                <div class="total-secundarios">
+                                    <?php echo number_format($datos['tot_mat'], 0, '.', ','); ?> alumnos |
+                                    <?php echo number_format($datos['tot_doc'], 0, '.', ','); ?> docentes
+                                </div>
+                            </div>
+
+                            <!-- Desglose Público/Privado -->
+                            <div class="publico-privado-grid">
+                                <!-- Públicas -->
+                                <div class="publico-card">
+                                    <h4>
+                                        <i class="fas fa-university"></i> Públicas
+                                    </h4>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datos['tot_esc_pub'], 0, '.', ','); ?> escuelas
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datos['tot_esc'] > 0 ? round(($datos['tot_esc_pub'] / $datos['tot_esc']) * 100, 1) : 0; ?>%
+
+                                    </div>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datos['tot_mat_pub'], 0, '.', ','); ?> alumnos
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datos['tot_mat'] > 0 ? round(($datos['tot_mat_pub'] / $datos['tot_mat']) * 100, 1) : 0; ?>%<br>
+                                    </div>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datos['tot_doc_pub'], 0, '.', ','); ?> docentes
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datos['tot_doc'] > 0 ? round(($datos['tot_doc_pub'] / $datos['tot_doc']) * 100, 1) : 0; ?>%
+                                    </div>
+                                </div>
+
+                                <!-- Privadas -->
+                                <div class="privado-card">
+                                    <h4>
+                                        <i class="fas fa-building"></i> Privadas
+                                    </h4>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datos['tot_esc_priv'], 0, '.', ','); ?> escuelas
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datos['tot_esc'] > 0 ? round(($datos['tot_esc_priv'] / $datos['tot_esc']) * 100, 1) : 0; ?>%
+                                    </div>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datos['tot_mat_priv'], 0, '.', ','); ?> alumnos
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datos['tot_mat'] > 0 ? round(($datos['tot_mat_priv'] / $datos['tot_mat']) * 100, 1) : 0; ?>%<br>
+                                    </div>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datos['tot_doc_priv'], 0, '.', ','); ?> docentes
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datos['tot_doc'] > 0 ? round(($datos['tot_doc_priv'] / $datos['tot_doc']) * 100, 1) : 0; ?>%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <div class="publico-privado-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>No hay datos disponibles</h3>
+                    <p>No se pudieron obtener datos de desglose público/privado para el municipio de
+                        <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>.
+                    </p>
                 </div>
             <?php endif; ?>
         </div>
