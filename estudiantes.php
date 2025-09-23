@@ -128,6 +128,33 @@ if (count($años) >= 2) {
                 <span>Docentes</span></a>
             <a href="estudiantes.php" class="sidebar-link active"><i class="fas fa-history"></i>
                 <span>Históricos</span></a>
+
+            <!-- Submenú Dinámico para Navegación entre Municipios -->
+            <div class="submenu-container">
+                <div class="submenu-header">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Municipios Disponibles</span>
+                </div>
+                <div class="submenu-links">
+                    <a href="estudiantes.php?municipio=1" class="submenu-link" data-municipio="1">
+                        <i class="fas fa-circle submenu-indicator"></i>
+                        <span>El Marqués</span>
+                    </a>
+                    <a href="estudiantes.php?municipio=2" class="submenu-link" data-municipio="2">
+                        <i class="fas fa-circle submenu-indicator"></i>
+                        <span>Querétaro</span>
+                    </a>
+                    <a href="estudiantes.php?municipio=14" class="submenu-link" data-municipio="14">
+                        <i class="fas fa-circle submenu-indicator"></i>
+                        <span>Corregidora</span>
+                    </a>
+                    <a href="estudiantes.php?municipio=18" class="submenu-link" data-municipio="18">
+                        <i class="fas fa-circle submenu-indicator"></i>
+                        <span>Huimilpan</span>
+                    </a>
+                </div>
+            </div>
+
             <!-- <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
                     Históricos</span></a> -->
         </div>
@@ -276,6 +303,47 @@ if (count($años) >= 2) {
     <script src="./js/estudiantes.js"></script>
     <script src="./js/animations_global.js"></script>
     <script src="./js/sidebar.js"></script>
+
+    <!-- Script para Persistencia de Municipio en Submenú -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtener municipio actual de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const municipioActual = urlParams.get('municipio') || '14'; // Corregidora por defecto
+
+            // Marcar el municipio activo en el submenú
+            const submenuLinks = document.querySelectorAll('.submenu-link');
+            submenuLinks.forEach(link => {
+                const municipioLink = link.getAttribute('data-municipio');
+                if (municipioLink === municipioActual) {
+                    link.classList.add('active');
+                    // Cambiar el indicador visual
+                    const indicator = link.querySelector('.submenu-indicator');
+                    if (indicator) {
+                        indicator.style.color = '#10b981';
+                    }
+                } else {
+                    link.classList.remove('active');
+                    const indicator = link.querySelector('.submenu-indicator');
+                    if (indicator) {
+                        indicator.style.color = '#6b7280';
+                    }
+                }
+            });
+
+            // Propagar municipio a otros enlaces del sidebar
+            const sidebarLinks = document.querySelectorAll('.sidebar-link:not(.submenu-link)');
+            sidebarLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href !== '#' && !href.includes('home.php') && href.includes('.php')) {
+                    // Agregar o actualizar parámetro municipio
+                    const url = new URL(href, window.location.origin + window.location.pathname);
+                    url.searchParams.set('municipio', municipioActual);
+                    link.setAttribute('href', url.pathname + url.search);
+                }
+            });
+        });
+    </script>
 
 </body>
 

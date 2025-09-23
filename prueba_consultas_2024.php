@@ -629,6 +629,74 @@ function formatearNumero($numero)
             ?>
 
             <?php if (!empty($datosPublicoPrivado)): ?>
+                <!-- Tarjetas de resumen total público/privado -->
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px;">
+                    <?php
+                    // Calcular totales generales
+                    $totalAlumnosGeneral = 0;
+                    $totalAlumnosPublicos = 0;
+                    $totalAlumnosPrivados = 0;
+
+                    foreach ($datosPublicoPrivado as $datos) {
+                        $totalAlumnosGeneral += $datos['tot_mat'];
+                        $totalAlumnosPublicos += $datos['tot_mat_pub'];
+                        $totalAlumnosPrivados += $datos['tot_mat_priv'];
+                    }
+                    ?>
+
+                    <!-- Tarjeta Total General -->
+                    <div
+                        style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 5px solid var(--primary-blue);">
+                        <div style="color: var(--primary-blue); margin-bottom: 15px;">
+                            <i class="fas fa-users" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h3 style="color: var(--primary-blue); margin-bottom: 10px; font-size: 1.3rem;">Total Alumnos</h3>
+                        <div style="font-size: 2.8rem; font-weight: bold; color: var(--primary-blue); margin-bottom: 10px;">
+                            <?php echo formatearNumero($totalAlumnosGeneral); ?>
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                            Todos los niveles educativos
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta Alumnos Públicos -->
+                    <div
+                        style="background: linear-gradient(135deg, #e8f5e8, #d4edda); border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 5px solid #28a745;">
+                        <div style="color: #28a745; margin-bottom: 15px;">
+                            <i class="fas fa-university" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h3 style="color: #28a745; margin-bottom: 10px; font-size: 1.3rem;">Alumnos Públicos</h3>
+                        <div style="font-size: 2.8rem; font-weight: bold; color: #28a745; margin-bottom: 10px;">
+                            <?php echo formatearNumero($totalAlumnosPublicos); ?>
+                        </div>
+                        <div style="color: #6c757d; font-size: 0.9rem;">
+                            <?php echo $totalAlumnosGeneral > 0 ? round(($totalAlumnosPublicos / $totalAlumnosGeneral) * 100, 1) : 0; ?>%
+                            del total
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta Alumnos Privados -->
+                    <div
+                        style="background: linear-gradient(135deg, #fff3cd, #ffeaa7); border-radius: 12px; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-left: 5px solid #ffc107;">
+                        <div style="color: #856404; margin-bottom: 15px;">
+                            <i class="fas fa-building" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h3 style="color: #856404; margin-bottom: 10px; font-size: 1.3rem;">Alumnos Privados</h3>
+                        <div style="font-size: 2.8rem; font-weight: bold; color: #856404; margin-bottom: 10px;">
+                            <?php echo formatearNumero($totalAlumnosPrivados); ?>
+                        </div>
+                        <div style="color: #6c757d; font-size: 0.9rem;">
+                            <?php echo $totalAlumnosGeneral > 0 ? round(($totalAlumnosPrivados / $totalAlumnosGeneral) * 100, 1) : 0; ?>%
+                            del total
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desglose por nivel educativo -->
+                <h3 style="text-align: center; margin-bottom: 25px; color: var(--text-primary);">
+                    <i class="fas fa-chart-bar"></i> Desglose por Nivel Educativo
+                </h3>
                 <div class="datos-grid">
                     <?php foreach ($datosPublicoPrivado as $nivel => $datos): ?>
                         <div class="datos-card">

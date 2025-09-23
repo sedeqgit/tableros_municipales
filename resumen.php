@@ -243,7 +243,8 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
         <div class="sidebar-links">
             <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
             <div class="sidebar-link-with-submenu">
-                <a href="resumen.php" class="sidebar-link active has-submenu">
+                <a href="resumen.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>"
+                    class="sidebar-link active has-submenu">
                     <i class="fas fa-chart-bar"></i>
                     <span>Resumen</span>
                     <i class="fas fa-chevron-down submenu-arrow"></i>
@@ -271,11 +272,15 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                     </a>
                 </div>
             </div>
-            <a href="alumnos.php" class="sidebar-link"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
-            <a href="escuelas_detalle.php" class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
-            <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i>
+            <a href="alumnos.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>" class="sidebar-link"><i
+                    class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
+            <a href="escuelas_detalle.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>"
+                class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
+            <a href="docentes.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>" class="sidebar-link"><i
+                    class="fas fa-chalkboard-teacher"></i>
                 <span>Docentes</span></a>
-            <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
+            <a href="estudiantes.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>" class="sidebar-link"><i
+                    class="fas fa-history"></i> <span>Históricos</span></a>
             <!-- <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
                     Históricos</span></a> -->
         </div>

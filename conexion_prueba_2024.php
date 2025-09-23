@@ -1463,12 +1463,12 @@ function obtenerDatosPublicoPrivado($municipio = 'CORREGIDORA', $ini_ciclo = nul
         $niveles_educativos = [
             'inicial_esc' => 'INICIAL ESCOLARIZADA',
             'inicial_no_esc' => 'INICIAL NO ESCOLARIZADA',
+            'especial_tot' => 'ESPECIAL (CAM)',
             'preescolar' => 'PREESCOLAR',
             'primaria' => 'PRIMARIA',
             'secundaria' => 'SECUNDARIA',
             'media_sup' => 'MEDIA SUPERIOR',
-            'superior' => 'SUPERIOR',
-            'especial_tot' => 'ESPECIAL TOTAL'
+            'superior' => 'SUPERIOR'
         ];
         $datos_consolidados = [];
 
