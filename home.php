@@ -89,13 +89,11 @@ if (!$datosEstado || !is_array($datosEstado)) {
 $todosLosMunicipiosOrdenados = $todosLosMunicipios;
 sort($todosLosMunicipiosOrdenados);
 
-// Definir municipios principales que se mostrarán inicialmente (mantener funcionalidad existente)
-$municipiosPrincipales = ['QUERÉTARO', 'CORREGIDORA', 'EL MARQUÉS', 'SAN JUAN DEL RÍO'];
+// Obtener los primeros 4 municipios del estado (ordenados alfabéticamente)
+$primerosCuatroMunicipios = array_slice($todosLosMunicipiosOrdenados, 0, 4);
 
-// Filtrar municipios adicionales (excluyendo los principales)
-$municipiosAdicionales = array_filter($todosLosMunicipios, function ($municipio) use ($municipiosPrincipales) {
-    return !in_array(strtoupper($municipio), $municipiosPrincipales);
-});
+// Filtrar municipios adicionales (excluyendo los primeros 4)
+$municipiosAdicionales = array_slice($todosLosMunicipiosOrdenados, 4);
 
 /**
  * Formatea nombres de municipios para display en formato título
@@ -576,11 +574,11 @@ function obtenerDatosMunicipio($municipio)
                 <section class="dashboard-section animate-up delay-3">
                     <h2 class="section-title"><i class="fas fa-map-marker-alt"></i> Tableros por Municipio</h2>
 
-                    <!-- Grid de municipios principales (mostrados inicialmente) -->
+                    <!-- Grid de los primeros 4 municipios del estado (mostrados inicialmente) -->
                     <div class="dashboard-grid animate-sequence">
                         <?php
-                        // Generar tarjetas para municipios principales con datos reales
-                        foreach ($municipiosPrincipales as $municipio) {
+                        // Generar tarjetas para los primeros 4 municipios con datos reales
+                        foreach ($primerosCuatroMunicipios as $municipio) {
                             $municipioNormalizado = formatearNombreMunicipio($municipio);
                             $datosMunicipio = obtenerDatosMunicipio($municipio);
                             $tieneDatos = ($datosMunicipio['alumnos'] > 0 || $datosMunicipio['escuelas'] > 0);
@@ -625,7 +623,7 @@ function obtenerDatosMunicipio($municipio)
                                         </div>
                                     </div>
                                 </div>
-                                <a href="prueba_consultas_2024.php?municipio=<?php echo urlencode($municipio); ?>"
+                                <a href="resumen.php?municipio=<?php echo urlencode($municipio); ?>"
                                     class="municipality-link">
                                     Ver Datos Detallados <i class="fas fa-arrow-right"></i>
                                 </a>
@@ -683,7 +681,7 @@ function obtenerDatosMunicipio($municipio)
                                             </div>
                                         </div>
                                     </div>
-                                    <a href="prueba_consultas_2024.php?municipio=<?php echo urlencode($municipio); ?>"
+                                    <a href="resumen.php?municipio=<?php echo urlencode($municipio); ?>"
                                         class="municipality-link">
                                         Ver Datos Detallados <i class="fas fa-arrow-right"></i>
                                     </a>

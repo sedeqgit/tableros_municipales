@@ -261,6 +261,14 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                         <i class="fas fa-balance-scale"></i>
                         <span>Desglose Público vs Privado</span>
                     </a>
+                    <a href="#desglose-sexo" class="submenu-link">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Desglose Alumnos por Sexo</span>
+                    </a>
+                    <a href="#totales-municipales" class="submenu-link">
+                        <i class="fas fa-percentage"></i>
+                        <span>Porcentajes Totales Municipales por Nivel</span>
+                    </a>
                 </div>
             </div>
             <a href="alumnos.php" class="sidebar-link"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
@@ -680,6 +688,221 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                     <i class="fas fa-exclamation-triangle"></i>
                     <h3>No hay datos disponibles</h3>
                     <p>No se pudieron obtener datos de desglose público/privado para el municipio de
+                        <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>.
+                    </p>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Sección de Desglose de Alumnos por Sexo -->
+        <div class="desglose-sexo-section" id="desglose-sexo">
+            <h2 class="desglose-sexo-title">
+                <i class="fas fa-user-graduate"></i> Desglose de Alumnos por Sexo
+            </h2>
+
+            <?php if (!empty($datosPublicoPrivado)): ?>
+                <div class="datos-grid">
+                    <?php foreach ($datosPublicoPrivado as $nivel => $datos): ?>
+                        <?php
+                        // Calcular total de alumnos del nivel
+                        $totalAlumnosNivel = $datos['tot_mat'];
+
+                        // Solo mostrar si hay alumnos
+                        if ($totalAlumnosNivel > 0):
+                            ?>
+                            <div class="desglose-sexo-card">
+                                <div class="card-header">
+                                    <div class="card-icon">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </div>
+                                    <h3 class="card-title">
+                                        <?php echo htmlspecialchars($datos['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </h3>
+                                </div>
+
+                                <!-- Total de Alumnos -->
+                                <div class="total-alumnos">
+                                    <div class="numero-total">
+                                        Total: <?php echo number_format($totalAlumnosNivel, 0, '.', ','); ?>
+                                    </div>
+                                </div>
+
+                                <!-- Desglose Hombres/Mujeres -->
+                                <div class="sexo-grid">
+                                    <!-- Hombres -->
+                                    <div class="hombres-card">
+                                        <h4>
+                                            <i class="fas fa-mars"></i> Hombres
+                                        </h4>
+                                        <div class="numero-principal">
+                                            <?php echo number_format($datos['mat_h'], 0, '.', ','); ?> alumnos totales
+                                        </div>
+                                        <div class="porcentaje">
+                                            <?php echo $totalAlumnosNivel > 0 ? round(($datos['mat_h'] / $totalAlumnosNivel) * 100, 1) : 0; ?>%
+
+                                        </div>
+                                        <div class="numero-principal">
+                                            <?php echo number_format($datos['mat_h_pub'], 0, '.', ','); ?> alumnos públicos
+                                        </div>
+                                        <div class="porcentaje">
+                                            <?php echo $datos['mat_h'] > 0 ? round(($datos['mat_h_pub'] / $datos['mat_h']) * 100, 1) : 0; ?>%
+                                        </div>
+                                        <div class="numero-principal">
+                                            <?php echo number_format($datos['mat_h_priv'], 0, '.', ','); ?> alumnos privados
+                                        </div>
+                                        <div class="porcentaje">
+                                            <?php echo $datos['mat_h'] > 0 ? round(($datos['mat_h_priv'] / $datos['mat_h']) * 100, 1) : 0; ?>%
+                                        </div>
+                                    </div>
+
+                                    <!-- Mujeres -->
+                                    <div class="mujeres-card">
+                                        <h4>
+                                            <i class="fas fa-venus"></i> Mujeres
+                                        </h4>
+                                        <div class="numero-principal">
+                                            <?php echo number_format($datos['mat_m'], 0, '.', ','); ?> alumnos totales
+                                        </div>
+                                        <div class="porcentaje">
+                                            <?php echo $totalAlumnosNivel > 0 ? round(($datos['mat_m'] / $totalAlumnosNivel) * 100, 1) : 0; ?>%
+                                        </div>
+                                        <div class="numero-principal">
+                                            <?php echo number_format($datos['mat_m_pub'], 0, '.', ','); ?> alumnos públicos
+                                        </div>
+                                        <div class="porcentaje">
+                                            <?php echo $datos['mat_m'] > 0 ? round(($datos['mat_m_pub'] / $datos['mat_m']) * 100, 1) : 0; ?>%
+                                        </div>
+                                        <div class="numero-principal">
+                                            <?php echo number_format($datos['mat_m_priv'], 0, '.', ','); ?> alumnos privados
+                                        </div>
+                                        <div class="porcentaje">
+                                            <?php echo $datos['mat_m'] > 0 ? round(($datos['mat_m_priv'] / $datos['mat_m']) * 100, 1) : 0; ?>%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <div class="desglose-sexo-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>No hay datos disponibles</h3>
+                    <p>No se pudieron obtener datos de desglose por sexo para el municipio de
+                        <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>.
+                    </p>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Sección de Totales Municipales por Nivel -->
+        <div id="totales-municipales" class="totales-municipales-section">
+            <h2 class="totales-municipales-title">
+                <i class="fas fa-percentage"></i> Porcentajes Totales Municipales por Nivel Educativo
+            </h2>
+
+            <?php if ($tieneDatos && !empty($datosCompletosMunicipio)): ?>
+                <div class="totales-municipales-container">
+                    <!-- Resumen de Totales Municipales -->
+                    <div class="totales-resumen">
+                        <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                            <i class="fas fa-chart-bar"></i> Resumen General del Municipio
+                        </h3>
+                        <div class="totales-generales-grid">
+                            <div class="total-municipal-card">
+                                <div class="total-icono">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="total-contenido">
+                                    <span class="total-tipo">Total Matrícula</span>
+                                    <span
+                                        class="total-valor"><?php echo number_format($totalAlumnos, 0, '.', ','); ?></span>
+                                    <span class="total-subtitulo">alumnos</span>
+                                </div>
+                            </div>
+                            <div class="total-municipal-card">
+                                <div class="total-icono">
+                                    <i class="fas fa-school"></i>
+                                </div>
+                                <div class="total-contenido">
+                                    <span class="total-tipo">Total Escuelas</span>
+                                    <span
+                                        class="total-valor"><?php echo number_format($totalEscuelas, 0, '.', ','); ?></span>
+                                    <span class="total-subtitulo">escuelas</span>
+                                </div>
+                            </div>
+                            <div class="total-municipal-card">
+                                <div class="total-icono">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <div class="total-contenido">
+                                    <span class="total-tipo">Total Docentes</span>
+                                    <span
+                                        class="total-valor"><?php echo number_format($totalDocentes, 0, '.', ','); ?></span>
+                                    <span class="total-subtitulo">profesores</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desglose por Nivel Educativo con Porcentajes Municipales -->
+                    <?php if (!empty($datosPublicoPrivado)): ?>
+                        <div class="porcentajes-niveles-detalle">
+                            <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                                <i class="fas fa-chart-line"></i> Distribución por Nivel Educativo
+                            </h3>
+                            <div class="niveles-municipales-grid">
+                                <?php foreach ($datosPublicoPrivado as $nivel => $datos): ?>
+                                    <?php if ($datos['tot_mat'] > 0): ?>
+                                        <div class="nivel-municipal-card">
+                                            <div class="nivel-header">
+                                                <h4><?php echo htmlspecialchars($datos['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?></h4>
+                                            </div>
+                                            <div class="nivel-totales-detalle">
+                                                <div class="total-item-detalle">
+                                                    <span class="total-label">Matrícula:</span>
+                                                    <span
+                                                        class="porcentaje-municipal"><?php echo $totalAlumnos > 0 ? round(($datos['tot_mat'] / $totalAlumnos) * 100, 2) : 0; ?>%
+
+                                                    </span>
+                                                    <span
+                                                        class="total-numero"><?php echo number_format($datos['tot_mat'], 0, '.', ','); ?>
+
+                                                    </span>
+                                                </div>
+                                                <div class="total-item-detalle">
+                                                    <span class="total-label">Escuelas:</span>
+                                                    <span
+                                                        class="porcentaje-municipal"><?php echo $totalEscuelas > 0 ? round(($datos['tot_esc'] / $totalEscuelas) * 100, 2) : 0; ?>%
+                                                    </span>
+                                                    <span
+                                                        class="total-numero"><?php echo number_format($datos['tot_esc'], 0, '.', ','); ?>
+
+                                                    </span>
+                                                </div>
+                                                <div class="total-item-detalle">
+                                                    <span class="total-label">Docentes:</span>
+                                                    <span
+                                                        class="porcentaje-municipal"><?php echo $totalDocentes > 0 ? round(($datos['tot_doc'] / $totalDocentes) * 100, 2) : 0; ?>%
+                                                    </span>
+                                                    <span
+                                                        class="total-numero"><?php echo number_format($datos['tot_doc'], 0, '.', ','); ?>
+
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php else: ?>
+                <div class="totales-municipales-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>No hay datos disponibles</h3>
+                    <p>No se pudieron obtener datos totales para el municipio de
                         <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>.
                     </p>
                 </div>

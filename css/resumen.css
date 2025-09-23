@@ -1186,3 +1186,490 @@
         padding: 20px !important;
     }
 }
+
+/* =============================================================================
+   ESTILOS PARA DESGLOSE DE ALUMNOS POR SEXO
+   ============================================================================= */
+
+/* Sección principal */
+.desglose-sexo-section {
+    margin-top: 40px !important;
+    padding: 0 20px !important;
+}
+
+.desglose-sexo-title {
+    text-align: center !important;
+    color: var(--primary-blue) !important;
+    margin-bottom: 25px !important;
+    font-size: 1.8rem !important;
+    font-weight: 600 !important;
+}
+
+.desglose-sexo-title i {
+    margin-right: 10px !important;
+    color: var(--primary-blue) !important;
+}
+
+/* Tarjetas de desglose por sexo */
+.desglose-sexo-card {
+    background-color: var(--white) !important;
+    border-radius: 15px !important;
+    padding: 25px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    overflow: hidden !important;
+}
+
+.desglose-sexo-card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+.desglose-sexo-card .card-header {
+    display: flex !important;
+    align-items: center !important;
+    margin-bottom: 20px !important;
+    padding-bottom: 15px !important;
+    border-bottom: 2px solid #f0f0f0 !important;
+    background: transparent !important;
+    gap: 10px !important;
+}
+
+.desglose-sexo-card .card-icon {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.5rem !important;
+    color: white !important;
+    margin-right: 0 !important;
+    flex-shrink: 0 !important;
+    background: linear-gradient(135deg, var(--secondary-blue), var(--accent-aqua)) !important;
+}
+
+.desglose-sexo-card .card-title {
+    color: var(--text-primary) !important;
+    font-size: 1.3rem !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    margin-left: 0 !important;
+    flex: 1 !important;
+}
+
+/* Total de alumnos */
+.total-alumnos {
+    text-align: center !important;
+    margin-bottom: 20px !important;
+}
+
+.numero-total {
+    font-size: 1.5rem !important;
+    font-weight: bold !important;
+    color: var(--primary-blue) !important;
+    margin-bottom: 10px !important;
+}
+
+/* Grid de hombres y mujeres */
+.sexo-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 20px !important;
+    align-items: start !important;
+}
+
+/* Tarjeta de hombres */
+.hombres-card {
+    background-color: #e3f2fd !important;
+    padding: 20px !important;
+    border-radius: 10px !important;
+    border: 1px solid #bbdefb !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    height: 100% !important;
+    min-height: 250px !important;
+}
+
+.hombres-card:hover {
+    border-color: #1565c0 !important;
+    box-shadow: 0 4px 12px rgba(21, 101, 192, 0.15) !important;
+    background-color: #bbdefb !important;
+}
+
+.hombres-card h4 {
+    color: #1565c0 !important;
+    font-size: 1.3rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 15px !important;
+    text-align: center !important;
+    padding-bottom: 10px !important;
+    border-bottom: 1px solid #bbdefb !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1.2 !important;
+}
+
+.hombres-card h4 i {
+    margin-right: 8px !important;
+    color: #1565c0 !important;
+    font-size: 1.2rem !important;
+    vertical-align: middle !important;
+    line-height: 1 !important;
+    display: inline-block !important;
+}
+
+.hombres-card .numero-principal {
+    font-weight: bold !important;
+    color: #1565c0 !important;
+    font-size: 1.2rem !important;
+}
+
+.hombres-card .porcentaje {
+    font-size: 0.9rem !important;
+    color: #1565c0 !important;
+    margin: 5px 0 8px 0 !important;
+    font-weight: 600 !important;
+}
+
+.hombres-card .detalles-secundarios {
+    font-size: 1rem !important;
+    color: #1565c0 !important;
+    margin-top: 5px !important;
+    line-height: 1.3 !important;
+    font-weight: bold !important;
+}
+
+/* Tarjeta de mujeres */
+.mujeres-card {
+    background-color: #ceafe0ff !important;
+    padding: 20px !important;
+    border-radius: 10px !important;
+    border: 1px solid #ceafe0ff !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    height: 100% !important;
+    min-height: 250px !important;
+}
+
+.mujeres-card:hover {
+    border-color: #610c76  !important;
+    box-shadow: 0 4px 12px rgba(233, 30, 99, 0.15) !important;
+    background-color: #ceafe0ff !important;
+}
+
+.mujeres-card h4 {
+    color: #610c76 !important;
+    font-size: 1.3rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 15px !important;
+    text-align: center !important;
+    padding-bottom: 10px !important;
+    border-bottom: 1px solid #f8bbd9 !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1.2 !important;
+}
+
+.mujeres-card h4 i {
+    margin-right: 8px !important;
+    color: #610c76 !important;
+    font-size: 1.2rem !important;
+    vertical-align: middle !important;
+    line-height: 1 !important;
+    display: inline-block !important;
+}
+
+.mujeres-card .numero-principal {
+    font-weight: bold !important;
+    color: #610c76 !important;
+    font-size: 1.2rem !important;
+}
+
+.mujeres-card .porcentaje {
+    font-size: 0.9rem !important;
+    color: #610c76!important;
+    margin: 5px 0 8px 0 !important;
+    font-weight: 600 !important;
+}
+
+.mujeres-card .detalles-secundarios {
+    font-size: 1rem !important;
+    color: #610c76 !important;
+    margin-top: 5px !important;
+    line-height: 1.3 !important;
+    font-weight: bold !important;
+}
+
+/* Mensaje de error para desglose por sexo */
+.desglose-sexo-error {
+    background-color: #fff3cd !important;
+    color: var(--primary-blue) !important;
+    padding: 20px !important;
+    border-radius: 10px !important;
+    border-left: 4px solid #ffc107 !important;
+    text-align: center !important;
+    margin: 20px 0 !important;
+}
+
+.desglose-sexo-error i {
+    font-size: 2rem !important;
+    margin-bottom: 15px !important;
+    color: #ffc107 !important;
+}
+
+.desglose-sexo-error h3 {
+    margin-bottom: 10px !important;
+    font-size: 1.3rem !important;
+}
+
+/* Responsive para desglose por sexo */
+@media (max-width: 768px) {
+    .desglose-sexo-section {
+        padding: 0 10px !important;
+    }
+    
+    .desglose-sexo-title {
+        font-size: 1.5rem !important;
+    }
+    
+    .sexo-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    .numero-total {
+        font-size: 1.4rem !important;
+    }
+    
+    .desglose-sexo-card {
+        padding: 20px !important;
+    }
+}
+
+/* =============================================
+   ESTILOS PARA TOTALES MUNICIPALES POR NIVEL
+   ============================================= */
+
+.totales-municipales-section {
+    background-color: var(--background-color) !important;
+    padding: 40px 20px !important;
+    margin-top: 20px !important;
+}
+
+.totales-municipales-title {
+    color: var(--primary-blue) !important;
+    font-size: 1.8rem !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    margin-bottom: 30px !important;
+}
+
+.totales-municipales-title i {
+    margin-right: 10px !important;
+    color: var(--primary-blue) !important;
+}
+
+.totales-municipales-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+}
+
+.totales-resumen {
+    margin-bottom: 40px !important;
+}
+
+.totales-generales-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+    gap: 20px !important;
+    margin-bottom: 30px !important;
+}
+
+.total-municipal-card {
+    background: linear-gradient(135deg, #ffffff, #f8f9fa) !important;
+    border-radius: 12px !important;
+    padding: 25px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    border-left: 5px solid var(--primary-blue) !important;
+    display: flex !important;
+    align-items: center !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.total-municipal-card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.total-icono {
+    background: linear-gradient(135deg, var(--primary-blue), #2196F3) !important;
+    color: white !important;
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.5rem !important;
+    margin-right: 20px !important;
+    flex-shrink: 0 !important;
+}
+
+.total-contenido {
+    flex: 1 !important;
+}
+
+.total-tipo {
+    display: block !important;
+    font-size: 0.9rem !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 8px !important;
+    font-weight: 500 !important;
+}
+
+.total-valor {
+    display: block !important;
+    font-size: 2.2rem !important;
+    font-weight: bold !important;
+    color: var(--primary-blue) !important;
+    line-height: 1 !important;
+}
+
+.total-subtitulo {
+    display: block !important;
+    font-size: 0.8rem !important;
+    color: var(--text-secondary) !important;
+    margin-top: 5px !important;
+}
+
+.porcentajes-niveles-detalle {
+    margin-top: 40px !important;
+}
+
+.niveles-municipales-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)) !important;
+    gap: 20px !important;
+}
+
+.nivel-municipal-card {
+    background: #ffffff !important;
+    border-radius: 10px !important;
+    padding: 20px !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1) !important;
+    border-left: 4px solid var(--primary-blue) !important;
+    transition: transform 0.2s ease !important;
+}
+
+.nivel-municipal-card:hover {
+    transform: translateY(-2px) !important;
+}
+
+.nivel-header h4 {
+    margin: 0 0 15px 0 !important;
+    color: var(--text-primary) !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+}
+
+.nivel-totales-detalle {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+.total-item-detalle {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 8px 12px !important;
+    background: #f8f9fa !important;
+    border-radius: 6px !important;
+}
+
+.total-label {
+    font-weight: 500 !important;
+    color: var(--text-primary) !important;
+}
+
+.total-numero {
+    font-weight: bold !important;
+    color: var(--primary-blue) !important;
+    font-size: 0.9rem !important;
+    margin-right: 10px !important;
+}
+
+.porcentaje-municipal {
+    font-weight: bold !important;
+    color: #28a745 !important;
+    font-size: 1.2rem !important;
+    background-color: #e8f5e8 !important;
+    padding: 2px 8px !important;
+    border-radius: 12px !important;
+}
+
+/* Mensaje de error para totales municipales */
+.totales-municipales-error {
+    background-color: #fff3cd !important;
+    color: var(--primary-blue) !important;
+    padding: 20px !important;
+    border-radius: 10px !important;
+    border-left: 4px solid #ffc107 !important;
+    text-align: center !important;
+    margin: 20px 0 !important;
+}
+
+.totales-municipales-error i {
+    font-size: 2rem !important;
+    margin-bottom: 15px !important;
+    color: #ffc107 !important;
+}
+
+.totales-municipales-error h3 {
+    margin-bottom: 10px !important;
+    font-size: 1.3rem !important;
+}
+
+/* Responsive para totales municipales */
+@media (max-width: 768px) {
+    .totales-municipales-section {
+        padding: 20px 10px !important;
+    }
+    
+    .totales-municipales-title {
+        font-size: 1.5rem !important;
+    }
+    
+    .totales-generales-grid,
+    .niveles-municipales-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+    
+    .total-municipal-card {
+        padding: 20px !important;
+    }
+    
+    .total-valor {
+        font-size: 1.8rem !important;
+    }
+    
+    .total-icono {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 1.2rem !important;
+        margin-right: 15px !important;
+    }
+}
