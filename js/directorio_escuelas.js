@@ -95,7 +95,7 @@ function initSearch() {
 /**
  * Filtra las escuelas por nivel educativo
  * @param {string} type - Tipo de escuelas ('publicas' o 'privadas')
- * @param {string} level - Nivel educativo a filtrar
+ * @param {string} level - Nivel educativo a filtrar ('todos' o código de nivel)
  */
 function filterByLevel(type, level) {
     const table = document.getElementById('tabla-' + type);
@@ -106,13 +106,13 @@ function filterByLevel(type, level) {
     let visibleCount = 0;
     
     // Si se selecciona "Todos los niveles", ordenar por nivel y luego por alumnos descendente
-    if (!level) {
+    if (!level || level === 'todos') {
         sortTableByLevelAndStudents(rows, tbody);
     }
     
     rows.forEach(row => {
         const rowLevel = row.getAttribute('data-nivel');
-        const shouldShow = !level || rowLevel === level;
+        const shouldShow = !level || level === 'todos' || rowLevel === level;
         
         if (shouldShow) {
             row.style.display = '';

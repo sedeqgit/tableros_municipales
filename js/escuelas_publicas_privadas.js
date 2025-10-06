@@ -7,6 +7,17 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('=== Sistema de Filtrado de Escuelas por Sostenimiento ===');
     console.log('Inicializando componentes...');
     
+    // Verificar datos disponibles
+    console.log('✓ Datos cargados:');
+    console.log('  - Total escuelas:', typeof totalEscuelas !== 'undefined' ? totalEscuelas : 'NO DEFINIDO');
+    console.log('  - Escuelas públicas:', typeof escuelasPublicas !== 'undefined' ? escuelasPublicas : 'NO DEFINIDO');
+    console.log('  - Escuelas privadas:', typeof escuelasPrivadas !== 'undefined' ? escuelasPrivadas : 'NO DEFINIDO');
+    console.log('  - Datos por nivel:', typeof escuelasNivelSostenimiento !== 'undefined' ? 'DISPONIBLE' : 'NO DEFINIDO');
+    
+    if (typeof escuelasNivelSostenimiento !== 'undefined') {
+        console.log('  - Niveles disponibles:', Object.keys(escuelasNivelSostenimiento));
+    }
+    
     // Almacenar los valores originales de cada nivel para restaurarlos
     const valoresOriginales = {};
     const barrasNivel = document.querySelectorAll('.level-bar');
@@ -20,12 +31,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const levelPercent = bar.querySelector('.level-percent');
 
         if (escuelasCount && levelFill && levelPercent) {
+            // Extraer el ancho actual de la barra (del style inline)
+            const anchoActual = levelFill.style.width || '0%';
+            
             // Guardar los valores iniciales para poder restaurarlos luego
             valoresOriginales[nombreNivel] = {
-                cantidad: escuelasCount.textContent,
-                porcentaje: levelPercent.textContent,
-                ancho: levelPercent.textContent // Si no tiene ancho inicial, usar el porcentaje
+                cantidad: escuelasCount.textContent.trim(),
+                porcentaje: levelPercent.textContent.trim(),
+                ancho: anchoActual
             };
+            
+            console.log(`  - ${nombreNivel}: ${escuelasCount.textContent.trim()} escuelas, ${anchoActual} ancho`);
         }
     });
 
@@ -72,9 +88,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 aplicarFiltro(filterType);
             });
         });
-    }    // Función para aplicar filtros de sostenimiento
+    }
+    
+    // Función para aplicar filtros de sostenimiento
     function aplicarFiltro(tipo) {
         console.log(`Aplicando filtro: ${tipo}`);
+        
+        // Verificar que los datos estén disponibles
+        if (typeof escuelasNivelSostenimiento === 'undefined') {
+            console.error('❌ Error: escuelasNivelSostenimiento no está definido');
+            return;
+        }
+        
+        console.log('Datos disponibles:', escuelasNivelSostenimiento);
         
         barrasNivel.forEach(bar => {
             const nombreNivel = bar.querySelector('.level-name').textContent.trim();
@@ -110,22 +136,33 @@ document.addEventListener('DOMContentLoaded', function() {
                         let cantidad = 0;
                         let porcentaje = 0;
                         let totalReferencia = 0;
+                        let maxEscuelas = 0; // Para calcular el ancho relativo de la barra
                         
                         if (tipo === 'publico') {
                             cantidad = nivelData.publicas || 0;
                             totalReferencia = escuelasPublicas;
+                            // Encontrar el máximo de escuelas públicas en todos los niveles para la escala
+                            maxEscuelas = Math.max(...Object.values(escuelasNivelSostenimiento).map(n => n.publicas || 0));
                             console.log(`✓ Encontrado ${nombreNivel}: ${cantidad} escuelas públicas`);
                         } else if (tipo === 'privado') {
                             cantidad = nivelData.privadas || 0;
                             totalReferencia = escuelasPrivadas;
+                            // Encontrar el máximo de escuelas privadas en todos los niveles para la escala
+                            maxEscuelas = Math.max(...Object.values(escuelasNivelSostenimiento).map(n => n.privadas || 0));
                             console.log(`✓ Encontrado ${nombreNivel}: ${cantidad} escuelas privadas`);
                         }
                         
-                        // Calcular porcentaje si hay un total de referencia válido
+                        // Calcular porcentaje basado en el total de referencia (para el texto)
                         if (totalReferencia > 0) {
                             porcentaje = Math.round((cantidad / totalReferencia) * 100);
                         } else {
                             console.warn(`Total de referencia inválido para ${nombreNivel}: ${totalReferencia}`);
+                        }
+                        
+                        // Calcular ancho de barra basado en el máximo (para mantener proporciones visuales)
+                        let anchoBarra = 0;
+                        if (maxEscuelas > 0) {
+                            anchoBarra = Math.round((cantidad / maxEscuelas) * 100);
                         }
                         
                         // Actualizar la interfaz
@@ -133,13 +170,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             escuelasCount.textContent = cantidad;
                         }
                         if (levelFill) {
-                            levelFill.style.width = porcentaje + '%';
+                            // Usar anchoBarra para mantener proporciones visuales entre niveles
+                            levelFill.style.width = anchoBarra + '%';
                         }
                         if (levelPercent) {
+                            // Mostrar el porcentaje real del total
                             levelPercent.textContent = porcentaje + '%';
                         }
                         
-                        console.log(`✓ Actualizado ${nombreNivel}: ${cantidad} escuelas (${porcentaje}%)`);
+                        console.log(`✓ Actualizado ${nombreNivel}: ${cantidad} escuelas (${porcentaje}% del total, ${anchoBarra}% ancho barra)`);
                     } else {
                         console.warn(`✗ No se encontraron datos para el nivel "${nombreNivel}" con filtro "${tipo}"`);
                         // Se podría considerar mostrar un valor de cero o un mensaje de "N/A"
@@ -189,19 +228,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Función auxiliar para buscar datos de sostenimiento por nivel
-    function buscarDatosSostenimiento(nombreNivel) {        // Mapa explícito de coincidencias entre nombres de UI y nombres en los datos
+    function buscarDatosSostenimiento(nombreNivel) {
+        // Mapa explícito de coincidencias entre nombres de UI y nombres en los datos
         const mapaCoincidencias = {
             // Mapeo para abreviaturas en UI
-            'Inicial E': 'Inicial (Escolarizado)',
-            'Inicial NE': 'Inicial (No Escolarizado)',
             'Inicial (E)': 'Inicial (Escolarizado)',
             'Inicial (NE)': 'Inicial (No Escolarizado)',
-            'Especial': 'Especial (CAM)',
+            'Especial (CAM)': 'Especial (CAM)',
             'Media Sup.': 'Media Superior',
             // Mantener también los nombres originales
+            'Inicial (Escolarizado)': 'Inicial (Escolarizado)',
+            'Inicial (No Escolarizado)': 'Inicial (No Escolarizado)',
             'Preescolar': 'Preescolar',
             'Primaria': 'Primaria',
             'Secundaria': 'Secundaria',
+            'Media Superior': 'Media Superior',
             'Superior': 'Superior'
         };
         

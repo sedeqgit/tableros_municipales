@@ -5,6 +5,7 @@
  * Sistema de Dashboard Estadístico - SEDEQ Corregidora
  * =============================================================================
  *
+ *
  * 
  * @author Sistema SEDEQ
  * @version 2.0.0
@@ -885,6 +886,351 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         10 AS escuelas,
                         100 AS grupos";
 
+        // ===== CONSULTAS PARA DIRECTORIO DE ESCUELAS INDIVIDUALES =====
+        case 'gral_ini_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        (V398+V414) as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'ind_ini_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        (V183+V184) as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.ini_ind_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'lact_ini_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V398 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'mater_ini_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V414 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'gral_pree_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V177 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.pree_gral_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'ind_pree_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V177 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.pree_ind_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'gral_prim_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V608 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.prim_gral_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'ind_prim_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V610 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.prim_ind_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'gral_sec_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V340 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.sec_gral_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'comuni_pree_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V97 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.pree_comuni_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'comuni_prim_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V515 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.prim_comuni_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'comuni_sec_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V257 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.sec_comuni_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'comuni_ini_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V81 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.ini_comuni_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'ne_ini_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        (V129+V130) as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.ini_ne_$ini_ciclo
+                    WHERE $filtroBase $filtro";
+
+        case 'bgral_msup_directorio':
+            return "SELECT cct_ins_pla as cv_cct,
+                        nombre_ins_pla as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V397 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo
+                    WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro";
+
+        case 'btecno_msup_directorio':
+            return "SELECT cct_ins_pla as cv_cct,
+                        nombre_ins_pla as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V472 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo
+                    WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro";
+
+        case 'media_sup_directorio':
+            return "SELECT cct_ins_pla as cv_cct,
+                        MAX(nombre_ins_pla) as nombre_escuela,
+                        MAX(c_nom_loc) as localidad,
+                        SUM(total_alumnos) as total_alumnos,
+                        MAX(control) as tipo_control
+                    FROM (
+                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc, V397 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo
+                        WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro AND V397 > 0
+                        UNION ALL
+                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc, V472 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo
+                        WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro AND V472 > 0
+                    ) AS media_sup_dir
+                    GROUP BY cct_ins_pla
+                    ORDER BY cct_ins_pla";
+
+        case 'especial_tot_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        V2257 as total_alumnos,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo
+                    WHERE cv_estatus_captura = 0 $filtro";
+
+        case 'superior_directorio':
+            return "SELECT cct_ins_pla as cv_cct,
+                        MAX(nombre_ins_pla) as nombre_escuela,
+                        MAX(localidad) as localidad,
+                        SUM(total_alumnos) as total_alumnos,
+                        MAX(control) as tipo_control
+                    FROM (
+                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc as localidad, V177 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo
+                        WHERE cv_motivo = '0' $filtro AND V177 > 0
+                        UNION ALL
+                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc as localidad, V142 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.sup_posgrado_$ini_ciclo
+                        WHERE cv_motivo = '0' $filtro AND V142 > 0
+                        UNION ALL
+                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_mun as localidad, total_matricula as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.sup_unidades_$ini_ciclo
+                        WHERE 1=1 $filtro AND total_matricula > 0
+                    ) AS superior_dir
+                    GROUP BY cct_ins_pla
+                    ORDER BY cct_ins_pla";
+
+        case 'superior_directorio_queretaro':
+            // Querétaro: Muestra cada registro de sup_escuela_24 (83 registros = campus/turnos)
+            // Los alumnos se distribuyen entre campus: división entera + residuo al primer registro
+            // Coincide con el conteo de resumen.php que hace COUNT(cct_ins_pla) sin agrupar
+            return "SELECT 
+                        sub.id_sec as id_registro,
+                        sub.cv_cct,
+                        sub.nombre_escuela,
+                        sub.localidad,
+                        sub.base_alumnos + 
+                        CASE 
+                            WHEN sub.row_num = 1 THEN sub.residuo_alumnos
+                            ELSE 0
+                        END -
+                        CASE 
+                            -- Restar unidades estatales de instituciones específicas (solo del primer registro)
+                            WHEN sub.cv_cct = '22MSU0090J' AND sub.row_num = 1 THEN 889  -- Universidad Pedagógica Nacional
+                            WHEN sub.cv_cct = '22MSU0024K' AND sub.row_num = 1 THEN 626  -- Tecnológico Nacional de México
+                            ELSE 0
+                        END as total_alumnos,
+                        sub.tipo_control
+                    FROM (
+                        SELECT 
+                            e.id_sec,
+                            e.cct_ins_pla as cv_cct,
+                            e.nombre_ins as nombre_escuela,
+                            e.c_nom_loc as localidad,
+                            e.control as tipo_control,
+                            ROW_NUMBER() OVER (PARTITION BY e.cct_ins_pla ORDER BY e.id_sec) as row_num,
+                            CAST((COALESCE(alumnos_carrera.total, 0) + COALESCE(alumnos_posgrado.total, 0)) / total_registros.cnt AS INTEGER) as base_alumnos,
+                            (COALESCE(alumnos_carrera.total, 0) + COALESCE(alumnos_posgrado.total, 0)) % total_registros.cnt as residuo_alumnos
+                        FROM nonce_pano_$ini_ciclo.sup_escuela_$ini_ciclo e
+                        LEFT JOIN (
+                            SELECT cct_ins_pla, SUM(V177) as total
+                            FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo
+                            WHERE cv_motivo = '0' $filtro
+                            GROUP BY cct_ins_pla
+                        ) alumnos_carrera ON e.cct_ins_pla = alumnos_carrera.cct_ins_pla
+                        LEFT JOIN (
+                            SELECT cct_ins_pla, SUM(V142) as total
+                            FROM nonce_pano_$ini_ciclo.sup_posgrado_$ini_ciclo
+                            WHERE cv_motivo = '0' $filtro
+                            GROUP BY cct_ins_pla
+                        ) alumnos_posgrado ON e.cct_ins_pla = alumnos_posgrado.cct_ins_pla
+                        LEFT JOIN (
+                            SELECT cct_ins_pla, COUNT(*) as cnt
+                            FROM nonce_pano_$ini_ciclo.sup_escuela_$ini_ciclo
+                            WHERE cv_motivo = '0' $filtro
+                            GROUP BY cct_ins_pla
+                        ) total_registros ON e.cct_ins_pla = total_registros.cct_ins_pla
+                        WHERE e.cv_motivo = '0' $filtro
+                    ) sub
+                    ORDER BY sub.cv_cct, sub.row_num";
+
+        case 'inicial_esc_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        total_alumnos,
+                        control as tipo_control
+                    FROM (
+                        SELECT cv_cct, nombrect, c_nom_loc, (V398+V414) as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
+                        WHERE $filtroBase $filtro
+                        UNION ALL
+                        SELECT cv_cct, nombrect, c_nom_loc, (V183+V184) as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.ini_ind_$ini_ciclo
+                        WHERE $filtroBase $filtro
+                    ) AS inicial_esc_dir
+                    ORDER BY cv_cct";
+
+        case 'inicial_no_esc_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        total_alumnos,
+                        control as tipo_control
+                    FROM (
+                        SELECT cv_cct, nombrect, c_nom_loc, V81 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.ini_comuni_$ini_ciclo
+                        WHERE $filtroBase $filtro
+                        UNION ALL
+                        SELECT cv_cct, nombrect, c_nom_loc, (V129+V130) as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.ini_ne_$ini_ciclo
+                        WHERE $filtroBase $filtro
+                    ) AS inicial_no_esc_dir
+                    ORDER BY cv_cct";
+
+        case 'preescolar_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        total_alumnos,
+                        control as tipo_control
+                    FROM (
+                        SELECT cv_cct, nombrect, c_nom_loc, V177 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.pree_gral_$ini_ciclo
+                        WHERE $filtroBase $filtro AND V177 > 0
+                        UNION ALL
+                        SELECT cv_cct, nombrect, c_nom_loc, V177 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.pree_ind_$ini_ciclo
+                        WHERE $filtroBase $filtro AND V177 > 0
+                        UNION ALL
+                        SELECT cv_cct, nombrect, c_nom_loc, V97 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.pree_comuni_$ini_ciclo
+                        WHERE $filtroBase $filtro AND V97 > 0
+                        UNION ALL
+                        SELECT cv_cct, nombrect, c_nom_loc, V478 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
+                        WHERE $filtroBase $filtro AND V478 > 0
+                    ) AS preescolar_dir
+                    ORDER BY cv_cct";
+
+        case 'primaria_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        total_alumnos,
+                        control as tipo_control
+                    FROM (
+                        SELECT cv_cct, nombrect, c_nom_loc, V608 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.prim_gral_$ini_ciclo
+                        WHERE $filtroBase $filtro
+                        UNION ALL
+                        SELECT cv_cct, nombrect, c_nom_loc, V610 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.prim_ind_$ini_ciclo
+                        WHERE $filtroBase $filtro
+                        UNION ALL
+                        SELECT cv_cct, nombrect, c_nom_loc, V515 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.prim_comuni_$ini_ciclo
+                        WHERE $filtroBase $filtro
+                    ) AS primaria_dir
+                    ORDER BY cv_cct";
+
+        case 'secundaria_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        total_alumnos,
+                        control as tipo_control
+                    FROM (
+                        SELECT cv_cct, nombrect, c_nom_loc, V340 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.sec_gral_$ini_ciclo
+                        WHERE $filtroBase $filtro
+                        UNION ALL
+                        SELECT cv_cct, nombrect, c_nom_loc, V257 as total_alumnos, control
+                        FROM nonce_pano_$ini_ciclo.sec_comuni_$ini_ciclo
+                        WHERE $filtroBase $filtro
+                    ) AS secundaria_dir
+                    ORDER BY cv_cct";
+
         default:
             return false;
     }
@@ -1252,11 +1598,6 @@ function rs_consulta_segura($link, $str_consulta, $ini_ciclo, $filtro)
     // Si es el indicador de procesamiento especial, retornar false
     if ($consulta === 'SPECIAL_PROCESSING_REQUIRED') {
         return false;
-    }
-
-    // DEBUG TEMPORAL: Log para especial_tot
-    if ($str_consulta === 'especial_tot') {
-        error_log("DEBUG ESPECIAL_TOT: " . substr($consulta, 0, 200) . "...");
     }
 
     $rs_nivel = pg_query($link, $consulta);
@@ -2505,3 +2846,108 @@ function calcularPorcentajesMunicipioEstado($datosMunicipio, $datosEstado)
 
     return $resultado;
 }
+
+/**
+ * Obtiene directorio de escuelas individuales por municipio y nivel educativo
+ * @param string $municipio Nombre del municipio
+ * @param string $nivel_educativo Nivel educativo (gral_ini, ind_ini, lact_ini, etc.)
+ * @param string $ini_ciclo Ciclo escolar (opcional, usa el actual por defecto)
+ * @return array|false Array con datos de escuelas individuales o false en caso de error
+ */
+function obtenerDirectorioEscuelas($municipio, $nivel_educativo, $ini_ciclo = null)
+{
+    // Usar ciclo escolar actual si no se especifica
+    if ($ini_ciclo === null) {
+        $ini_ciclo = obtenerCicloEscolarActual();
+    }
+
+    $link = ConectarsePrueba();
+    if (!$link) {
+        return false;
+    }
+
+    try {
+        // Generar filtro de municipio exacto como en otras funciones
+        $num_muni = nombre_a_numero_municipio($municipio);
+        $filtro_mun = ($num_muni !== false) ? " AND cv_mun='$num_muni' " : "";
+
+        // Construir el caso para directorio agregando "_directorio" al nivel
+        $caso_directorio = $nivel_educativo . '_directorio';
+
+        // Caso especial: Para Superior en Querétaro, usar consulta sin unidades
+        if ($nivel_educativo === 'superior' && $num_muni === '14') {
+            $caso_directorio = 'superior_directorio_queretaro';
+        }
+
+        // Obtener la consulta SQL usando la función existente
+        $sql = str_consulta_segura($caso_directorio, $ini_ciclo, $filtro_mun);
+
+        if (!$sql) {
+            error_log("Error: No se encontró consulta para el caso: $caso_directorio");
+            pg_close($link);
+            return false;
+        }
+
+        // Ejecutar la consulta
+        $result = pg_query($link, $sql);
+        if (!$result) {
+            error_log("Error en consulta SQL para directorio de escuelas: " . pg_last_error($link));
+            pg_close($link);
+            return false;
+        }
+
+        // Recopilar todas las escuelas
+        $escuelas = [];
+        $total_alumnos_directorio = 0;
+
+        while ($row = pg_fetch_assoc($result)) {
+            $alumnos = (int) $row['total_alumnos'];
+            $total_alumnos_directorio += $alumnos;
+
+            $escuelas[] = [
+                'cv_cct' => $row['cv_cct'],
+                'nombre_escuela' => $row['nombre_escuela'],
+                'localidad' => $row['localidad'],
+                'total_alumnos' => $alumnos,
+                'tipo_control' => $row['tipo_control']
+            ];
+        }
+
+        pg_free_result($result);
+        pg_close($link);
+
+        // Preparar respuesta base
+        $respuesta = [
+            'escuelas' => $escuelas,
+            'total_registros' => count($escuelas),
+            'total_alumnos_directorio' => $total_alumnos_directorio
+        ];
+
+        // Caso especial: Agregar nota explicativa para Superior en Querétaro
+        if ($nivel_educativo === 'superior' && $num_muni === '14') {
+            $ajuste_unidades = 1515; // Total de alumnos en sup_unidades_24 (889 UPN + 626 TecNM)
+            $total_sin_ajuste = 71184; // Total real de carrera + posgrado
+
+            $respuesta['tiene_ajuste_unidades'] = true;
+            $respuesta['total_alumnos_sin_ajuste'] = $total_sin_ajuste;
+            $respuesta['ajuste_unidades'] = $ajuste_unidades;
+            $respuesta['total_alumnos_ajustado'] = $total_alumnos_directorio; // Ya incluye el ajuste aplicado
+            $respuesta['nota_explicativa'] = 'El total oficial de alumnos de nivel Superior para Querétaro es ' .
+                number_format($total_alumnos_directorio) . ' (ajustado). Este directorio muestra los datos con el ajuste ya aplicado: ' .
+                'se restaron 889 alumnos de la Universidad Pedagógica Nacional y 626 del Tecnológico Nacional de México. ' .
+                'Sin este ajuste, el total sería de ' . number_format($total_sin_ajuste) . ' alumnos. ' .
+                'Esta corrección evita contar dos veces a los ' . number_format($ajuste_unidades) . ' estudiantes de unidades estatales ' .
+                'que las instituciones de educación superior registran en Querétaro aunque ya están contabilizados en sus instituciones base.';
+        }
+
+        return $respuesta;
+
+    } catch (Exception $e) {
+        error_log("Error en obtenerDirectorioEscuelas: " . $e->getMessage());
+        if ($link) {
+            pg_close($link);
+        }
+        return false;
+    }
+}
+

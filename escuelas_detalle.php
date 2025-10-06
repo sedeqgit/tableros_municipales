@@ -1,42 +1,38 @@
 <?php
 /**
  * =============================================================================
- * PÁGINA DE DETALLE DE ESCUELAS - SISTEMA SEDEQ
+ * PÁGINA DE DIRECTORIO DE ESCUELAS - SISTEMA SEDEQ
  * =============================================================================
  * 
- * Esta página presenta un análisis detallado del sistema educativo en el
- * municipio de Corregidora, Querétaro, incluyendo di                    <div class="subcontrol-intro animate-fade delay-1">
-                        <p>Análisis detallado de las <strong><?php echo $totalEscuelasSubcontrol; ?> escuelas</strong> 
-                           del municipio de Corregidora según su subcontrol administrativo y fuente de financiamiento.</p>
-                    </div>bución por niveles,
- * sostenimiento (público/privado) y diagramas de flujo educativo.
+ * Esta página presenta el directorio completo de instituciones educativas
+ * por municipio y nivel educativo en el estado de Querétaro.
  * 
  * FUNCIONALIDADES PRINCIPALES:
- * - Resumen ejecutivo de escuelas por nivel educativo
- * - Análisis comparativo entre escuelas públicas y privadas
- * - Diagramas de flujo del sistema educativo
- * - Métricas de eficiencia y retención escolar
- * - Filtros dinámicos por tipo de sostenimiento
+ * - Directorio completo de escuelas por municipio
+ * - Filtros por nivel educativo (Inicial, Preescolar, Primaria, etc.)
+ * - Información detallada: CCT, nombre, localidad, alumnos, control
+ * - Exportación de directorios en múltiples formatos
+ * - Ajustes especiales para nivel Superior en Querétaro
  * 
  * COMPONENTES ANALÍTICOS:
- * - Distribución porcentual por nivel educativo
- * - Barras de progreso comparativas
- * - Conclusiones automáticas basadas en datos
- * - Recomendaciones para política educativa
+ * - Distribución por nivel educativo
+ * - Análisis de escuelas públicas vs privadas
+ * - Totales de alumnos por institución
+ * - Notas explicativas para ajustes especiales
  * 
- * VISUALIZACIONES ESPECIALIZADAS:
- * - Gráficos de barras horizontales con mini-indicadores
- * - Diagramas de flujo interactivos
- * - Paneles de análisis con pestañas navegables
- * - Indicadores de tendencias y variaciones
+ * VISUALIZACIONES:
+ * - Tablas interactivas y ordenables
+ * - Filtros dinámicos por nivel
+ * - Búsqueda en tiempo real
+ * - Paginación de resultados
  * 
  * @package SEDEQ_Dashboard
- * @subpackage Escuelas_Detalle
- * @version 2.0
+ * @subpackage Directorio_Escuelas
+ * @version 3.0
  */
 
 // =============================================================================
-// CONFIGURACIÓN DEL ENTORNO DE DESARROLLO
+// CONFIGURACIÓN E INICIALIZACIÓN DEL SISTEMA
 // =============================================================================
 
 // Incluir el helper de sesiones para manejo de autenticación
@@ -46,127 +42,256 @@ require_once 'session_helper.php';
 iniciarSesionDemo();
 
 // CONFIGURACIÓN DE DEPURACIÓN (remover en producción)
-// Estas configuraciones permiten ver errores durante el desarrollo
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // =============================================================================
+// OBTENCIÓN DE PARÁMETROS Y VALIDACIÓN
+// =============================================================================
+
+// Incluir módulo de conexión actualizado con funciones dinámicas
+require_once 'conexion_prueba_2024.php';
+
+// Obtener el municipio desde el parámetro GET, por defecto Querétaro
+$municipioSeleccionado = isset($_GET['municipio']) ? strtoupper(trim($_GET['municipio'])) : 'QUERÉTARO';
+
+// Validar que el municipio esté en la lista de municipios válidos
+$municipiosValidos = obtenerMunicipiosPrueba2024();
+if (!in_array($municipioSeleccionado, $municipiosValidos)) {
+    $municipioSeleccionado = 'QUERÉTARO'; // Fallback a Querétaro si el municipio no es válido
+}
+
+// =============================================================================
 // OBTENCIÓN Y PROCESAMIENTO DE DATOS EDUCATIVOS
 // =============================================================================
 
-// Incluir módulo de conexión con funciones especializadas de consulta
-require_once 'conexion.php';
+// Obtener datos completos del municipio usando funciones dinámicas
+$datosCompletosMunicipio = obtenerResumenMunicipioCompleto($municipioSeleccionado);
 
-// Obtener conjunto completo de datos educativos desde la base de datos
-// Incluye información de todas las escuelas por nivel y modalidad
-$datosEducativos = obtenerDatosEducativos();
+// Obtener datos de público/privado y distribución por subcontrol
+$datosPublicoPrivado = obtenerDatosPublicoPrivado($municipioSeleccionado);
+
+// Verificar si hay datos
+$hayError = !$datosCompletosMunicipio;
+$tieneDatos = $datosCompletosMunicipio &&
+    isset($datosCompletosMunicipio['total_matricula']) &&
+    $datosCompletosMunicipio['total_matricula'] > 0;
 
 // =============================================================================
 // CÁLCULOS ESTADÍSTICOS GENERALES
 // =============================================================================
 
-// Calcular totales agregados para métricas principales del dashboard
-// Utiliza la misma lógica de cálculo que el dashboard principal para consistencia
-$totales = calcularTotales($datosEducativos);
-$totalEscuelas = $totales['escuelas']; // Total de instituciones educativas
-$totalAlumnos = $totales['alumnos'];   // Total de estudiantes matriculados
+// Extraer totales de manera segura y convertir a enteros
+$totalEscuelas = $tieneDatos ? (int) $datosCompletosMunicipio['total_escuelas'] : 0;
+$totalAlumnos = $tieneDatos ? (int) $datosCompletosMunicipio['total_matricula'] : 0;
+$totalDocentes = $tieneDatos ? (int) $datosCompletosMunicipio['total_docentes'] : 0;
+
+// Calcular totales de escuelas públicas y privadas
+$escuelasPublicas = 0;
+$escuelasPrivadas = 0;
+
+if ($datosPublicoPrivado && !empty($datosPublicoPrivado)) {
+    foreach ($datosPublicoPrivado as $nivel => $datos) {
+        if (isset($datos['tot_esc_pub'])) {
+            $escuelasPublicas += (int) $datos['tot_esc_pub'];
+        }
+        if (isset($datos['tot_esc_priv'])) {
+            $escuelasPrivadas += (int) $datos['tot_esc_priv'];
+        }
+    }
+}
+
+// Calcular porcentajes
+$porcentajePublicas = $totalEscuelas > 0 ? round(($escuelasPublicas / $totalEscuelas) * 100, 1) : 0;
+$porcentajePrivadas = $totalEscuelas > 0 ? round(($escuelasPrivadas / $totalEscuelas) * 100, 1) : 0;
+
+// Crear estructura de escuelas por nivel y sostenimiento para JavaScript
+$escuelasNivelSostenimiento = [];
+
+if ($datosPublicoPrivado && !empty($datosPublicoPrivado)) {
+    // Mapeo de claves del backend a nombres visuales
+    $mapeoNiveles = [
+        'inicial_esc' => 'Inicial (Escolarizado)',
+        'inicial_no_esc' => 'Inicial (No Escolarizado)',
+        'especial_tot' => 'Especial (CAM)',
+        'preescolar' => 'Preescolar',
+        'primaria' => 'Primaria',
+        'secundaria' => 'Secundaria',
+        'media_sup' => 'Media Superior',
+        'superior' => 'Superior'
+    ];
+
+    foreach ($datosPublicoPrivado as $clave => $datos) {
+        if (isset($mapeoNiveles[$clave])) {
+            $nombreNivel = $mapeoNiveles[$clave];
+            $escuelasNivelSostenimiento[$nombreNivel] = [
+                'publicas' => isset($datos['tot_esc_pub']) ? (int) $datos['tot_esc_pub'] : 0,
+                'privadas' => isset($datos['tot_esc_priv']) ? (int) $datos['tot_esc_priv'] : 0,
+                'total' => isset($datos['tot_esc']) ? (int) $datos['tot_esc'] : 0
+            ];
+        }
+    }
+}
 
 // =============================================================================
 // PROCESAMIENTO DE DATOS POR NIVEL EDUCATIVO
 // =============================================================================
 
-// Extraer y estructurar datos por nivel educativo desde el dataset principal
-// Se omite la primera fila que contiene encabezados de la consulta
+// Extraer y estructurar datos por nivel educativo
 $escuelasPorNivel = [];
-for ($i = 1; $i < count($datosEducativos); $i++) {
-    $tipoEducativo = $datosEducativos[$i][0]; // Nombre del nivel (ej: "Primaria")
-    $escuelas = $datosEducativos[$i][1];      // Cantidad de escuelas
-    $escuelasPorNivel[$tipoEducativo] = $escuelas;
+$alumnosPorNivel = [];
+
+if ($tieneDatos) {
+    $niveles = [
+        'Inicial (Escolarizado)' => 'inicial_esc',
+        'Inicial (No Escolarizado)' => 'inicial_no_esc',
+        'Preescolar' => 'preescolar',
+        'Primaria' => 'primaria',
+        'Secundaria' => 'secundaria',
+        'Media Superior' => 'media_sup',
+        'Superior' => 'superior',
+        'Especial' => 'especial'
+    ];
+
+    foreach ($niveles as $nombreNivel => $clave) {
+        if (isset($datosCompletosMunicipio[$clave])) {
+            $datos = $datosCompletosMunicipio[$clave];
+            $escuelasPorNivel[$nombreNivel] = isset($datos['tot_esc']) ? (int) $datos['tot_esc'] : 0;
+            $alumnosPorNivel[$nombreNivel] = isset($datos['tot_mat']) ? (int) $datos['tot_mat'] : 0;
+        } else {
+            $escuelasPorNivel[$nombreNivel] = 0;
+            $alumnosPorNivel[$nombreNivel] = 0;
+        }
+    }
 }
 
-// Calcular distribución porcentual para análisis comparativo
-// Cada nivel se expresa como porcentaje del total de escuelas
+// Mapear nivel Especial a Especial (CAM) para visualización
+if (isset($escuelasPorNivel['Especial'])) {
+    $escuelasPorNivel['Especial (CAM)'] = $escuelasPorNivel['Especial'];
+    $alumnosPorNivel['Especial (CAM)'] = $alumnosPorNivel['Especial'];
+    // Mantener también el valor en 'Especial' para compatibilidad
+} else {
+    $escuelasPorNivel['Especial (CAM)'] = 0;
+    $alumnosPorNivel['Especial (CAM)'] = 0;
+}
+
+// Calcular distribución porcentual
 $porcentajes = [];
-foreach ($escuelasPorNivel as $nivel => $cantidad) {
-    $porcentajes[$nivel] = round(($cantidad / $totalEscuelas) * 100);
+if ($totalEscuelas > 0) {
+    foreach ($escuelasPorNivel as $nivel => $cantidad) {
+        $porcentajes[$nivel] = round(($cantidad / $totalEscuelas) * 100, 1);
+    }
+} else {
+    foreach ($escuelasPorNivel as $nivel => $cantidad) {
+        $porcentajes[$nivel] = 0;
+    }
 }
 
 // =============================================================================
-// ANÁLISIS POR TIPO DE SOSTENIMIENTO
+// MAPEO DE NIVELES PARA DIRECTORIO
 // =============================================================================
 
-// Obtener datos segmentados por sostenimiento (público vs privado)
-// Incluye datos agregados y desglosados por nivel educativo
-$escuelasPorSostenimiento = obtenerEscuelasPorSostenimiento();
-$escuelasPublicas = $escuelasPorSostenimiento['publicas'];           // Total escuelas públicas
-$escuelasPrivadas = $escuelasPorSostenimiento['privadas'];           // Total escuelas privadas
-$porcentajePublicas = $escuelasPorSostenimiento['porcentaje_publicas']; // % públicas
-$porcentajePrivadas = $escuelasPorSostenimiento['porcentaje_privadas']; // % privadas
-$escuelasNivelSostenimiento = $escuelasPorSostenimiento['por_nivel'];    // Desglose por nivel
-
-// =============================================================================
-// ANÁLISIS POR SUBCONTROL EDUCATIVO
-// =============================================================================
-
-// Obtener datos segmentados por subcontrol educativo según análisis verificado
-// Incluye PRIVADO, FEDERAL TRANSFERIDO, FEDERAL, ESTATAL y AUTÓNOMO
-$escuelasPorSubcontrol = obtenerEscuelasPorSubcontrol();
-$totalEscuelasSubcontrol = $escuelasPorSubcontrol['total_escuelas'];
-$distribucionSubcontrol = $escuelasPorSubcontrol['distribución'];
-
-// =============================================================================
-// OBTENER DIRECTORIOS DE ESCUELAS
-// =============================================================================
-
-// Obtener listados completos de escuelas públicas y privadas
-$escuelasPublicasDirectorio = obtenerDirectorioEscuelasPublicas();
-$escuelasPrivadasDirectorio = obtenerDirectorioEscuelasPrivadas();
-
-// =============================================================================
-// DATOS PARA ANÁLISIS DE EFICIENCIA EDUCATIVA
-// =============================================================================
-
-// Configurar datos de flujo educativo para diagrama de eficiencia
-// Representa tasas de ingreso, permanencia y egreso por nivel educativo
-$datosEficiencia = [
-    'primaria' => [
-        'ingreso' => 100,
-        'egreso' => 111,
-        'diferencia' => 11,
-        'cicloIngreso' => '2006-2007',
-        'cicloEgreso' => '2011-2012'
-    ],
-    'secundaria' => [
-        'ingreso' => 68,
-        'egreso' => 90,
-        'diferencia' => 22,
-        'cicloIngreso' => '2012-2013',
-        'cicloEgreso' => '2014-2015'
-    ],
-    'bachillerato' => [
-        'ingreso' => 150,
-        'egreso' => 105,
-        'diferencia' => -45,
-        'cicloIngreso' => '2015-2016',
-        'cicloEgreso' => '2017-2018'
-    ],
-    'superior' => [
-        'ingreso' => 32,
-        'egreso' => 34,
-        'diferencia' => 2,
-        'cicloIngreso' => '2018-2019',
-        'cicloEgreso' => '2022-2023'
-    ],
-    'transiciones' => [
-        'primaria_secundaria' => -43,
-        'secundaria_bachillerato' => 60,
-        'bachillerato_superior' => -73
-    ]
+// Definir los niveles educativos disponibles para el directorio
+$nivelesDisponibles = [
+    'inicial_esc' => 'Inicial Escolarizada',
+    'preescolar' => 'Preescolar',
+    'primaria' => 'Primaria',
+    'secundaria' => 'Secundaria',
+    'media_sup' => 'Media Superior',
+    'superior' => 'Superior'
 ];
 
+// =============================================================================
+// CARGAR DIRECTORIOS DE ESCUELAS POR NIVEL
+// =============================================================================
+
+// Inicializar array para almacenar directorios por nivel
+$directoriosPorNivel = [];
+$notasEspeciales = [];
+
+// Cargar directorio para cada nivel educativo
+foreach ($nivelesDisponibles as $codigoNivel => $nombreNivel) {
+    $directorio = obtenerDirectorioEscuelas($municipioSeleccionado, $codigoNivel);
+
+    if ($directorio && isset($directorio['escuelas'])) {
+        $directoriosPorNivel[$codigoNivel] = $directorio;
+
+        // Almacenar nota especial si existe (para Superior en Querétaro)
+        if (isset($directorio['tiene_ajuste_unidades']) && $directorio['tiene_ajuste_unidades']) {
+            $notasEspeciales[$codigoNivel] = [
+                'total_ajustado' => $directorio['total_alumnos_ajustado'],
+                'total_sin_ajuste' => $directorio['total_alumnos_sin_ajuste'],
+                'ajuste' => $directorio['ajuste_unidades'],
+                'nota' => $directorio['nota_explicativa']
+            ];
+        }
+    }
+}
+
+// Separar escuelas públicas y privadas para cada nivel
+$escuelasPublicasPorNivel = [];
+$escuelasPrivadasPorNivel = [];
+
+// Inicializar contadores por subcontrol
+$conteoSubcontrol = [];
+
+foreach ($directoriosPorNivel as $nivel => $datos) {
+    $escuelasPublicasPorNivel[$nivel] = [];
+    $escuelasPrivadasPorNivel[$nivel] = [];
+
+    foreach ($datos['escuelas'] as $escuela) {
+        $control = strtoupper($escuela['tipo_control']);
+
+        // Contar por subcontrol
+        if (!isset($conteoSubcontrol[$control])) {
+            $conteoSubcontrol[$control] = 0;
+        }
+        $conteoSubcontrol[$control]++;
+
+        if ($control === 'PRIVADO') {
+            $escuelasPrivadasPorNivel[$nivel][] = $escuela;
+        } else {
+            $escuelasPublicasPorNivel[$nivel][] = $escuela;
+        }
+    }
+}
+
+// Construir distribución por subcontrol con porcentajes
+$distribucionSubcontrol = [];
+foreach ($conteoSubcontrol as $subcontrol => $total) {
+    $distribucionSubcontrol[$subcontrol] = [
+        'total' => $total,
+        'porcentaje' => $totalEscuelas > 0 ? round(($total / $totalEscuelas) * 100, 1) : 0
+    ];
+}
+
+// Asegurar que existan todas las categorías necesarias
+$subcontrolesEsperados = ['PRIVADO', 'FEDERAL TRANSFERIDO', 'FEDERAL', 'ESTATAL', 'AUTÓNOMO'];
+foreach ($subcontrolesEsperados as $subcontrol) {
+    if (!isset($distribucionSubcontrol[$subcontrol])) {
+        $distribucionSubcontrol[$subcontrol] = [
+            'total' => 0,
+            'porcentaje' => 0
+        ];
+    }
+}
+
+// =============================================================================
+// VARIABLES ADICIONALES PARA JAVASCRIPT
+// =============================================================================
+
+// Variable de eficiencia (puede implementarse en el futuro)
+$datosEficiencia = [
+    'promedio_alumnos_escuela' => $totalEscuelas > 0 ? round($totalAlumnos / $totalEscuelas, 1) : 0,
+    'promedio_alumnos_docente' => $totalDocentes > 0 ? round($totalAlumnos / $totalDocentes, 1) : 0
+];
+
+// Variable para datos educativos (usada por otros scripts)
+$datosEducativos = $datosCompletosMunicipio;
 
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -195,10 +320,13 @@ $datosEficiencia = [
         </div>
         <div class="sidebar-links">
             <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
-            <a href="resumen.php" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
-            <a href="alumnos.php" class="sidebar-link"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
+            <a href="resumen.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>" class="sidebar-link"><i
+                    class="fas fa-chart-bar"></i><span>Resumen</span></a>
+            <a href="alumnos.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>" class="sidebar-link"><i
+                    class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
             <div class="sidebar-link-with-submenu">
-                <a href="escuelas_detalle.php" class="sidebar-link active has-submenu">
+                <a href="escuelas_detalle.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>"
+                    class="sidebar-link active has-submenu">
                     <i class="fas fa-school"></i>
                     <span>Escuelas</span>
                     <i class="fas fa-chevron-down submenu-arrow"></i>
@@ -220,16 +348,14 @@ $datosEficiencia = [
                         <i class="fas fa-building"></i>
                         <span>Escuelas Privadas</span>
                     </a>
-                    <a href="#conclusiones" class="submenu-link">
-                        <i class="fas fa-clipboard-check"></i>
-                        <span>Conclusiones</span>
-                    </a>
                 </div>
             </div>
-            <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i>
+            <a href="docentes.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>" class="sidebar-link"><i
+                    class="fas fa-chalkboard-teacher"></i>
                 <span>Docentes</span></a>
-            <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
-            <!-- <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
+            <a href="estudiantes.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>" class="sidebar-link"><i
+                    class="fas fa-history"></i> <span>Históricos</span></a>
+            <!-- <a href="historicos.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
                     Históricos</span></a> -->
         </div>
     </div>
@@ -253,13 +379,14 @@ $datosEficiencia = [
             <!-- Panel de resumen de escuelas -->
             <div id="resumen-escuelas" class="panel animate-up">
                 <div class="panel-header">
-                    <h3 class="panel-title"><i class="fas fa-school"></i> Resumen de Escuelas en Querétaro</h3>
+                    <h3 class="panel-title"><i class="fas fa-school"></i> Resumen de Escuelas en
+                        <?php echo $municipioSeleccionado; ?></h3>
                 </div>
                 <div class="panel-body">
                     <div class="stats-row">
                         <div class="stat-box animate-fade delay-1">
                             <div class="stat-value"><?php echo $totalEscuelas; ?> </div>
-                            <div class="stat-label">Total Escuelas Ciclo escolar 2023-2024</div>
+                            <div class="stat-label">Total Escuelas Ciclo escolar 2024-2025</div>
                         </div>
                         <div class="stat-box animate-fade delay-2">
                             <div class="stat-value">
@@ -322,28 +449,14 @@ $datosEficiencia = [
                         <div class="level-bar">
                             <span class="level-name">Especial (CAM)</span>
                             <div class="level-track">
-                                <div class="level-fill" style="width: <?php echo $porcentajes['Especial (CAM)']; ?>%">
+                                <div class="level-fill"
+                                    style="width: <?php echo isset($porcentajes['Especial (CAM)']) ? $porcentajes['Especial (CAM)'] : 0; ?>%">
                                     <span
-                                        class="escuelas-count"><?php echo $escuelasPorNivel['Especial (CAM)']; ?></span>
-                                    <?php if (isset($escuelasNivelSostenimiento['Especial (CAM)'])): ?>
-
-                                    <?php endif; ?>
+                                        class="escuelas-count"><?php echo isset($escuelasPorNivel['Especial (CAM)']) ? $escuelasPorNivel['Especial (CAM)'] : 0; ?></span>
                                 </div>
                             </div>
-                            <span class="level-percent"><?php echo $porcentajes['Especial (CAM)']; ?>%</span>
-                        </div>
-                        <div class="level-bar">
-                            <span class="level-name">Especial (USAER)</span>
-                            <div class="level-track">
-                                <div class="level-fill" style="width: <?php echo $porcentajes['Especial (USAER)']; ?>%">
-                                    <span
-                                        class="escuelas-count"><?php echo $escuelasPorNivel['Especial (USAER)']; ?></span>
-                                    <?php if (isset($escuelasNivelSostenimiento['Especial (USAER)'])): ?>
-
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <span class="level-percent"><?php echo $porcentajes['Especial (CAM)']; ?>%</span>
+                            <span
+                                class="level-percent"><?php echo isset($porcentajes['Especial (CAM)']) ? $porcentajes['Especial (CAM)'] : 0; ?>%</span>
                         </div>
                         <div class="level-bar">
                             <span class="level-name">Preescolar</span>
@@ -411,159 +524,61 @@ $datosEficiencia = [
                     <h3 class="panel-title"><i class="fas fa-building"></i> Distribución por Subcontrol Educativo</h3>
                 </div>
                 <div class="panel-body">
-                    <div class="subcontrol-cards animate-sequence">
-                        <?php foreach ($distribucionSubcontrol as $subcontrol => $datos): ?>
-                            <?php
-                            // Normalizar el subcontrol para manejar problemas de encoding
-                            $subcontrolNormalizado = $subcontrol;
-                            if ($subcontrol === 'AUT?NOMO' || strpos($subcontrol, 'AUT') === 0) {
-                                $subcontrolNormalizado = 'AUTÓNOMO';
-                            }
-                            $dataAttribute = strtolower(str_replace(array(' ', 'Ó'), array('-', 'o'), $subcontrolNormalizado));
-                            ?>
-                            <div class="subcontrol-card animate-scale" data-subcontrol="<?php echo $dataAttribute; ?>">
-                                <div class="subcontrol-header">
-                                    <div class="subcontrol-info">
-                                        <h4 class="subcontrol-name"><?php echo $subcontrolNormalizado; ?></h4>
-                                        <div class="subcontrol-stats">
-                                            <span class="subcontrol-count"><?php echo $datos['total']; ?></span>
-                                            <span class="subcontrol-label">escuelas</span>
-                                            <span class="subcontrol-percentage"><?php echo $datos['porcentaje']; ?>%</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="subcontrol-progress">
-                                    <div class="progress-bar-subcontrol">
-                                        <div class="progress-fill-subcontrol"
-                                            style="width: <?php echo $datos['porcentaje']; ?>%"
-                                            data-subcontrol="<?php echo $dataAttribute; ?>">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="subcontrol-details">
-                                    <div class="details-header">
-                                        <span>Desglose por nivel educativo</span>
-                                    </div>
-                                    <div class="details-content">
-                                        <?php
-                                        // Definir orden específico de los niveles educativos
-                                        $ordenNiveles = [
-                                            'Inicial Escolarizado' => 1,
-                                            'Inicial No Escolarizado' => 2,
-                                            'Especial (CAM)' => 3,
-                                            'Especial (USAER)' => 4,
-                                            'Preescolar' => 5,
-                                            'Primaria' => 6,
-                                            'Secundaria' => 7,
-                                            'Media Superior' => 8,
-                                            'Superior' => 9
-                                        ];
-
-                                        // Crear array ordenado de niveles con sus cantidades
-                                        $nivelesOrdenados = [];
-
-                                        foreach ($ordenNiveles as $nivel => $indice) {
-                                            // Buscar coincidencias exactas para evitar duplicados
-                                            foreach ($datos['desglose'] as $nivelOriginal => $cantidad) {
-                                                $coincideNivel = false;
-
-                                                // Matching exacto y específico para evitar confusiones
-                                                switch ($nivel) {
-                                                    case 'Inicial Escolarizado':
-                                                        if ($nivelOriginal === 'Inicial Escolarizado')
-                                                            $coincideNivel = true;
-                                                        break;
-                                                    case 'Inicial No Escolarizado':
-                                                        if ($nivelOriginal === 'Inicial No Escolarizado')
-                                                            $coincideNivel = true;
-                                                        break;
-                                                    case 'Especial (CAM)':
-                                                        if ($nivelOriginal === 'Educación Especial CAM' || $nivelOriginal === 'CAM')
-                                                            $coincideNivel = true;
-                                                        break;
-                                                    case 'Especial (USAER)':
-                                                        if ($nivelOriginal === 'Educación Especial USAER' || $nivelOriginal === 'USAER')
-                                                            $coincideNivel = true;
-                                                        break;
-                                                    case 'Preescolar':
-                                                        if (stripos($nivelOriginal, 'Preescolar') !== false)
-                                                            $coincideNivel = true;
-                                                        break;
-                                                    case 'Primaria':
-                                                        if (stripos($nivelOriginal, 'Primaria') !== false)
-                                                            $coincideNivel = true;
-                                                        break;
-                                                    case 'Secundaria':
-                                                        if (stripos($nivelOriginal, 'Secundaria') !== false)
-                                                            $coincideNivel = true;
-                                                        break;
-                                                    case 'Media Superior':
-                                                        if ($nivelOriginal === 'Media Superior')
-                                                            $coincideNivel = true;
-                                                        break;
-                                                    case 'Superior':
-                                                        if (stripos($nivelOriginal, 'Superior') !== false && stripos($nivelOriginal, 'Media') === false)
-                                                            $coincideNivel = true;
-                                                        break;
-                                                }
-
-                                                if ($coincideNivel) {
-                                                    $nivelesOrdenados[$indice] = [
-                                                        'nombre' => $nivelOriginal,
-                                                        'cantidad' => $cantidad
-                                                    ];
-                                                    break;
-                                                }
-                                            }
-                                        }
-
-                                        // Ordenar por índice y mostrar
-                                        ksort($nivelesOrdenados);
-                                        foreach ($nivelesOrdenados as $nivelData): ?>
-                                            <div class="detail-item">
-                                                <span class="detail-level"><?php echo $nivelData['nombre']; ?></span>
-                                                <span class="detail-count"><?php echo $nivelData['cantidad']; ?></span>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-
-                    <!-- Resumen estadístico del subcontrol -->
-                    <div class="subcontrol-summary animate-fade delay-3">
-                        <div class="summary-stats">
-                            <div class="summary-item">
-                                <i class="fas fa-chart-pie"></i>
-                                <div>
-                                    <span
-                                        class="summary-value"><?php echo $distribucionSubcontrol['PRIVADO']['porcentaje']; ?>%</span>
-                                    <span class="summary-label">Privadas</span>
-                                </div>
-                            </div>
-                            <div class="summary-item">
-                                <i class="fas fa-building-columns"></i>
-                                <div>
-                                    <span
-                                        class="summary-value"><?php echo round($distribucionSubcontrol['FEDERAL TRANSFERIDO']['porcentaje'] + $distribucionSubcontrol['FEDERAL']['porcentaje'] + $distribucionSubcontrol['ESTATAL']['porcentaje'] + $distribucionSubcontrol['AUTÓNOMO']['porcentaje'], 1); ?>%</span>
-                                    <span class="summary-label">Públicas</span>
-                                </div>
-                            </div>
-                            <div class="summary-item">
-                                <i class="fas fa-crown"></i>
-                                <div>
-                                    <span
-                                        class="summary-value"><?php echo $distribucionSubcontrol['FEDERAL TRANSFERIDO']['porcentaje']; ?>%</span>
-                                    <span class="summary-label">Fed. Transferido</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div style="text-align: center; padding: 60px 20px; color: #666;">
+                        <i class="fas fa-tools" style="font-size: 48px; color: #0066cc; margin-bottom: 20px;"></i>
+                        <h3 style="color: #333; margin-bottom: 15px;">Sección en Desarrollo</h3>
+                        <p style="font-size: 16px; line-height: 1.6; max-width: 600px; margin: 0 auto;">
+                            Esta sección está experimentando cambios estructurales para mejorar la presentación
+                            de la distribución por subcontrol educativo. Pronto estará disponible con información
+                            más detallada y precisa sobre Federal, Estatal, Federal Transferido, Autónomo y Privado.
+                        </p>
+                        <p style="margin-top: 20px; color: #999; font-size: 14px;">
+                            <i class="fas fa-info-circle"></i> Actualmente trabajando en la integración con
+                            <code>conexion_prueba_2024.php</code>
+                        </p>
                     </div>
                 </div>
             </div>
+
+            <?php
+            /* 
+            ============================================================================
+            SECCIÓN COMENTADA TEMPORALMENTE - DISTRIBUCIÓN POR SUBCONTROL EDUCATIVO
+            ============================================================================
+
+            Esta sección requiere cambios estructurales para adaptarse correctamente
+            al nuevo sistema de conexión (conexion_prueba_2024.php).
+
+            PENDIENTE:
+            - Adaptar la estructura de datos de $distribucionSubcontrol
+            - Implementar desglose correcto por nivel educativo
+            - Verificar coincidencia de nombres de niveles
+            - Calcular porcentajes correctamente
+
+            CÓDIGO ORIGINAL:
+
+            <div class="subcontrol-cards animate-sequence">
+                <?php foreach ($distribucionSubcontrol as $subcontrol => $datos): ?>
+                    <?php
+                    $subcontrolNormalizado = $subcontrol;
+                    if ($subcontrol === 'AUT?NOMO' || strpos($subcontrol, 'AUT') === 0) {
+                        $subcontrolNormalizado = 'AUTÓNOMO';
+                    }
+                    $dataAttribute = strtolower(str_replace(array(' ', 'Ó'), array('-', 'o'), $subcontrolNormalizado));
+                    ?>
+                    <div class="subcontrol-card animate-scale" data-subcontrol="<?php echo $dataAttribute; ?>">
+                        [... resto del código de tarjetas de subcontrol ...]
+                    </div>
+                <?php endforeach; ?>
+            </div>
+
+            <div class="subcontrol-summary animate-fade delay-3">
+                [... resumen estadístico del subcontrol ...]
+            </div>
+
+            ============================================================================
+            */
+            ?>
 
             <!-- Panel de eficiencia educativa 
             <div class="panel animate-up delay-2">
@@ -691,66 +706,40 @@ $datosEficiencia = [
         <!-- Panel de Directorio de Escuelas Públicas -->
         <div id="directorio-publicas" class="matricula-panel animate-fade delay-4">
             <div class="matricula-header">
-                <h3 class="matricula-title"><i class="fas fa-landmark"></i> Directorio de Escuelas Públicas (No incluye
-                    USAER)</h3>
+                <h3 class="matricula-title">
+                    <i class="fas fa-landmark"></i>
+                    Directorio de Escuelas Públicas - <?php echo $municipioSeleccionado; ?>
+                </h3>
             </div>
             <div class="matricula-body">
                 <div class="directorio-filters">
                     <input type="text" id="search-publicas" placeholder="Buscar escuela pública..."
                         class="search-input">
                     <select id="nivel-filter-publicas" class="nivel-filter">
-                        <option value="">Todos los niveles</option>
-                        <?php
-                        // Definir orden específico de los niveles educativos
-                        $ordenNivelesEducativos = [
-                            'Inicial (Escolarizado)',
-                            'Inicial (No Escolarizado)',
-                            'Especial (CAM)',
-                            'Especial (USAER)',
-                            'Preescolar',
-                            'Primaria',
-                            'Secundaria',
-                            'Media Superior',
-                            'Superior'
-                        ];
-
-                        $nivelesPublicas = array_unique(array_column($escuelasPublicasDirectorio, 'nivel'));
-
-                        // Ordenar según el orden educativo específico
-                        $nivelesOrdenados = [];
-                        foreach ($ordenNivelesEducativos as $nivelOrden) {
-                            foreach ($nivelesPublicas as $nivel) {
-                                if (
-                                    $nivel === $nivelOrden ||
-                                    ($nivelOrden === 'Especial (CAM)' && stripos($nivel, 'CAM') !== false) ||
-                                    ($nivelOrden === 'Inicial (Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'Escolar') !== false) ||
-                                    ($nivelOrden === 'Inicial (No Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'No Escolar') !== false)
-                                ) {
-                                    $nivelesOrdenados[] = $nivel;
-                                    break;
-                                }
-                            }
-                        }
-
-                        // Agregar USAER manualmente para escuelas públicas
-                        if (!in_array('Especial (USAER)', $nivelesOrdenados)) {
-                            // Insertar USAER después de CAM
-                            $pos = array_search('Especial (CAM)', $nivelesOrdenados);
-                            if ($pos !== false) {
-                                array_splice($nivelesOrdenados, $pos + 1, 0, 'Especial (USAER)');
-                            } else {
-                                $nivelesOrdenados[] = 'Especial (USAER)';
-                            }
-                        }
-
-                        foreach ($nivelesOrdenados as $nivel): ?>
-                            <option value="<?php echo $nivel; ?>"><?php echo $nivel; ?></option>
-                        <?php endforeach; ?>
+                        <option value="todos">Todos los niveles</option>
+                        <?php foreach ($nivelesDisponibles as $codigo => $nombre):
+                            $cantPublicas = isset($escuelasPublicasPorNivel[$codigo]) ? count($escuelasPublicasPorNivel[$codigo]) : 0;
+                            if ($cantPublicas > 0):
+                                ?>
+                                <option value="<?php echo $codigo; ?>">
+                                    <?php echo $nombre; ?> (<?php echo $cantPublicas; ?>)
+                                </option>
+                                <?php
+                            endif;
+                        endforeach;
+                        ?>
                     </select>
                     <div class="school-count">
                         <span class="count-label">Total:</span>
-                        <span class="count-number" id="count-publicas"><?php echo count($escuelasPublicasDirectorio) + 34;
-                        ?></span>
+                        <span class="count-number" id="count-publicas">
+                            <?php
+                            $totalPublicas = 0;
+                            foreach ($escuelasPublicasPorNivel as $escuelas) {
+                                $totalPublicas += count($escuelas);
+                            }
+                            echo $totalPublicas;
+                            ?>
+                        </span>
                         <span class="count-text">escuelas</span>
                     </div>
                 </div>
@@ -766,17 +755,26 @@ $datosEficiencia = [
                                 <th>Total Alumnos</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <?php foreach ($escuelasPublicasDirectorio as $escuela): ?>
-                                <tr data-nivel="<?php echo $escuela['nivel']; ?>">
-                                    <td class="nivel-nombre"><?php echo $escuela['nivel']; ?></td>
-                                    <td class="cct-codigo"><?php echo $escuela['cct']; ?></td>
-                                    <td class="escuela-nombre"><?php echo $escuela['nombre']; ?></td>
-                                    <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
-                                    <td class="sector-publico"><?php echo number_format($escuela['total_alumnos']); ?>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
+                        <tbody id="tbody-publicas">
+                            <?php
+                            foreach ($nivelesDisponibles as $codigo => $nombreNivel):
+                                if (!isset($escuelasPublicasPorNivel[$codigo]))
+                                    continue;
+                                foreach ($escuelasPublicasPorNivel[$codigo] as $escuela):
+                                    ?>
+                                    <tr data-nivel="<?php echo $codigo; ?>"
+                                        data-nombre="<?php echo strtolower($escuela['nombre_escuela']); ?>"
+                                        data-cct="<?php echo $escuela['cv_cct']; ?>">
+                                        <td class="nivel-nombre"><?php echo $nombreNivel; ?></td>
+                                        <td class="cct-codigo"><?php echo $escuela['cv_cct']; ?></td>
+                                        <td class="escuela-nombre"><?php echo $escuela['nombre_escuela']; ?></td>
+                                        <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
+                                        <td class="sector-publico"><?php echo number_format($escuela['total_alumnos']); ?></td>
+                                    </tr>
+                                    <?php
+                                endforeach;
+                            endforeach;
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -786,54 +784,40 @@ $datosEficiencia = [
         <!-- Panel de Directorio de Escuelas Privadas -->
         <div id="directorio-privadas" class="matricula-panel animate-fade delay-5">
             <div class="matricula-header">
-                <h3 class="matricula-title"><i class="fas fa-building"></i> Directorio de Escuelas Privadas</h3>
+                <h3 class="matricula-title">
+                    <i class="fas fa-building"></i>
+                    Directorio de Escuelas Privadas - <?php echo $municipioSeleccionado; ?>
+                </h3>
             </div>
             <div class="matricula-body">
                 <div class="directorio-filters">
                     <input type="text" id="search-privadas" placeholder="Buscar escuela privada..."
                         class="search-input">
                     <select id="nivel-filter-privadas" class="nivel-filter">
-                        <option value="">Todos los niveles</option>
-                        <?php
-                        // Definir orden específico de los niveles educativos
-                        $ordenNivelesEducativos = [
-                            'Inicial (Escolarizado)',
-                            'Inicial (No Escolarizado)',
-                            'Especial (CAM)',
-                            'Especial (USAER)',
-                            'Preescolar',
-                            'Primaria',
-                            'Secundaria',
-                            'Media Superior',
-                            'Superior'
-                        ];
-
-                        $nivelesPrivadas = array_unique(array_column($escuelasPrivadasDirectorio, 'nivel'));
-
-                        // Ordenar según el orden educativo específico
-                        $nivelesOrdenados = [];
-                        foreach ($ordenNivelesEducativos as $nivelOrden) {
-                            foreach ($nivelesPrivadas as $nivel) {
-                                if (
-                                    $nivel === $nivelOrden ||
-                                    ($nivelOrden === 'Especial (CAM)' && stripos($nivel, 'CAM') !== false) ||
-                                    ($nivelOrden === 'Inicial (Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'Escolar') !== false) ||
-                                    ($nivelOrden === 'Inicial (No Escolarizado)' && stripos($nivel, 'Inicial') !== false && stripos($nivel, 'No Escolar') !== false)
-                                ) {
-                                    $nivelesOrdenados[] = $nivel;
-                                    break;
-                                }
-                            }
-                        }
-
-                        foreach ($nivelesOrdenados as $nivel): ?>
-                            <option value="<?php echo $nivel; ?>"><?php echo $nivel; ?></option>
-                        <?php endforeach; ?>
+                        <option value="todos">Todos los niveles</option>
+                        <?php foreach ($nivelesDisponibles as $codigo => $nombre):
+                            $cantPrivadas = isset($escuelasPrivadasPorNivel[$codigo]) ? count($escuelasPrivadasPorNivel[$codigo]) : 0;
+                            if ($cantPrivadas > 0):
+                                ?>
+                                <option value="<?php echo $codigo; ?>">
+                                    <?php echo $nombre; ?> (<?php echo $cantPrivadas; ?>)
+                                </option>
+                                <?php
+                            endif;
+                        endforeach;
+                        ?>
                     </select>
                     <div class="school-count">
                         <span class="count-label">Total:</span>
-                        <span class="count-number"
-                            id="count-privadas"><?php echo count($escuelasPrivadasDirectorio); ?></span>
+                        <span class="count-number" id="count-privadas">
+                            <?php
+                            $totalPrivadas = 0;
+                            foreach ($escuelasPrivadasPorNivel as $escuelas) {
+                                $totalPrivadas += count($escuelas);
+                            }
+                            echo $totalPrivadas;
+                            ?>
+                        </span>
                         <span class="count-text">escuelas</span>
                     </div>
                 </div>
@@ -849,61 +833,32 @@ $datosEficiencia = [
                                 <th>Total Alumnos</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <?php foreach ($escuelasPrivadasDirectorio as $escuela): ?>
-                                <tr data-nivel="<?php echo $escuela['nivel']; ?>">
-                                    <td class="nivel-nombre"><?php echo $escuela['nivel']; ?></td>
-                                    <td class="cct-codigo"><?php echo $escuela['cct']; ?></td>
-                                    <td class="escuela-nombre"><?php echo $escuela['nombre']; ?></td>
-                                    <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
-                                    <td class="sector-privado"><?php echo number_format($escuela['total_alumnos']); ?>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
+                        <tbody id="tbody-privadas">
+                            <?php
+                            foreach ($nivelesDisponibles as $codigo => $nombreNivel):
+                                if (!isset($escuelasPrivadasPorNivel[$codigo]))
+                                    continue;
+                                foreach ($escuelasPrivadasPorNivel[$codigo] as $escuela):
+                                    ?>
+                                    <tr data-nivel="<?php echo $codigo; ?>"
+                                        data-nombre="<?php echo strtolower($escuela['nombre_escuela']); ?>"
+                                        data-cct="<?php echo $escuela['cv_cct']; ?>">
+                                        <td class="nivel-nombre"><?php echo $nombreNivel; ?></td>
+                                        <td class="cct-codigo"><?php echo $escuela['cv_cct']; ?></td>
+                                        <td class="escuela-nombre"><?php echo $escuela['nombre_escuela']; ?></td>
+                                        <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
+                                        <td class="sector-privado"><?php echo number_format($escuela['total_alumnos']); ?></td>
+                                    </tr>
+                                    <?php
+                                endforeach;
+                            endforeach;
+                            ?>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- Panel de conclusiones -->
-        <div id="conclusiones" class="panel animate-up delay-4">
-            <div class="panel-header">
-                <h3 class="panel-title"><i class="fas fa-clipboard-check"></i> Conclusiones del Análisis</h3>
-            </div>
-            <div class="panel-body">
-                <div class="conclusion-list">
-                    <div class="conclusion-item animate-left delay-5">
-                        <div class="conclusion-icon strength">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div>
-                            <h4>Fortalezas</h4>
-                            <ul>
-                                <li>Alta retención en educación primaria</li>
-                                <li>Excelente retención al final de secundaria</li>
-                                <li>Fuerte atracción inicial en bachillerato</li>
-                                <li>Alta tasa de graduación universitaria para quienes ingresan</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="conclusion-item animate-right delay-5">
-                        <div class="conclusion-icon weakness">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <div>
-                            <h4>Áreas de Oportunidad</h4>
-                            <ul>
-                                <li>Deserción significativa al entrar a secundaria</li>
-                                <li>Pérdida importante de matrícula durante bachillerato</li>
-                                <li>Gran brecha entre egresados de bachillerato y acceso a educación superior local
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <footer class="dashboard-footer">
@@ -913,20 +868,36 @@ $datosEficiencia = [
     </div>
     <script>
         <?php
+        // Debug: Verificar valores antes de generar JavaScript
+        error_log("=== DEBUG ESCUELAS_DETALLE.PHP ===");
+        error_log("totalEscuelas: " . $totalEscuelas);
+        error_log("escuelasPublicas: " . $escuelasPublicas);
+        error_log("escuelasPrivadas: " . $escuelasPrivadas);
+        error_log("escuelasNivelSostenimiento: " . print_r($escuelasNivelSostenimiento, true));
+
         // Convertir datos de eficiencia a formato JSON para usar en JavaScript
         echo "const datosEficiencia = " . json_encode($datosEficiencia) . ";\n";
+        echo "const datosEducativos = " . json_encode($datosEducativos) . ";\n";
         echo "const totalEscuelas = " . $totalEscuelas . ";\n";
         echo "const totalAlumnos = " . $totalAlumnos . ";\n";
         echo "const escuelasPublicas = " . $escuelasPublicas . ";\n";
         echo "const escuelasPrivadas = " . $escuelasPrivadas . ";\n";
         echo "const porcentajePublicas = " . $porcentajePublicas . ";\n";
         echo "const porcentajePrivadas = " . $porcentajePrivadas . ";\n";
-        echo "const escuelasNivelSostenimiento = " . json_encode($escuelasNivelSostenimiento) . ";\n";
         echo "const escuelasPorNivel = " . json_encode($escuelasPorNivel) . ";\n";
 
-        // Datos de subcontrol educativo
-        echo "const totalEscuelasSubcontrol = " . $totalEscuelasSubcontrol . ";\n";
-        echo "const distribucionSubcontrol = " . json_encode($distribucionSubcontrol) . ";\n";
+        // Datos de sostenimiento por nivel educativo (público/privado)
+        echo "const escuelasNivelSostenimiento = " . json_encode($escuelasNivelSostenimiento) . ";\n";
+
+        // Log de verificación
+        echo "console.log('✓ Variables PHP cargadas correctamente');\n";
+        echo "console.log('Total escuelas desde PHP:', " . $totalEscuelas . ");\n";
+        echo "console.log('Escuelas públicas desde PHP:', " . $escuelasPublicas . ");\n";
+        echo "console.log('Escuelas privadas desde PHP:', " . $escuelasPrivadas . ");\n";
+
+        // Datos de subcontrol educativo - COMENTADO TEMPORALMENTE
+        // echo "const totalEscuelasSubcontrol = " . $totalEscuelasSubcontrol . ";\n";
+        // echo "const distribucionSubcontrol = " . json_encode($distribucionSubcontrol) . ";\n";
         ?>
     </script>
     <script src="./js/script.js"></script>
