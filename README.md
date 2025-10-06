@@ -167,4 +167,25 @@ Sistema completo de visualización que muestra la distribución de instituciones
 
 ---
 
+## 📚 Documentación Adicional
+
+### Documentos Técnicos
+
+- **[DOCUMENTACION_SUBCONTROL.md](DOCUMENTACION_SUBCONTROL.md)** - Análisis detallado de desglose por subcontrol educativo
+  - Correcciones aplicadas a consultas SQL
+  - Validación de totales con PostgreSQL
+  - Instrucciones de uso y eliminación del código temporal
+  - Consideraciones especiales para nivel superior
+
+- **[MIGRACION_PROGRESO.md](MIGRACION_PROGRESO.md)** - Progreso de migración del sistema
+- **[RESUMEN_TRABAJO_SISTEMAS_DINAMICOS.md](RESUMEN_TRABAJO_SISTEMAS_DINAMICOS.md)** - Análisis de sistemas dinámicos
+
+### Archivos de Prueba
+
+- `prueba_subcontrol.php` - Visualización de desglose por subcontrol (TEMPORAL)
+- `test_subcontrol_debug.php` - Depuración de consultas de subcontrol
+- `test_tablas_subcontrol.php` - Pruebas de tablas de subcontrol
+
+---
+
 *Sistema integral de análisis educativo desarrollado para la toma de decisiones estratégicas en todo el Estado de Querétaro.*

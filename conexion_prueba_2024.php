@@ -2951,3 +2951,276 @@ function obtenerDirectorioEscuelas($municipio, $nivel_educativo, $ini_ciclo = nu
     }
 }
 
+function obtenerEscuelasPorSubcontrolYNivel($municipio = 'QUERÉTARO', $ini_ciclo = null)
+{
+    // Usar ciclo escolar actual si no se especifica
+    if ($ini_ciclo === null) {
+        $ini_ciclo = obtenerCicloEscolarActual();
+    }
+
+    // Usar la misma función que usa escuelas_detalle.php
+    $datosPublicoPrivado = obtenerDatosPublicoPrivado($municipio, $ini_ciclo);
+
+    if (!$datosPublicoPrivado || empty($datosPublicoPrivado)) {
+        return false;
+    }
+
+    // Mapeo de claves del backend a nombres visuales (igual que escuelas_detalle.php)
+    $mapeoNiveles = [
+        'inicial_esc' => 'Inicial (Escolarizado)',
+        'inicial_no_esc' => 'Inicial (No Escolarizado)',
+        'especial_tot' => 'Especial (CAM)',
+        'preescolar' => 'Preescolar',
+        'primaria' => 'Primaria',
+        'secundaria' => 'Secundaria',
+        'media_sup' => 'Media Superior',
+        'superior' => 'Superior'
+    ];
+
+    // Estructurar datos por subcontrol
+    $datos = [];
+    $total_escuelas = 0;
+
+    foreach ($datosPublicoPrivado as $codigo_nivel => $nivel_datos) {
+        if (!isset($mapeoNiveles[$codigo_nivel])) {
+            continue;
+        }
+
+        $nombre_nivel = $mapeoNiveles[$codigo_nivel];
+        $escuelas_publicas = isset($nivel_datos['tot_esc_pub']) ? (int) $nivel_datos['tot_esc_pub'] : 0;
+        $escuelas_privadas = isset($nivel_datos['tot_esc_priv']) ? (int) $nivel_datos['tot_esc_priv'] : 0;
+
+        $total_escuelas += ($escuelas_publicas + $escuelas_privadas);
+
+        // Agrupar escuelas públicas por subcontrol
+        if ($escuelas_publicas > 0) {
+            // Necesitamos desglosar las públicas por subcontrol
+            // Para esto usamos la consulta directa con subcontrol
+            $num_muni = nombre_a_numero_municipio($municipio);
+            $filtro_mun = ($num_muni !== false) ? " AND cv_mun='$num_muni' " : "";
+
+            $link = ConectarsePrueba();
+            if ($link) {
+                $subcontroles_publicos = obtenerSubcontrolPorNivel($link, $codigo_nivel, $ini_ciclo, $filtro_mun, $nombre_nivel);
+
+                foreach ($subcontroles_publicos as $subcontrol => $cantidad) {
+                    if (!isset($datos[$subcontrol])) {
+                        $datos[$subcontrol] = [
+                            'total' => 0,
+                            'niveles' => []
+                        ];
+                    }
+                    $datos[$subcontrol]['niveles'][$nombre_nivel] = $cantidad;
+                    $datos[$subcontrol]['total'] += $cantidad;
+                }
+
+                pg_close($link);
+            }
+        }
+
+        // Escuelas privadas
+        if ($escuelas_privadas > 0) {
+            if (!isset($datos['PRIVADO'])) {
+                $datos['PRIVADO'] = [
+                    'total' => 0,
+                    'niveles' => []
+                ];
+            }
+            $datos['PRIVADO']['niveles'][$nombre_nivel] = $escuelas_privadas;
+            $datos['PRIVADO']['total'] += $escuelas_privadas;
+        }
+    }
+
+    // Calcular porcentajes
+    foreach ($datos as $control => &$info) {
+        $info['porcentaje'] = $total_escuelas > 0 ? round(($info['total'] / $total_escuelas) * 100, 1) : 0;
+    }
+
+    return [
+        'total_escuelas' => $total_escuelas,
+        'municipio' => $municipio,
+        'ciclo' => $ini_ciclo,
+        'distribucion' => $datos
+    ];
+}
+
+/**
+ * Función auxiliar para obtener el desglose de subcontrol de un nivel específico
+ * 
+ * CORRECCIONES APLICADAS (2025-01-06):
+ * - Se agregaron los filtros base (cv_estatus_captura) que faltaban en todas las consultas
+ * - Se corrigieron los filtros de Media Superior para usar NOT IN en lugar de <>
+ * - Se validaron todas las consultas contra la base de datos real usando PostgreSQL MCP
+ * - Ahora los totales por subcontrol coinciden EXACTAMENTE con los totales generales
+ */
+function obtenerSubcontrolPorNivel($link, $codigo_nivel, $ini_ciclo, $filtro_mun, $nombre_nivel)
+{
+    $resultado = [];
+    $muni_num = extractMuniNumber($filtro_mun);
+
+    // Mapeo de código de nivel a tablas y consultas
+    // IMPORTANTE: Estas consultas replican EXACTAMENTE la lógica de rs_consulta_segura
+    // usando las mismas tablas y filtros, pero agregando GROUP BY subcontrol
+    $consultas_por_nivel = [
+        // Inicial Escolarizado: ini_gral + ini_ind (según rs_consulta_segura línea 686-697)
+        'inicial_esc' => "
+            SELECT subcontrol, COUNT(DISTINCT cv_cct) as total
+            FROM (
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo 
+                WHERE cv_mun = '$muni_num' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND control <> 'PRIVADO'
+                UNION
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.ini_ind_$ini_ciclo 
+                WHERE cv_mun = '$muni_num' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND control <> 'PRIVADO'
+            ) t
+            GROUP BY subcontrol",
+
+        // Inicial No Escolarizado: ini_comuni + ini_ne (según rs_consulta_segura línea 699-718)
+        'inicial_no_esc' => "
+            SELECT subcontrol, COUNT(DISTINCT cv_cct) as total
+            FROM (
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.ini_comuni_$ini_ciclo 
+                WHERE cv_mun = '$muni_num' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND control <> 'PRIVADO'
+                UNION
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.ini_ne_$ini_ciclo 
+                WHERE cv_mun = '$muni_num' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND control <> 'PRIVADO'
+            ) t
+            GROUP BY subcontrol",
+
+        // Especial: solo esp_cam_24, SIN esp_usaer (según rs_consulta_segura línea 811-832)
+        'especial_tot' => "
+            SELECT subcontrol, COUNT(DISTINCT cv_cct) as total
+            FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo
+            WHERE cv_mun = '$muni_num' AND cv_estatus_captura = 0 AND control <> 'PRIVADO'
+            GROUP BY subcontrol",
+
+        // Preescolar: pree_gral + pree_ind + pree_comuni (según rs_consulta_segura línea 720-754)
+        // NOTA: rs_consulta_segura incluye ini_gral pero lo marca con es_ini_gral=1 y lo excluye en COUNT
+        // Por lo tanto, para el conteo de escuelas solo debemos incluir las 3 tablas de preescolar
+        'preescolar' => "
+            SELECT subcontrol, COUNT(DISTINCT cv_cct) as total
+            FROM (
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.pree_gral_$ini_ciclo 
+                WHERE cv_mun = '$muni_num' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND control <> 'PRIVADO'
+                UNION
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.pree_ind_$ini_ciclo 
+                WHERE cv_mun = '$muni_num' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND control <> 'PRIVADO'
+                UNION
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.pree_comuni_$ini_ciclo 
+                WHERE cv_mun = '$muni_num' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND control <> 'PRIVADO'
+            ) t
+            GROUP BY subcontrol",
+
+        // Primaria: prim_gral + prim_ind + prim_comuni (según rs_consulta_segura línea 750-778)
+        'primaria' => "
+            SELECT subcontrol, COUNT(DISTINCT cv_cct) as total
+            FROM (
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.prim_gral_$ini_ciclo 
+                WHERE cv_mun = '$muni_num' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND control <> 'PRIVADO'
+                UNION
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.prim_ind_$ini_ciclo 
+                WHERE cv_mun = '$muni_num' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND control <> 'PRIVADO'
+                UNION
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.prim_comuni_$ini_ciclo 
+                WHERE cv_mun = '$muni_num' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND control <> 'PRIVADO'
+            ) t
+            GROUP BY subcontrol",
+
+        // Secundaria: sec_gral + sec_comuni (según rs_consulta_segura línea 780-799)
+        // IMPORTANTE: Usar UNION ALL y COUNT sin DISTINCT para replicar rs_consulta_segura
+        // que cuenta escuelas con diferentes turnos/modalidades como entradas separadas
+        'secundaria' => "
+            SELECT subcontrol, COUNT(cv_cct) as total
+            FROM (
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.sec_gral_$ini_ciclo 
+                WHERE cv_mun = '$muni_num' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND control <> 'PRIVADO'
+                UNION ALL
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.sec_comuni_$ini_ciclo 
+                WHERE cv_mun = '$muni_num' AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10) AND control <> 'PRIVADO'
+            ) t
+            GROUP BY subcontrol",
+
+        // Media Superior: ms_gral + ms_tecno con filtros especiales (según rs_consulta_segura línea 801-809)
+        // CORRECCIÓN: Usar NOT IN en lugar de <> para cv_estatus
+        'media_sup' => "
+            SELECT subcontrol, COUNT(DISTINCT cv_cct) as total
+            FROM (
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo
+                WHERE cv_mun = '$muni_num' AND control <> 'PRIVADO'
+                    AND cv_motivo = '0' AND cv_estatus NOT IN ('2', '4')
+                UNION
+                SELECT cv_cct, subcontrol FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo
+                WHERE cv_mun = '$muni_num' AND control <> 'PRIVADO'
+                    AND cv_motivo = '0' AND cv_estatus NOT IN ('2', '4')
+            ) t
+            GROUP BY subcontrol",
+
+        // Superior: sup_escuela con cct_ins_pla (según rs_consulta_segura línea 833-876)
+        // IMPORTANTE: Se incluyen unidades de sup_unidades que no están en sup_escuela
+        // (Tecnológico Nacional y Universidad Pedagógica Nacional)
+        'superior' => "
+            SELECT subcontrol, COUNT(DISTINCT cct_ins_pla) as total
+            FROM (
+                -- Escuelas principales de sup_escuela_24
+                SELECT cct_ins_pla, subcontrol
+                FROM nonce_pano_$ini_ciclo.sup_escuela_$ini_ciclo
+                WHERE cv_mun = '$muni_num' AND control <> 'PRIVADO'
+                    AND cv_motivo = '0'
+                
+                UNION
+                
+                -- Unidades de sup_unidades_24 que NO están en sup_escuela_24
+                -- Estas son las unidades del Tecnológico Nacional y UPN
+                SELECT DISTINCT 
+                    u.cct_ins_pla,
+                    CASE 
+                        WHEN u.cv_cct = '22DIT0001M' THEN 'FEDERAL'  -- Tecnológico Nacional
+                        WHEN u.cv_cct = '22DUP0002U' THEN 'FEDERAL'  -- UPN
+                        ELSE 'FEDERAL'
+                    END as subcontrol
+                FROM nonce_pano_$ini_ciclo.sup_unidades_$ini_ciclo u
+                WHERE u.cv_mun = $muni_num
+                    AND u.control <> 'PRIVADO'
+                    AND NOT EXISTS (
+                        SELECT 1 
+                        FROM nonce_pano_$ini_ciclo.sup_escuela_$ini_ciclo e
+                        WHERE e.cv_cct = u.cv_cct 
+                            AND e.cv_mun = u.cv_mun
+                    )
+            ) t
+            GROUP BY subcontrol"
+    ];
+
+    if (!isset($consultas_por_nivel[$codigo_nivel])) {
+        return $resultado;
+    }
+
+    $query = $consultas_por_nivel[$codigo_nivel];
+    $result = pg_query($link, $query);
+
+    if ($result) {
+        while ($row = pg_fetch_assoc($result)) {
+            $subcontrol = strtoupper(trim($row['subcontrol']));
+
+            // Normalizar nombres
+            if ($subcontrol === 'AUT?NOMO' || strpos($subcontrol, 'AUT') === 0) {
+                $subcontrol = 'AUTÓNOMO';
+            }
+
+            $resultado[$subcontrol] = (int) $row['total'];
+        }
+        pg_free_result($result);
+    }
+
+    return $resultado;
+}
+
+/**
+ * Función auxiliar para extraer el número de municipio del filtro
+ */
+function extractMuniNumber($filtro_mun)
+{
+    preg_match("/cv_mun='(\d+)'/", $filtro_mun, $matches);
+    return isset($matches[1]) ? $matches[1] : '14';
+}
+
+

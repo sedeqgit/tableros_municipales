@@ -471,24 +471,16 @@ function initOriginalTexts() {
  * @param {HTMLElement} tbody - Elemento tbody de la tabla
  */
 function sortTableByLevelAndStudents(rows, tbody) {
-    // Definir orden correcto de niveles educativos
+    // Definir orden correcto de niveles educativos usando códigos
     const levelOrder = {
-        'Inicial (Escolarizado)': 1,
-        'Inicial Escolarizada': 1,
-        'Inicial (No Escolarizado)': 2,
-        'Inicial No Escolarizada': 2,
-        'Inicial Comunitaria': 2,
-        'Inicial Indigena': 2,
-        'CAM': 3,
-        'Especial (CAM)': 3,
-        'Preescolar': 4,
-        'Preescolar Comunitario': 4,
-        'Primaria': 5,
-        'Primaria Comunitaria': 5,
-        'Secundaria': 6,
-        'Secundaria Comunitaria': 6,
-        'Media Superior': 7,
-        'Superior': 8
+        'inicial_esc': 1,
+        'inicial_no_esc': 2,
+        'especial_tot': 3,
+        'preescolar': 4,
+        'primaria': 5,
+        'secundaria': 6,
+        'media_sup': 7,
+        'superior': 8
     };
     
     // Ordenar filas

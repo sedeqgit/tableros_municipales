@@ -6,17 +6,20 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('=== Sistema de Filtrado de Escuelas por Sostenimiento ===');
     console.log('Inicializando componentes...');
-    
+
     // Verificar datos disponibles
     console.log('✓ Datos cargados:');
     console.log('  - Total escuelas:', typeof totalEscuelas !== 'undefined' ? totalEscuelas : 'NO DEFINIDO');
     console.log('  - Escuelas públicas:', typeof escuelasPublicas !== 'undefined' ? escuelasPublicas : 'NO DEFINIDO');
     console.log('  - Escuelas privadas:', typeof escuelasPrivadas !== 'undefined' ? escuelasPrivadas : 'NO DEFINIDO');
     console.log('  - Datos por nivel:', typeof escuelasNivelSostenimiento !== 'undefined' ? 'DISPONIBLE' : 'NO DEFINIDO');
-    
+
     if (typeof escuelasNivelSostenimiento !== 'undefined') {
         console.log('  - Niveles disponibles:', Object.keys(escuelasNivelSostenimiento));
     }
+
+    // Variable para rastrear el filtro actual (para sincronizar con el gráfico)
+    let filtroActual = 'total';
     
     // Almacenar los valores originales de cada nivel para restaurarlos
     const valoresOriginales = {};
@@ -85,7 +88,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Aplicar el filtro seleccionado
                 const filterType = this.getAttribute('data-filter');
+                filtroActual = filterType; // Guardar el filtro actual
                 aplicarFiltro(filterType);
+            });
+        });
+    }
+
+    // Configurar los botones de toggle de visualización
+    const viewToggleButtons = document.querySelectorAll('.view-toggle-btn');
+    const vistaBarras = document.getElementById('vista-barras');
+    const vistaGrafico = document.getElementById('vista-grafico');
+
+    if (viewToggleButtons.length > 0) {
+        viewToggleButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Cambiar clase activa
+                viewToggleButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                // Cambiar vista
+                const viewType = this.getAttribute('data-view');
+                if (viewType === 'barras') {
+                    vistaBarras.style.display = 'block';
+                    vistaGrafico.style.display = 'none';
+                } else if (viewType === 'grafico') {
+                    vistaBarras.style.display = 'none';
+                    vistaGrafico.style.display = 'block';
+                    // Crear o actualizar el gráfico cuando se muestra
+                    crearGraficoPieNivel(filtroActual);
+                }
             });
         });
     }
@@ -193,8 +224,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 resetearFiltros();
             }
         });
-        
+
         console.log(`Filtro "${tipo}" aplicado correctamente a todos los niveles`);
+
+        // Si la vista de gráfico está activa, actualizarla también
+        if (vistaGrafico && vistaGrafico.style.display !== 'none') {
+            crearGraficoPieNivel(tipo);
+        }
     }
     
     // Función para resetear todos los filtros en caso de error
@@ -278,11 +314,107 @@ document.addEventListener('DOMContentLoaded', function() {
         return null;
     }
 
-    // Función para crear gráficos de pastel por nivel educativo
-    // Esta función puede expandirse en el futuro para mostrar gráficos más detallados
-    function crearGraficosPorNivel() {
-        // Código para gráficos Google Charts puede implementarse aquí
-        // cuando se requiera visualización adicional
+    // Función para crear el gráfico de pie por nivel educativo
+    function crearGraficoPieNivel(tipo = 'total') {
+        console.log(`Creando gráfico de pie con filtro: ${tipo}`);
+
+        // Preparar datos para el gráfico
+        const datosGrafico = prepararDatosGrafico(tipo);
+
+        if (!datosGrafico || datosGrafico.length === 0) {
+            console.error('No hay datos disponibles para el gráfico');
+            return;
+        }
+
+        // Cargar Google Charts si no está cargado
+        if (typeof google === 'undefined' || typeof google.charts === 'undefined') {
+            console.error('Google Charts no está disponible');
+            return;
+        }
+
+        // Dibujar el gráfico
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(function() {
+            const data = google.visualization.arrayToDataTable(datosGrafico);
+
+            const options = {
+                title: getTituloGrafico(tipo),
+                titleTextStyle: {
+                    fontSize: 16,
+                    bold: true,
+                    color: '#333'
+                },
+                pieHole: 0, // 0 para pie normal, 0.4 para donut
+                colors: ['#4A90E2', '#7CB342', '#FFA726', '#AB47BC', '#26C6DA', '#EF5350', '#78909C', '#FDD835'],
+                legend: {
+                    position: 'right',
+                    textStyle: {
+                        fontSize: 13
+                    }
+                },
+                pieSliceText: 'percentage',
+                pieSliceTextStyle: {
+                    color: 'white',
+                    fontSize: 12
+                },
+                tooltip: {
+                    text: 'both',
+                    showColorCode: true
+                },
+                chartArea: {
+                    width: '85%',
+                    height: '80%'
+                },
+                animation: {
+                    startup: true,
+                    duration: 1000,
+                    easing: 'out'
+                }
+            };
+
+            const chart = new google.visualization.PieChart(document.getElementById('pie-chart-nivel'));
+            chart.draw(data, options);
+        });
+    }
+
+    // Función auxiliar para preparar datos según el filtro
+    function prepararDatosGrafico(tipo) {
+        const datos = [['Nivel', 'Escuelas']];
+
+        if (typeof escuelasNivelSostenimiento === 'undefined') {
+            console.error('escuelasNivelSostenimiento no está definido');
+            return null;
+        }
+
+        for (const nivel in escuelasNivelSostenimiento) {
+            let cantidad = 0;
+
+            if (tipo === 'total') {
+                cantidad = escuelasNivelSostenimiento[nivel].total || 0;
+            } else if (tipo === 'publico') {
+                cantidad = escuelasNivelSostenimiento[nivel].publicas || 0;
+            } else if (tipo === 'privado') {
+                cantidad = escuelasNivelSostenimiento[nivel].privadas || 0;
+            }
+
+            if (cantidad > 0) {
+                datos.push([nivel, cantidad]);
+            }
+        }
+
+        return datos;
+    }
+
+    // Función auxiliar para obtener el título del gráfico según el filtro
+    function getTituloGrafico(tipo) {
+        switch(tipo) {
+            case 'publico':
+                return 'Distribución de Escuelas Públicas por Nivel';
+            case 'privado':
+                return 'Distribución de Escuelas Privadas por Nivel';
+            default:
+                return 'Distribución Total de Escuelas por Nivel';
+        }
     }
 
     // Código de depuración - muestra los datos en consola para verificar

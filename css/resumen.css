@@ -716,7 +716,8 @@
 
 @media (max-width: 992px) {
     .main-content {
-        margin-left: 70px;
+        margin-left: 0;
+        width: 100%;
     }
     
     .metric {
@@ -728,23 +729,77 @@
         margin-right: 0;
         margin-bottom: 15px;
     }
+    
+    .topbar {
+        padding: 12px 15px;
+    }
+    
+    .page-title h1 {
+        font-size: 1.4rem;
+    }
 }
 
 @media (max-width: 768px) {
     .topbar {
         flex-direction: column;
         align-items: flex-start;
+        padding: 10px 12px;
+        gap: 10px;
+    }
+    
+    .page-title h1 {
+        font-size: 1.2rem;
     }
     
     .utilities {
-        margin-top: 15px;
+        margin-top: 0;
         align-self: flex-end;
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .export-buttons {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .export-button {
+        padding: 6px 10px;
+        font-size: 0.85rem;
     }
 }
 
 @media (max-width: 576px) {
     .main-content {
         margin-left: 0;
+        padding: 15px 10px;
+    }
+    
+    .topbar {
+        padding: 8px 10px;
+    }
+    
+    .page-title h1 {
+        font-size: 1rem;
+    }
+    
+    .export-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .export-button {
+        flex: 1;
+        justify-content: center;
+        min-width: 0;
+    }
+    
+    .export-button span {
+        display: none;
+    }
+    
+    .export-button i {
+        margin: 0;
     }
     
     .card-header h2 {

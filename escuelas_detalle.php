@@ -195,6 +195,8 @@ if ($totalEscuelas > 0) {
 // Definir los niveles educativos disponibles para el directorio
 $nivelesDisponibles = [
     'inicial_esc' => 'Inicial Escolarizada',
+    'inicial_no_esc' => 'Inicial No Escolarizada',
+    'especial_tot' => 'Especial (CAM)',
     'preescolar' => 'Preescolar',
     'primaria' => 'Primaria',
     'secundaria' => 'Secundaria',
@@ -255,6 +257,15 @@ foreach ($directoriosPorNivel as $nivel => $datos) {
             $escuelasPublicasPorNivel[$nivel][] = $escuela;
         }
     }
+
+    // Ordenar escuelas dentro de cada nivel por número de alumnos (descendente)
+    usort($escuelasPublicasPorNivel[$nivel], function ($a, $b) {
+        return $b['total_alumnos'] - $a['total_alumnos'];
+    });
+
+    usort($escuelasPrivadasPorNivel[$nivel], function ($a, $b) {
+        return $b['total_alumnos'] - $a['total_alumnos'];
+    });
 }
 
 // Construir distribución por subcontrol con porcentajes
@@ -380,7 +391,8 @@ $datosEducativos = $datosCompletosMunicipio;
             <div id="resumen-escuelas" class="panel animate-up">
                 <div class="panel-header">
                     <h3 class="panel-title"><i class="fas fa-school"></i> Resumen de Escuelas en
-                        <?php echo $municipioSeleccionado; ?></h3>
+                        <?php echo $municipioSeleccionado; ?>
+                    </h3>
                 </div>
                 <div class="panel-body">
                     <div class="stats-row">
@@ -419,101 +431,127 @@ $datosEducativos = $datosCompletosMunicipio;
                     </div>
 
                     <div class="level-bars animate-sequence">
-                        <h4>Distribución por Nivel</h4>
-                        <div class="level-bar">
-                            <span class="level-name">Inicial (E)</span>
-                            <div class="level-track">
-                                <div class="level-fill"
-                                    style="width: <?php echo $porcentajes['Inicial (Escolarizado)']; ?>%">
-                                    <span
-                                        class="escuelas-count"><?php echo $escuelasPorNivel['Inicial (Escolarizado)']; ?></span>
-                                    <?php if (isset($escuelasNivelSostenimiento['Inicial (Escolarizado)'])): ?>
-                                    <?php endif; ?>
-                                </div>
+                        <div class="nivel-header">
+                            <h4>Distribución por Nivel</h4>
+                            <div class="view-toggle-buttons">
+                                <button class="view-toggle-btn active" data-view="barras">
+                                    <i class="fas fa-chart-bar"></i> Vista Barras
+                                </button>
+                                <button class="view-toggle-btn" data-view="grafico">
+                                    <i class="fas fa-chart-pie"></i> Vista Gráfico
+                                </button>
                             </div>
-                            <span class="level-percent"><?php echo $porcentajes['Inicial (Escolarizado)']; ?>%</span>
                         </div>
-                        <div class="level-bar">
-                            <span class="level-name">Inicial (NE)</span>
-                            <div class="level-track">
-                                <div class="level-fill"
-                                    style="width: <?php echo $porcentajes['Inicial (No Escolarizado)']; ?>%">
-                                    <span
-                                        class="escuelas-count"><?php echo $escuelasPorNivel['Inicial (No Escolarizado)']; ?></span>
-                                    <?php if (isset($escuelasNivelSostenimiento['Inicial (No Escolarizado)'])): ?>
-                                    <?php endif; ?>
+
+                        <!-- Vista de Barras (Por defecto) -->
+                        <div id="vista-barras" class="visualization-container">
+                            <div class="level-bar">
+                                <span class="level-name">Inicial (E)</span>
+                                <div class="level-track">
+                                    <div class="level-fill"
+                                        style="width: <?php echo $porcentajes['Inicial (Escolarizado)']; ?>%">
+                                        <span
+                                            class="escuelas-count"><?php echo $escuelasPorNivel['Inicial (Escolarizado)']; ?></span>
+                                        <?php if (isset($escuelasNivelSostenimiento['Inicial (Escolarizado)'])): ?>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
+                                <span
+                                    class="level-percent"><?php echo $porcentajes['Inicial (Escolarizado)']; ?>%</span>
                             </div>
-                            <span class="level-percent"><?php echo $porcentajes['Inicial (No Escolarizado)']; ?>%</span>
-                        </div>
-                        <div class="level-bar">
-                            <span class="level-name">Especial (CAM)</span>
-                            <div class="level-track">
-                                <div class="level-fill"
-                                    style="width: <?php echo isset($porcentajes['Especial (CAM)']) ? $porcentajes['Especial (CAM)'] : 0; ?>%">
-                                    <span
-                                        class="escuelas-count"><?php echo isset($escuelasPorNivel['Especial (CAM)']) ? $escuelasPorNivel['Especial (CAM)'] : 0; ?></span>
+                            <div class="level-bar">
+                                <span class="level-name">Inicial (NE)</span>
+                                <div class="level-track">
+                                    <div class="level-fill"
+                                        style="width: <?php echo $porcentajes['Inicial (No Escolarizado)']; ?>%">
+                                        <span
+                                            class="escuelas-count"><?php echo $escuelasPorNivel['Inicial (No Escolarizado)']; ?></span>
+                                        <?php if (isset($escuelasNivelSostenimiento['Inicial (No Escolarizado)'])): ?>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
+                                <span
+                                    class="level-percent"><?php echo $porcentajes['Inicial (No Escolarizado)']; ?>%</span>
                             </div>
-                            <span
-                                class="level-percent"><?php echo isset($porcentajes['Especial (CAM)']) ? $porcentajes['Especial (CAM)'] : 0; ?>%</span>
-                        </div>
-                        <div class="level-bar">
-                            <span class="level-name">Preescolar</span>
-                            <div class="level-track">
-                                <div class="level-fill" style="width: <?php echo $porcentajes['Preescolar']; ?>%">
-                                    <span class="escuelas-count"><?php echo $escuelasPorNivel['Preescolar']; ?></span>
-                                    <?php if (isset($escuelasNivelSostenimiento['Preescolar'])): ?>
-                                    <?php endif; ?>
+                            <div class="level-bar">
+                                <span class="level-name">Especial (CAM)</span>
+                                <div class="level-track">
+                                    <div class="level-fill"
+                                        style="width: <?php echo isset($porcentajes['Especial (CAM)']) ? $porcentajes['Especial (CAM)'] : 0; ?>%">
+                                        <span
+                                            class="escuelas-count"><?php echo isset($escuelasPorNivel['Especial (CAM)']) ? $escuelasPorNivel['Especial (CAM)'] : 0; ?></span>
+                                    </div>
                                 </div>
+                                <span
+                                    class="level-percent"><?php echo isset($porcentajes['Especial (CAM)']) ? $porcentajes['Especial (CAM)'] : 0; ?>%</span>
                             </div>
-                            <span class="level-percent"><?php echo $porcentajes['Preescolar']; ?>%</span>
-                        </div>
-                        <div class="level-bar">
-                            <span class="level-name">Primaria</span>
-                            <div class="level-track">
-                                <div class="level-fill" style="width: <?php echo $porcentajes['Primaria']; ?>%">
-                                    <span class="escuelas-count"><?php echo $escuelasPorNivel['Primaria']; ?></span>
-                                    <?php if (isset($escuelasNivelSostenimiento['Primaria'])): ?>
-                                    <?php endif; ?>
+                            <div class="level-bar">
+                                <span class="level-name">Preescolar</span>
+                                <div class="level-track">
+                                    <div class="level-fill" style="width: <?php echo $porcentajes['Preescolar']; ?>%">
+                                        <span
+                                            class="escuelas-count"><?php echo $escuelasPorNivel['Preescolar']; ?></span>
+                                        <?php if (isset($escuelasNivelSostenimiento['Preescolar'])): ?>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
+                                <span class="level-percent"><?php echo $porcentajes['Preescolar']; ?>%</span>
                             </div>
-                            <span class="level-percent"><?php echo $porcentajes['Primaria']; ?>%</span>
-                        </div>
-                        <div class="level-bar">
-                            <span class="level-name">Secundaria</span>
-                            <div class="level-track">
-                                <div class="level-fill" style="width: <?php echo $porcentajes['Secundaria']; ?>%">
-                                    <span class="escuelas-count"><?php echo $escuelasPorNivel['Secundaria']; ?></span>
-                                    <?php if (isset($escuelasNivelSostenimiento['Secundaria'])): ?>
-                                    <?php endif; ?>
+                            <div class="level-bar">
+                                <span class="level-name">Primaria</span>
+                                <div class="level-track">
+                                    <div class="level-fill" style="width: <?php echo $porcentajes['Primaria']; ?>%">
+                                        <span class="escuelas-count"><?php echo $escuelasPorNivel['Primaria']; ?></span>
+                                        <?php if (isset($escuelasNivelSostenimiento['Primaria'])): ?>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
+                                <span class="level-percent"><?php echo $porcentajes['Primaria']; ?>%</span>
                             </div>
-                            <span class="level-percent"><?php echo $porcentajes['Secundaria']; ?>%</span>
-                        </div>
-                        <div class="level-bar">
-                            <span class="level-name">Media Sup.</span>
-                            <div class="level-track">
-                                <div class="level-fill" style="width: <?php echo $porcentajes['Media Superior']; ?>%">
-                                    <span
-                                        class="escuelas-count"><?php echo $escuelasPorNivel['Media Superior']; ?></span>
-                                    <?php if (isset($escuelasNivelSostenimiento['Media Superior'])): ?>
-                                    <?php endif; ?>
+                            <div class="level-bar">
+                                <span class="level-name">Secundaria</span>
+                                <div class="level-track">
+                                    <div class="level-fill" style="width: <?php echo $porcentajes['Secundaria']; ?>%">
+                                        <span
+                                            class="escuelas-count"><?php echo $escuelasPorNivel['Secundaria']; ?></span>
+                                        <?php if (isset($escuelasNivelSostenimiento['Secundaria'])): ?>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
+                                <span class="level-percent"><?php echo $porcentajes['Secundaria']; ?>%</span>
                             </div>
-                            <span class="level-percent"><?php echo $porcentajes['Media Superior']; ?>%</span>
-                        </div>
-                        <div class="level-bar">
-                            <span class="level-name">Superior</span>
-                            <div class="level-track">
-                                <div class="level-fill" style="width: <?php echo $porcentajes['Superior']; ?>%">
-                                    <span class="escuelas-count"><?php echo $escuelasPorNivel['Superior']; ?></span>
-                                    <?php if (isset($escuelasNivelSostenimiento['Superior'])): ?>
-                                    <?php endif; ?>
+                            <div class="level-bar">
+                                <span class="level-name">Media Sup.</span>
+                                <div class="level-track">
+                                    <div class="level-fill"
+                                        style="width: <?php echo $porcentajes['Media Superior']; ?>%">
+                                        <span
+                                            class="escuelas-count"><?php echo $escuelasPorNivel['Media Superior']; ?></span>
+                                        <?php if (isset($escuelasNivelSostenimiento['Media Superior'])): ?>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
+                                <span class="level-percent"><?php echo $porcentajes['Media Superior']; ?>%</span>
                             </div>
-                            <span class="level-percent"><?php echo $porcentajes['Superior']; ?>%</span>
+                            <div class="level-bar">
+                                <span class="level-name">Superior</span>
+                                <div class="level-track">
+                                    <div class="level-fill" style="width: <?php echo $porcentajes['Superior']; ?>%">
+                                        <span class="escuelas-count"><?php echo $escuelasPorNivel['Superior']; ?></span>
+                                        <?php if (isset($escuelasNivelSostenimiento['Superior'])): ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <span class="level-percent"><?php echo $porcentajes['Superior']; ?>%</span>
+                            </div>
                         </div>
+                        <!-- Fin Vista Barras -->
+
+                        <!-- Vista Gráfico (Oculto por defecto) -->
+                        <div id="vista-grafico" class="visualization-container" style="display: none;">
+                            <div id="pie-chart-nivel" style="width: 100%; height: 400px;"></div>
+                        </div>
+                        <!-- Fin Vista Gráfico -->
                     </div>
                 </div>
             </div>
@@ -524,61 +562,136 @@ $datosEducativos = $datosCompletosMunicipio;
                     <h3 class="panel-title"><i class="fas fa-building"></i> Distribución por Subcontrol Educativo</h3>
                 </div>
                 <div class="panel-body">
-                    <div style="text-align: center; padding: 60px 20px; color: #666;">
-                        <i class="fas fa-tools" style="font-size: 48px; color: #0066cc; margin-bottom: 20px;"></i>
-                        <h3 style="color: #333; margin-bottom: 15px;">Sección en Desarrollo</h3>
-                        <p style="font-size: 16px; line-height: 1.6; max-width: 600px; margin: 0 auto;">
-                            Esta sección está experimentando cambios estructurales para mejorar la presentación
-                            de la distribución por subcontrol educativo. Pronto estará disponible con información
-                            más detallada y precisa sobre Federal, Estatal, Federal Transferido, Autónomo y Privado.
-                        </p>
-                        <p style="margin-top: 20px; color: #999; font-size: 14px;">
-                            <i class="fas fa-info-circle"></i> Actualmente trabajando en la integración con
-                            <code>conexion_prueba_2024.php</code>
-                        </p>
-                    </div>
+                    <?php
+                    // Obtener distribución por subcontrol usando la nueva función
+                    $datosSubcontrol = obtenerEscuelasPorSubcontrolYNivel($municipioSeleccionado);
+                    $distribucionSubcontrol = isset($datosSubcontrol['distribucion']) ? $datosSubcontrol['distribucion'] : [];
+                    $totalEscuelasSubcontrol = isset($datosSubcontrol['total_escuelas']) ? $datosSubcontrol['total_escuelas'] : 0;
+
+                    if (!empty($distribucionSubcontrol)):
+                        ?>
+                        <!-- Tarjetas de subcontrol -->
+                        <div class="subcontrol-cards animate-sequence">
+                            <?php
+                            // Orden específico para mostrar los subcontroles
+                            $ordenSubcontroles = ['FEDERAL TRANSFERIDO', 'FEDERAL', 'ESTATAL', 'AUTÓNOMO', 'PRIVADO'];
+
+                            foreach ($ordenSubcontroles as $subcontrol):
+                                if (!isset($distribucionSubcontrol[$subcontrol]))
+                                    continue;
+                                $datos = $distribucionSubcontrol[$subcontrol];
+
+                                // Normalizar nombre para atributo data
+                                $dataAttribute = strtolower(str_replace(array(' ', 'Ó'), array('-', 'o'), $subcontrol));
+                                ?>
+
+                                <div class="subcontrol-card animate-scale" data-subcontrol="<?php echo $dataAttribute; ?>">
+                                    <div class="subcontrol-header">
+                                        <div class="subcontrol-info">
+                                            <h4 class="subcontrol-name"><?php echo $subcontrol; ?></h4>
+                                            <div class="subcontrol-stats">
+                                                <span
+                                                    class="subcontrol-count"><?php echo number_format($datos['total']); ?></span>
+                                                <span class="subcontrol-label">escuelas</span>
+                                                <span class="subcontrol-percentage"><?php echo $datos['porcentaje']; ?>%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="subcontrol-progress">
+                                        <div class="progress-bar-subcontrol">
+                                            <div class="progress-fill-subcontrol animate-width"
+                                                data-subcontrol="<?php echo $dataAttribute; ?>"
+                                                style="width: <?php echo $datos['porcentaje']; ?>%;">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <?php if (!empty($datos['niveles'])): ?>
+                                        <div class="subcontrol-details">
+                                            <div class="details-header">
+                                                <i class="fas fa-layer-group"></i>
+                                            </div>
+                                            <div class="details-content">
+                                                <?php foreach ($datos['niveles'] as $nivel => $cantidad): ?>
+                                                    <?php if ($cantidad > 0): ?>
+                                                        <div class="detail-item">
+                                                            <span class="detail-level"><?php echo $nivel; ?></span>
+                                                            <span class="detail-count"><?php echo $cantidad; ?></span>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+
+                            <?php endforeach; ?>
+                        </div>
+
+                        <!-- Resumen estadístico -->
+                        <div class="subcontrol-summary animate-fade delay-3">
+                            <div class="summary-stats">
+                                <div class="summary-item">
+                                    <i class="fas fa-school"></i>
+                                    <div>
+                                        <span
+                                            class="summary-value"><?php echo number_format($totalEscuelasSubcontrol); ?></span>
+                                        <span class="summary-label">Total de Escuelas</span>
+                                    </div>
+                                </div>
+                                <div class="summary-item">
+                                    <i class="fas fa-layer-group"></i>
+                                    <div>
+                                        <span class="summary-value"><?php echo count($distribucionSubcontrol); ?></span>
+                                        <span class="summary-label">Tipos de Control</span>
+                                    </div>
+                                </div>
+                                <?php
+                                // Calcular escuelas públicas y privadas
+                                $escuelasPublicasTotal = 0;
+                                $escuelasPrivadasTotal = 0;
+                                foreach ($distribucionSubcontrol as $sub => $dat) {
+                                    if ($sub === 'PRIVADO') {
+                                        $escuelasPrivadasTotal = $dat['total'];
+                                    } else {
+                                        $escuelasPublicasTotal += $dat['total'];
+                                    }
+                                }
+                                $porcentajePublicas = $totalEscuelasSubcontrol > 0 ? round(($escuelasPublicasTotal / $totalEscuelasSubcontrol) * 100, 1) : 0;
+                                $porcentajePrivadas = $totalEscuelasSubcontrol > 0 ? round(($escuelasPrivadasTotal / $totalEscuelasSubcontrol) * 100, 1) : 0;
+                                ?>
+                                <div class="summary-item">
+                                    <i class="fas fa-landmark"></i>
+                                    <div>
+                                        <span class="summary-value"><?php echo number_format($escuelasPublicasTotal); ?>
+                                            (<?php echo $porcentajePublicas; ?>%)</span>
+                                        <span class="summary-label">Escuelas Públicas</span>
+                                    </div>
+                                </div>
+                                <div class="summary-item">
+                                    <i class="fas fa-building"></i>
+                                    <div>
+                                        <span class="summary-value"><?php echo number_format($escuelasPrivadasTotal); ?>
+                                            (<?php echo $porcentajePrivadas; ?>%)</span>
+                                        <span class="summary-label">Escuelas Privadas</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <?php else: ?>
+                        <!-- Mensaje si no hay datos -->
+                        <div style="text-align: center; padding: 40px 20px; color: #666;">
+                            <i class="fas fa-info-circle" style="font-size: 48px; color: #999; margin-bottom: 20px;"></i>
+                            <h3 style="color: #333; margin-bottom: 15px;">No hay datos disponibles</h3>
+                            <p style="font-size: 16px; line-height: 1.6;">
+                                No se encontró información de distribución por subcontrol para este municipio.
+                            </p>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
-
-            <?php
-            /* 
-            ============================================================================
-            SECCIÓN COMENTADA TEMPORALMENTE - DISTRIBUCIÓN POR SUBCONTROL EDUCATIVO
-            ============================================================================
-
-            Esta sección requiere cambios estructurales para adaptarse correctamente
-            al nuevo sistema de conexión (conexion_prueba_2024.php).
-
-            PENDIENTE:
-            - Adaptar la estructura de datos de $distribucionSubcontrol
-            - Implementar desglose correcto por nivel educativo
-            - Verificar coincidencia de nombres de niveles
-            - Calcular porcentajes correctamente
-
-            CÓDIGO ORIGINAL:
-
-            <div class="subcontrol-cards animate-sequence">
-                <?php foreach ($distribucionSubcontrol as $subcontrol => $datos): ?>
-                    <?php
-                    $subcontrolNormalizado = $subcontrol;
-                    if ($subcontrol === 'AUT?NOMO' || strpos($subcontrol, 'AUT') === 0) {
-                        $subcontrolNormalizado = 'AUTÓNOMO';
-                    }
-                    $dataAttribute = strtolower(str_replace(array(' ', 'Ó'), array('-', 'o'), $subcontrolNormalizado));
-                    ?>
-                    <div class="subcontrol-card animate-scale" data-subcontrol="<?php echo $dataAttribute; ?>">
-                        [... resto del código de tarjetas de subcontrol ...]
-                    </div>
-                <?php endforeach; ?>
-            </div>
-
-            <div class="subcontrol-summary animate-fade delay-3">
-                [... resumen estadístico del subcontrol ...]
-            </div>
-
-            ============================================================================
-            */
-            ?>
 
             <!-- Panel de eficiencia educativa 
             <div class="panel animate-up delay-2">

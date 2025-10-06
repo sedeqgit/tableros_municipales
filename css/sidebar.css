@@ -56,11 +56,15 @@
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 99;
     display: none;
+    opacity: 0;
     transition: opacity var(--transition-normal);
+    pointer-events: none;
 }
 
 .sidebar-overlay.active {
     display: block;
+    opacity: 1;
+    pointer-events: auto;
 }
 
 /* =============================================
@@ -87,6 +91,8 @@
     flex-direction: column;
     padding: 0; /* Asegura que no hay padding adicional */
     margin: 0; /* Asegura que no hay margin adicional */
+    overflow-y: auto; /* Permite scroll si el contenido es muy largo */
+    overflow-x: hidden; /* Evita scroll horizontal */
 }
 
 .sidebar.collapsed {
@@ -97,6 +103,7 @@
     margin-left: 240px;
     transition: all var(--transition-speed);
     width: calc(100% - 240px);
+    overflow-x: hidden; /* Evita desbordamiento horizontal */
 }
 
 .main-content.expanded {
@@ -108,6 +115,7 @@
 .menu-toggle {
     display: block; /* Siempre visible */
     margin-right: 10px;
+    flex-shrink: 0; /* No se encoge en pantallas pequeñas */
 }
 
 #sidebarToggle {
@@ -124,11 +132,17 @@
     justify-content: center;
     transition: all 0.3s;
     background-color: rgba(0, 73, 144, 0.05); /* Fondo sutil */
+    flex-shrink: 0; /* No se encoge */
 }
 
 #sidebarToggle:hover {
     background-color: rgba(0, 73, 144, 0.1);
     color: var(--accent-red);
+}
+
+#sidebarToggle:active {
+    transform: scale(0.95);
+    background-color: rgba(0, 73, 144, 0.15);
 }
 
 /* Topbar con botón de menú */
@@ -143,6 +157,8 @@
     position: sticky;
     top: 0;
     z-index: 10;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* === ESTILOS DE NAVEGACIÓN DEL SIDEBAR === */
@@ -219,13 +235,17 @@
     .menu-toggle {
         display: block;
     }
-      .sidebar {
+    
+    .sidebar {
         left: -240px;
+        width: 240px;
+        z-index: 1000;
     }
     
     /* Se cambia .sidebar.active por .sidebar:not(.collapsed) para consistencia */
     .sidebar:not(.collapsed) {
         left: 0;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
     }
     
     .main-content {
@@ -233,34 +253,120 @@
         width: 100%;
     }
     
-    /* Ajustes para estructura alternativa en móviles */
-    .sidebar-link span {
-        display: none;
+    /* Mostrar overlay cuando el sidebar está abierto */
+    .sidebar:not(.collapsed) ~ .sidebar-overlay {
+        display: block;
     }
     
-    .sidebar {
-        width: 70px;
-    }
-    
+    /* Logo en móviles más compacto */
     .logo-container {
-        margin: 15px 5px;
-        padding: 8px;
+        margin: 15px 10px;
+        padding: 10px;
+    }
+    
+    .logo {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 280px;
+        max-width: 85vw;
+    }
+    
+    .sidebar.collapsed {
+        left: -280px;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    /* Ajustes en navegación para mejor legibilidad en móviles */
+    .nav-item a {
+        padding: 14px 20px;
+        font-size: 1rem;
+    }
+    
+    .sidebar-link {
+        padding: 14px 20px;
+        font-size: 1rem;
+    }
+    
+    /* Asegurar que el texto no se corte pero se pueda envolver si es necesario */
+    .nav-item a span,
+    .sidebar-link span {
+        display: inline;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+    
+    /* Logo más pequeño en tablets */
+    .logo-container {
+        margin: 20px 12px 15px 12px;
+        padding: 12px;
+    }
+    
+    /* Contenedor de enlaces con scroll si es necesario */
+    .sidebar-links {
+        max-height: calc(100vh - 250px);
+    }
+    
+    /* Footer más visible en móviles */
+    .sidebar-footer {
+        padding: 15px;
+        background-color: rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+    }
+    
+    .logout-btn {
+        padding: 14px 20px;
+        font-size: 1rem;
     }
 }
 
 @media (max-width: 576px) {
     .sidebar {
-        width: 0;
-        padding: 0;
+        width: 260px;
+        max-width: 80vw;
     }
     
     .sidebar.collapsed {
-        left: -240px;
+        left: -260px;
     }
     
     .main-content {
         margin-left: 0;
         width: 100%;
+    }
+    
+    /* Optimización adicional para pantallas muy pequeñas */
+    .nav-item a,
+    .sidebar-link {
+        padding: 12px 15px;
+        font-size: 0.95rem;
+    }
+    
+    /* Logo más compacto */
+    .logo-container {
+        margin: 15px 10px 12px 10px;
+        padding: 10px;
+    }
+    
+    /* Contenedor de enlaces más compacto */
+    .sidebar-links {
+        max-height: calc(100vh - 220px);
+    }
+    
+    .sidebar-footer {
+        padding: 12px 15px;
+    }
+    
+    .logout-btn {
+        padding: 12px 15px;
+        font-size: 0.95rem;
     }
 }
 
@@ -275,6 +381,7 @@
     background-color: var(--white);
     border-radius: 12px;
     margin: 25px 15px 20px 15px;
+    flex-shrink: 0; /* No se encoge en espacios pequeños */
 }
 
 .logo {
@@ -288,6 +395,8 @@
     flex-direction: column;
     flex-grow: 1;
     padding: 0;
+    overflow-y: auto; /* Permite scroll si hay muchos enlaces */
+    overflow-x: hidden;
 }
 
 /* Estilos para enlaces individuales del sidebar */
@@ -300,12 +409,19 @@
     transition: background-color var(--transition-speed);
     font-size: 1.05rem;
     border-radius: 0;
+    position: relative;
+    white-space: nowrap;
 }
 
 .sidebar-link i {
     margin-right: 12px;
     width: 20px;
     text-align: center;
+    flex-shrink: 0;
+}
+
+.sidebar-link span {
+    flex: 1;
 }
 
 .sidebar-link:hover {
@@ -352,10 +468,11 @@
   max-height: 0;
   overflow: hidden;
   transition: max-height var(--transition-speed) ease-out;
+  display: block; /* Siempre en display block para que la transición funcione */
 }
 
 .submenu.active {
-  max-height: 300px;
+  max-height: 500px; /* Aumentado para permitir más elementos */
   transition: max-height var(--transition-speed) ease-in;
 }
 
@@ -407,11 +524,70 @@
 
 /* Responsive para submenús */
 @media (max-width: 992px) {
+  /* Cuando el sidebar está colapsado (cerrado), ocultar submenús */
   .sidebar.collapsed .submenu {
     display: none;
   }
 
   .sidebar.collapsed .sidebar-link .submenu-arrow {
     display: none;
+  }
+  
+  /* Cuando el sidebar está abierto (no colapsado), mostrar submenús */
+  .sidebar:not(.collapsed) .submenu {
+    display: block;
+  }
+  
+  .sidebar:not(.collapsed) .sidebar-link .submenu-arrow {
+    display: inline-block;
+  }
+  
+  /* Asegurar que los submenús activos se muestren */
+  .sidebar:not(.collapsed) .submenu.active {
+    max-height: 500px;
+  }
+  
+  /* Ajustes de espaciado en submenús para móviles */
+  .submenu-link {
+    padding: 10px 15px 10px 25px;
+    font-size: 0.9rem;
+  }
+  
+  .submenu-link i {
+    margin-right: 8px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Submenús más compactos en móviles */
+  .submenu-link {
+    padding: 9px 12px 9px 20px;
+    font-size: 0.85rem;
+  }
+  
+  .submenu-link i {
+    margin-right: 6px;
+    font-size: 0.8rem;
+  }
+  
+  /* Asegurar que el texto no se corte */
+  .submenu-link span {
+    display: inline;
+    white-space: normal;
+    line-height: 1.3;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Optimización adicional para pantallas muy pequeñas */
+  .submenu-link {
+    padding: 8px 10px 8px 18px;
+    font-size: 0.8rem;
+  }
+  
+  .submenu-link i {
+    margin-right: 5px;
+    font-size: 0.75rem;
   }
 }

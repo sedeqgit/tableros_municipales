@@ -1,10 +1,21 @@
 /* Estilos para el Home del Sistema SEDEQ */
 
+/* Estilos base para prevenir desbordamiento */
+* {
+    box-sizing: border-box;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 /* Estructura principal */
 .app-container {
     width: 100%;
     display: flex;
     min-height: 100vh;
+    overflow-x: hidden; /* Evita scroll horizontal no deseado */
 }
 
 /* Barra lateral - Estos estilos se movieron a sidebar.css */
@@ -15,8 +26,9 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-x: hidden;
     background-color: var(--light-gray);
+    max-width: 100%; /* Asegura que no exceda el ancho disponible */
 }
 
 /* Barra superior */
@@ -29,11 +41,20 @@
     justify-content: space-between;
     box-shadow: var(--shadow-sm);
     z-index: 50;
+    width: 100%;
+    box-sizing: border-box;
+    flex-wrap: nowrap; /* Evita que los elementos se envuelvan */
+    gap: 10px; /* Espacio entre elementos */
 }
 
 /* Estilos del botón de menú - Se movieron a sidebar.css */
 
 /* Título principal de la página - usa --font-heading */
+.top-bar-title {
+    flex: 1; /* Toma el espacio disponible */
+    min-width: 0; /* Permite que el texto se trunque */
+}
+
 .top-bar-title h1 {
     font-size: 1.9rem;
     color: var(--text-primary);
@@ -41,6 +62,10 @@
     letter-spacing: 0.3px;
     font-family: var(--font-heading);
     text-transform: uppercase;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .user-menu {
@@ -124,6 +149,9 @@
     flex-grow: 1;
     padding: 25px;
     overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box; /* Incluye padding en el cálculo del ancho */
 }
 
 /* Sección de bienvenida */
@@ -454,12 +482,14 @@
 /* Responsividad */
 
 @media (max-width: 992px) {
-    .sidebar {
-        width: 80px;
+    .dashboard-grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
     }
     
-    .dashboard-grid {
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    .quick-access-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 15px;
     }
     
     .municipality-stats {
@@ -482,89 +512,251 @@
         font-size: 0.6rem;
     }
     
-    .nav-item a span,
-    .logout-btn span {
-        display: none;
-    }
-    
-    .nav-item a,
-    .logout-btn {
-        justify-content: center;
-    }
-    
-    .nav-item a i,
-    .logout-btn i {
-        margin-right: 0;
-    }
-    
-    .sidebar.expanded {
-        width: 260px;
-    }
-    
-    .sidebar.expanded .nav-item a span,
-    .sidebar.expanded .logout-btn span {
-        display: block;
-    }
-    
-    .sidebar.expanded .nav-item a,
-    .sidebar.expanded .logout-btn {
-        justify-content: flex-start;
-    }
-    
-    .sidebar.expanded .nav-item a i,
-    .sidebar.expanded .logout-btn i {
-        margin-right: 10px;
+    .content-wrapper {
+        padding: 20px;
     }
 }
 
 @media (max-width: 768px) {
-    .dashboard-grid,
-    .quick-access-grid {
-        grid-template-columns: 1fr;
+    /* Ajustes generales de contenedor */
+    .content-wrapper {
+        padding: 15px;
     }
     
-    .municipality-stats {
-        gap: 4px;
+    /* Top bar más compacto */
+    .top-bar {
+        padding: 0 15px;
+        height: 60px;
         flex-wrap: wrap;
     }
     
-    .stat {
-        font-size: 0.85rem;
-        flex: 0 1 auto;
-        min-width: 0;
-    }
-    
-    .stat i {
-        font-size: 0.95rem;
-        margin-right: 3px;
-    }
-    
-    .stat-number {
-        font-size: 0.85rem;
-    }
-    
-    .stat-label {
-        font-size: 0.55rem;
-    }
-    
-    .top-bar {
-        padding: 0 15px;
-    }
-    
     .top-bar-title h1 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+        letter-spacing: 0.1px;
     }
     
     .user-greeting {
         display: none;
     }
     
+    /* Welcome card responsivo */
     .welcome-card {
         flex-direction: column;
         text-align: center;
+        padding: 15px;
     }
     
     .welcome-text {
         margin-bottom: 20px;
+    }
+    
+    .welcome-text h2 {
+        font-size: 1.3rem;
+    }
+    
+    .welcome-text p {
+        font-size: 0.95rem;
+    }
+    
+    .welcome-image {
+        max-width: 250px;
+        margin: 0 auto;
+    }
+    
+    /* Grids de una columna */
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .quick-access-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    
+    /* Tarjetas de municipios optimizadas */
+    .municipality-card {
+        padding: 15px;
+    }
+    
+    .municipality-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+        margin-bottom: 12px;
+    }
+    
+    .municipality-info h3 {
+        font-size: 1rem;
+    }
+    
+    .municipality-info p {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+    }
+    
+    .municipality-stats {
+        gap: 5px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .stat {
+        font-size: 0.85rem;
+        flex: 0 1 calc(33.333% - 5px);
+        min-width: 0;
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stat i {
+        font-size: 1rem;
+        margin-right: 0;
+        margin-bottom: 3px;
+    }
+    
+    .stat-number {
+        font-size: 0.85rem;
+        margin-right: 0;
+    }
+    
+    .stat-label {
+        font-size: 0.55rem;
+        display: block;
+        margin-top: 2px;
+    }
+    
+    .municipality-link {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+        margin-top: 12px;
+    }
+    
+    /* Tarjetas de acceso rápido */
+    .quick-access-card {
+        padding: 15px;
+    }
+    
+    .quick-access-card i {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+    
+    .quick-access-card h3 {
+        font-size: 0.85rem;
+    }
+    
+    /* Sección de títulos */
+    .section-title {
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    /* Ajustes para pantallas muy pequeñas */
+    .content-wrapper {
+        padding: 12px;
+    }
+    
+    .top-bar {
+        padding: 0 10px;
+        height: 55px;
+    }
+    
+    .top-bar-title h1 {
+        font-size: 1rem;
+    }
+    
+    .user-avatar {
+        width: 35px;
+        height: 35px;
+    }
+    
+    #sidebarToggle {
+        width: 35px;
+        height: 35px;
+        font-size: 1.2rem;
+    }
+    
+    /* Welcome card más compacto */
+    .welcome-card {
+        padding: 12px;
+    }
+    
+    .welcome-text h2 {
+        font-size: 1.1rem;
+    }
+    
+    .welcome-text p {
+        font-size: 0.9rem;
+    }
+    
+    .welcome-image {
+        max-width: 200px;
+    }
+    
+    /* Grid de acceso rápido en una columna */
+    .quick-access-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    /* Municipios más compactos */
+    .municipality-card {
+        padding: 12px;
+    }
+    
+    .municipality-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+    }
+    
+    .municipality-info h3 {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+    }
+    
+    .municipality-info p {
+        font-size: 0.8rem;
+        margin-bottom: 10px;
+    }
+    
+    .municipality-stats {
+        gap: 4px;
+    }
+    
+    .stat {
+        font-size: 0.8rem;
+    }
+    
+    .stat i {
+        font-size: 0.95rem;
+    }
+    
+    .stat-number {
+        font-size: 0.8rem;
+    }
+    
+    .stat-label {
+        font-size: 0.5rem;
+    }
+    
+    .municipality-link {
+        padding: 8px 10px;
+        font-size: 0.85rem;
+    }
+    
+    /* Sección de títulos más pequeña */
+    .section-title {
+        font-size: 0.95rem;
+        margin-bottom: 12px;
+    }
+    
+    .section-title i {
+        margin-right: 8px;
+        font-size: 0.9rem;
     }
 }
