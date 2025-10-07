@@ -759,4 +759,417 @@ img {
         margin-right: 8px;
         font-size: 0.9rem;
     }
+
 }
+
+
+        /* Estilos para estadísticas estatales */
+        .estadisticas-estado {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            border-radius: var(--card-border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-lg);
+            color: var(--white);
+        }
+
+        .estado-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .estado-header h2 {
+            color: var(--white);
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+        }
+
+        .estado-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+        }
+
+        .estado-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .estado-stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            transition: all var(--transition-speed);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .estado-stat-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .estado-stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--accent-aqua);
+        }
+
+        .estado-stat-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 5px;
+        }
+
+        .estado-stat-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .estado-note {
+            text-align: center;
+            margin-top: 1rem;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        /* Estilos para estadísticas de municipios */
+        .municipios-stats {
+            background-color: var(--white);
+            border-radius: var(--card-border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-item {
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        /* Estilos para tarjetas de municipios mejoradas */
+        .municipality-card {
+            position: relative;
+            transition: all var(--transition-speed);
+        }
+
+        .municipality-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(51, 153, 204, 0.3);
+        }
+
+        /* Indicador visual para municipios con datos */
+        .municipality-card.has-data {
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .municipality-card.no-data {
+            opacity: 0.7;
+            border-left: 4px solid var(--text-secondary);
+        }
+
+        /* Checkbox de selección */
+        .municipality-checkbox {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            cursor: pointer;
+            accent-color: var(--primary-blue);
+        }
+
+        .checkbox-wrapper label {
+            margin-left: 5px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Tarjeta seleccionada */
+        .municipality-card.selected {
+            border: 2px solid var(--primary-blue);
+            background-color: rgba(51, 153, 204, 0.05);
+        }
+
+        .municipality-card.selected .municipality-checkbox label {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        /* Botón flotante de comparación */
+        .compare-floating-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--white);
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(51, 153, 204, 0.4);
+            transition: all var(--transition-speed);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .compare-floating-button:hover {
+            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-aqua));
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(51, 153, 204, 0.5);
+        }
+
+        .compare-floating-button.show {
+            display: flex;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .selected-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive para móviles */
+        @media (max-width: 992px) {
+            .estado-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .estado-stat-card {
+                padding: 15px;
+            }
+
+            .estado-stat-icon {
+                font-size: 2rem;
+                margin-bottom: 8px;
+            }
+
+            .estado-stat-number {
+                font-size: 1.8rem;
+            }
+
+            .estado-stat-label {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            /* Estadísticas estatales más compactas */
+            .estadisticas-estado {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+
+            .estado-header h2 {
+                font-size: 1.4rem;
+                margin-bottom: 6px;
+            }
+
+            .estado-header p {
+                font-size: 0.9rem;
+            }
+
+            .estado-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .estado-stat-card {
+                padding: 12px;
+            }
+
+            .estado-stat-icon {
+                font-size: 1.8rem;
+                margin-bottom: 6px;
+            }
+
+            .estado-stat-number {
+                font-size: 1.5rem;
+            }
+
+            .estado-stat-label {
+                font-size: 0.75rem;
+            }
+
+            .estado-note {
+                font-size: 0.8rem;
+                margin-top: 12px;
+            }
+
+            /* Municipios stats más compactas */
+            .municipios-stats {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            /* Checkbox más accesible en móviles */
+            .municipality-checkbox {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 10px;
+                text-align: right;
+            }
+
+            .checkbox-wrapper {
+                justify-content: flex-end;
+            }
+
+            .checkbox-wrapper input[type="checkbox"] {
+                width: 24px;
+                height: 24px;
+            }
+
+            /* Botón de comparación más visible */
+            .compare-floating-button {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                font-size: 0.9rem;
+                box-shadow: 0 4px 15px rgba(51, 153, 204, 0.5);
+            }
+
+            .selected-count {
+                padding: 4px 10px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+
+            /* Estadísticas estatales en una columna */
+            .estadisticas-estado {
+                padding: 15px 12px;
+                margin-bottom: 15px;
+            }
+
+            .estado-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .estado-header p {
+                font-size: 0.85rem;
+            }
+
+            .estado-stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .estado-stat-card {
+                padding: 15px;
+            }
+
+            .estado-stat-icon {
+                font-size: 2rem;
+            }
+
+            .estado-stat-number {
+                font-size: 1.8rem;
+            }
+
+            .estado-stat-label {
+                font-size: 0.8rem;
+            }
+
+            .estado-note {
+                font-size: 0.75rem;
+                margin-top: 10px;
+            }
+
+            /* Municipios stats */
+            .municipios-stats {
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .stat-item {
+                padding: 8px 0;
+            }
+
+            /* Checkbox en móviles pequeños */
+            .municipality-checkbox {
+                margin-bottom: 8px;
+            }
+
+            .checkbox-wrapper input[type="checkbox"] {
+                width: 22px;
+                height: 22px;
+            }
+
+            .checkbox-wrapper label {
+                font-size: 0.85rem;
+            }
+
+            /* Botón flotante más pequeño */
+            .compare-floating-button {
+                bottom: 15px;
+                right: 15px;
+                padding: 10px 15px;
+                font-size: 0.85rem;
+                border-radius: 40px;
+            }
+
+            .compare-floating-button i {
+                font-size: 1rem;
+            }
+
+            .selected-count {
+                padding: 3px 8px;
+                font-size: 0.85rem;
+            }
+        }
+    
+

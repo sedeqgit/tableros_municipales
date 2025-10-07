@@ -199,10 +199,6 @@ foreach ($datosPorNivel as $nivel => $datos) {
             <a href="docentes.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>" class="sidebar-link"><i
                     class="fas fa-chalkboard-teacher"></i>
                 <span>Docentes</span></a>
-            <a href="estudiantes.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>" class="sidebar-link"><i
-                    class="fas fa-history"></i> <span>Históricos</span></a>
-            <!-- <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
-                    Históricos</span></a> -->
         </div>
     </div>
     </div>

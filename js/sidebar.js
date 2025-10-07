@@ -166,23 +166,33 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Detectar qué sección está visible para activar el enlace correspondiente
+    // Soporta las secciones de: resumen.php, escuelas_detalle.php, alumnos.php y docentes.php
     const sections = document.querySelectorAll(
-      '[id^="resumen-"], [id^="subcontrol-"], [id^="directorio-"], [id^="conclusiones"], [id^="distribucion-"], [id^="tabla-"]'
+      '[id^="resumen-"], [id^="subcontrol-"], [id^="directorio-"], [id^="conclusiones"], [id^="distribucion-"], [id^="tabla-"], [id^="desglose-"], [id^="publico-"], [id^="totales-"], [id^="analisis-"]'
     );
 
     function updateActiveSubmenuLink() {
       let activeSection = null;
-      const scrollPosition = window.scrollY + 100; // Offset para mejor detección
+      let closestDistance = Infinity;
+      
+      // Usar un punto de referencia en la parte superior de la ventana
+      const triggerPoint = window.innerHeight * 0.3; // 30% desde arriba de la ventana
 
       sections.forEach((section) => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.offsetHeight;
-
-        if (
-          scrollPosition >= sectionTop &&
-          scrollPosition < sectionTop + sectionHeight
-        ) {
-          activeSection = section;
+        const rect = section.getBoundingClientRect();
+        const sectionTop = rect.top;
+        const sectionBottom = rect.bottom;
+        
+        // La sección está visible si cualquier parte de ella está en el viewport
+        if (sectionBottom > 0 && sectionTop < window.innerHeight) {
+          // Calcular la distancia desde el punto de referencia
+          const distance = Math.abs(sectionTop - triggerPoint);
+          
+          // Si esta sección está más cerca del punto de referencia, es la activa
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            activeSection = section;
+          }
         }
       });
 
@@ -191,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
         submenuLinksAll.forEach((link) => link.classList.remove("active"));
 
         const activeLink = document.querySelector(`a[href="#${activeSection.id}"]`);
-        if (activeLink) {
+        if (activeLink && activeLink.classList.contains('submenu-link')) {
           activeLink.classList.add("active");
         }
       }

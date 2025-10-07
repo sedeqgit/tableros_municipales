@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeTooltips();
     initializeInteractiveElements();
     initializeSostenimientoFilters(); // Nueva funcionalidad
+    initializeViewToggle(); // Cambio de vista barras/gráfico
+    initializeGoogleCharts(); // Gráficos de Google Charts
     
     // Configurar redimensionamiento de gráficos
     window.addEventListener('resize', debounce(resizeCharts, 250));
@@ -391,8 +393,11 @@ function animateProgressBars() {
 
 function aplicarFiltroDocentes(tipo) {
     console.log(`Aplicando filtro: ${tipo}`);
-    
+
     const barrasNivel = document.querySelectorAll('.level-bar');
+
+    // Guardar el tipo de filtro actual
+    window.tipoFiltroActual = tipo;
     
     barrasNivel.forEach(bar => {
         const nombreNivel = bar.querySelector('.level-name').textContent.trim();
@@ -412,11 +417,11 @@ function aplicarFiltroDocentes(tipo) {
                 } else {
                     console.warn(`✗ No se pudo restaurar la cantidad para ${nombreNivel}`);
                 }
-                
+
                 if (levelFill && valoresOriginalesDocentes[nombreNivel]) {
                     levelFill.style.width = valoresOriginalesDocentes[nombreNivel].porcentaje;
                 }
-                
+
                 if (levelPercent && valoresOriginalesDocentes[nombreNivel]) {
                     levelPercent.textContent = valoresOriginalesDocentes[nombreNivel].porcentaje;
                 }
@@ -456,7 +461,7 @@ function aplicarFiltroDocentes(tipo) {
                     if (levelPercent) {
                         levelPercent.textContent = porcentaje + '%';
                     }
-                    
+
                     console.log(`✓ Actualizado ${nombreNivel}: ${cantidad} docentes (${porcentaje}%)`);
                 } else {
                     console.warn(`✗ No se encontraron datos para el nivel "${nombreNivel}" con filtro "${tipo}"`);
@@ -472,7 +477,14 @@ function aplicarFiltroDocentes(tipo) {
             resetearFiltrosDocentes();
         }
     });
-    
+
+    // Redibujar el gráfico con los datos filtrados si está visible
+    if (document.getElementById('vista-grafico').style.display !== 'none') {
+        setTimeout(() => {
+            drawDocentesNivelChart();
+        }, 100);
+    }
+
     console.log(`Filtro "${tipo}" aplicado correctamente a todos los niveles`);
 }
 
@@ -540,13 +552,238 @@ function resetearFiltrosDocentes() {
         const docentesCount = bar.querySelector('.escuelas-count');
         const levelFill = bar.querySelector('.level-fill');
         const levelPercent = bar.querySelector('.level-percent');
-        
+
         if (valoresOriginalesDocentes[nombreNivel]) {
             if (docentesCount) docentesCount.textContent = valoresOriginalesDocentes[nombreNivel].cantidad;
             if (levelFill) levelFill.style.width = valoresOriginalesDocentes[nombreNivel].porcentaje;
             if (levelPercent) levelPercent.textContent = valoresOriginalesDocentes[nombreNivel].porcentaje;
         }
     });
-    
+
+    // Resetear tipo de filtro
+    window.tipoFiltroActual = 'total';
+
+    // Redibujar el gráfico si está visible
+    if (document.getElementById('vista-grafico').style.display !== 'none') {
+        setTimeout(() => {
+            drawDocentesNivelChart();
+        }, 100);
+    }
+
     console.log('Filtros reseteados correctamente');
+}
+
+/**
+ * =============================================
+ * SISTEMA DE CAMBIO DE VISTA BARRAS/GRÁFICO
+ * =============================================
+ */
+
+/**
+ * Inicializar funcionalidad de toggle entre vista barras y gráfico
+ */
+function initializeViewToggle() {
+    const toggleButtons = document.querySelectorAll('.view-toggle-btn');
+
+    if (toggleButtons.length === 0) {
+        console.warn('No se encontraron botones de toggle de vista');
+        return;
+    }
+
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const viewType = this.getAttribute('data-view');
+
+            // Remover clase activa de todos los botones
+            toggleButtons.forEach(btn => btn.classList.remove('active'));
+
+            // Agregar clase activa al botón clickeado
+            this.classList.add('active');
+
+            // Cambiar vista
+            switchView(viewType);
+        });
+    });
+
+    console.log('Sistema de toggle de vista inicializado correctamente');
+}
+
+/**
+ * Cambiar entre vista de barras y gráfico
+ */
+function switchView(viewType) {
+    const vistaBarras = document.getElementById('vista-barras');
+    const vistaGrafico = document.getElementById('vista-grafico');
+
+    if (!vistaBarras || !vistaGrafico) {
+        console.error('No se encontraron los contenedores de vista');
+        return;
+    }
+
+    if (viewType === 'barras') {
+        vistaBarras.style.display = 'block';
+        vistaGrafico.style.display = 'none';
+        console.log('Cambiado a vista de barras');
+    } else if (viewType === 'grafico') {
+        vistaBarras.style.display = 'none';
+        vistaGrafico.style.display = 'block';
+
+        // Redibujar el gráfico si es necesario
+        if (typeof drawDocentesNivelChart === 'function') {
+            setTimeout(() => {
+                drawDocentesNivelChart();
+            }, 100);
+        }
+        console.log('Cambiado a vista de gráfico');
+    }
+}
+
+/**
+ * =============================================
+ * GRÁFICOS DE GOOGLE CHARTS
+ * =============================================
+ */
+
+/**
+ * Inicializar Google Charts
+ */
+function initializeGoogleCharts() {
+    if (typeof google === 'undefined') {
+        console.error('Google Charts no está disponible');
+        return;
+    }
+
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(setupChartsDocentes);
+}
+
+/**
+ * Configurar gráficos de docentes
+ */
+function setupChartsDocentes() {
+    // Verificar si tenemos los datos necesarios
+    if (typeof docentesPorNivel === 'undefined') {
+        console.error('Los datos de docentes por nivel no están disponibles');
+        return;
+    }
+
+    console.log('Configurando gráficos de docentes...');
+
+    // Configurar el gráfico inicial si es necesario
+    window.docentesChart = true;
+}
+
+/**
+ * Dibujar gráfico circular de distribución por nivel
+ */
+function drawDocentesNivelChart() {
+    if (typeof google === 'undefined') {
+        console.error('Google Charts no está disponible');
+        return;
+    }
+
+    const tipoFiltro = window.tipoFiltroActual || 'total';
+    console.log(`Creando gráfico de docentes con filtro: ${tipoFiltro}`);
+
+    // Preparar datos para el gráfico
+    const datosGrafico = prepararDatosGraficoDocentes(tipoFiltro);
+
+    if (!datosGrafico || datosGrafico.length <= 1) {
+        document.getElementById('pie-chart-nivel').innerHTML =
+            '<div style="text-align: center; padding: 50px; color: #666;">No hay datos disponibles para mostrar</div>';
+        return;
+    }
+
+    // Dibujar el gráfico
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(function() {
+        const data = google.visualization.arrayToDataTable(datosGrafico);
+
+        const options = {
+            title: getTituloGraficoDocentes(tipoFiltro),
+            titleTextStyle: {
+                fontSize: 18,
+                fontName: 'Inter, sans-serif',
+                bold: true,
+                color: '#2c3e50'
+            },
+            pieHole: 0.4,
+            colors: [
+                '#3498db', '#2ecc71', '#e74c3c', '#f39c12',
+                '#9b59b6', '#1abc9c', '#e67e22', '#34495e'
+            ],
+            backgroundColor: 'transparent',
+            legend: {
+                position: 'bottom',
+                alignment: 'center',
+                textStyle: {
+                    fontSize: 12,
+                    fontName: 'Inter, sans-serif'
+                }
+            },
+            chartArea: {
+                left: 10,
+                top: 50,
+                width: '90%',
+                height: '75%'
+            },
+            tooltip: {
+                textStyle: {
+                    fontSize: 13,
+                    fontName: 'Inter, sans-serif'
+                },
+                showColorCode: true
+            },
+            animation: {
+                startup: true,
+                duration: 1000,
+                easing: 'out'
+            }
+        };
+
+        const chart = new google.visualization.PieChart(document.getElementById('pie-chart-nivel'));
+        chart.draw(data, options);
+    });
+}
+
+// Función auxiliar para preparar datos según el filtro
+function prepararDatosGraficoDocentes(tipo) {
+    const datos = [['Nivel', 'Docentes']];
+
+    if (tipo === 'total') {
+        // Para total, usar los datos originales que ya funcionan
+        if (typeof docentesPorNivel !== 'undefined') {
+            for (const nivel in docentesPorNivel) {
+                if (docentesPorNivel[nivel] > 0) {
+                    datos.push([nivel, docentesPorNivel[nivel]]);
+                }
+            }
+        }
+    } else {
+        // Para público/privado, leer directamente de las barras actuales
+        const barrasNivel = document.querySelectorAll('.level-bar');
+        barrasNivel.forEach(bar => {
+            const nombreNivel = bar.querySelector('.level-name').textContent.trim();
+            const cantidadTexto = bar.querySelector('.escuelas-count').textContent;
+            const cantidad = parseInt(cantidadTexto.replace(/,/g, ''));
+
+            if (cantidad > 0) {
+                datos.push([nombreNivel, cantidad]);
+            }
+        });
+    }
+
+    return datos;
+}
+
+// Función auxiliar para obtener el título del gráfico según el filtro
+function getTituloGraficoDocentes(tipo) {
+    switch(tipo) {
+        case 'publico':
+            return 'Distribución de Docentes Públicos por Nivel Educativo';
+        case 'privado':
+            return 'Distribución de Docentes Privados por Nivel Educativo';
+        default:
+            return 'Distribución de Docentes por Nivel Educativo';
+    }
 }
