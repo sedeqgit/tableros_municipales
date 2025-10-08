@@ -149,7 +149,7 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
     switch ($str_consulta) {
         case 'gral_ini':
             return "SELECT CONCAT('GENERAL') AS titulo_fila,
-                        SUM(V398+V414) AS total_matricula, 6210 2584+3108
+                        SUM(V398+V414) AS total_matricula, 
                         SUM(V390+V406) AS mat_hombres,
                         SUM(V394+V410) AS mat_mujeres,
                         SUM(V509+V516+V523+V511+V518+V525+V510+V517+V524+V512+V519+V526) AS total_docentes,
@@ -2310,6 +2310,385 @@ function obtenerResumenMunicipio($municipio = 'CORREGIDORA', $ciclo_escolar = nu
         'municipio' => $municipio,
         'ciclo_escolar' => $ciclo_escolar
     ];
+}
+
+/**
+ * Obtiene datos de docentes agrupados por nivel y subnivel
+ * Reutiliza las consultas existentes agregando GROUP BY nivel, subnivel
+ * 
+ * @param string $municipio Nombre del municipio
+ * @param string $ini_ciclo Ciclo escolar (opcional, por defecto ciclo actual)
+ * @return array Datos agrupados por nivel y subnivel con total_docentes, doc_hombres, doc_mujeres
+ */
+function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo = null)
+{
+    // Usar ciclo escolar actual si no se especifica
+    if ($ini_ciclo === null) {
+        $ini_ciclo = obtenerCicloEscolarActual();
+    }
+
+    $link = ConectarsePrueba();
+    if (!$link) {
+        return [];
+    }
+
+    // Normalizar nombre del municipio y obtener código
+    $municipio = normalizarNombreMunicipio($municipio);
+    $codigo_municipio = nombre_a_numero_municipio($municipio);
+
+    if ($codigo_municipio === false) {
+        pg_close($link);
+        return [];
+    }
+
+    // Construir consulta SQL que agrupa por nivel y subnivel
+    $query = "
+    SELECT 
+        nivel,
+        subnivel,
+        SUM(total_docentes)::integer as total_docentes,
+        SUM(doc_hombres)::integer as doc_hombres,
+        SUM(doc_mujeres)::integer as doc_mujeres,
+        COUNT(DISTINCT cct)::integer as escuelas
+    FROM (
+        -- INICIAL ESCOLARIZADA (ini_gral_24)
+        SELECT 
+            cv_cct as cct,
+            'INICIAL ESCOLARIZADA' as nivel,
+            COALESCE(NULLIF(TRIM(subnivel), ''), 'General') as subnivel,
+            (V509+V516+V523+V511+V518+V525+V510+V517+V524+V512+V519+V526+V787+V785+V786)::integer as total_docentes,
+            (V509+V511+V510+V512+V787)::integer as doc_hombres,
+            (V516+V523+V518+V525+V517+V524+V519+V526+V785+V786)::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- INICIAL ESCOLARIZADA (ini_ind_24)
+        SELECT 
+            cv_cct as cct,
+            'INICIAL ESCOLARIZADA' as nivel,
+            COALESCE(NULLIF(TRIM(subnivel), ''), 'Indígena') as subnivel,
+            V291::integer as total_docentes,
+            V289::integer as doc_hombres,
+            V290::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.ini_ind_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- INICIAL NO ESCOLARIZADA (ini_comuni_24)
+        SELECT 
+            cv_cct as cct,
+            'INICIAL NO ESCOLARIZADA' as nivel,
+            'Comunitario' as subnivel,
+            V126::integer as total_docentes,
+            V124::integer as doc_hombres,
+            V125::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.ini_comuni_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- INICIAL NO ESCOLARIZADA (ini_ne_24)
+        SELECT 
+            cv_cct as cct,
+            'INICIAL NO ESCOLARIZADA' as nivel,
+            COALESCE(NULLIF(TRIM(subnivel), ''), 'No escolarizada') as subnivel,
+            (V183+V184)::integer as total_docentes,
+            V183::integer as doc_hombres,
+            V184::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.ini_ne_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- ESPECIAL CAM
+        SELECT 
+            cv_cct as cct,
+            'ESPECIAL CAM' as nivel,
+            COALESCE(NULLIF(TRIM(subnivel), ''), 'CAM') as subnivel,
+            V2496::integer as total_docentes,
+            V2494::integer as doc_hombres,
+            V2495::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- PREESCOLAR (pree_gral_24)
+        SELECT 
+            cv_cct as cct,
+            'PREESCOLAR' as nivel,
+            COALESCE(NULLIF(TRIM(subnivel), ''), 'General') as subnivel,
+            (V867+V868+V859+V860)::integer as total_docentes,
+            (V867+V859)::integer as doc_hombres,
+            (V868+V860)::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.pree_gral_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- PREESCOLAR (pree_ind_24)
+        SELECT 
+            cv_cct as cct,
+            'PREESCOLAR' as nivel,
+            COALESCE(NULLIF(TRIM(subnivel), ''), 'Indígena') as subnivel,
+            (V795+V803+V796+V804)::integer as total_docentes,
+            (V795+V803)::integer as doc_hombres,
+            (V796+V804)::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.pree_ind_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- PREESCOLAR (pree_comuni_24)
+        SELECT 
+            cv_cct as cct,
+            'PREESCOLAR' as nivel,
+            'Comunitario' as subnivel,
+            V151::integer as total_docentes,
+            V149::integer as doc_hombres,
+            V150::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.pree_comuni_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- PRIMARIA (prim_gral_24)
+        SELECT 
+            cv_cct as cct,
+            'PRIMARIA' as nivel,
+            COALESCE(NULLIF(TRIM(subnivel), ''), 'General') as subnivel,
+            (V1575+V1576+V1567+V1568)::integer as total_docentes,
+            (V1575+V1567)::integer as doc_hombres,
+            (V1576+V1568)::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.prim_gral_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- PRIMARIA (prim_ind_24)
+        SELECT 
+            cv_cct as cct,
+            'PRIMARIA' as nivel,
+            COALESCE(NULLIF(TRIM(subnivel), ''), 'Indígena') as subnivel,
+            (V1507+V1499+V1508+V1500)::integer as total_docentes,
+            (V1507+V1499)::integer as doc_hombres,
+            (V1508+V1500)::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.prim_ind_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- PRIMARIA (prim_comuni_24)
+        SELECT 
+            cv_cct as cct,
+            'PRIMARIA' as nivel,
+            'Comunitario' as subnivel,
+            (V583+V584)::integer as total_docentes,
+            V583::integer as doc_hombres,
+            V584::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.prim_comuni_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- SECUNDARIA (sec_gral_24)
+        SELECT 
+            cv_cct as cct,
+            'SECUNDARIA' as nivel,
+            COALESCE(NULLIF(TRIM(subnivel), ''), 'General') as subnivel,
+            V1401::integer as total_docentes,
+            (V1297+V1303+V1307+V1309+V1311+V1313)::integer as doc_hombres,
+            (V1298+V1304+V1308+V1310+V1312+V1314)::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.sec_gral_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- SECUNDARIA (sec_comuni_24)
+        SELECT 
+            cv_cct as cct,
+            'SECUNDARIA' as nivel,
+            'Comunitario' as subnivel,
+            V386::integer as total_docentes,
+            V384::integer as doc_hombres,
+            V385::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.sec_comuni_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- MEDIA SUPERIOR (sin subnivel, solo general)
+        SELECT 
+            cct_ins_pla as cct,
+            'MEDIA SUPERIOR' as nivel,
+            'General' as subnivel,
+            (V106+V101)::integer as total_docentes,
+            (V104+V99)::integer as doc_hombres,
+            (V105+V100)::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.ms_plantel_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND cv_motivo = '0'
+        
+        UNION ALL
+        
+        -- SUPERIOR (sin subnivel, solo general)
+        SELECT 
+            cv_cct as cct,
+            'SUPERIOR' as nivel,
+            'General' as subnivel,
+            V83::integer as total_docentes,
+            V81::integer as doc_hombres,
+            V82::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.sup_escuela_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND cv_motivo = '0'
+          
+    ) AS todos_niveles
+    WHERE total_docentes > 0
+    GROUP BY nivel, subnivel
+    ORDER BY 
+        CASE nivel
+            WHEN 'INICIAL ESCOLARIZADA' THEN 1
+            WHEN 'INICIAL NO ESCOLARIZADA' THEN 2
+            WHEN 'ESPECIAL CAM' THEN 3
+            WHEN 'PREESCOLAR' THEN 4
+            WHEN 'PRIMARIA' THEN 5
+            WHEN 'SECUNDARIA' THEN 6
+            WHEN 'MEDIA SUPERIOR' THEN 7
+            WHEN 'SUPERIOR' THEN 8
+        END,
+        subnivel";
+
+    $result = pg_query($link, $query);
+
+    if (!$result) {
+        pg_close($link);
+        return [];
+    }
+
+    $datos = [];
+    while ($row = pg_fetch_assoc($result)) {
+        $datos[] = $row;
+    }
+
+    pg_free_result($result);
+
+    // Aplicar ajuste de unidades estatales para nivel Superior
+    // - Municipio 14 (Querétaro): RESTAR unidades (evitar doble conteo)
+    // - Otros municipios: SUMAR unidades (no están en sup_escuela_24)
+    $datos = aplicarAjusteUnidadesSuperior($link, $ini_ciclo, $codigo_municipio, $datos);
+
+    pg_close($link);
+
+    return $datos;
+}
+
+/**
+ * Aplica ajuste de unidades estatales al nivel Superior
+ * 
+ * LÓGICA:
+ * - Municipio 14 (Querétaro): Las unidades están en sup_escuela_24, hay que RESTAR sup_unidades_24 (evitar doble conteo)
+ * - Otros municipios: Las unidades NO están en sup_escuela_24, hay que SUMAR sup_unidades_24 del municipio
+ * 
+ * Las unidades estatales (UPN 22DUP0002U, TecNM 22DIT0001M) operan físicamente en varios municipios
+ * pero administrativamente pertenecen a Querétaro.
+ * 
+ * @param resource $link Conexión a la base de datos
+ * @param string $ini_ciclo Ciclo escolar
+ * @param string $codigo_municipio Código del municipio
+ * @param array $datos Datos originales por nivel y subnivel
+ * @return array Datos ajustados con unidades sumadas o restadas según corresponda
+ */
+function aplicarAjusteUnidadesSuperior($link, $ini_ciclo, $codigo_municipio, $datos)
+{
+    if ($codigo_municipio == '14') {
+        // CASO QUERÉTARO: RESTAR todas las unidades estatales (sin filtro municipal)
+        $consulta_unidades = str_consulta_segura('unidades_sup', $ini_ciclo, '');
+        if (!$consulta_unidades) {
+            return $datos;
+        }
+
+        $rs_unidades = pg_query($link, $consulta_unidades);
+        if (!$rs_unidades || pg_num_rows($rs_unidades) == 0) {
+            return $datos;
+        }
+
+        $unidades_totales = pg_fetch_assoc($rs_unidades);
+        pg_free_result($rs_unidades);
+
+        // Restar unidades del nivel SUPERIOR
+        foreach ($datos as $index => $fila) {
+            if ($fila['nivel'] === 'SUPERIOR') {
+                $datos[$index]['total_docentes'] = max(0, $fila['total_docentes'] - $unidades_totales['total_docentes']);
+                $datos[$index]['doc_hombres'] = max(0, $fila['doc_hombres'] - $unidades_totales['doc_hombres']);
+                $datos[$index]['doc_mujeres'] = max(0, $fila['doc_mujeres'] - $unidades_totales['doc_mujeres']);
+                // Las escuelas NO se modifican
+            }
+        }
+    } else {
+        // CASO OTROS MUNICIPIOS: SUMAR unidades del municipio específico
+        $filtro_municipio = " AND cv_mun='$codigo_municipio'";
+        $consulta_unidades = str_consulta_segura('unidades_sup', $ini_ciclo, $filtro_municipio);
+        if (!$consulta_unidades) {
+            return $datos;
+        }
+
+        $rs_unidades = pg_query($link, $consulta_unidades);
+        if (!$rs_unidades || pg_num_rows($rs_unidades) == 0) {
+            return $datos; // No hay unidades en este municipio
+        }
+
+        $unidades_municipio = pg_fetch_assoc($rs_unidades);
+        pg_free_result($rs_unidades);
+
+        // Verificar si hay docentes en unidades
+        if ($unidades_municipio['total_docentes'] > 0) {
+            $superior_encontrado = false;
+
+            // Buscar si ya existe el nivel SUPERIOR en los datos
+            foreach ($datos as $index => $fila) {
+                if ($fila['nivel'] === 'SUPERIOR') {
+                    $superior_encontrado = true;
+                    // Sumar unidades al total existente
+                    $datos[$index]['total_docentes'] += $unidades_municipio['total_docentes'];
+                    $datos[$index]['doc_hombres'] += $unidades_municipio['doc_hombres'];
+                    $datos[$index]['doc_mujeres'] += $unidades_municipio['doc_mujeres'];
+                    $datos[$index]['escuelas'] += $unidades_municipio['escuelas'];
+                    break;
+                }
+            }
+
+            // Si no existe nivel SUPERIOR, agregarlo con los datos de unidades
+            if (!$superior_encontrado) {
+                $datos[] = [
+                    'nivel' => 'SUPERIOR',
+                    'subnivel' => 'Unidades',
+                    'total_docentes' => $unidades_municipio['total_docentes'],
+                    'doc_hombres' => $unidades_municipio['doc_hombres'],
+                    'doc_mujeres' => $unidades_municipio['doc_mujeres'],
+                    'escuelas' => $unidades_municipio['escuelas']
+                ];
+            }
+        }
+    }
+
+    return $datos;
 }
 
 /**

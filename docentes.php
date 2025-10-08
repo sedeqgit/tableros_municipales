@@ -52,6 +52,9 @@ $datosPublicoPrivado = obtenerDatosPublicoPrivado($municipioSeleccionado);
 // PROCESAMIENTO DE DATOS POR NIVEL EDUCATIVO
 // =============================================================================
 
+// Obtener datos de docentes por nivel y subnivel directamente de la base de datos
+$datosDocentesPorSubnivel = obtenerDocentesPorNivelYSubnivel($municipioSeleccionado);
+
 // Procesar datos para obtener totales por nivel y subnivel
 $datosDocentesGenero = array();
 $datosDocentesGenero[] = array('Nivel Educativo', 'Subnivel', 'Total Docentes', 'Hombres', 'Mujeres', '% Hombres', '% Mujeres');
@@ -59,78 +62,29 @@ $datosDocentesGenero[] = array('Nivel Educativo', 'Subnivel', 'Total Docentes', 
 $docentesPorNivel = array(); // Total por nivel principal
 $totalDocentes = 0;
 
-// Definir estructura de niveles con sus subniveles
-$estructuraNiveles = [
-    'Inicial Escolarizada' => [
-        ['clave' => 'inicial_esc', 'nombre' => 'General']
-    ],
-    'Inicial No Escolarizada' => [
-        ['clave' => 'inicial_no_esc', 'nombre' => 'General']
-    ],
-    'Especial' => [
-        ['clave' => 'especial', 'nombre' => 'CAM']
-    ],
-    'Preescolar' => [
-        ['clave' => 'preescolar', 'nombre' => 'General']
-    ],
-    'Primaria' => [
-        ['clave' => 'primaria', 'nombre' => 'General']
-    ],
-    'Secundaria' => [
-        ['clave' => 'secundaria', 'nombre' => 'General']
-    ],
-    'Media Superior' => [
-        ['clave' => 'media_sup', 'nombre' => 'Bachillerato']
-    ],
-    'Superior' => [
-        ['clave' => 'superior', 'nombre' => 'Licenciatura']
-    ]
-];
+// Procesar datos dinámicos desde la base de datos
+if ($datosDocentesPorSubnivel && is_array($datosDocentesPorSubnivel)) {
+    foreach ($datosDocentesPorSubnivel as $fila) {
+        $nivelPrincipal = $fila['nivel'];
+        $nombreSubnivel = $fila['subnivel'];
+        $docentes = intval($fila['total_docentes']);
+        $docentesH = intval($fila['doc_hombres']);
+        $docentesM = intval($fila['doc_mujeres']);
 
-// Procesar datos de docentes desde la estructura completa
-if ($datosCompletos && is_array($datosCompletos)) {
-    foreach ($estructuraNiveles as $nivelPrincipal => $subniveles) {
-        foreach ($subniveles as $subnivel) {
-            $clave = $subnivel['clave'];
-            $nombreSubnivel = $subnivel['nombre'];
+        // Calcular porcentajes de género
+        $porcH = $docentes > 0 ? round(($docentesH / $docentes) * 100, 1) : 0;
+        $porcM = $docentes > 0 ? round(($docentesM / $docentes) * 100, 1) : 0;
 
-            if (isset($datosCompletos[$clave]) && is_array($datosCompletos[$clave])) {
-                $dato = $datosCompletos[$clave];
-                $docentes = isset($dato['tot_doc']) ? $dato['tot_doc'] : 0;
-                $docentesH = isset($dato['doc_h']) ? $dato['doc_h'] : 0;
-                $docentesM = isset($dato['doc_m']) ? $dato['doc_m'] : 0;
+        // Agregar a datos de género
+        $datosDocentesGenero[] = array($nivelPrincipal, $nombreSubnivel, $docentes, $docentesH, $docentesM, $porcH, $porcM);
 
-                // Calcular porcentajes de género
-                $porcH = $docentes > 0 ? round(($docentesH / $docentes) * 100, 1) : 0;
-                $porcM = $docentes > 0 ? round(($docentesM / $docentes) * 100, 1) : 0;
-
-                // Agregar a datos de género
-                $datosDocentesGenero[] = array($nivelPrincipal, $nombreSubnivel, $docentes, $docentesH, $docentesM, $porcH, $porcM);
-
-                // Acumular por nivel principal
-                if (!isset($docentesPorNivel[$nivelPrincipal])) {
-                    $docentesPorNivel[$nivelPrincipal] = 0;
-                }
-                $docentesPorNivel[$nivelPrincipal] += $docentes;
-                $totalDocentes += $docentes;
-            }
+        // Acumular por nivel principal
+        if (!isset($docentesPorNivel[$nivelPrincipal])) {
+            $docentesPorNivel[$nivelPrincipal] = 0;
         }
+        $docentesPorNivel[$nivelPrincipal] += $docentes;
+        $totalDocentes += $docentes;
     }
-}
-
-// Si no hay datos, usar valores de fallback
-if ($totalDocentes == 0) {
-    $totalDocentes = 2808;
-    $docentesPorNivel = array(
-        'Inicial Escolarizada' => 36,
-        'Inicial No Escolarizada' => 25,
-        'Especial' => 22,
-        'Preescolar' => 352,
-        'Primaria' => 750,
-        'Secundaria' => 571,
-        'Media Superior' => 607,
-        'Superior' => 467
-    );
 }
 
 // =============================================================================
@@ -172,13 +126,6 @@ $porcentajePrivados = $totalGeneral > 0 ? round(($docentesPrivados / $totalGener
 $porcentajesDocentes = array();
 foreach ($docentesPorNivel as $nivel => $cantidad) {
     $porcentajesDocentes[$nivel] = round(($cantidad / $totalDocentes) * 100, 1);
-}
-
-// Preparar datos para gráficos (formato Google Charts)
-$datosGraficoNivel = array();
-$datosGraficoNivel[] = array('Nivel', 'Docentes');
-foreach ($docentesPorNivel as $nivel => $cantidad) {
-    $datosGraficoNivel[] = array($nivel, $cantidad);
 }
 
 // Análisis de concentración (niveles con mayor cantidad de docentes)
@@ -276,24 +223,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                         <?php echo ucwords(strtolower($municipioSeleccionado)); ?>
                     </h3>
                 </div>
-                <div class="panel-body"> <?php
-                // Debug - mostrar valores para verificar
-                echo "<!-- DEBUG: Total Docentes: $totalDocentes -->";
-                echo "<!-- DEBUG: Nivel Mayor: $nivelMayorConcentracion -->";
-                echo "<!-- DEBUG: Porcentaje Mayor: $porcentajeMayorConcentracion -->";
-                echo "<!-- DEBUG: Count Niveles: " . count($docentesPorNivel) . " -->";
-
-                // Verificar que los valores no estén vacíos
-                if (empty($totalDocentes) || $totalDocentes <= 0) {
-                    echo "<!-- ERROR: Total Docentes es 0 o vacío -->";
-                    $totalDocentes = 2808; // Valor de fallback
-                }
-                if (empty($nivelMayorConcentracion)) {
-                    echo "<!-- ERROR: Nivel Mayor Concentración vacío -->";
-                    $nivelMayorConcentracion = "Primaria";
-                    $porcentajeMayorConcentracion = 26.7;
-                }
-                ?>
+                <div class="panel-body">
                     <div class="stats-row">
                         <div class="stat-box animate-fade delay-1">
                             <div class="stat-value"><?php echo number_format($totalDocentes); ?></div>
@@ -355,50 +285,50 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                             <?php
                             // Función para determinar el orden educativo basado en palabras clave
                             function obtenerOrdenEducativo($nivel)
-                        {
-                            $nivel = strtolower($nivel);
-                            if (strpos($nivel, 'inicial') !== false && strpos($nivel, 'escolarizada') !== false)
-                                return 1;
-                            if (strpos($nivel, 'inicial') !== false && strpos($nivel, 'no') !== false)
-                                return 2;
-                            if (strpos($nivel, 'especial') !== false || strpos($nivel, 'cam') !== false)
-                                return 3;
-                            if (strpos($nivel, 'preescolar') !== false)
-                                return 4;
-                            if (strpos($nivel, 'primaria') !== false)
-                                return 5;
-                            if (strpos($nivel, 'secundaria') !== false)
-                                return 6;
-                            if (strpos($nivel, 'media') !== false || strpos($nivel, 'medio') !== false)
-                                return 7;
-                            if (strpos($nivel, 'superior') !== false)
-                                return 8;
-                            return 9; // Para niveles no reconocidos
-                        }
+                            {
+                                $nivel = strtolower($nivel);
+                                if (strpos($nivel, 'inicial') !== false && strpos($nivel, 'escolarizada') !== false)
+                                    return 1;
+                                if (strpos($nivel, 'inicial') !== false && strpos($nivel, 'no') !== false)
+                                    return 2;
+                                if (strpos($nivel, 'especial') !== false || strpos($nivel, 'cam') !== false)
+                                    return 3;
+                                if (strpos($nivel, 'preescolar') !== false)
+                                    return 4;
+                                if (strpos($nivel, 'primaria') !== false)
+                                    return 5;
+                                if (strpos($nivel, 'secundaria') !== false)
+                                    return 6;
+                                if (strpos($nivel, 'media') !== false || strpos($nivel, 'medio') !== false)
+                                    return 7;
+                                if (strpos($nivel, 'superior') !== false)
+                                    return 8;
+                                return 9; // Para niveles no reconocidos
+                            }
 
-                        // Ordenar según el orden educativo lógico
-                        $nivelesOrdenadosDisplay = $docentesPorNivel;
-                        uksort($nivelesOrdenadosDisplay, function ($a, $b) {
-                            return obtenerOrdenEducativo($a) - obtenerOrdenEducativo($b);
-                        });
-                        foreach ($nivelesOrdenadosDisplay as $nivel => $cantidad):
-                            $porcentaje = $porcentajesDocentes[$nivel];
-                            // Obtener datos de sostenimiento para este nivel
-                            $publicos = isset($docentesNivelSostenimiento[$nivel]) ? $docentesNivelSostenimiento[$nivel]['publicos'] : 0;
-                            $privados = isset($docentesNivelSostenimiento[$nivel]) ? $docentesNivelSostenimiento[$nivel]['privados'] : 0;
-                            ?>
-                            <div class="level-bar" data-nivel="<?php echo htmlspecialchars($nivel); ?>"
-                                data-publicos="<?php echo $publicos; ?>" data-privados="<?php echo $privados; ?>"
-                                data-total="<?php echo $cantidad; ?>">
-                                <span class="level-name"><?php echo $nivel; ?></span>
-                                <div class="level-track">
-                                    <div class="level-fill" style="width: <?php echo $porcentaje; ?>%">
-                                        <span class="escuelas-count"><?php echo number_format($cantidad); ?></span>
+                            // Ordenar según el orden educativo lógico
+                            $nivelesOrdenadosDisplay = $docentesPorNivel;
+                            uksort($nivelesOrdenadosDisplay, function ($a, $b) {
+                                return obtenerOrdenEducativo($a) - obtenerOrdenEducativo($b);
+                            });
+                            foreach ($nivelesOrdenadosDisplay as $nivel => $cantidad):
+                                $porcentaje = $porcentajesDocentes[$nivel];
+                                // Obtener datos de sostenimiento para este nivel
+                                $publicos = isset($docentesNivelSostenimiento[$nivel]) ? $docentesNivelSostenimiento[$nivel]['publicos'] : 0;
+                                $privados = isset($docentesNivelSostenimiento[$nivel]) ? $docentesNivelSostenimiento[$nivel]['privados'] : 0;
+                                ?>
+                                <div class="level-bar" data-nivel="<?php echo htmlspecialchars($nivel); ?>"
+                                    data-publicos="<?php echo $publicos; ?>" data-privados="<?php echo $privados; ?>"
+                                    data-total="<?php echo $cantidad; ?>">
+                                    <span class="level-name"><?php echo $nivel; ?></span>
+                                    <div class="level-track">
+                                        <div class="level-fill" style="width: <?php echo $porcentaje; ?>%">
+                                            <span class="escuelas-count"><?php echo number_format($cantidad); ?></span>
+                                        </div>
                                     </div>
+                                    <span class="level-percent"><?php echo $porcentaje; ?>%</span>
                                 </div>
-                                <span class="level-percent"><?php echo $porcentaje; ?>%</span>
-                            </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
                         </div>
                         <!-- Fin Vista Barras -->
 
@@ -419,11 +349,11 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                         <th>Nivel Educativo</th>
                                         <th>Subnivel</th>
                                         <th>Total Docentes</th>
-                                        <th>Docentes Hombres</th>
-                                        <th>Docentes Mujeres</th>
-                                        <th>% Hombres</th>
-                                        <th>% Mujeres</th>
                                         <th>% del Total General</th>
+                                        <th>Docentes Hombres</th>
+                                        <th>% Hombres</th>
+                                        <th>Docentes Mujeres</th>
+                                        <th>% Mujeres</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -508,15 +438,15 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                             <td><?php echo $nivel; ?></td>
                                             <td><?php echo $subnivel; ?></td>
                                             <td class="text-center"><?php echo number_format($totalNivel); ?></td>
+                                            <td class="text-center"><?php echo $porcentajeDelTotal; ?>%</td>
                                             <td class="text-center docentes-hombres"><?php echo number_format($hombres); ?>
-                                            </td>
-                                            <td class="text-center docentes-mujeres"><?php echo number_format($mujeres); ?>
                                             </td>
                                             <td class="text-center porcentaje-hombres"><?php echo $porcentajeHombres; ?>%
                                             </td>
+                                            <td class="text-center docentes-mujeres"><?php echo number_format($mujeres); ?>
+                                            </td>
                                             <td class="text-center porcentaje-mujeres"><?php echo $porcentajeMujeres; ?>%
                                             </td>
-                                            <td class="text-center"><?php echo $porcentajeDelTotal; ?>%</td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -526,6 +456,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                         <td class="text-center">
                                             <strong><?php echo number_format($totalDocentes); ?></strong>
                                         </td>
+                                        <td class="text-center"><strong>100.0%</strong></td>
                                         <?php
                                         // Calcular totales de género
                                         $totalHombres = 0;
@@ -541,15 +472,14 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                             <strong><?php echo number_format($totalHombres); ?></strong>
                                         </td>
                                         <td class="text-center">
-                                            <strong><?php echo number_format($totalMujeres); ?></strong>
+                                            <strong><?php echo $porcentajeTotalHombres; ?>%</strong>
                                         </td>
                                         <td class="text-center">
-                                            <strong><?php echo $porcentajeTotalHombres; ?>%</strong>
+                                            <strong><?php echo number_format($totalMujeres); ?></strong>
                                         </td>
                                         <td class="text-center">
                                             <strong><?php echo $porcentajeTotalMujeres; ?>%</strong>
                                         </td>
-                                        <td class="text-center"><strong>100.0%</strong></td>
                                     </tr>
                                 </tfoot>
                             </table>

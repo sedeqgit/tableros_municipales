@@ -553,13 +553,13 @@
 }
 
 /* Headers de género con colores distintivos */
-.docentes-page .data-table th:nth-child(4), /* Docentes Hombres */
+.docentes-page .data-table th:nth-child(5), /* Docentes Hombres */
 .docentes-page .data-table th:nth-child(6) { /* % Hombres */
     background: linear-gradient(135deg, var(--secondary-blue), #3498db) !important;
 }
 
-.docentes-page .data-table th:nth-child(5), /* Docentes Mujeres */
-.docentes-page .data-table th:nth-child(7) { /* % Mujeres */
+.docentes-page .data-table th:nth-child(7), /* Docentes Mujeres */
+.docentes-page .data-table th:nth-child(8) { /* % Mujeres */
     background: linear-gradient(135deg, #610c76, #ceafe0ff) !important;
 }
 
@@ -575,21 +575,23 @@
         font-size: 0.75rem;
     }
     
-    /* Ocultar algunas columnas en móvil si es necesario */
-    .data-table th:nth-child(6),
+    /* Ocultar porcentajes en móvil si es necesario */
+    .data-table th:nth-child(6), /* % Hombres */
     .data-table td:nth-child(6),
-    .data-table th:nth-child(7),
-    .data-table td:nth-child(7) {
+    .data-table th:nth-child(8), /* % Mujeres */
+    .data-table td:nth-child(8) {
         display: none;
     }
 }
 
 @media (max-width: 480px) {
     /* En pantallas muy pequeñas, mostrar solo info esencial */
-    .data-table th:nth-child(4),
+    .data-table th:nth-child(4), /* % del Total */
     .data-table td:nth-child(4),
-    .data-table th:nth-child(5),
-    .data-table td:nth-child(5) {
+    .data-table th:nth-child(5), /* Docentes Hombres */
+    .data-table td:nth-child(5),
+    .data-table th:nth-child(7), /* Docentes Mujeres */
+    .data-table td:nth-child(7) {
         display: none;
     }
 }
