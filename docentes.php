@@ -35,6 +35,11 @@ error_reporting(E_ALL);
 // Incluir módulo de conexión actualizado con soporte de municipios dinámicos
 require_once 'conexion_prueba_2024.php';
 
+// Configurar codificación UTF-8 para evitar problemas con acentos
+header('Content-Type: text/html; charset=UTF-8');
+mb_internal_encoding('UTF-8');
+mb_http_output('UTF-8');
+
 // Obtener municipio desde parámetro GET, por defecto CORREGIDORA
 $municipioSeleccionado = isset($_GET['municipio']) ? strtoupper(trim($_GET['municipio'])) : 'CORREGIDORA';
 
@@ -62,11 +67,59 @@ $datosDocentesGenero[] = array('Nivel Educativo', 'Subnivel', 'Total Docentes', 
 $docentesPorNivel = array(); // Total por nivel principal
 $totalDocentes = 0;
 
+// Función auxiliar para normalizar y corregir texto con problemas de codificación
+function normalizarTextoEducativo($texto)
+{
+    // Limpiar el texto y remover caracteres invisibles/control
+    $texto = trim($texto);
+
+    // Usar expresiones regulares para detectar patrones con caracteres corruptos
+    // Patrón para detectar "T[cualquier carácter corrupto]CNICA" (incluyendo variantes como T?:Cnica)
+    if (preg_match('/^T.{0,3}CNICA$/i', $texto)) {
+        return 'Técnica';
+    }
+
+    // Patrón para detectar "IND[cualquier carácter corrupto]GENA"
+    if (preg_match('/^IND.{0,3}GENA$/i', $texto)) {
+        return 'Indígena';
+    }
+
+    // Correcciones exactas para otros casos
+    $correcciones = array(
+        'TECNICA' => 'Técnica',
+        'INDIGENA' => 'Indígena',
+        'TELESECUNDARIA' => 'Telesecundaria',
+        'GENERAL' => 'General',
+        'COMUNITARIO' => 'Comunitario',
+        'CAM' => 'Cam',
+        'LACTANTE Y MATERNAL' => 'Lactante Y Maternal',
+        'NO ESCOLARIZADA' => 'No Escolarizada',
+        'INICIAL ESCOLARIZADA' => 'Inicial Escolarizada',
+        'INICIAL NO ESCOLARIZADA' => 'Inicial No Escolarizada',
+        'ESPECIAL CAM' => 'Especial Cam',
+        'PREESCOLAR' => 'Preescolar',
+        'PRIMARIA' => 'Primaria',
+        'SECUNDARIA' => 'Secundaria',
+        'MEDIA SUPERIOR' => 'Media Superior',
+        'SUPERIOR' => 'Superior'
+    );
+
+    // Buscar coincidencia exacta
+    $textoUpper = strtoupper($texto);
+    if (isset($correcciones[$textoUpper])) {
+        return $correcciones[$textoUpper];
+    }
+
+    // Si no hay coincidencia, aplicar formato título
+    return mb_convert_case($texto, MB_CASE_TITLE, 'UTF-8');
+}
+
 // Procesar datos dinámicos desde la base de datos
 if ($datosDocentesPorSubnivel && is_array($datosDocentesPorSubnivel)) {
     foreach ($datosDocentesPorSubnivel as $fila) {
-        $nivelPrincipal = $fila['nivel'];
-        $nombreSubnivel = $fila['subnivel'];
+        // Normalizar texto: corregir problemas de codificación y formato
+        $nivelPrincipal = normalizarTextoEducativo($fila['nivel']);
+        $nombreSubnivel = normalizarTextoEducativo($fila['subnivel']);
         $docentes = intval($fila['total_docentes']);
         $docentesH = intval($fila['doc_hombres']);
         $docentesM = intval($fila['doc_mujeres']);
@@ -317,10 +370,12 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                 $publicos = isset($docentesNivelSostenimiento[$nivel]) ? $docentesNivelSostenimiento[$nivel]['publicos'] : 0;
                                 $privados = isset($docentesNivelSostenimiento[$nivel]) ? $docentesNivelSostenimiento[$nivel]['privados'] : 0;
                                 ?>
-                                <div class="level-bar" data-nivel="<?php echo htmlspecialchars($nivel); ?>"
+                                <div class="level-bar"
+                                    data-nivel="<?php echo htmlspecialchars($nivel, ENT_QUOTES, 'UTF-8'); ?>"
                                     data-publicos="<?php echo $publicos; ?>" data-privados="<?php echo $privados; ?>"
                                     data-total="<?php echo $cantidad; ?>">
-                                    <span class="level-name"><?php echo $nivel; ?></span>
+                                    <span
+                                        class="level-name"><?php echo htmlspecialchars($nivel, ENT_QUOTES, 'UTF-8'); ?></span>
                                     <div class="level-track">
                                         <div class="level-fill" style="width: <?php echo $porcentaje; ?>%">
                                             <span class="escuelas-count"><?php echo number_format($cantidad); ?></span>
@@ -342,6 +397,11 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                     <!-- Tabla detallada -->
                     <div id="tabla-detallada" class="detailed-table animate-fade delay-4">
                         <h4>Detalle por Subnivel Educativo</h4>
+                        <p class="note-info"
+                            style="margin-top: 10px; margin-bottom: 15px; font-size: 0.9em; color: #666; font-style: italic;">
+                            <strong>Nota:</strong> El subnivel "General" contabiliza tanto docentes públicos como
+                            privados.
+                        </p>
                         <div class="table-responsive">
                             <table class="data-table">
                                 <thead>
@@ -435,8 +495,8 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                         $porcentajeDelTotal = round(($totalNivel / $totalDocentes) * 100, 2);
                                         ?>
                                         <tr>
-                                            <td><?php echo $nivel; ?></td>
-                                            <td><?php echo $subnivel; ?></td>
+                                            <td><?php echo htmlspecialchars($nivel, ENT_QUOTES, 'UTF-8'); ?></td>
+                                            <td><?php echo htmlspecialchars($subnivel, ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td class="text-center"><?php echo number_format($totalNivel); ?></td>
                                             <td class="text-center"><?php echo $porcentajeDelTotal; ?>%</td>
                                             <td class="text-center docentes-hombres"><?php echo number_format($hombres); ?>

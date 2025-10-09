@@ -13,7 +13,10 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeSostenimientoFilters(); // Nueva funcionalidad
     initializeViewToggle(); // Cambio de vista barras/gráfico
     initializeGoogleCharts(); // Gráficos de Google Charts
-    
+
+    // Guardar totales originales para restaurar después de filtrar
+    setTimeout(guardarTotalesOriginales, 500);
+
     // Configurar redimensionamiento de gráficos
     window.addEventListener('resize', debounce(resizeCharts, 250));
 });
@@ -138,18 +141,35 @@ function addQuickFilter() {
     
     filterInput.addEventListener('input', function() {
         const filterValue = this.value.toLowerCase();
-        
+
+        // Variables para acumular totales filtrados
+        let totalDocentesFiltrado = 0;
+        let totalHombresFiltrado = 0;
+        let totalMujeresFiltrado = 0;
+
         tableRows.forEach(row => {
             const nivel = row.cells[0].textContent.toLowerCase();
             const subnivel = row.cells[1].textContent.toLowerCase();
-            
+
             if (nivel.includes(filterValue) || subnivel.includes(filterValue)) {
                 row.style.display = '';
+
+                // Acumular los totales de las filas visibles
+                const totalDocentes = parseInt(row.cells[2].textContent.replace(/,/g, '')) || 0;
+                const hombres = parseInt(row.cells[4].textContent.replace(/,/g, '')) || 0;
+                const mujeres = parseInt(row.cells[6].textContent.replace(/,/g, '')) || 0;
+
+                totalDocentesFiltrado += totalDocentes;
+                totalHombresFiltrado += hombres;
+                totalMujeresFiltrado += mujeres;
             } else {
                 row.style.display = 'none';
             }
         });
-        
+
+        // Actualizar la fila de totales
+        actualizarFilaTotales(totalDocentesFiltrado, totalHombresFiltrado, totalMujeresFiltrado);
+
         // Mostrar/ocultar botón de limpiar
         clearButton.style.display = filterValue ? 'block' : 'none';
     });
@@ -158,7 +178,73 @@ function addQuickFilter() {
         filterInput.value = '';
         tableRows.forEach(row => row.style.display = '');
         this.style.display = 'none';
+
+        // Restaurar totales originales
+        restaurarTotalesOriginales();
     });
+}
+
+/**
+ * Actualizar la fila de totales con los valores filtrados
+ */
+function actualizarFilaTotales(totalDocentes, totalHombres, totalMujeres) {
+    const totalRow = document.querySelector('.data-table tfoot .total-row');
+    if (!totalRow) return;
+
+    // Calcular porcentajes
+    const porcentajeHombres = totalDocentes > 0 ? ((totalHombres / totalDocentes) * 100).toFixed(1) : 0;
+    const porcentajeMujeres = totalDocentes > 0 ? ((totalMujeres / totalDocentes) * 100).toFixed(1) : 0;
+
+    // Actualizar las celdas (índices según la estructura de la tabla)
+    const cells = totalRow.querySelectorAll('td');
+
+    // Total docentes (columna 2)
+    if (cells[1]) cells[1].querySelector('strong').textContent = totalDocentes.toLocaleString();
+
+    // Total hombres (columna 4)
+    if (cells[3]) cells[3].querySelector('strong').textContent = totalHombres.toLocaleString();
+
+    // Porcentaje hombres (columna 5)
+    if (cells[4]) cells[4].querySelector('strong').textContent = porcentajeHombres + '%';
+
+    // Total mujeres (columna 6)
+    if (cells[5]) cells[5].querySelector('strong').textContent = totalMujeres.toLocaleString();
+
+    // Porcentaje mujeres (columna 7)
+    if (cells[6]) cells[6].querySelector('strong').textContent = porcentajeMujeres + '%';
+}
+
+/**
+ * Restaurar los totales originales (guardados al cargar la página)
+ */
+let totalesOriginales = null;
+
+function guardarTotalesOriginales() {
+    const totalRow = document.querySelector('.data-table tfoot .total-row');
+    if (!totalRow) return;
+
+    const cells = totalRow.querySelectorAll('td strong');
+    totalesOriginales = {
+        totalDocentes: cells[1] ? cells[1].textContent : '',
+        totalHombres: cells[3] ? cells[3].textContent : '',
+        porcentajeHombres: cells[4] ? cells[4].textContent : '',
+        totalMujeres: cells[5] ? cells[5].textContent : '',
+        porcentajeMujeres: cells[6] ? cells[6].textContent : ''
+    };
+}
+
+function restaurarTotalesOriginales() {
+    if (!totalesOriginales) return;
+
+    const totalRow = document.querySelector('.data-table tfoot .total-row');
+    if (!totalRow) return;
+
+    const cells = totalRow.querySelectorAll('td strong');
+    if (cells[1]) cells[1].textContent = totalesOriginales.totalDocentes;
+    if (cells[3]) cells[3].textContent = totalesOriginales.totalHombres;
+    if (cells[4]) cells[4].textContent = totalesOriginales.porcentajeHombres;
+    if (cells[5]) cells[5].textContent = totalesOriginales.totalMujeres;
+    if (cells[6]) cells[6].textContent = totalesOriginales.porcentajeMujeres;
 }
 
 /**
