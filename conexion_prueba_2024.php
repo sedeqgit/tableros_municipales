@@ -2352,10 +2352,14 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         COUNT(DISTINCT cct)::integer as escuelas
     FROM (
         -- INICIAL ESCOLARIZADA (ini_gral_24)
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'INICIAL ESCOLARIZADA' as nivel,
-            COALESCE(NULLIF(TRIM(subnivel), ''), 'General') as subnivel,
+            'Inicial Escolarizada' as nivel,
+            CASE
+                WHEN UPPER(TRIM(subnivel)) = 'GENERAL' THEN 'General'
+                WHEN TRIM(subnivel) = '' OR subnivel IS NULL THEN 'General'
+                ELSE TRIM(subnivel)
+            END as subnivel,
             (V509+V516+V523+V511+V518+V525+V510+V517+V524+V512+V519+V526+V787+V785+V786)::integer as total_docentes,
             (V509+V511+V510+V512+V787)::integer as doc_hombres,
             (V516+V523+V518+V525+V517+V524+V519+V526+V785+V786)::integer as doc_mujeres
@@ -2366,10 +2370,15 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- INICIAL ESCOLARIZADA (ini_ind_24)
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'INICIAL ESCOLARIZADA' as nivel,
-            COALESCE(NULLIF(TRIM(subnivel), ''), 'Indígena') as subnivel,
+            'Inicial Escolarizada' as nivel,
+            CASE
+                WHEN TRIM(subnivel) ~ '^IND.{0,3}GENA$' THEN 'Indígena'
+                WHEN UPPER(TRIM(subnivel)) = 'INDIGENA' THEN 'Indígena'
+                WHEN TRIM(subnivel) = '' OR subnivel IS NULL THEN 'Indígena'
+                ELSE 'Indígena'
+            END as subnivel,
             V291::integer as total_docentes,
             V289::integer as doc_hombres,
             V290::integer as doc_mujeres
@@ -2380,9 +2389,9 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- INICIAL NO ESCOLARIZADA (ini_comuni_24)
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'INICIAL NO ESCOLARIZADA' as nivel,
+            'Inicial No Escolarizada' as nivel,
             'Comunitario' as subnivel,
             V126::integer as total_docentes,
             V124::integer as doc_hombres,
@@ -2394,10 +2403,14 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- INICIAL NO ESCOLARIZADA (ini_ne_24)
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'INICIAL NO ESCOLARIZADA' as nivel,
-            COALESCE(NULLIF(TRIM(subnivel), ''), 'No escolarizada') as subnivel,
+            'Inicial No Escolarizada' as nivel,
+            CASE
+                WHEN UPPER(TRIM(subnivel)) = 'NO ESCOLARIZADA' THEN 'No Escolarizada'
+                WHEN TRIM(subnivel) = '' OR subnivel IS NULL THEN 'No Escolarizada'
+                ELSE 'No Escolarizada'
+            END as subnivel,
             (V183+V184)::integer as total_docentes,
             V183::integer as doc_hombres,
             V184::integer as doc_mujeres
@@ -2408,10 +2421,14 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- ESPECIAL CAM
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'ESPECIAL CAM' as nivel,
-            COALESCE(NULLIF(TRIM(subnivel), ''), 'CAM') as subnivel,
+            'Especial Cam' as nivel,
+            CASE
+                WHEN UPPER(TRIM(subnivel)) = 'CAM' THEN 'Cam'
+                WHEN TRIM(subnivel) = '' OR subnivel IS NULL THEN 'Cam'
+                ELSE 'Cam'
+            END as subnivel,
             V2496::integer as total_docentes,
             V2494::integer as doc_hombres,
             V2495::integer as doc_mujeres
@@ -2422,10 +2439,14 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- PREESCOLAR (pree_gral_24)
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'PREESCOLAR' as nivel,
-            COALESCE(NULLIF(TRIM(subnivel), ''), 'General') as subnivel,
+            'Preescolar' as nivel,
+            CASE
+                WHEN UPPER(TRIM(subnivel)) = 'GENERAL' THEN 'General'
+                WHEN TRIM(subnivel) = '' OR subnivel IS NULL THEN 'General'
+                ELSE TRIM(subnivel)
+            END as subnivel,
             (V867+V868+V859+V860)::integer as total_docentes,
             (V867+V859)::integer as doc_hombres,
             (V868+V860)::integer as doc_mujeres
@@ -2436,10 +2457,15 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- PREESCOLAR (pree_ind_24)
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'PREESCOLAR' as nivel,
-            COALESCE(NULLIF(TRIM(subnivel), ''), 'Indígena') as subnivel,
+            'Preescolar' as nivel,
+            CASE
+                WHEN TRIM(subnivel) ~ '^IND.{0,3}GENA$' THEN 'Indígena'
+                WHEN UPPER(TRIM(subnivel)) = 'INDIGENA' THEN 'Indígena'
+                WHEN TRIM(subnivel) = '' OR subnivel IS NULL THEN 'Indígena'
+                ELSE 'Indígena'
+            END as subnivel,
             (V795+V803+V796+V804)::integer as total_docentes,
             (V795+V803)::integer as doc_hombres,
             (V796+V804)::integer as doc_mujeres
@@ -2450,9 +2476,9 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- PREESCOLAR (pree_comuni_24)
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'PREESCOLAR' as nivel,
+            'Preescolar' as nivel,
             'Comunitario' as subnivel,
             V151::integer as total_docentes,
             V149::integer as doc_hombres,
@@ -2464,10 +2490,14 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- PRIMARIA (prim_gral_24)
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'PRIMARIA' as nivel,
-            COALESCE(NULLIF(TRIM(subnivel), ''), 'General') as subnivel,
+            'Primaria' as nivel,
+            CASE
+                WHEN UPPER(TRIM(subnivel)) = 'GENERAL' THEN 'General'
+                WHEN TRIM(subnivel) = '' OR subnivel IS NULL THEN 'General'
+                ELSE TRIM(subnivel)
+            END as subnivel,
             (V1575+V1576+V1567+V1568)::integer as total_docentes,
             (V1575+V1567)::integer as doc_hombres,
             (V1576+V1568)::integer as doc_mujeres
@@ -2478,10 +2508,15 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- PRIMARIA (prim_ind_24)
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'PRIMARIA' as nivel,
-            COALESCE(NULLIF(TRIM(subnivel), ''), 'Indígena') as subnivel,
+            'Primaria' as nivel,
+            CASE
+                WHEN TRIM(subnivel) ~ '^IND.{0,3}GENA$' THEN 'Indígena'
+                WHEN UPPER(TRIM(subnivel)) = 'INDIGENA' THEN 'Indígena'
+                WHEN TRIM(subnivel) = '' OR subnivel IS NULL THEN 'Indígena'
+                ELSE 'Indígena'
+            END as subnivel,
             (V1507+V1499+V1508+V1500)::integer as total_docentes,
             (V1507+V1499)::integer as doc_hombres,
             (V1508+V1500)::integer as doc_mujeres
@@ -2492,9 +2527,9 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- PRIMARIA (prim_comuni_24)
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'PRIMARIA' as nivel,
+            'Primaria' as nivel,
             'Comunitario' as subnivel,
             (V583+V584)::integer as total_docentes,
             V583::integer as doc_hombres,
@@ -2506,10 +2541,17 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- SECUNDARIA (sec_gral_24)
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'SECUNDARIA' as nivel,
-            COALESCE(NULLIF(TRIM(subnivel), ''), 'General') as subnivel,
+            'Secundaria' as nivel,
+            CASE
+                WHEN UPPER(TRIM(subnivel)) = 'GENERAL' THEN 'General'
+                WHEN UPPER(TRIM(subnivel)) = 'TELESECUNDARIA' THEN 'Telesecundaria'
+                WHEN TRIM(subnivel) ~ '^T.{0,3}CNICA$' THEN 'Técnica'
+                WHEN UPPER(TRIM(subnivel)) = 'TECNICA' THEN 'Técnica'
+                WHEN TRIM(subnivel) = '' OR subnivel IS NULL THEN 'General'
+                ELSE TRIM(subnivel)
+            END as subnivel,
             V1401::integer as total_docentes,
             (V1297+V1303+V1307+V1309+V1311+V1313)::integer as doc_hombres,
             (V1298+V1304+V1308+V1310+V1312+V1314)::integer as doc_mujeres
@@ -2520,9 +2562,9 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- SECUNDARIA (sec_comuni_24)
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'SECUNDARIA' as nivel,
+            'Secundaria' as nivel,
             'Comunitario' as subnivel,
             V386::integer as total_docentes,
             V384::integer as doc_hombres,
@@ -2534,9 +2576,9 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- MEDIA SUPERIOR (sin subnivel, solo general)
-        SELECT 
+        SELECT
             cct_ins_pla as cct,
-            'MEDIA SUPERIOR' as nivel,
+            'Media Superior' as nivel,
             'General' as subnivel,
             (V106+V101)::integer as total_docentes,
             (V104+V99)::integer as doc_hombres,
@@ -2548,9 +2590,9 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         UNION ALL
         
         -- SUPERIOR (sin subnivel, solo general)
-        SELECT 
+        SELECT
             cv_cct as cct,
-            'SUPERIOR' as nivel,
+            'Superior' as nivel,
             'General' as subnivel,
             V83::integer as total_docentes,
             V81::integer as doc_hombres,
@@ -2562,16 +2604,16 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
     ) AS todos_niveles
     WHERE total_docentes > 0
     GROUP BY nivel, subnivel
-    ORDER BY 
+    ORDER BY
         CASE nivel
-            WHEN 'INICIAL ESCOLARIZADA' THEN 1
-            WHEN 'INICIAL NO ESCOLARIZADA' THEN 2
-            WHEN 'ESPECIAL CAM' THEN 3
-            WHEN 'PREESCOLAR' THEN 4
-            WHEN 'PRIMARIA' THEN 5
-            WHEN 'SECUNDARIA' THEN 6
-            WHEN 'MEDIA SUPERIOR' THEN 7
-            WHEN 'SUPERIOR' THEN 8
+            WHEN 'Inicial Escolarizada' THEN 1
+            WHEN 'Inicial No Escolarizada' THEN 2
+            WHEN 'Especial Cam' THEN 3
+            WHEN 'Preescolar' THEN 4
+            WHEN 'Primaria' THEN 5
+            WHEN 'Secundaria' THEN 6
+            WHEN 'Media Superior' THEN 7
+            WHEN 'Superior' THEN 8
         END,
         subnivel";
 

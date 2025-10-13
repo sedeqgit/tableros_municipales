@@ -67,7 +67,11 @@ $datosDocentesGenero[] = array('Nivel Educativo', 'Subnivel', 'Total Docentes', 
 $docentesPorNivel = array(); // Total por nivel principal
 $totalDocentes = 0;
 
-// Función auxiliar para normalizar y corregir texto con problemas de codificación
+// NOTA: Esta función ya NO se usa porque la normalización se hace directamente en SQL
+// en la función obtenerDocentesPorNivelYSubnivel() del archivo conexion_prueba_2024.php
+// Se mantiene comentada por si se necesita en el futuro para otros propósitos
+
+/*
 function normalizarTextoEducativo($texto)
 {
     // Limpiar el texto y remover caracteres invisibles/control
@@ -113,13 +117,14 @@ function normalizarTextoEducativo($texto)
     // Si no hay coincidencia, aplicar formato título
     return mb_convert_case($texto, MB_CASE_TITLE, 'UTF-8');
 }
+*/
 
 // Procesar datos dinámicos desde la base de datos
 if ($datosDocentesPorSubnivel && is_array($datosDocentesPorSubnivel)) {
     foreach ($datosDocentesPorSubnivel as $fila) {
-        // Normalizar texto: corregir problemas de codificación y formato
-        $nivelPrincipal = normalizarTextoEducativo($fila['nivel']);
-        $nombreSubnivel = normalizarTextoEducativo($fila['subnivel']);
+        // Los datos ya vienen normalizados desde SQL, no necesitamos normalizar en PHP
+        $nivelPrincipal = $fila['nivel'];
+        $nombreSubnivel = $fila['subnivel'];
         $docentes = intval($fila['total_docentes']);
         $docentesH = intval($fila['doc_hombres']);
         $docentesM = intval($fila['doc_mujeres']);
@@ -436,31 +441,47 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                         if (strpos($nivel, 'especial') !== false || strpos($nivel, 'cam') !== false)
                                             return 3;
 
-                                        // PREESCOLAR
-                                        if (strpos($nivel, 'preescolar') !== false && strpos($subnivel, 'general') !== false)
-                                            return 4;
-                                        if (strpos($nivel, 'preescolar') !== false && strpos($subnivel, 'comunitario') !== false)
-                                            return 5;
+                                        // PREESCOLAR - Verificar primero General, luego Comunitario, luego Indígena
+                                        if (strpos($nivel, 'preescolar') !== false) {
+                                            if (strpos($subnivel, 'general') !== false)
+                                                return 4;
+                                            if (strpos($subnivel, 'comunitario') !== false)
+                                                return 5;
+                                            if (strpos($subnivel, 'indígena') !== false || strpos($subnivel, 'indigena') !== false)
+                                                return 6;
+                                        }
 
-                                        // PRIMARIA
-                                        if (strpos($nivel, 'primaria') !== false && strpos($subnivel, 'general') !== false)
-                                            return 6;
-                                        if (strpos($nivel, 'primaria') !== false && strpos($subnivel, 'comunitario') !== false)
-                                            return 7;
+                                        // PRIMARIA - Verificar primero General, luego Comunitario, luego Indígena
+                                        if (strpos($nivel, 'primaria') !== false) {
+                                            if (strpos($subnivel, 'general') !== false)
+                                                return 7;
+                                            if (strpos($subnivel, 'comunitario') !== false)
+                                                return 8;
+                                            if (strpos($subnivel, 'indígena') !== false || strpos($subnivel, 'indigena') !== false)
+                                                return 9;
+                                        }
 
-                                        // SECUNDARIA
-                                        if (strpos($nivel, 'secundaria') !== false)
-                                            return 8;
+                                        // SECUNDARIA - Verificar subniveles específicos
+                                        if (strpos($nivel, 'secundaria') !== false) {
+                                            if (strpos($subnivel, 'comunitario') !== false)
+                                                return 10;
+                                            if (strpos($subnivel, 'general') !== false)
+                                                return 11;
+                                            if (strpos($subnivel, 'técnica') !== false || strpos($subnivel, 'tecnica') !== false)
+                                                return 12;
+                                            if (strpos($subnivel, 'telesecundaria') !== false)
+                                                return 13;
+                                        }
 
                                         // MEDIA SUPERIOR
                                         if (strpos($nivel, 'media') !== false || strpos($nivel, 'medio') !== false)
-                                            return 9;
+                                            return 14;
 
                                         // SUPERIOR
                                         if (strpos($nivel, 'superior') !== false)
-                                            return 10;
+                                            return 15;
 
-                                        return 11; // Para niveles no reconocidos
+                                        return 16; // Para niveles no reconocidos
                                     }
 
                                     // Crear array temporal para ordenar
