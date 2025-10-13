@@ -445,7 +445,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                         // PRIMARIA
                                         if (strpos($nivel, 'primaria') !== false && strpos($subnivel, 'general') !== false)
                                             return 6;
-                                        if (strpos($nivel, 'primaria') !== false && strpos($subnivel, 'comunitaria') !== false)
+                                        if (strpos($nivel, 'primaria') !== false && strpos($subnivel, 'comunitario') !== false)
                                             return 7;
 
                                         // SECUNDARIA
