@@ -149,7 +149,7 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
     switch ($str_consulta) {
         case 'gral_ini':
             return "SELECT CONCAT('GENERAL') AS titulo_fila,
-                        SUM(V398+V414) AS total_matricula, 
+                        SUM(V398+V414) AS total_matricula,
                         SUM(V390+V406) AS mat_hombres,
                         SUM(V394+V410) AS mat_mujeres,
                         SUM(V509+V516+V523+V511+V518+V525+V510+V517+V524+V512+V519+V526) AS total_docentes,
@@ -2360,9 +2360,9 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
                 WHEN TRIM(subnivel) = '' OR subnivel IS NULL THEN 'General'
                 ELSE TRIM(subnivel)
             END as subnivel,
-            (V509+V516+V523+V511+V518+V525+V510+V517+V524+V512+V519+V526+V787+V785+V786)::integer as total_docentes,
-            (V509+V511+V510+V512+V787)::integer as doc_hombres,
-            (V516+V523+V518+V525+V517+V524+V519+V526+V785+V786)::integer as doc_mujeres
+            (V509+V516+V523+V511+V518+V525+V510+V517+V524+V512+V519+V526+V787)::integer as total_docentes,
+            (V509+V511+V510+V512+V785)::integer as doc_hombres,
+            (V516+V523+V518+V525+V517+V524+V519+V526+V786)::integer as doc_mujeres
         FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
         WHERE cv_mun = '$codigo_municipio'
           AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
@@ -2484,6 +2484,20 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
             V149::integer as doc_hombres,
             V150::integer as doc_mujeres
         FROM nonce_pano_$ini_ciclo.pree_comuni_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+        
+        UNION ALL
+        
+        -- PREESCOLAR en ini_gral_24 (docentes de preescolar registrados en tabla de inicial)
+        SELECT
+            cv_cct as cct,
+            'Preescolar' as nivel,
+            'General' as subnivel,
+            (V513+V520+V527+V514+V521+V528)::integer as total_docentes,
+            (V513+V520+V527)::integer as doc_hombres,
+            (V514+V521+V528)::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
         WHERE cv_mun = '$codigo_municipio'
           AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
         
@@ -2674,9 +2688,9 @@ function aplicarAjusteUnidadesSuperior($link, $ini_ciclo, $codigo_municipio, $da
         $unidades_totales = pg_fetch_assoc($rs_unidades);
         pg_free_result($rs_unidades);
 
-        // Restar unidades del nivel SUPERIOR
+        // Restar unidades del nivel SUPERIOR (debe coincidir con 'Superior' que viene del SQL)
         foreach ($datos as $index => $fila) {
-            if ($fila['nivel'] === 'SUPERIOR') {
+            if ($fila['nivel'] === 'Superior') {
                 $datos[$index]['total_docentes'] = max(0, $fila['total_docentes'] - $unidades_totales['total_docentes']);
                 $datos[$index]['doc_hombres'] = max(0, $fila['doc_hombres'] - $unidades_totales['doc_hombres']);
                 $datos[$index]['doc_mujeres'] = max(0, $fila['doc_mujeres'] - $unidades_totales['doc_mujeres']);
@@ -2703,9 +2717,9 @@ function aplicarAjusteUnidadesSuperior($link, $ini_ciclo, $codigo_municipio, $da
         if ($unidades_municipio['total_docentes'] > 0) {
             $superior_encontrado = false;
 
-            // Buscar si ya existe el nivel SUPERIOR en los datos
+            // Buscar si ya existe el nivel Superior en los datos (debe coincidir con SQL)
             foreach ($datos as $index => $fila) {
-                if ($fila['nivel'] === 'SUPERIOR') {
+                if ($fila['nivel'] === 'Superior') {
                     $superior_encontrado = true;
                     // Sumar unidades al total existente
                     $datos[$index]['total_docentes'] += $unidades_municipio['total_docentes'];
@@ -2716,10 +2730,10 @@ function aplicarAjusteUnidadesSuperior($link, $ini_ciclo, $codigo_municipio, $da
                 }
             }
 
-            // Si no existe nivel SUPERIOR, agregarlo con los datos de unidades
+            // Si no existe nivel Superior, agregarlo con los datos de unidades
             if (!$superior_encontrado) {
                 $datos[] = [
-                    'nivel' => 'SUPERIOR',
+                    'nivel' => 'Superior',
                     'subnivel' => 'Unidades',
                     'total_docentes' => $unidades_municipio['total_docentes'],
                     'doc_hombres' => $unidades_municipio['doc_hombres'],
