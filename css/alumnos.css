@@ -737,3 +737,198 @@
 .data-table .total-row .col-mujeres strong {
     color: #f472b6 !important;
 }
+
+/* =============================================
+   ESTILOS PARA TABLA DETALLADA POR SUBNIVEL (REPLICANDO DOCENTES)
+   ============================================= */
+
+/* Tabla detallada con estilo similar a docentes */
+#tabla-detallada-alumnos {
+    background: var(--white);
+    border-radius: var(--card-border-radius);
+    padding: 25px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 30px;
+}
+
+#tabla-detallada-alumnos h4 {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+
+/* Estilo mejorado para la nota informativa */
+#tabla-detallada-alumnos .note-info {
+    margin: 10px 0 20px 0;
+    padding: 12px 18px;
+    font-size: 0.9em;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, rgba(52, 144, 220, 0.08), rgba(52, 144, 220, 0.05));
+    border-left: 4px solid var(--secondary-blue);
+    border-radius: var(--border-radius-sm);
+    font-style: normal;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow-sm);
+}
+
+#tabla-detallada-alumnos .note-info i {
+    color: var(--secondary-blue);
+    font-size: 1.1em;
+    flex-shrink: 0;
+}
+
+#tabla-detallada-alumnos .note-info strong {
+    color: var(--secondary-blue);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Filtro de búsqueda */
+.search-filter {
+    position: relative;
+    margin-bottom: 20px;
+    max-width: 400px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    border: 2px solid var(--medium-gray);
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-primary);
+    font-size: 0.95rem;
+    transition: var(--transition-normal);
+    background-color: var(--white);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--secondary-blue);
+    box-shadow: 0 0 0 3px rgba(52, 144, 220, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+/* Estilos de tabla replicando docentes */
+#tabla-detallada-alumnos .data-table {
+    font-family: var(--font-primary);
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: var(--card-border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+#tabla-detallada-alumnos .data-table th {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+    color: var(--white) !important;
+    background: linear-gradient(135deg, var(--secondary-blue), var(--accent-aqua)) !important;
+    padding: 0.875rem 1rem;
+    text-align: left;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#tabla-detallada-alumnos .data-table td {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-regular);
+    color: var(--text-primary);
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--medium-gray);
+}
+
+#tabla-detallada-alumnos .data-table tbody tr:hover {
+    background-color: rgba(73, 150, 196, 0.05);
+}
+
+#tabla-detallada-alumnos .data-table .text-center {
+    text-align: center;
+}
+
+#tabla-detallada-alumnos .total-row td {
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    background: var(--light-gray);
+}
+
+/* Columnas de alumnos hombres - azul suave */
+#tabla-detallada-alumnos .data-table .alumnos-hombres {
+    background-color: rgba(52, 144, 220, 0.1);
+    font-weight: var(--font-weight-medium);
+    color: var(--secondary-blue);
+}
+
+/* Columnas de alumnos mujeres - rosa/morado suave */
+#tabla-detallada-alumnos .data-table .alumnos-mujeres {
+    background-color: #ceafe0ff;
+    font-weight: var(--font-weight-medium);
+    color: #610c76;
+}
+
+/* Porcentajes de hombres */
+#tabla-detallada-alumnos .data-table .porcentaje-hombres {
+    background-color: rgba(52, 144, 220, 0.08);
+    color: var(--secondary-blue);
+    font-weight: var(--font-weight-medium);
+}
+
+/* Porcentajes de mujeres */
+#tabla-detallada-alumnos .data-table .porcentaje-mujeres {
+    background-color: #ceafe0ff;
+    color: #610c76;
+    font-weight: var(--font-weight-medium);
+}
+
+/* Headers de género con colores distintivos */
+#tabla-detallada-alumnos .data-table th:nth-child(5), /* Alumnos Hombres */
+#tabla-detallada-alumnos .data-table th:nth-child(6) { /* % Hombres */
+    background: linear-gradient(135deg, var(--secondary-blue), #3498db) !important;
+}
+
+#tabla-detallada-alumnos .data-table th:nth-child(7), /* Alumnas Mujeres */
+#tabla-detallada-alumnos .data-table th:nth-child(8) { /* % Mujeres */
+    background: linear-gradient(135deg, #610c76, #ceafe0ff) !important;
+}
+
+/* Fila oculta por búsqueda */
+#tabla-detallada-alumnos .data-table tbody tr.hidden-row {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .search-filter {
+        max-width: 100%;
+    }
+    
+    #tabla-detallada-alumnos .data-table {
+        font-size: 0.8rem;
+    }
+    
+    #tabla-detallada-alumnos .data-table th,
+    #tabla-detallada-alumnos .data-table td {
+        padding: 0.4rem 0.3rem;
+        font-size: 0.75rem;
+    }
+    
+    /* Ocultar porcentajes en móvil si es necesario */
+    #tabla-detallada-alumnos .data-table th:nth-child(6), /* % Hombres */
+    #tabla-detallada-alumnos .data-table td:nth-child(6),
+    #tabla-detallada-alumnos .data-table th:nth-child(8), /* % Mujeres */
+    #tabla-detallada-alumnos .data-table td:nth-child(8) {
+        display: none;
+    }
+}

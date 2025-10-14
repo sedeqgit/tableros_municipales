@@ -126,6 +126,46 @@ if ($tieneDatos) {
 // Extraer datos organizados
 $datosPorNivel = $datosMatricula['datos_por_nivel'];
 $totales = $datosMatricula['totales'];
+
+// =============================================================================
+// PROCESAMIENTO DE DATOS POR NIVEL Y SUBNIVEL EDUCATIVO
+// =============================================================================
+
+// Obtener datos de alumnos por nivel y subnivel directamente de la base de datos
+$datosAlumnosPorSubnivel = obtenerAlumnosPorNivelYSubnivel($municipioSeleccionado);
+
+// Procesar datos para obtener totales por nivel y subnivel
+$datosAlumnosGenero = array();
+$datosAlumnosGenero[] = array('Nivel Educativo', 'Subnivel', 'Total Alumnos', 'Hombres', 'Mujeres', '% Hombres', '% Mujeres');
+
+$alumnosPorNivel = array(); // Total por nivel principal
+$totalAlumnosSubnivel = 0;
+
+// Procesar datos dinámicos desde la base de datos
+if ($datosAlumnosPorSubnivel && is_array($datosAlumnosPorSubnivel)) {
+    foreach ($datosAlumnosPorSubnivel as $fila) {
+        $nivelPrincipal = $fila['nivel'];
+        $nombreSubnivel = $fila['subnivel'];
+        $alumnos = intval($fila['total_alumnos']);
+        $alumnosH = intval($fila['alumnos_hombres']);
+        $alumnosM = intval($fila['alumnos_mujeres']);
+
+        // Calcular porcentajes de género
+        $porcH = $alumnos > 0 ? round(($alumnosH / $alumnos) * 100, 1) : 0;
+        $porcM = $alumnos > 0 ? round(($alumnosM / $alumnos) * 100, 1) : 0;
+
+        // Agregar a datos de género
+        $datosAlumnosGenero[] = array($nivelPrincipal, $nombreSubnivel, $alumnos, $alumnosH, $alumnosM, $porcH, $porcM);
+
+        // Acumular por nivel principal
+        if (!isset($alumnosPorNivel[$nivelPrincipal])) {
+            $alumnosPorNivel[$nivelPrincipal] = 0;
+        }
+        $alumnosPorNivel[$nivelPrincipal] += $alumnos;
+        $totalAlumnosSubnivel += $alumnos;
+    }
+}
+
 // =============================================================================
 // PREPARACIÓN DE DATOS PARA GRÁFICOS
 // =============================================================================
@@ -191,6 +231,10 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     <a href="#analisis-genero" class="submenu-link">
                         <i class="fas fa-venus-mars"></i>
                         <span>Análisis por Género</span>
+                    </a>
+                    <a href="#tabla-detallada-alumnos" class="submenu-link">
+                        <i class="fas fa-list-alt"></i>
+                        <span>Detalle por Subnivel</span>
                     </a>
                 </div>
             </div>
@@ -548,6 +592,177 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     </div>
                 </div>
             </div>
+
+            <!-- Tabla detallada por subnivel educativo -->
+            <div id="tabla-detallada-alumnos" class="detailed-table animate-fade delay-6">
+                <h4>Detalle por Subnivel Educativo</h4>
+                <p class="note-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Nota:</strong> El subnivel "General" contabiliza tanto alumnos de escuelas públicas como
+                    privadas.
+                </p>
+                <!-- Filtro de búsqueda -->
+                <div class="search-filter">
+                    <input type="text" id="searchAlumnos" placeholder="Buscar por nivel o subnivel..."
+                        class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nivel Educativo</th>
+                                <th>Subnivel</th>
+                                <th>Total Alumnos</th>
+                                <th>% del Total General</th>
+                                <th>Alumnos Hombres</th>
+                                <th>% Hombres</th>
+                                <th>Alumnas Mujeres</th>
+                                <th>% Mujeres</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            // Reutilizar función de ordenamiento de docentes.php
+                            function obtenerOrdenSubnivel($nivel, $subnivel)
+                            {
+                                $nivel = strtolower($nivel);
+                                $subnivel = strtolower($subnivel);
+
+                                // INICIAL ESCOLARIZADA
+                                if (strpos($nivel, 'inicial') !== false && strpos($nivel, 'escolarizada') !== false)
+                                    return 1;
+
+                                // INICIAL NO ESCOLARIZADA
+                                if (strpos($nivel, 'inicial') !== false && strpos($nivel, 'no') !== false)
+                                    return 2;
+
+                                // ESPECIAL / CAM
+                                if (strpos($nivel, 'especial') !== false || strpos($nivel, 'cam') !== false)
+                                    return 3;
+
+                                // PREESCOLAR - Verificar primero General, luego Comunitario, luego Indígena
+                                if (strpos($nivel, 'preescolar') !== false) {
+                                    if (strpos($subnivel, 'general') !== false)
+                                        return 4;
+                                    if (strpos($subnivel, 'comunitario') !== false)
+                                        return 5;
+                                    if (strpos($subnivel, 'indígena') !== false || strpos($subnivel, 'indigena') !== false)
+                                        return 6;
+                                }
+
+                                // PRIMARIA - Verificar primero General, luego Comunitario, luego Indígena
+                                if (strpos($nivel, 'primaria') !== false) {
+                                    if (strpos($subnivel, 'general') !== false)
+                                        return 7;
+                                    if (strpos($subnivel, 'comunitario') !== false)
+                                        return 8;
+                                    if (strpos($subnivel, 'indígena') !== false || strpos($subnivel, 'indigena') !== false)
+                                        return 9;
+                                }
+
+                                // SECUNDARIA - Verificar subniveles específicos
+                                if (strpos($nivel, 'secundaria') !== false) {
+                                    if (strpos($subnivel, 'comunitario') !== false)
+                                        return 10;
+                                    if (strpos($subnivel, 'general') !== false)
+                                        return 11;
+                                    if (strpos($subnivel, 'técnica') !== false || strpos($subnivel, 'tecnica') !== false)
+                                        return 12;
+                                    if (strpos($subnivel, 'telesecundaria') !== false)
+                                        return 13;
+                                }
+
+                                // MEDIA SUPERIOR
+                                if (strpos($nivel, 'media') !== false || strpos($nivel, 'medio') !== false)
+                                    return 14;
+
+                                // SUPERIOR
+                                if (strpos($nivel, 'superior') !== false)
+                                    return 15;
+
+                                return 16; // Para niveles no reconocidos
+                            }
+
+                            // Crear array temporal para ordenar
+                            $datosOrdenados = array();
+                            for ($i = 1; $i < count($datosAlumnosGenero); $i++) {
+                                $datosOrdenados[] = array(
+                                    'nivel' => $datosAlumnosGenero[$i][0],
+                                    'subnivel' => $datosAlumnosGenero[$i][1],
+                                    'total' => $datosAlumnosGenero[$i][2],
+                                    'hombres' => $datosAlumnosGenero[$i][3],
+                                    'mujeres' => $datosAlumnosGenero[$i][4],
+                                    'porcentaje_hombres' => $datosAlumnosGenero[$i][5],
+                                    'porcentaje_mujeres' => $datosAlumnosGenero[$i][6],
+                                    'orden' => obtenerOrdenSubnivel($datosAlumnosGenero[$i][0], $datosAlumnosGenero[$i][1])
+                                );
+                            }
+
+                            // Ordenar por el campo orden
+                            usort($datosOrdenados, function ($a, $b) {
+                                return $a['orden'] - $b['orden'];
+                            });
+
+                            // Mostrar datos ordenados
+                            foreach ($datosOrdenados as $fila):
+                                $nivel = $fila['nivel'];
+                                $subnivel = $fila['subnivel'];
+                                $totalNivel = $fila['total'];
+                                $hombres = $fila['hombres'];
+                                $mujeres = $fila['mujeres'];
+                                $porcentajeHombres = $fila['porcentaje_hombres'];
+                                $porcentajeMujeres = $fila['porcentaje_mujeres'];
+                                $porcentajeDelTotal = $totalAlumnosSubnivel > 0 ? round(($totalNivel / $totalAlumnosSubnivel) * 100, 2) : 0;
+                                ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($nivel, ENT_QUOTES, 'UTF-8'); ?></td>
+                                    <td><?php echo htmlspecialchars($subnivel, ENT_QUOTES, 'UTF-8'); ?></td>
+                                    <td class="text-center"><?php echo number_format($totalNivel); ?></td>
+                                    <td class="text-center"><?php echo $porcentajeDelTotal; ?>%</td>
+                                    <td class="text-center alumnos-hombres"><?php echo number_format($hombres); ?></td>
+                                    <td class="text-center porcentaje-hombres"><?php echo $porcentajeHombres; ?>%</td>
+                                    <td class="text-center alumnos-mujeres"><?php echo number_format($mujeres); ?></td>
+                                    <td class="text-center porcentaje-mujeres"><?php echo $porcentajeMujeres; ?>%</td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="2"><strong>TOTAL GENERAL</strong></td>
+                                <td class="text-center">
+                                    <strong><?php echo number_format($totalAlumnosSubnivel); ?></strong>
+                                </td>
+                                <td class="text-center"><strong>100.0%</strong></td>
+                                <?php
+                                // Calcular totales de género
+                                $totalHombresSubnivel = 0;
+                                $totalMujeresSubnivel = 0;
+                                for ($i = 1; $i < count($datosAlumnosGenero); $i++) {
+                                    $totalHombresSubnivel += $datosAlumnosGenero[$i][3];
+                                    $totalMujeresSubnivel += $datosAlumnosGenero[$i][4];
+                                }
+                                $porcentajeTotalHombres = $totalAlumnosSubnivel > 0 ? round(($totalHombresSubnivel / $totalAlumnosSubnivel) * 100, 1) : 0;
+                                $porcentajeTotalMujeres = $totalAlumnosSubnivel > 0 ? round(($totalMujeresSubnivel / $totalAlumnosSubnivel) * 100, 1) : 0;
+                                ?>
+                                <td class="text-center alumnos-hombres">
+                                    <strong><?php echo number_format($totalHombresSubnivel); ?></strong>
+                                </td>
+                                <td class="text-center porcentaje-hombres">
+                                    <strong><?php echo $porcentajeTotalHombres . '%'; ?></strong>
+                                </td>
+                                <td class="text-center alumnos-mujeres">
+                                    <strong><?php echo number_format($totalMujeresSubnivel); ?></strong>
+                                </td>
+                                <td class="text-center porcentaje-mujeres">
+                                    <strong><?php echo $porcentajeTotalMujeres . '%'; ?></strong>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
         </div>
         <!-- BARRERAS DE APRENDIZAJE -->
 

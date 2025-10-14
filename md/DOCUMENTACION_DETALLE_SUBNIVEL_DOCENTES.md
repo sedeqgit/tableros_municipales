@@ -37,19 +37,19 @@ El sistema de **Tabla de Detalle por Subnivel Educativo** muestra un desglose co
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    ARQUITECTURA GENERAL                      │
+│                    ARQUITECTURA GENERAL                     │
 ├─────────────────────────────────────────────────────────────┤
-│                                                               │
-│  ┌──────────────┐      ┌──────────────┐      ┌───────────┐ │
-│  │   Base de    │ ───> │   Backend    │ ───> │ Frontend  │ │
-│  │    Datos     │      │    (PHP)     │      │(HTML/JS)  │ │
-│  │  PostgreSQL  │      │              │      │           │ │
-│  └──────────────┘      └──────────────┘      └───────────┘ │
-│         │                      │                    │        │
-│         │                      │                    │        │
+│                                                             │
+│  ┌──────────────┐      ┌──────────────┐      ┌───────────┐  │
+│  │   Base de    │ ───> │   Backend    │ ───> │ Frontend  │  │
+│  │    Datos     │      │    (PHP)     │      │(HTML/JS)  │  │
+│  │  PostgreSQL  │      │              │      │           │  │
+│  └──────────────┘      └──────────────┘      └───────────┘  │
+│         │                      │                    │       │
+│         │                      │                    │       │
 │    [Múltiples                [Procesa              [Muestra │
 │     Tablas]                  y Agrupa]             Datos]   │
-│                                                               │
+│                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 

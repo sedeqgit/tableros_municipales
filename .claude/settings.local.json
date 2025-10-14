@@ -5,7 +5,8 @@
       "Bash(claude mcp:*)",
       "mcp__ide__executeCode",
       "Bash(psql:*)",
-      "mcp__postgres__query"
+      "mcp__postgres__query",
+      "Bash(php:*)"
     ],
     "deny": []
   }

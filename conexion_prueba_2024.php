@@ -2748,6 +2748,345 @@ function aplicarAjusteUnidadesSuperior($link, $ini_ciclo, $codigo_municipio, $da
 }
 
 /**
+ * Obtiene datos de ALUMNOS agrupados por nivel y subnivel educativo
+ * Similar a obtenerDocentesPorNivelYSubnivel() pero para matrícula estudiantil
+ *
+ * @param string $municipio Nombre del municipio
+ * @param string $ini_ciclo Ciclo escolar (opcional, por defecto ciclo actual)
+ * @return array Datos agrupados por nivel y subnivel con total_alumnos, alumnos_hombres, alumnos_mujeres
+ */
+function obtenerAlumnosPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo = null)
+{
+    // Usar ciclo escolar actual si no se especifica
+    if ($ini_ciclo === null) {
+        $ini_ciclo = obtenerCicloEscolarActual();
+    }
+
+    $link = ConectarsePrueba();
+    if (!$link) {
+        return [];
+    }
+
+    // Normalizar nombre del municipio y obtener código
+    $municipio = normalizarNombreMunicipio($municipio);
+    $codigo_municipio = nombre_a_numero_municipio($municipio);
+
+    if ($codigo_municipio === false) {
+        pg_close($link);
+        return [];
+    }
+
+    // Construir consulta SQL que agrupa por nivel y subnivel
+    $query = "
+    SELECT
+        nivel,
+        subnivel,
+        SUM(total_alumnos)::integer as total_alumnos,
+        SUM(alumnos_hombres)::integer as alumnos_hombres,
+        SUM(alumnos_mujeres)::integer as alumnos_mujeres,
+        COUNT(DISTINCT cct)::integer as escuelas
+    FROM (
+        -- INICIAL ESCOLARIZADA - General (ini_gral_24)
+        SELECT
+            cv_cct as cct,
+            'Inicial Escolarizada' as nivel,
+            CASE
+                WHEN UPPER(TRIM(subnivel)) = 'GENERAL' THEN 'General'
+                WHEN TRIM(subnivel) = '' OR subnivel IS NULL THEN 'General'
+                ELSE TRIM(subnivel)
+            END as subnivel,
+            (V398+V414)::integer as total_alumnos,
+            (V390+V406)::integer as alumnos_hombres,
+            (V394+V410)::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- INICIAL ESCOLARIZADA - Indígena (ini_ind_24)
+        SELECT
+            cv_cct as cct,
+            'Inicial Escolarizada' as nivel,
+            'Indígena' as subnivel,
+            (V183+V184)::integer as total_alumnos,
+            V183::integer as alumnos_hombres,
+            V184::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.ini_ind_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- INICIAL NO ESCOLARIZADA - Comunitario (ini_comuni_24)
+        SELECT
+            cv_cct as cct,
+            'Inicial No Escolarizada' as nivel,
+            'Comunitario' as subnivel,
+            V81::integer as total_alumnos,
+            V79::integer as alumnos_hombres,
+            V80::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.ini_comuni_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- INICIAL NO ESCOLARIZADA (ini_ne_24)
+        SELECT
+            cv_cct as cct,
+            'Inicial No Escolarizada' as nivel,
+            'No Escolarizada' as subnivel,
+            (V129+V130)::integer as total_alumnos,
+            V129::integer as alumnos_hombres,
+            V130::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.ini_ne_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- ESPECIAL CAM (usa V2257 para total, V2255 hombres, V2256 mujeres)
+        SELECT
+            cv_cct as cct,
+            'Especial Cam' as nivel,
+            'Cam' as subnivel,
+            V2257::integer as total_alumnos,
+            V2255::integer as alumnos_hombres,
+            V2256::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND cv_estatus_captura = 0
+
+        UNION ALL
+
+        -- PREESCOLAR - General (pree_gral_24)
+        SELECT
+            cv_cct as cct,
+            'Preescolar' as nivel,
+            'General' as subnivel,
+            V177::integer as total_alumnos,
+            V165::integer as alumnos_hombres,
+            V171::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.pree_gral_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- PREESCOLAR - Indígena (pree_ind_24)
+        SELECT
+            cv_cct as cct,
+            'Preescolar' as nivel,
+            'Indígena' as subnivel,
+            V177::integer as total_alumnos,
+            V165::integer as alumnos_hombres,
+            V171::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.pree_ind_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- PREESCOLAR - Comunitario (pree_comuni_24)
+        SELECT
+            cv_cct as cct,
+            'Preescolar' as nivel,
+            'Comunitario' as subnivel,
+            V97::integer as total_alumnos,
+            V85::integer as alumnos_hombres,
+            V91::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.pree_comuni_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- PREESCOLAR en ini_gral_24 (casos especiales - alumnos de preescolar en tabla de inicial)
+        SELECT
+            cv_cct as cct,
+            'Preescolar' as nivel,
+            'General' as subnivel,
+            V478::integer as total_alumnos,
+            V466::integer as alumnos_hombres,
+            V472::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+          AND V478 > 0
+
+        UNION ALL
+
+        -- PRIMARIA - General (prim_gral_24)
+        SELECT
+            cv_cct as cct,
+            'Primaria' as nivel,
+            'General' as subnivel,
+            V608::integer as total_alumnos,
+            (V562+V573)::integer as alumnos_hombres,
+            (V585+V596)::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.prim_gral_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- PRIMARIA - Indígena (prim_ind_24)
+        SELECT
+            cv_cct as cct,
+            'Primaria' as nivel,
+            'Indígena' as subnivel,
+            V610::integer as total_alumnos,
+            (V564+V575)::integer as alumnos_hombres,
+            (V587+V598)::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.prim_ind_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- PRIMARIA - Comunitario (prim_comuni_24)
+        SELECT
+            cv_cct as cct,
+            'Primaria' as nivel,
+            'Comunitario' as subnivel,
+            V515::integer as total_alumnos,
+            (V469+V480)::integer as alumnos_hombres,
+            (V492+V503)::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.prim_comuni_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- SECUNDARIA - General (sec_gral_24)
+        SELECT
+            cv_cct as cct,
+            'Secundaria' as nivel,
+            CASE
+                WHEN UPPER(TRIM(subnivel)) = 'GENERAL' THEN 'General'
+                WHEN UPPER(TRIM(subnivel)) = 'TELESECUNDARIA' THEN 'Telesecundaria'
+                WHEN TRIM(subnivel) ~ '^T.{0,3}CNICA$' THEN 'Técnica'
+                WHEN UPPER(TRIM(subnivel)) = 'TECNICA' THEN 'Técnica'
+                WHEN TRIM(subnivel) = '' OR subnivel IS NULL THEN 'General'
+                ELSE TRIM(subnivel)
+            END as subnivel,
+            V340::integer as total_alumnos,
+            (V306+V314)::integer as alumnos_hombres,
+            (V323+V331)::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.sec_gral_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- SECUNDARIA - Comunitario (sec_comuni_24)
+        SELECT
+            cv_cct as cct,
+            'Secundaria' as nivel,
+            'Comunitario' as subnivel,
+            V257::integer as total_alumnos,
+            (V223+V231)::integer as alumnos_hombres,
+            (V240+V248)::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.sec_comuni_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
+        -- MEDIA SUPERIOR - Bachillerato General (ms_gral_24)
+        SELECT
+            cct_ins_pla as cct,
+            'Media Superior' as nivel,
+            'Bachillerato General' as subnivel,
+            V397::integer as total_alumnos,
+            V395::integer as alumnos_hombres,
+            V396::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND cv_motivo = '0'
+          AND (cv_estatus <> '4' AND cv_estatus <> '2')
+
+        UNION ALL
+
+        -- MEDIA SUPERIOR - Bachillerato Tecnológico (ms_tecno_24)
+        SELECT
+            cct_ins_pla as cct,
+            'Media Superior' as nivel,
+            'Bachillerato Tecnológico' as subnivel,
+            V472::integer as total_alumnos,
+            V470::integer as alumnos_hombres,
+            V471::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND cv_motivo = '0'
+          AND (cv_estatus <> '4' AND cv_estatus <> '2')
+
+        UNION ALL
+
+        -- SUPERIOR - Licenciatura (sup_carrera_24)
+        -- Importante: Para alumnos se usa sup_carrera + sup_posgrado, NO sup_escuela
+        -- (ver case 'superior' en str_consulta_segura línea 841-870)
+        SELECT
+            cct_ins_pla as cct,
+            'Superior' as nivel,
+            'Licenciatura' as subnivel,
+            V177::integer as total_alumnos,
+            V175::integer as alumnos_hombres,
+            V176::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND cv_motivo = '0'
+
+        UNION ALL
+
+        -- SUPERIOR - Posgrado (sup_posgrado_24)
+        SELECT
+            cct_ins_pla as cct,
+            'Superior' as nivel,
+            'Posgrado' as subnivel,
+            V142::integer as total_alumnos,
+            V140::integer as alumnos_hombres,
+            V141::integer as alumnos_mujeres
+        FROM nonce_pano_$ini_ciclo.sup_posgrado_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND cv_motivo = '0'
+
+    ) AS todos_niveles
+    WHERE total_alumnos > 0
+    GROUP BY nivel, subnivel
+    ORDER BY
+        CASE nivel
+            WHEN 'Inicial Escolarizada' THEN 1
+            WHEN 'Inicial No Escolarizada' THEN 2
+            WHEN 'Especial Cam' THEN 3
+            WHEN 'Preescolar' THEN 4
+            WHEN 'Primaria' THEN 5
+            WHEN 'Secundaria' THEN 6
+            WHEN 'Media Superior' THEN 7
+            WHEN 'Superior' THEN 8
+        END,
+        subnivel";
+
+    $result = pg_query($link, $query);
+
+    if (!$result) {
+        pg_close($link);
+        return [];
+    }
+
+    $datos = [];
+    while ($row = pg_fetch_assoc($result)) {
+        $datos[] = $row;
+    }
+
+    pg_free_result($result);
+    pg_close($link);
+
+    return $datos;
+}
+
+/**
  * Obtiene datos agrupados por nivel educativo principal
  */
 function obtenerDatosPorNivel($municipio = 'CORREGIDORA', $ciclo_escolar = null)

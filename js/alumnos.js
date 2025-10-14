@@ -107,6 +107,9 @@ document.addEventListener('DOMContentLoaded', function() {
     inicializarAnimaciones();
     inicializarExportacion();
     
+    // Inicializar filtro de búsqueda - SIMPLE Y DIRECTO
+    inicializarFiltroBusqueda();
+    
     console.log('✅ Módulo de matrícula inicializado correctamente');
 });
 
@@ -1190,6 +1193,180 @@ if (typeof window !== 'undefined') {
 }
 
 // =============================================================================
+// FILTRO DE BÚSQUEDA PARA TABLA DE SUBNIVELES
+// =============================================================================
+
+// Variables para guardar los valores originales de la tabla
+let valoresOriginalesTabla = null;
+
+/**
+ * Inicializa el filtro de búsqueda para la tabla de subniveles
+ */
+function inicializarFiltroBusqueda() {
+    console.log('🔍 [ALUMNOS] Inicializando filtro de búsqueda...');
+    
+    const searchInput = document.getElementById('searchAlumnos');
+    const tableRows = document.querySelectorAll('#tabla-detallada-alumnos .data-table tbody tr');
+    const tfoot = document.querySelector('#tabla-detallada-alumnos .data-table tfoot');
+    
+    console.log('[DEBUG] Elementos encontrados:', {
+        searchInput: searchInput ? 'SÍ' : 'NO',
+        tableRows: tableRows.length + ' filas',
+        tfoot: tfoot ? 'SÍ' : 'NO'
+    });
+    
+    if (!searchInput) {
+        console.error('❌ [ALUMNOS] No se encontró el input #searchAlumnos');
+        return false;
+    }
+    
+    if (!tableRows.length) {
+        console.error('❌ [ALUMNOS] No se encontraron filas en la tabla');
+        return false;
+    }
+    
+    if (!tfoot) {
+        console.error('❌ [ALUMNOS] No se encontró el tfoot de la tabla');
+        return false;
+    }
+    
+    // Guardar valores originales
+    guardarValoresOriginales(tfoot);
+    console.log('💾 [ALUMNOS] Valores originales guardados');
+    
+    // Agregar evento de input
+    searchInput.addEventListener('input', function(e) {
+        const filterValue = e.target.value.toLowerCase().trim();
+        console.log('🔎 [ALUMNOS] Filtrando por:', filterValue);
+        
+        let totalAlumnos = 0;
+        let totalHombres = 0;
+        let totalMujeres = 0;
+        let filasVisibles = 0;
+        
+        tableRows.forEach(row => {
+            const nivel = row.cells[0].textContent.toLowerCase();
+            const subnivel = row.cells[1].textContent.toLowerCase();
+            
+            if (filterValue === '' || nivel.includes(filterValue) || subnivel.includes(filterValue)) {
+                row.style.display = '';
+                filasVisibles++;
+                
+                // Acumular totales
+                const alumnos = parseInt(row.cells[2].textContent.replace(/,/g, '')) || 0;
+                const hombres = parseInt(row.cells[4].textContent.replace(/,/g, '')) || 0;
+                const mujeres = parseInt(row.cells[6].textContent.replace(/,/g, '')) || 0;
+                
+                totalAlumnos += alumnos;
+                totalHombres += hombres;
+                totalMujeres += mujeres;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        // Actualizar o restaurar totales
+        if (filterValue !== '') {
+            actualizarTotalesTabla(tfoot, totalAlumnos, totalHombres, totalMujeres, filasVisibles);
+        } else {
+            restaurarValoresOriginales(tfoot);
+        }
+        
+        console.log('✅ [ALUMNOS] Filtrado completo:', filasVisibles, 'filas visibles');
+    });
+    
+    console.log('✅ [ALUMNOS] Filtro inicializado correctamente');
+    return true;
+}
+
+/**
+ * Guarda los valores originales del pie de tabla
+ */
+function guardarValoresOriginales(tfoot) {
+    const totalRow = tfoot.querySelector('.total-row');
+    
+    if (!totalRow || valoresOriginalesTabla) {
+        return; // Ya guardados
+    }
+    
+    // La fila total tiene colspan="2" en cells[0], así que los índices son:
+    // cells[0] = TOTAL GENERAL (colspan=2)
+    // cells[1] = Total Alumnos
+    // cells[2] = % Total
+    // cells[3] = Hombres
+    // cells[4] = % Hombres
+    // cells[5] = Mujeres
+    // cells[6] = % Mujeres
+    
+    valoresOriginalesTabla = {
+        titulo: totalRow.cells[0].textContent,
+        totalAlumnos: totalRow.cells[1].textContent,
+        porcentajeTotal: totalRow.cells[2].textContent,
+        totalHombres: totalRow.cells[3].textContent,
+        porcentajeHombres: totalRow.cells[4].textContent,
+        totalMujeres: totalRow.cells[5].textContent,
+        porcentajeMujeres: totalRow.cells[6].textContent
+    };
+    
+    console.log('💾 [ALUMNOS] Valores originales guardados:', valoresOriginalesTabla);
+}
+
+/**
+ * Restaura los valores originales del pie de tabla
+ */
+function restaurarValoresOriginales(tfoot) {
+    const totalRow = tfoot.querySelector('.total-row');
+    
+    if (!totalRow || !valoresOriginalesTabla) {
+        return;
+    }
+    
+    totalRow.cells[0].textContent = valoresOriginalesTabla.titulo;
+    totalRow.cells[1].textContent = valoresOriginalesTabla.totalAlumnos;
+    totalRow.cells[2].textContent = valoresOriginalesTabla.porcentajeTotal;
+    totalRow.cells[3].textContent = valoresOriginalesTabla.totalHombres;
+    totalRow.cells[4].textContent = valoresOriginalesTabla.porcentajeHombres;
+    totalRow.cells[5].textContent = valoresOriginalesTabla.totalMujeres;
+    totalRow.cells[6].textContent = valoresOriginalesTabla.porcentajeMujeres;
+    
+    console.log('♻️ [ALUMNOS] Valores originales restaurados');
+}
+
+/**
+ * Actualiza los totales en el pie de la tabla
+ */
+function actualizarTotalesTabla(tfoot, totalAlumnos, totalHombres, totalMujeres, filasVisibles) {
+    const totalRow = tfoot.querySelector('.total-row');
+    
+    if (!totalRow) {
+        return;
+    }
+    
+    // Calcular porcentajes
+    const porcentajeHombres = totalAlumnos > 0 ? ((totalHombres / totalAlumnos) * 100).toFixed(1) : '0.0';
+    const porcentajeMujeres = totalAlumnos > 0 ? ((totalMujeres / totalAlumnos) * 100).toFixed(1) : '0.0';
+    
+    // Formatear números con comas
+    const formatearNumero = (num) => num.toLocaleString('es-MX');
+    
+    // Actualizar celdas (recordar que cells[0] tiene colspan="2")
+    totalRow.cells[0].textContent = `TOTAL FILTRADO (${filasVisibles} registro${filasVisibles !== 1 ? 's' : ''})`;
+    totalRow.cells[1].textContent = formatearNumero(totalAlumnos);
+    totalRow.cells[2].textContent = '100.0%';
+    totalRow.cells[3].textContent = formatearNumero(totalHombres);
+    totalRow.cells[4].textContent = porcentajeHombres + '%';
+    totalRow.cells[5].textContent = formatearNumero(totalMujeres);
+    totalRow.cells[6].textContent = porcentajeMujeres + '%';
+    
+    console.log('📊 [ALUMNOS] Totales actualizados:', {
+        alumnos: totalAlumnos,
+        hombres: totalHombres,
+        mujeres: totalMujeres,
+        filasVisibles: filasVisibles
+    });
+}
+
+// =============================================================================
 // EXPORTAR FUNCIONES PÚBLICAS
 // =============================================================================
 
@@ -1200,6 +1377,7 @@ window.AlumnosModule = {
     exportarExcel,
     exportarCSV,
     exportarPDF,
+    inicializarFiltroBusqueda,
     debug
 };
 
