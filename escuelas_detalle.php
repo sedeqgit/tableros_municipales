@@ -838,6 +838,14 @@ $datosEducativos = $datosCompletosMunicipio;
                         endforeach;
                         ?>
                     </select>
+                    <div class="export-buttons">
+                        <button class="export-btn export-excel" onclick="exportarDirectorio('excel', 'publicas')" title="Exportar a Excel">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                        <button class="export-btn export-pdf" onclick="exportarDirectorio('pdf', 'publicas')" title="Exportar a PDF">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                    </div>
                     <div class="school-count">
                         <span class="count-label">Total:</span>
                         <span class="count-number" id="count-publicas">
@@ -916,6 +924,14 @@ $datosEducativos = $datosCompletosMunicipio;
                         endforeach;
                         ?>
                     </select>
+                    <div class="export-buttons">
+                        <button class="export-btn export-excel" onclick="exportarDirectorio('excel', 'privadas')" title="Exportar a Excel">
+                            <i class="fas fa-file-excel"></i> Excel
+                        </button>
+                        <button class="export-btn export-pdf" onclick="exportarDirectorio('pdf', 'privadas')" title="Exportar a PDF">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                    </div>
                     <div class="school-count">
                         <span class="count-label">Total:</span>
                         <span class="count-number" id="count-privadas">

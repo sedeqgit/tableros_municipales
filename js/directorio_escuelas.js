@@ -278,11 +278,18 @@ function updateStats() {
  */
 function exportarDirectorio(format, type) {
     const tipoEscuelas = type === 'publicas' ? 'Públicas' : 'Privadas';
-    
+
+    // Obtener el filtro de nivel activo
+    const nivelFilter = document.getElementById('nivel-filter-' + type);
+    const nivelSeleccionado = nivelFilter ? nivelFilter.value : 'todos';
+    const nivelTexto = nivelFilter && nivelSeleccionado !== 'todos'
+        ? nivelFilter.options[nivelFilter.selectedIndex].text
+        : 'Todos los niveles';
+
     if (format === 'excel') {
-        exportToExcel(type, tipoEscuelas);
+        exportToExcel(type, tipoEscuelas, nivelSeleccionado, nivelTexto);
     } else if (format === 'pdf') {
-        exportToPDF(type, tipoEscuelas);
+        exportToPDF(type, tipoEscuelas, nivelSeleccionado, nivelTexto);
     }
 }
 
@@ -290,20 +297,41 @@ function exportarDirectorio(format, type) {
  * Exporta a Excel usando SheetJS
  * @param {string} type - Tipo de escuelas
  * @param {string} tipoEscuelas - Nombre del tipo para el archivo
+ * @param {string} nivelSeleccionado - Nivel educativo seleccionado
+ * @param {string} nivelTexto - Texto descriptivo del nivel
  */
-function exportToExcel(type, tipoEscuelas) {
+function exportToExcel(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
     const table = document.getElementById('tabla-' + type);
     if (!table) return;
-    
+
     // Crear workbook
     const wb = XLSX.utils.book_new();
-    
-    // Obtener datos de la tabla
-    const data = getTableData(table);
-    
+
+    // Obtener datos de la tabla (solo filas visibles)
+    const data = getTableData(table, false);
+
+    // Verificar si hay datos para exportar
+    if (data.length <= 1) {
+        alert('No hay datos visibles para exportar. Verifica los filtros aplicados.');
+        return;
+    }
+
+    // Agregar información de filtros al inicio
+    const dataWithHeader = [];
+    dataWithHeader.push(['Directorio de Escuelas ' + tipoEscuelas]);
+    dataWithHeader.push(['Municipio de Corregidora, Querétaro']);
+    dataWithHeader.push(['Ciclo Escolar 2024-2025']);
+    dataWithHeader.push(['Nivel: ' + nivelTexto]);
+    dataWithHeader.push(['Total de escuelas: ' + (data.length - 1)]);
+    dataWithHeader.push(['Fecha de exportación: ' + new Date().toLocaleDateString('es-MX')]);
+    dataWithHeader.push([]); // Fila vacía
+
+    // Agregar los datos de la tabla
+    dataWithHeader.push(...data);
+
     // Crear worksheet
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    
+    const ws = XLSX.utils.aoa_to_sheet(dataWithHeader);
+
     // Configurar anchos de columna
     const colWidths = [
         { wch: 25 }, // Nivel
@@ -313,14 +341,31 @@ function exportToExcel(type, tipoEscuelas) {
         { wch: 15 }  // Alumnos
     ];
     ws['!cols'] = colWidths;
-    
+
+    // Aplicar estilos al encabezado (primeras 6 filas)
+    const headerRange = XLSX.utils.decode_range(ws['!ref']);
+    for (let row = 0; row < 6; row++) {
+        for (let col = headerRange.s.c; col <= headerRange.e.c; col++) {
+            const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+            if (ws[cellAddress]) {
+                ws[cellAddress].s = {
+                    font: { bold: true },
+                    fill: { fgColor: { rgb: "E8F4F8" } }
+                };
+            }
+        }
+    }
+
     // Añadir worksheet al workbook
     XLSX.utils.book_append_sheet(wb, ws, `Escuelas ${tipoEscuelas}`);
-    
-    // Generar y descargar archivo
-    const fileName = `Directorio_Escuelas_${tipoEscuelas}_Corregidora.xlsx`;
+
+    // Generar nombre de archivo con información del filtro
+    const nivelSuffix = nivelSeleccionado !== 'todos' ? '_' + nivelSeleccionado : '';
+    const fileName = `Directorio_Escuelas_${tipoEscuelas}${nivelSuffix}_Corregidora.xlsx`;
+
+    // Descargar archivo
     XLSX.writeFile(wb, fileName);
-    
+
     // Mostrar mensaje de éxito
     showExportMessage('Excel', fileName);
 }
@@ -329,52 +374,98 @@ function exportToExcel(type, tipoEscuelas) {
  * Exporta a PDF usando jsPDF
  * @param {string} type - Tipo de escuelas
  * @param {string} tipoEscuelas - Nombre del tipo para el archivo
+ * @param {string} nivelSeleccionado - Nivel educativo seleccionado
+ * @param {string} nivelTexto - Texto descriptivo del nivel
  */
-function exportToPDF(type, tipoEscuelas) {
+function exportToPDF(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    
+    const doc = new jsPDF('l', 'mm', 'a4'); // Orientación horizontal para más espacio
+
     const table = document.getElementById('tabla-' + type);
     if (!table) return;
-    
-    // Configurar título
-    doc.setFontSize(18);
-    doc.text(`Directorio de Escuelas ${tipoEscuelas}`, 20, 20);
-    doc.setFontSize(12);
-    doc.text('Municipio de Corregidora, Querétaro', 20, 30);
-    doc.text(`Generado: ${new Date().toLocaleDateString('es-MX')}`, 20, 40);
-    
-    // Obtener datos de la tabla
+
+    // Obtener datos de la tabla (solo filas visibles)
     const data = getTableData(table, false);
+
+    // Verificar si hay datos para exportar
+    if (data.length <= 1) {
+        alert('No hay datos visibles para exportar. Verifica los filtros aplicados.');
+        return;
+    }
+
     const headers = data[0];
     const rows = data.slice(1);
-    
+
+    // Configurar encabezado del documento
+    doc.setFontSize(16);
+    doc.setFont(undefined, 'bold');
+    doc.text(`Directorio de Escuelas ${tipoEscuelas}`, 15, 15);
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text('Municipio de Corregidora, Querétaro', 15, 22);
+    doc.text(`Ciclo Escolar 2024-2025`, 15, 28);
+
+    doc.setFont(undefined, 'bold');
+    doc.text(`Nivel: ${nivelTexto}`, 15, 34);
+
+    doc.setFont(undefined, 'normal');
+    doc.text(`Total de escuelas: ${rows.length}`, 15, 40);
+    doc.text(`Fecha de exportación: ${new Date().toLocaleDateString('es-MX', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    })}`, 15, 46);
+
     // Configurar tabla
     doc.autoTable({
         head: [headers],
         body: rows,
-        startY: 50,
+        startY: 52,
         styles: {
             fontSize: 8,
-            cellPadding: 3
+            cellPadding: 2.5,
+            overflow: 'linebreak',
+            halign: 'left'
         },
         headStyles: {
-            fillColor: [0, 123, 255],
-            textColor: 255
+            fillColor: [41, 128, 185],
+            textColor: 255,
+            fontStyle: 'bold',
+            halign: 'center'
+        },
+        alternateRowStyles: {
+            fillColor: [245, 245, 245]
         },
         columnStyles: {
-            0: { cellWidth: 35 },
-            1: { cellWidth: 25 },
-            2: { cellWidth: 70 },
-            3: { cellWidth: 35 },
-            4: { cellWidth: 20, halign: 'right' }
+            0: { cellWidth: 40 },  // Nivel Educativo
+            1: { cellWidth: 28 },  // CCT
+            2: { cellWidth: 120 }, // Nombre de la Escuela
+            3: { cellWidth: 50 },  // Localidad
+            4: { cellWidth: 25, halign: 'right' } // Total Alumnos
+        },
+        margin: { top: 52, left: 15, right: 15 },
+        didDrawPage: function(data) {
+            // Pie de página
+            const pageCount = doc.internal.getNumberOfPages();
+            doc.setFontSize(8);
+            doc.setTextColor(150);
+            doc.text(
+                `Página ${data.pageNumber} de ${pageCount}`,
+                doc.internal.pageSize.width / 2,
+                doc.internal.pageSize.height - 10,
+                { align: 'center' }
+            );
         }
     });
-    
-    // Generar y descargar archivo
-    const fileName = `Directorio_Escuelas_${tipoEscuelas}_Corregidora.pdf`;
+
+    // Generar nombre de archivo con información del filtro
+    const nivelSuffix = nivelSeleccionado !== 'todos' ? '_' + nivelSeleccionado : '';
+    const fileName = `Directorio_Escuelas_${tipoEscuelas}${nivelSuffix}_Corregidora.pdf`;
+
+    // Descargar archivo
     doc.save(fileName);
-    
+
     // Mostrar mensaje de éxito
     showExportMessage('PDF', fileName);
 }

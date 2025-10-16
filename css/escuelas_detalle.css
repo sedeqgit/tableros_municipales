@@ -1529,3 +1529,93 @@
 .table-container .data-table tbody tr:first-child td {
     padding-top: 15px;
 }
+
+/* =============================================
+   BOTONES DE EXPORTACIÓN
+   ============================================= */
+
+.export-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.export-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.9rem;
+    font-weight: var(--font-weight-medium);
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.export-btn i {
+    font-size: 1rem;
+}
+
+.export-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.export-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Botón Excel - Verde */
+.export-excel {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.export-excel:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+/* Botón PDF - Rojo */
+.export-pdf {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.export-pdf:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+/* Responsive para botones de exportación */
+@media (max-width: 768px) {
+    .export-buttons {
+        order: 2;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .export-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .export-buttons {
+        gap: 8px;
+    }
+
+    .export-btn {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+
+    .export-btn i {
+        font-size: 0.9rem;
+    }
+}
