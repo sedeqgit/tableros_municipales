@@ -476,7 +476,7 @@ function obtenerDatosMunicipio($municipio)
                 <section class="quick-access-section animate-up delay-3">
                     <h2 class="section-title"><i class="fas fa-bolt"></i> Acceso Rápido</h2>
                     <div class="quick-access-grid animate-sequence">
-                        <a href="#" class="quick-access-card">
+                        <a href="directorio_estatal.php" class="quick-access-card">
                             <i class="fas fa-search"></i>
                             <h3>Búsqueda por Escuela</h3>
                         </a>
