@@ -892,6 +892,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         (V398+V414) as total_alumnos,
+                        (V390+V406) as alumnos_hombres,
+                        (V394+V410) as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -901,6 +903,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         (V183+V184) as total_alumnos,
+                        V183 as alumnos_hombres,
+                        V184 as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.ini_ind_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -910,6 +914,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         V398 as total_alumnos,
+                        V390 as alumnos_hombres,
+                        V394 as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -919,6 +925,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         V414 as total_alumnos,
+                        V406 as alumnos_hombres,
+                        V410 as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -928,6 +936,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         V177 as total_alumnos,
+                        V165 as alumnos_hombres,
+                        V171 as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.pree_gral_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -937,6 +947,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         V177 as total_alumnos,
+                        V165 as alumnos_hombres,
+                        V171 as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.pree_ind_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -946,6 +958,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         V608 as total_alumnos,
+                        (V562+V573) as alumnos_hombres,
+                        (V585+V596) as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.prim_gral_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -955,6 +969,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         V610 as total_alumnos,
+                        (V564+V575) as alumnos_hombres,
+                        (V587+V598) as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.prim_ind_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -964,6 +980,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         V340 as total_alumnos,
+                        (V306+V314) as alumnos_hombres,
+                        (V323+V331) as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.sec_gral_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -973,6 +991,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         V97 as total_alumnos,
+                        V85 as alumnos_hombres,
+                        V91 as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.pree_comuni_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -982,6 +1002,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         V515 as total_alumnos,
+                        (V469+V480) as alumnos_hombres,
+                        (V492+V503) as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.prim_comuni_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -991,6 +1013,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         V257 as total_alumnos,
+                        (V223+V231) as alumnos_hombres,
+                        (V240+V248) as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.sec_comuni_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -1000,6 +1024,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         V81 as total_alumnos,
+                        V79 as alumnos_hombres,
+                        V80 as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.ini_comuni_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -1009,6 +1035,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         (V129+V130) as total_alumnos,
+                        V129 as alumnos_hombres,
+                        V130 as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.ini_ne_$ini_ciclo
                     WHERE $filtroBase $filtro";
@@ -1018,6 +1046,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombre_ins_pla as nombre_escuela,
                         c_nom_loc as localidad,
                         V397 as total_alumnos,
+                        V395 as alumnos_hombres,
+                        V396 as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo
                     WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro";
@@ -1027,6 +1057,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombre_ins_pla as nombre_escuela,
                         c_nom_loc as localidad,
                         V472 as total_alumnos,
+                        V470 as alumnos_hombres,
+                        V471 as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo
                     WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro";
@@ -1036,13 +1068,15 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         MAX(nombre_ins_pla) as nombre_escuela,
                         MAX(c_nom_loc) as localidad,
                         SUM(total_alumnos) as total_alumnos,
+                        SUM(alumnos_hombres) as alumnos_hombres,
+                        SUM(alumnos_mujeres) as alumnos_mujeres,
                         MAX(control) as tipo_control
                     FROM (
-                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc, V397 as total_alumnos, control
+                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc, V397 as total_alumnos, V395 as alumnos_hombres, V396 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo
                         WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro AND V397 > 0
                         UNION ALL
-                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc, V472 as total_alumnos, control
+                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc, V472 as total_alumnos, V470 as alumnos_hombres, V471 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo
                         WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro AND V472 > 0
                     ) AS media_sup_dir
@@ -1054,6 +1088,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         V2257 as total_alumnos,
+                        V2255 as alumnos_hombres,
+                        V2256 as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo
                     WHERE cv_estatus_captura = 0 $filtro";
@@ -1063,17 +1099,19 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         MAX(nombre_ins_pla) as nombre_escuela,
                         MAX(localidad) as localidad,
                         SUM(total_alumnos) as total_alumnos,
+                        SUM(alumnos_hombres) as alumnos_hombres,
+                        SUM(alumnos_mujeres) as alumnos_mujeres,
                         MAX(control) as tipo_control
                     FROM (
-                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc as localidad, V177 as total_alumnos, control
+                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc as localidad, V177 as total_alumnos, V175 as alumnos_hombres, V176 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo
                         WHERE cv_motivo = '0' $filtro AND V177 > 0
                         UNION ALL
-                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc as localidad, V142 as total_alumnos, control
+                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc as localidad, V142 as total_alumnos, V140 as alumnos_hombres, V141 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.sup_posgrado_$ini_ciclo
                         WHERE cv_motivo = '0' $filtro AND V142 > 0
                         UNION ALL
-                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_mun as localidad, total_matricula as total_alumnos, control
+                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_mun as localidad, total_matricula as total_alumnos, mat_hombres as alumnos_hombres, mat_mujeres as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.sup_unidades_$ini_ciclo
                         WHERE 1=1 $filtro AND total_matricula > 0
                     ) AS superior_dir
@@ -1084,25 +1122,47 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
             // Querétaro: Muestra cada registro de sup_escuela_24 (83 registros = campus/turnos)
             // Los alumnos se distribuyen entre campus: división entera + residuo al primer registro
             // Coincide con el conteo de resumen.php que hace COUNT(cct_ins_pla) sin agrupar
-            return "SELECT 
+            return "SELECT
                         sub.id_sec as id_registro,
                         sub.cv_cct,
                         sub.nombre_escuela,
                         sub.localidad,
-                        sub.base_alumnos + 
-                        CASE 
+                        sub.base_alumnos +
+                        CASE
                             WHEN sub.row_num = 1 THEN sub.residuo_alumnos
                             ELSE 0
                         END -
-                        CASE 
+                        CASE
                             -- Restar unidades estatales de instituciones específicas (solo del primer registro)
                             WHEN sub.cv_cct = '22MSU0090J' AND sub.row_num = 1 THEN 889  -- Universidad Pedagógica Nacional
                             WHEN sub.cv_cct = '22MSU0024K' AND sub.row_num = 1 THEN 626  -- Tecnológico Nacional de México
                             ELSE 0
                         END as total_alumnos,
+                        sub.base_hombres +
+                        CASE
+                            WHEN sub.row_num = 1 THEN sub.residuo_hombres
+                            ELSE 0
+                        END -
+                        CASE
+                            -- Restar hombres de unidades estatales (solo del primer registro)
+                            WHEN sub.cv_cct = '22MSU0090J' AND sub.row_num = 1 THEN 206  -- Universidad Pedagógica Nacional
+                            WHEN sub.cv_cct = '22MSU0024K' AND sub.row_num = 1 THEN 374  -- Tecnológico Nacional de México
+                            ELSE 0
+                        END as alumnos_hombres,
+                        sub.base_mujeres +
+                        CASE
+                            WHEN sub.row_num = 1 THEN sub.residuo_mujeres
+                            ELSE 0
+                        END -
+                        CASE
+                            -- Restar mujeres de unidades estatales (solo del primer registro)
+                            WHEN sub.cv_cct = '22MSU0090J' AND sub.row_num = 1 THEN 683  -- Universidad Pedagógica Nacional
+                            WHEN sub.cv_cct = '22MSU0024K' AND sub.row_num = 1 THEN 252  -- Tecnológico Nacional de México
+                            ELSE 0
+                        END as alumnos_mujeres,
                         sub.tipo_control
                     FROM (
-                        SELECT 
+                        SELECT
                             e.id_sec,
                             e.cct_ins_pla as cv_cct,
                             e.nombre_ins as nombre_escuela,
@@ -1110,16 +1170,20 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                             e.control as tipo_control,
                             ROW_NUMBER() OVER (PARTITION BY e.cct_ins_pla ORDER BY e.id_sec) as row_num,
                             CAST((COALESCE(alumnos_carrera.total, 0) + COALESCE(alumnos_posgrado.total, 0)) / total_registros.cnt AS INTEGER) as base_alumnos,
-                            (COALESCE(alumnos_carrera.total, 0) + COALESCE(alumnos_posgrado.total, 0)) % total_registros.cnt as residuo_alumnos
+                            (COALESCE(alumnos_carrera.total, 0) + COALESCE(alumnos_posgrado.total, 0)) % total_registros.cnt as residuo_alumnos,
+                            CAST((COALESCE(alumnos_carrera.hombres, 0) + COALESCE(alumnos_posgrado.hombres, 0)) / total_registros.cnt AS INTEGER) as base_hombres,
+                            (COALESCE(alumnos_carrera.hombres, 0) + COALESCE(alumnos_posgrado.hombres, 0)) % total_registros.cnt as residuo_hombres,
+                            CAST((COALESCE(alumnos_carrera.mujeres, 0) + COALESCE(alumnos_posgrado.mujeres, 0)) / total_registros.cnt AS INTEGER) as base_mujeres,
+                            (COALESCE(alumnos_carrera.mujeres, 0) + COALESCE(alumnos_posgrado.mujeres, 0)) % total_registros.cnt as residuo_mujeres
                         FROM nonce_pano_$ini_ciclo.sup_escuela_$ini_ciclo e
                         LEFT JOIN (
-                            SELECT cct_ins_pla, SUM(V177) as total
+                            SELECT cct_ins_pla, SUM(V177) as total, SUM(V175) as hombres, SUM(V176) as mujeres
                             FROM nonce_pano_$ini_ciclo.sup_carrera_$ini_ciclo
                             WHERE cv_motivo = '0' $filtro
                             GROUP BY cct_ins_pla
                         ) alumnos_carrera ON e.cct_ins_pla = alumnos_carrera.cct_ins_pla
                         LEFT JOIN (
-                            SELECT cct_ins_pla, SUM(V142) as total
+                            SELECT cct_ins_pla, SUM(V142) as total, SUM(V140) as hombres, SUM(V141) as mujeres
                             FROM nonce_pano_$ini_ciclo.sup_posgrado_$ini_ciclo
                             WHERE cv_motivo = '0' $filtro
                             GROUP BY cct_ins_pla
@@ -1139,13 +1203,15 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         total_alumnos,
+                        alumnos_hombres,
+                        alumnos_mujeres,
                         control as tipo_control
                     FROM (
-                        SELECT cv_cct, nombrect, c_nom_loc, (V398+V414) as total_alumnos, control
+                        SELECT cv_cct, nombrect, c_nom_loc, (V398+V414) as total_alumnos, (V390+V406) as alumnos_hombres, (V394+V410) as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
                         WHERE $filtroBase $filtro
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, (V183+V184) as total_alumnos, control
+                        SELECT cv_cct, nombrect, c_nom_loc, (V183+V184) as total_alumnos, V183 as alumnos_hombres, V184 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.ini_ind_$ini_ciclo
                         WHERE $filtroBase $filtro
                     ) AS inicial_esc_dir
@@ -1156,13 +1222,15 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         total_alumnos,
+                        alumnos_hombres,
+                        alumnos_mujeres,
                         control as tipo_control
                     FROM (
-                        SELECT cv_cct, nombrect, c_nom_loc, V81 as total_alumnos, control
+                        SELECT cv_cct, nombrect, c_nom_loc, V81 as total_alumnos, V79 as alumnos_hombres, V80 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.ini_comuni_$ini_ciclo
                         WHERE $filtroBase $filtro
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, (V129+V130) as total_alumnos, control
+                        SELECT cv_cct, nombrect, c_nom_loc, (V129+V130) as total_alumnos, V129 as alumnos_hombres, V130 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.ini_ne_$ini_ciclo
                         WHERE $filtroBase $filtro
                     ) AS inicial_no_esc_dir
@@ -1173,21 +1241,23 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         total_alumnos,
+                        alumnos_hombres,
+                        alumnos_mujeres,
                         control as tipo_control
                     FROM (
-                        SELECT cv_cct, nombrect, c_nom_loc, V177 as total_alumnos, control
+                        SELECT cv_cct, nombrect, c_nom_loc, V177 as total_alumnos, V165 as alumnos_hombres, V171 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.pree_gral_$ini_ciclo
                         WHERE $filtroBase $filtro AND V177 > 0
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, V177 as total_alumnos, control
+                        SELECT cv_cct, nombrect, c_nom_loc, V177 as total_alumnos, V165 as alumnos_hombres, V171 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.pree_ind_$ini_ciclo
                         WHERE $filtroBase $filtro AND V177 > 0
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, V97 as total_alumnos, control
+                        SELECT cv_cct, nombrect, c_nom_loc, V97 as total_alumnos, V85 as alumnos_hombres, V91 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.pree_comuni_$ini_ciclo
                         WHERE $filtroBase $filtro AND V97 > 0
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, V478 as total_alumnos, control
+                        SELECT cv_cct, nombrect, c_nom_loc, V478 as total_alumnos, V466 as alumnos_hombres, V472 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
                         WHERE $filtroBase $filtro AND V478 > 0
                     ) AS preescolar_dir
@@ -1198,17 +1268,19 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         total_alumnos,
+                        alumnos_hombres,
+                        alumnos_mujeres,
                         control as tipo_control
                     FROM (
-                        SELECT cv_cct, nombrect, c_nom_loc, V608 as total_alumnos, control
+                        SELECT cv_cct, nombrect, c_nom_loc, V608 as total_alumnos, (V562+V573) as alumnos_hombres, (V585+V596) as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.prim_gral_$ini_ciclo
                         WHERE $filtroBase $filtro
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, V610 as total_alumnos, control
+                        SELECT cv_cct, nombrect, c_nom_loc, V610 as total_alumnos, (V564+V575) as alumnos_hombres, (V587+V598) as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.prim_ind_$ini_ciclo
                         WHERE $filtroBase $filtro
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, V515 as total_alumnos, control
+                        SELECT cv_cct, nombrect, c_nom_loc, V515 as total_alumnos, (V469+V480) as alumnos_hombres, (V492+V503) as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.prim_comuni_$ini_ciclo
                         WHERE $filtroBase $filtro
                     ) AS primaria_dir
@@ -1219,13 +1291,15 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
                         total_alumnos,
+                        alumnos_hombres,
+                        alumnos_mujeres,
                         control as tipo_control
                     FROM (
-                        SELECT cv_cct, nombrect, c_nom_loc, V340 as total_alumnos, control
+                        SELECT cv_cct, nombrect, c_nom_loc, V340 as total_alumnos, (V306+V314) as alumnos_hombres, (V323+V331) as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.sec_gral_$ini_ciclo
                         WHERE $filtroBase $filtro
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, V257 as total_alumnos, control
+                        SELECT cv_cct, nombrect, c_nom_loc, V257 as total_alumnos, (V223+V231) as alumnos_hombres, (V240+V248) as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.sec_comuni_$ini_ciclo
                         WHERE $filtroBase $filtro
                     ) AS secundaria_dir
@@ -3683,6 +3757,8 @@ function obtenerDirectorioEscuelas($municipio, $nivel_educativo, $ini_ciclo = nu
                 'nombre_escuela' => $row['nombre_escuela'],
                 'localidad' => $row['localidad'],
                 'total_alumnos' => $alumnos,
+                'alumnos_hombres' => (int) $row['alumnos_hombres'],
+                'alumnos_mujeres' => (int) $row['alumnos_mujeres'],
                 'tipo_control' => $row['tipo_control']
             ];
         }

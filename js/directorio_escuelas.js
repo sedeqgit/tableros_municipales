@@ -100,43 +100,60 @@ function initSearch() {
 function filterByLevel(type, level) {
     const table = document.getElementById('tabla-' + type);
     if (!table) return;
-    
+
     const tbody = table.getElementsByTagName('tbody')[0];
     const rows = Array.from(tbody.getElementsByTagName('tr'));
+
+    // Obtener el término de búsqueda actual
+    const searchInput = document.getElementById('search-' + type);
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
     let visibleCount = 0;
-    
+
     // Si se selecciona "Todos los niveles", ordenar por nivel y luego por alumnos descendente
     if (!level || level === 'todos') {
         sortTableByLevelAndStudents(rows, tbody);
     }
-    
+
     rows.forEach(row => {
         const rowLevel = row.getAttribute('data-nivel');
-        const shouldShow = !level || level === 'todos' || rowLevel === level;
-        
+
+        // Verificar si cumple con el filtro de nivel
+        const matchesLevel = !level || level === 'todos' || rowLevel === level;
+
+        // Verificar si cumple con el filtro de búsqueda
+        let matchesSearch = true;
+        if (searchTerm) {
+            const cells = row.getElementsByTagName('td');
+            matchesSearch = false;
+            Array.from(cells).forEach(cell => {
+                const originalText = cell.dataset.originalText || cell.textContent;
+                if (originalText.toLowerCase().includes(searchTerm)) {
+                    matchesSearch = true;
+                }
+            });
+        }
+
+        // Mostrar solo si cumple AMBOS filtros
+        const shouldShow = matchesLevel && matchesSearch;
+
         if (shouldShow) {
             row.style.display = '';
             visibleCount++;
-            
+
             // Aplicar animación de entrada
             row.style.animation = 'fadeInUp 0.3s ease-in-out';
-            
-            // Limpiar resaltados de búsqueda
-            highlightSearchTerm(row, '');
+
+            // Mantener resaltado de búsqueda si existe
+            highlightSearchTerm(row, searchTerm);
         } else {
             row.style.display = 'none';
         }
     });
-    
-    // Limpiar campo de búsqueda cuando se cambia el filtro
-    const searchInput = document.getElementById('search-' + type);
-    if (searchInput) {
-        searchInput.value = '';
-    }
-    
+
     // Actualizar contador
     updateSchoolCount(type);
-    
+
     // Mostrar mensaje si no hay resultados
     showNoResultsMessage(type, visibleCount === 0);
 }
@@ -149,50 +166,52 @@ function filterByLevel(type, level) {
 function searchSchools(type, searchTerm) {
     const table = document.getElementById('tabla-' + type);
     if (!table) return;
-    
+
     const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
     const term = searchTerm.toLowerCase().trim();
+
+    // Obtener el filtro de nivel actual
+    const levelFilter = document.getElementById('nivel-filter-' + type);
+    const selectedLevel = levelFilter ? levelFilter.value : 'todos';
+
     let visibleCount = 0;
-    
-    // Si el campo está vacío, también limpiar el filtro de nivel
-    if (!term) {
-        const levelFilter = document.getElementById('nivel-filter-' + type);
-        if (levelFilter && levelFilter.value) {
-            filterByLevel(type, levelFilter.value);
-            return;
-        }
-    }
-    
+
     Array.from(rows).forEach(row => {
         const cells = row.getElementsByTagName('td');
-        let shouldShow = false;
-        
-        if (!term) {
-            shouldShow = true;
-        } else {
-            // Buscar en todas las celdas usando el texto original
+        const rowLevel = row.getAttribute('data-nivel');
+
+        // Verificar si cumple con el filtro de nivel
+        const matchesLevel = !selectedLevel || selectedLevel === 'todos' || rowLevel === selectedLevel;
+
+        // Verificar si cumple con el filtro de búsqueda
+        let matchesSearch = true;
+        if (term) {
+            matchesSearch = false;
             Array.from(cells).forEach(cell => {
                 const originalText = cell.dataset.originalText || cell.textContent;
                 if (originalText.toLowerCase().includes(term)) {
-                    shouldShow = true;
+                    matchesSearch = true;
                 }
             });
         }
-        
+
+        // Mostrar solo si cumple AMBOS filtros
+        const shouldShow = matchesLevel && matchesSearch;
+
         if (shouldShow) {
             row.style.display = '';
             visibleCount++;
         } else {
             row.style.display = 'none';
         }
-        
+
         // Aplicar resaltado después de determinar visibilidad
         highlightSearchTerm(row, term);
     });
-    
+
     // Actualizar contador
     updateSchoolCount(type);
-    
+
     // Mostrar mensaje si no hay resultados
     showNoResultsMessage(type, visibleCount === 0);
 }

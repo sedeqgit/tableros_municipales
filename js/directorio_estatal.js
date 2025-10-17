@@ -102,6 +102,11 @@ function filterByLevel(type, level) {
 
     const tbody = table.getElementsByTagName('tbody')[0];
     const rows = Array.from(tbody.getElementsByTagName('tr'));
+
+    // Obtener el término de búsqueda actual
+    const searchInput = document.getElementById('search-' + type);
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
     let visibleCount = 0;
 
     // Si se selecciona "Todos los niveles", ordenar por nivel y luego por alumnos descendente
@@ -111,7 +116,25 @@ function filterByLevel(type, level) {
 
     rows.forEach(row => {
         const rowLevel = row.getAttribute('data-nivel');
-        const shouldShow = !level || level === 'todos' || rowLevel === level;
+
+        // Verificar si cumple con el filtro de nivel
+        const matchesLevel = !level || level === 'todos' || rowLevel === level;
+
+        // Verificar si cumple con el filtro de búsqueda
+        let matchesSearch = true;
+        if (searchTerm) {
+            const cells = row.getElementsByTagName('td');
+            matchesSearch = false;
+            Array.from(cells).forEach(cell => {
+                const originalText = cell.dataset.originalText || cell.textContent;
+                if (originalText.toLowerCase().includes(searchTerm)) {
+                    matchesSearch = true;
+                }
+            });
+        }
+
+        // Mostrar solo si cumple AMBOS filtros
+        const shouldShow = matchesLevel && matchesSearch;
 
         if (shouldShow) {
             row.style.display = '';
@@ -120,18 +143,12 @@ function filterByLevel(type, level) {
             // Aplicar animación de entrada
             row.style.animation = 'fadeInUp 0.3s ease-in-out';
 
-            // Limpiar resaltados de búsqueda
-            highlightSearchTerm(row, '');
+            // Mantener resaltado de búsqueda si existe
+            highlightSearchTerm(row, searchTerm);
         } else {
             row.style.display = 'none';
         }
     });
-
-    // Limpiar campo de búsqueda cuando se cambia el filtro
-    const searchInput = document.getElementById('search-' + type);
-    if (searchInput) {
-        searchInput.value = '';
-    }
 
     // Actualizar contador
     updateSchoolCount(type);
@@ -151,32 +168,34 @@ function searchSchools(type, searchTerm) {
 
     const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
     const term = searchTerm.toLowerCase().trim();
-    let visibleCount = 0;
 
-    // Si el campo está vacío, también limpiar el filtro de nivel
-    if (!term) {
-        const levelFilter = document.getElementById('nivel-filter-' + type);
-        if (levelFilter && levelFilter.value) {
-            filterByLevel(type, levelFilter.value);
-            return;
-        }
-    }
+    // Obtener el filtro de nivel actual
+    const levelFilter = document.getElementById('nivel-filter-' + type);
+    const selectedLevel = levelFilter ? levelFilter.value : 'todos';
+
+    let visibleCount = 0;
 
     Array.from(rows).forEach(row => {
         const cells = row.getElementsByTagName('td');
-        let shouldShow = false;
+        const rowLevel = row.getAttribute('data-nivel');
 
-        if (!term) {
-            shouldShow = true;
-        } else {
-            // Buscar en todas las celdas usando el texto original
+        // Verificar si cumple con el filtro de nivel
+        const matchesLevel = !selectedLevel || selectedLevel === 'todos' || rowLevel === selectedLevel;
+
+        // Verificar si cumple con el filtro de búsqueda
+        let matchesSearch = true;
+        if (term) {
+            matchesSearch = false;
             Array.from(cells).forEach(cell => {
                 const originalText = cell.dataset.originalText || cell.textContent;
                 if (originalText.toLowerCase().includes(term)) {
-                    shouldShow = true;
+                    matchesSearch = true;
                 }
             });
         }
+
+        // Mostrar solo si cumple AMBOS filtros
+        const shouldShow = matchesLevel && matchesSearch;
 
         if (shouldShow) {
             row.style.display = '';
@@ -332,14 +351,16 @@ function exportToExcelEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto)
     // Crear worksheet
     const ws = XLSX.utils.aoa_to_sheet(dataWithHeader);
 
-    // Configurar anchos de columna (6 columnas incluyendo municipio)
+    // Configurar anchos de columna (8 columnas incluyendo municipio y género)
     const colWidths = [
         { wch: 25 }, // Nivel
         { wch: 15 }, // CCT
         { wch: 50 }, // Nombre
         { wch: 20 }, // Municipio
         { wch: 25 }, // Localidad
-        { wch: 15 }  // Alumnos
+        { wch: 15 }, // Total Alumnos
+        { wch: 12 }, // Hombres
+        { wch: 12 }  // Mujeres
     ];
     ws['!cols'] = colWidths;
 
@@ -439,12 +460,14 @@ function exportToPDFEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
             fillColor: [245, 245, 245]
         },
         columnStyles: {
-            0: { cellWidth: 35 },  // Nivel Educativo
-            1: { cellWidth: 25 },  // CCT
-            2: { cellWidth: 95 },  // Nombre de la Escuela
-            3: { cellWidth: 35 },  // Municipio
-            4: { cellWidth: 45 },  // Localidad
-            5: { cellWidth: 20, halign: 'right' } // Total Alumnos
+            0: { cellWidth: 32 },  // Nivel Educativo
+            1: { cellWidth: 22 },  // CCT
+            2: { cellWidth: 85 },  // Nombre de la Escuela
+            3: { cellWidth: 30 },  // Municipio
+            4: { cellWidth: 40 },  // Localidad
+            5: { cellWidth: 18, halign: 'right' }, // Total Alumnos
+            6: { cellWidth: 15, halign: 'right' }, // Hombres
+            7: { cellWidth: 15, halign: 'right' }  // Mujeres
         },
         margin: { top: 52, left: 15, right: 15 },
         didDrawPage: function(data) {
@@ -590,7 +613,7 @@ function sortTableByLevelAndStudents(rows, tbody) {
         }
 
         // Luego ordenar por cantidad de alumnos (descendente)
-        // Nota: En tabla estatal, los alumnos están en la columna 5 (índice 5)
+        // Nota: En tabla estatal, los alumnos totales están en la columna 5 (índice 5)
         const aStudents = parseInt(a.cells[5].textContent.replace(/,/g, '')) || 0;
         const bStudents = parseInt(b.cells[5].textContent.replace(/,/g, '')) || 0;
 

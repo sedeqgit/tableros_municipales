@@ -314,6 +314,8 @@ $infoCiclo = obtenerInfoCicloEscolar();
                                     <th>Municipio</th>
                                     <th>Localidad</th>
                                     <th>Total Alumnos</th>
+                                    <th>Hombres</th>
+                                    <th>Mujeres</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody-publicas">
@@ -329,13 +331,17 @@ $infoCiclo = obtenerInfoCicloEscolar();
                                         <tr data-nivel="<?php echo $codigo; ?>"
                                             data-nombre="<?php echo strtolower($escuela['nombre_escuela']); ?>"
                                             data-cct="<?php echo $escuela['cv_cct']; ?>"
-                                            data-municipio="<?php echo strtolower($escuela['municipio']); ?>">
+                                            data-municipio="<?php echo strtolower($escuela['municipio']); ?>"
+                                            data-hombres="<?php echo $escuela['alumnos_hombres']; ?>"
+                                            data-mujeres="<?php echo $escuela['alumnos_mujeres']; ?>">
                                             <td class="nivel-nombre"><?php echo $nombreNivel; ?></td>
                                             <td class="cct-codigo"><?php echo $escuela['cv_cct']; ?></td>
                                             <td class="escuela-nombre"><?php echo $escuela['nombre_escuela']; ?></td>
                                             <td class="municipio-nombre"><?php echo $municipioFormateado; ?></td>
                                             <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
                                             <td class="sector-publico"><?php echo number_format($escuela['total_alumnos']); ?></td>
+                                            <td class="alumnos-hombres"><?php echo number_format($escuela['alumnos_hombres']); ?></td>
+                                            <td class="alumnos-mujeres"><?php echo number_format($escuela['alumnos_mujeres']); ?></td>
                                         </tr>
                                         <?php
                                     endforeach;
@@ -400,6 +406,8 @@ $infoCiclo = obtenerInfoCicloEscolar();
                                     <th>Municipio</th>
                                     <th>Localidad</th>
                                     <th>Total Alumnos</th>
+                                    <th>Hombres</th>
+                                    <th>Mujeres</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody-privadas">
@@ -415,13 +423,17 @@ $infoCiclo = obtenerInfoCicloEscolar();
                                         <tr data-nivel="<?php echo $codigo; ?>"
                                             data-nombre="<?php echo strtolower($escuela['nombre_escuela']); ?>"
                                             data-cct="<?php echo $escuela['cv_cct']; ?>"
-                                            data-municipio="<?php echo strtolower($escuela['municipio']); ?>">
+                                            data-municipio="<?php echo strtolower($escuela['municipio']); ?>"
+                                            data-hombres="<?php echo $escuela['alumnos_hombres']; ?>"
+                                            data-mujeres="<?php echo $escuela['alumnos_mujeres']; ?>">
                                             <td class="nivel-nombre"><?php echo $nombreNivel; ?></td>
                                             <td class="cct-codigo"><?php echo $escuela['cv_cct']; ?></td>
                                             <td class="escuela-nombre"><?php echo $escuela['nombre_escuela']; ?></td>
                                             <td class="municipio-nombre"><?php echo $municipioFormateado; ?></td>
                                             <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
                                             <td class="sector-privado"><?php echo number_format($escuela['total_alumnos']); ?></td>
+                                            <td class="alumnos-hombres"><?php echo number_format($escuela['alumnos_hombres']); ?></td>
+                                            <td class="alumnos-mujeres"><?php echo number_format($escuela['alumnos_mujeres']); ?></td>
                                         </tr>
                                         <?php
                                     endforeach;
