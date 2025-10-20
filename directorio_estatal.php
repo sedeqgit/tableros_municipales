@@ -287,6 +287,18 @@ $infoCiclo = obtenerInfoCicloEscolar();
                             endforeach;
                             ?>
                         </select>
+                        <select id="municipio-filter-publicas" class="nivel-filter">
+                            <option value="todos">Todos los municipios</option>
+                            <?php foreach ($todosMunicipios as $municipio):
+                                // Formatear nombre del municipio
+                                $municipioFormateado = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
+                                $municipioFormateado = str_replace([' De ', ' Del ', ' El '], [' de ', ' del ', ' El '], $municipioFormateado);
+                                ?>
+                                <option value="<?php echo strtolower($municipio); ?>">
+                                    <?php echo $municipioFormateado; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                         <div class="export-buttons">
                             <button class="export-btn export-excel" onclick="exportarDirectorioEstatal('excel', 'publicas')" title="Exportar a Excel">
                                 <i class="fas fa-file-excel"></i> Excel
@@ -378,6 +390,18 @@ $infoCiclo = obtenerInfoCicloEscolar();
                                 endif;
                             endforeach;
                             ?>
+                        </select>
+                        <select id="municipio-filter-privadas" class="nivel-filter">
+                            <option value="todos">Todos los municipios</option>
+                            <?php foreach ($todosMunicipios as $municipio):
+                                // Formatear nombre del municipio
+                                $municipioFormateado = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
+                                $municipioFormateado = str_replace([' De ', ' Del ', ' El '], [' de ', ' del ', ' El '], $municipioFormateado);
+                                ?>
+                                <option value="<?php echo strtolower($municipio); ?>">
+                                    <?php echo $municipioFormateado; ?>
+                                </option>
+                            <?php endforeach; ?>
                         </select>
                         <div class="export-buttons">
                             <button class="export-btn export-excel" onclick="exportarDirectorioEstatal('excel', 'privadas')" title="Exportar a Excel">

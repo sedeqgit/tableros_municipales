@@ -384,7 +384,7 @@ function obtenerDatosMunicipio($municipio)
                                 </div>
                                 <a href="resumen.php?municipio=<?php echo urlencode($municipio); ?>"
                                     class="municipality-link">
-                                    Ver Datos Detallados <i class="fas fa-arrow-right"></i>
+                                    Acceder <i class="fas fa-arrow-right"></i>
                                 </a>
                             </div>
                             <?php
@@ -442,7 +442,7 @@ function obtenerDatosMunicipio($municipio)
                                     </div>
                                     <a href="resumen.php?municipio=<?php echo urlencode($municipio); ?>"
                                         class="municipality-link">
-                                        Ver Datos Detallados <i class="fas fa-arrow-right"></i>
+                                        Acceder <i class="fas fa-arrow-right"></i>
                                     </a>
                                 </div>
                                 <?php

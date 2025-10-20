@@ -297,6 +297,7 @@ function updateStats() {
  */
 function exportarDirectorio(format, type) {
     const tipoEscuelas = type === 'publicas' ? 'Públicas' : 'Privadas';
+    const municipio = typeof municipioActual !== 'undefined' ? municipioActual : 'Corregidora';
 
     // Obtener el filtro de nivel activo
     const nivelFilter = document.getElementById('nivel-filter-' + type);
@@ -306,9 +307,9 @@ function exportarDirectorio(format, type) {
         : 'Todos los niveles';
 
     if (format === 'excel') {
-        exportToExcel(type, tipoEscuelas, nivelSeleccionado, nivelTexto);
+        exportToExcel(type, tipoEscuelas, nivelSeleccionado, nivelTexto, municipio);
     } else if (format === 'pdf') {
-        exportToPDF(type, tipoEscuelas, nivelSeleccionado, nivelTexto);
+        exportToPDF(type, tipoEscuelas, nivelSeleccionado, nivelTexto, municipio);
     }
 }
 
@@ -318,8 +319,9 @@ function exportarDirectorio(format, type) {
  * @param {string} tipoEscuelas - Nombre del tipo para el archivo
  * @param {string} nivelSeleccionado - Nivel educativo seleccionado
  * @param {string} nivelTexto - Texto descriptivo del nivel
+ * @param {string} municipio - Nombre del municipio
  */
-function exportToExcel(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
+function exportToExcel(type, tipoEscuelas, nivelSeleccionado, nivelTexto, municipio) {
     const table = document.getElementById('tabla-' + type);
     if (!table) return;
 
@@ -338,7 +340,7 @@ function exportToExcel(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
     // Agregar información de filtros al inicio
     const dataWithHeader = [];
     dataWithHeader.push(['Directorio de Escuelas ' + tipoEscuelas]);
-    dataWithHeader.push(['Municipio de Corregidora, Querétaro']);
+    dataWithHeader.push(['Municipio de ' + municipio + ', Querétaro']);
     dataWithHeader.push(['Ciclo Escolar 2024-2025']);
     dataWithHeader.push(['Nivel: ' + nivelTexto]);
     dataWithHeader.push(['Total de escuelas: ' + (data.length - 1)]);
@@ -380,7 +382,7 @@ function exportToExcel(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
 
     // Generar nombre de archivo con información del filtro
     const nivelSuffix = nivelSeleccionado !== 'todos' ? '_' + nivelSeleccionado : '';
-    const fileName = `Directorio_Escuelas_${tipoEscuelas}${nivelSuffix}_Corregidora.xlsx`;
+    const fileName = `Directorio_Escuelas_${tipoEscuelas}${nivelSuffix}_${municipio}.xlsx`;
 
     // Descargar archivo
     XLSX.writeFile(wb, fileName);
@@ -395,8 +397,9 @@ function exportToExcel(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
  * @param {string} tipoEscuelas - Nombre del tipo para el archivo
  * @param {string} nivelSeleccionado - Nivel educativo seleccionado
  * @param {string} nivelTexto - Texto descriptivo del nivel
+ * @param {string} municipio - Nombre del municipio
  */
-function exportToPDF(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
+function exportToPDF(type, tipoEscuelas, nivelSeleccionado, nivelTexto, municipio) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('l', 'mm', 'a4'); // Orientación horizontal para más espacio
 
@@ -422,7 +425,7 @@ function exportToPDF(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
 
     doc.setFontSize(10);
     doc.setFont(undefined, 'normal');
-    doc.text('Municipio de Corregidora, Querétaro', 15, 22);
+    doc.text('Municipio de ' + municipio + ', Querétaro', 15, 22);
     doc.text(`Ciclo Escolar 2024-2025`, 15, 28);
 
     doc.setFont(undefined, 'bold');
@@ -480,7 +483,7 @@ function exportToPDF(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
 
     // Generar nombre de archivo con información del filtro
     const nivelSuffix = nivelSeleccionado !== 'todos' ? '_' + nivelSeleccionado : '';
-    const fileName = `Directorio_Escuelas_${tipoEscuelas}${nivelSuffix}_Corregidora.pdf`;
+    const fileName = `Directorio_Escuelas_${tipoEscuelas}${nivelSuffix}_${municipio}.pdf`;
 
     // Descargar archivo
     doc.save(fileName);

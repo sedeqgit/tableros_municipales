@@ -1014,6 +1014,9 @@ $datosEducativos = $datosCompletosMunicipio;
         // Datos de sostenimiento por nivel educativo (público/privado)
         echo "const escuelasNivelSostenimiento = " . json_encode($escuelasNivelSostenimiento) . ";\n";
 
+        // Nombre del municipio para exportación
+        echo "const municipioActual = " . json_encode($municipioSeleccionado) . ";\n";
+
         // Log de verificación
         echo "console.log('✓ Variables PHP cargadas correctamente');\n";
         echo "console.log('Total escuelas desde PHP:', " . $totalEscuelas . ");\n";

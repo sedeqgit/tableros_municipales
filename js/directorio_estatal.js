@@ -52,21 +52,35 @@ function updateSchoolCount(type) {
 }
 
 /**
- * Inicializa los filtros por nivel educativo
+ * Inicializa los filtros por nivel educativo y municipio
  */
 function initFilters() {
     const publicasFilter = document.getElementById('nivel-filter-publicas');
     const privadasFilter = document.getElementById('nivel-filter-privadas');
+    const publicasMunicipioFilter = document.getElementById('municipio-filter-publicas');
+    const privadasMunicipioFilter = document.getElementById('municipio-filter-privadas');
 
     if (publicasFilter) {
         publicasFilter.addEventListener('change', function() {
-            filterByLevel('publicas', this.value);
+            applyAllFilters('publicas');
         });
     }
 
     if (privadasFilter) {
         privadasFilter.addEventListener('change', function() {
-            filterByLevel('privadas', this.value);
+            applyAllFilters('privadas');
+        });
+    }
+
+    if (publicasMunicipioFilter) {
+        publicasMunicipioFilter.addEventListener('change', function() {
+            applyAllFilters('publicas');
+        });
+    }
+
+    if (privadasMunicipioFilter) {
+        privadasMunicipioFilter.addEventListener('change', function() {
+            applyAllFilters('privadas');
         });
     }
 }
@@ -92,33 +106,41 @@ function initSearch() {
 }
 
 /**
- * Filtra las escuelas por nivel educativo
+ * Aplica todos los filtros (nivel, municipio y búsqueda)
  * @param {string} type - Tipo de escuelas ('publicas' o 'privadas')
- * @param {string} level - Nivel educativo a filtrar ('todos' o código de nivel)
  */
-function filterByLevel(type, level) {
+function applyAllFilters(type) {
     const table = document.getElementById('tabla-' + type);
     if (!table) return;
 
     const tbody = table.getElementsByTagName('tbody')[0];
     const rows = Array.from(tbody.getElementsByTagName('tr'));
 
-    // Obtener el término de búsqueda actual
+    // Obtener los filtros actuales
+    const levelFilter = document.getElementById('nivel-filter-' + type);
+    const municipioFilter = document.getElementById('municipio-filter-' + type);
     const searchInput = document.getElementById('search-' + type);
+
+    const selectedLevel = levelFilter ? levelFilter.value : 'todos';
+    const selectedMunicipio = municipioFilter ? municipioFilter.value : 'todos';
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
     let visibleCount = 0;
 
     // Si se selecciona "Todos los niveles", ordenar por nivel y luego por alumnos descendente
-    if (!level || level === 'todos') {
+    if (!selectedLevel || selectedLevel === 'todos') {
         sortTableByLevelAndStudents(rows, tbody);
     }
 
     rows.forEach(row => {
         const rowLevel = row.getAttribute('data-nivel');
+        const rowMunicipio = row.getAttribute('data-municipio');
 
         // Verificar si cumple con el filtro de nivel
-        const matchesLevel = !level || level === 'todos' || rowLevel === level;
+        const matchesLevel = !selectedLevel || selectedLevel === 'todos' || rowLevel === selectedLevel;
+
+        // Verificar si cumple con el filtro de municipio
+        const matchesMunicipio = !selectedMunicipio || selectedMunicipio === 'todos' || rowMunicipio === selectedMunicipio;
 
         // Verificar si cumple con el filtro de búsqueda
         let matchesSearch = true;
@@ -133,8 +155,8 @@ function filterByLevel(type, level) {
             });
         }
 
-        // Mostrar solo si cumple AMBOS filtros
-        const shouldShow = matchesLevel && matchesSearch;
+        // Mostrar solo si cumple TODOS los filtros
+        const shouldShow = matchesLevel && matchesMunicipio && matchesSearch;
 
         if (shouldShow) {
             row.style.display = '';
@@ -158,61 +180,22 @@ function filterByLevel(type, level) {
 }
 
 /**
+ * Filtra las escuelas por nivel educativo (función legacy - ahora usa applyAllFilters)
+ * @param {string} type - Tipo de escuelas ('publicas' o 'privadas')
+ * @param {string} level - Nivel educativo a filtrar ('todos' o código de nivel)
+ */
+function filterByLevel(type, level) {
+    applyAllFilters(type);
+}
+
+/**
  * Busca escuelas por texto (incluye municipio)
  * @param {string} type - Tipo de escuelas ('publicas' o 'privadas')
  * @param {string} searchTerm - Término de búsqueda
  */
 function searchSchools(type, searchTerm) {
-    const table = document.getElementById('tabla-' + type);
-    if (!table) return;
-
-    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-    const term = searchTerm.toLowerCase().trim();
-
-    // Obtener el filtro de nivel actual
-    const levelFilter = document.getElementById('nivel-filter-' + type);
-    const selectedLevel = levelFilter ? levelFilter.value : 'todos';
-
-    let visibleCount = 0;
-
-    Array.from(rows).forEach(row => {
-        const cells = row.getElementsByTagName('td');
-        const rowLevel = row.getAttribute('data-nivel');
-
-        // Verificar si cumple con el filtro de nivel
-        const matchesLevel = !selectedLevel || selectedLevel === 'todos' || rowLevel === selectedLevel;
-
-        // Verificar si cumple con el filtro de búsqueda
-        let matchesSearch = true;
-        if (term) {
-            matchesSearch = false;
-            Array.from(cells).forEach(cell => {
-                const originalText = cell.dataset.originalText || cell.textContent;
-                if (originalText.toLowerCase().includes(term)) {
-                    matchesSearch = true;
-                }
-            });
-        }
-
-        // Mostrar solo si cumple AMBOS filtros
-        const shouldShow = matchesLevel && matchesSearch;
-
-        if (shouldShow) {
-            row.style.display = '';
-            visibleCount++;
-        } else {
-            row.style.display = 'none';
-        }
-
-        // Aplicar resaltado después de determinar visibilidad
-        highlightSearchTerm(row, term);
-    });
-
-    // Actualizar contador
-    updateSchoolCount(type);
-
-    // Mostrar mensaje si no hay resultados
-    showNoResultsMessage(type, visibleCount === 0);
+    // Usar la función unificada de filtros
+    applyAllFilters(type);
 }
 
 /**
@@ -305,10 +288,17 @@ function exportarDirectorioEstatal(format, type) {
         ? nivelFilter.options[nivelFilter.selectedIndex].text
         : 'Todos los niveles';
 
+    // Obtener el filtro de municipio activo
+    const municipioFilter = document.getElementById('municipio-filter-' + type);
+    const municipioSeleccionado = municipioFilter ? municipioFilter.value : 'todos';
+    const municipioTexto = municipioFilter && municipioSeleccionado !== 'todos'
+        ? municipioFilter.options[municipioFilter.selectedIndex].text
+        : 'Todos los municipios';
+
     if (format === 'excel') {
-        exportToExcelEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto);
+        exportToExcelEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto, municipioSeleccionado, municipioTexto);
     } else if (format === 'pdf') {
-        exportToPDFEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto);
+        exportToPDFEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto, municipioSeleccionado, municipioTexto);
     }
 }
 
@@ -318,8 +308,10 @@ function exportarDirectorioEstatal(format, type) {
  * @param {string} tipoEscuelas - Nombre del tipo para el archivo
  * @param {string} nivelSeleccionado - Nivel educativo seleccionado
  * @param {string} nivelTexto - Texto descriptivo del nivel
+ * @param {string} municipioSeleccionado - Municipio seleccionado
+ * @param {string} municipioTexto - Texto descriptivo del municipio
  */
-function exportToExcelEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
+function exportToExcelEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto, municipioSeleccionado, municipioTexto) {
     const table = document.getElementById('tabla-' + type);
     if (!table) return;
 
@@ -341,6 +333,7 @@ function exportToExcelEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto)
     dataWithHeader.push(['Estado de Querétaro']);
     dataWithHeader.push(['Ciclo Escolar 2024-2025']);
     dataWithHeader.push(['Nivel: ' + nivelTexto]);
+    dataWithHeader.push(['Municipio: ' + municipioTexto]);
     dataWithHeader.push(['Total de escuelas: ' + (data.length - 1)]);
     dataWithHeader.push(['Fecha de exportación: ' + new Date().toLocaleDateString('es-MX')]);
     dataWithHeader.push([]); // Fila vacía
@@ -364,9 +357,9 @@ function exportToExcelEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto)
     ];
     ws['!cols'] = colWidths;
 
-    // Aplicar estilos al encabezado (primeras 6 filas)
+    // Aplicar estilos al encabezado (primeras 7 filas)
     const headerRange = XLSX.utils.decode_range(ws['!ref']);
-    for (let row = 0; row < 6; row++) {
+    for (let row = 0; row < 7; row++) {
         for (let col = headerRange.s.c; col <= headerRange.e.c; col++) {
             const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
             if (ws[cellAddress]) {
@@ -383,7 +376,8 @@ function exportToExcelEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto)
 
     // Generar nombre de archivo con información del filtro
     const nivelSuffix = nivelSeleccionado !== 'todos' ? '_' + nivelSeleccionado : '';
-    const fileName = `Directorio_Estatal_Escuelas_${tipoEscuelas}${nivelSuffix}_Queretaro.xlsx`;
+    const municipioSuffix = municipioSeleccionado !== 'todos' ? '_' + municipioSeleccionado : '';
+    const fileName = `Directorio_Estatal_Escuelas_${tipoEscuelas}${nivelSuffix}${municipioSuffix}_Queretaro.xlsx`;
 
     // Descargar archivo
     XLSX.writeFile(wb, fileName);
@@ -398,8 +392,10 @@ function exportToExcelEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto)
  * @param {string} tipoEscuelas - Nombre del tipo para el archivo
  * @param {string} nivelSeleccionado - Nivel educativo seleccionado
  * @param {string} nivelTexto - Texto descriptivo del nivel
+ * @param {string} municipioSeleccionado - Municipio seleccionado
+ * @param {string} municipioTexto - Texto descriptivo del municipio
  */
-function exportToPDFEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
+function exportToPDFEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto, municipioSeleccionado, municipioTexto) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('l', 'mm', 'a4'); // Orientación horizontal para más espacio
 
@@ -430,20 +426,21 @@ function exportToPDFEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
 
     doc.setFont(undefined, 'bold');
     doc.text(`Nivel: ${nivelTexto}`, 15, 34);
+    doc.text(`Municipio: ${municipioTexto}`, 15, 40);
 
     doc.setFont(undefined, 'normal');
-    doc.text(`Total de escuelas: ${rows.length}`, 15, 40);
+    doc.text(`Total de escuelas: ${rows.length}`, 15, 46);
     doc.text(`Fecha de exportación: ${new Date().toLocaleDateString('es-MX', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
-    })}`, 15, 46);
+    })}`, 15, 52);
 
-    // Configurar tabla con 6 columnas (incluye municipio)
+    // Configurar tabla con 8 columnas (incluye municipio y género)
     doc.autoTable({
         head: [headers],
         body: rows,
-        startY: 52,
+        startY: 58,
         styles: {
             fontSize: 7,
             cellPadding: 2,
@@ -469,7 +466,7 @@ function exportToPDFEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
             6: { cellWidth: 15, halign: 'right' }, // Hombres
             7: { cellWidth: 15, halign: 'right' }  // Mujeres
         },
-        margin: { top: 52, left: 15, right: 15 },
+        margin: { top: 58, left: 15, right: 15 },
         didDrawPage: function(data) {
             // Pie de página
             const pageCount = doc.internal.getNumberOfPages();
@@ -486,7 +483,8 @@ function exportToPDFEstatal(type, tipoEscuelas, nivelSeleccionado, nivelTexto) {
 
     // Generar nombre de archivo con información del filtro
     const nivelSuffix = nivelSeleccionado !== 'todos' ? '_' + nivelSeleccionado : '';
-    const fileName = `Directorio_Estatal_Escuelas_${tipoEscuelas}${nivelSuffix}_Queretaro.pdf`;
+    const municipioSuffix = municipioSeleccionado !== 'todos' ? '_' + municipioSeleccionado : '';
+    const fileName = `Directorio_Estatal_Escuelas_${tipoEscuelas}${nivelSuffix}${municipioSuffix}_Queretaro.pdf`;
 
     // Descargar archivo
     doc.save(fileName);
