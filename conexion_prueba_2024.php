@@ -891,6 +891,7 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
             return "SELECT cv_cct,
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
+                        turno,
                         (V398+V414) as total_alumnos,
                         (V390+V406) as alumnos_hombres,
                         (V394+V410) as alumnos_mujeres,
@@ -1064,35 +1065,37 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                     WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro";
 
         case 'media_sup_directorio':
-            return "SELECT cct_ins_pla as cv_cct,
-                        MAX(nombre_ins_pla) as nombre_escuela,
-                        MAX(c_nom_loc) as localidad,
-                        SUM(total_alumnos) as total_alumnos,
-                        SUM(alumnos_hombres) as alumnos_hombres,
-                        SUM(alumnos_mujeres) as alumnos_mujeres,
-                        MAX(control) as tipo_control
+            return "SELECT cv_cct,
+                        nombre_escuela,
+                        localidad,
+                        turno,
+                        total_alumnos,
+                        alumnos_hombres,
+                        alumnos_mujeres,
+                        tipo_control
                     FROM (
-                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc, V397 as total_alumnos, V395 as alumnos_hombres, V396 as alumnos_mujeres, control
+                        SELECT cct_ins_pla as cv_cct, nombre_ins_pla as nombre_escuela, c_nom_loc as localidad, c_turno as turno, V397 as total_alumnos, V395 as alumnos_hombres, V396 as alumnos_mujeres, control as tipo_control
                         FROM nonce_pano_$ini_ciclo.ms_gral_$ini_ciclo
                         WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro AND V397 > 0
                         UNION ALL
-                        SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc, V472 as total_alumnos, V470 as alumnos_hombres, V471 as alumnos_mujeres, control
+                        SELECT cct_ins_pla as cv_cct, nombre_ins_pla as nombre_escuela, c_nom_loc as localidad, c_turno as turno, V472 as total_alumnos, V470 as alumnos_hombres, V471 as alumnos_mujeres, control as tipo_control
                         FROM nonce_pano_$ini_ciclo.ms_tecno_$ini_ciclo
                         WHERE cv_motivo = '0' AND (cv_estatus<>'4' AND cv_estatus<>'2') $filtro AND V472 > 0
                     ) AS media_sup_dir
-                    GROUP BY cct_ins_pla
-                    ORDER BY cct_ins_pla";
+                    ORDER BY cv_cct, turno";
 
         case 'especial_tot_directorio':
             return "SELECT cv_cct,
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
+                        turno,
                         V2257 as total_alumnos,
                         V2255 as alumnos_hombres,
                         V2256 as alumnos_mujeres,
                         control as tipo_control
                     FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo
-                    WHERE cv_estatus_captura = 0 $filtro";
+                    WHERE cv_estatus_captura = 0 $filtro
+                    ORDER BY cv_cct, turno";
 
         case 'superior_directorio':
             return "SELECT cct_ins_pla as cv_cct,
@@ -1202,108 +1205,113 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
             return "SELECT cv_cct,
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
+                        turno,
                         total_alumnos,
                         alumnos_hombres,
                         alumnos_mujeres,
                         control as tipo_control
                     FROM (
-                        SELECT cv_cct, nombrect, c_nom_loc, (V398+V414) as total_alumnos, (V390+V406) as alumnos_hombres, (V394+V410) as alumnos_mujeres, control
+                        SELECT cv_cct, nombrect, c_nom_loc, turno, (V398+V414) as total_alumnos, (V390+V406) as alumnos_hombres, (V394+V410) as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
                         WHERE $filtroBase $filtro
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, (V183+V184) as total_alumnos, V183 as alumnos_hombres, V184 as alumnos_mujeres, control
+                        SELECT cv_cct, nombrect, c_nom_loc, turno, (V183+V184) as total_alumnos, V183 as alumnos_hombres, V184 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.ini_ind_$ini_ciclo
                         WHERE $filtroBase $filtro
                     ) AS inicial_esc_dir
-                    ORDER BY cv_cct";
+                    ORDER BY cv_cct, turno";
 
         case 'inicial_no_esc_directorio':
             return "SELECT cv_cct,
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
+                        turno,
                         total_alumnos,
                         alumnos_hombres,
                         alumnos_mujeres,
                         control as tipo_control
                     FROM (
-                        SELECT cv_cct, nombrect, c_nom_loc, V81 as total_alumnos, V79 as alumnos_hombres, V80 as alumnos_mujeres, control
+                        SELECT cv_cct, nombrect, c_nom_loc, turno, V81 as total_alumnos, V79 as alumnos_hombres, V80 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.ini_comuni_$ini_ciclo
                         WHERE $filtroBase $filtro
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, (V129+V130) as total_alumnos, V129 as alumnos_hombres, V130 as alumnos_mujeres, control
+                        SELECT cv_cct, nombrect, c_nom_loc, turno, (V129+V130) as total_alumnos, V129 as alumnos_hombres, V130 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.ini_ne_$ini_ciclo
                         WHERE $filtroBase $filtro
                     ) AS inicial_no_esc_dir
-                    ORDER BY cv_cct";
+                    ORDER BY cv_cct, turno";
 
         case 'preescolar_directorio':
             return "SELECT cv_cct,
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
+                        turno,
                         total_alumnos,
                         alumnos_hombres,
                         alumnos_mujeres,
                         control as tipo_control
                     FROM (
-                        SELECT cv_cct, nombrect, c_nom_loc, V177 as total_alumnos, V165 as alumnos_hombres, V171 as alumnos_mujeres, control
+                        SELECT cv_cct, nombrect, c_nom_loc, turno, V177 as total_alumnos, V165 as alumnos_hombres, V171 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.pree_gral_$ini_ciclo
                         WHERE $filtroBase $filtro AND V177 > 0
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, V177 as total_alumnos, V165 as alumnos_hombres, V171 as alumnos_mujeres, control
+                        SELECT cv_cct, nombrect, c_nom_loc, turno, V177 as total_alumnos, V165 as alumnos_hombres, V171 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.pree_ind_$ini_ciclo
                         WHERE $filtroBase $filtro AND V177 > 0
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, V97 as total_alumnos, V85 as alumnos_hombres, V91 as alumnos_mujeres, control
+                        SELECT cv_cct, nombrect, c_nom_loc, turno, V97 as total_alumnos, V85 as alumnos_hombres, V91 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.pree_comuni_$ini_ciclo
                         WHERE $filtroBase $filtro AND V97 > 0
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, V478 as total_alumnos, V466 as alumnos_hombres, V472 as alumnos_mujeres, control
+                        SELECT cv_cct, nombrect, c_nom_loc, turno, V478 as total_alumnos, V466 as alumnos_hombres, V472 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.ini_gral_$ini_ciclo
                         WHERE $filtroBase $filtro AND V478 > 0
                     ) AS preescolar_dir
-                    ORDER BY cv_cct";
+                    ORDER BY cv_cct, turno";
 
         case 'primaria_directorio':
             return "SELECT cv_cct,
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
+                        turno,
                         total_alumnos,
                         alumnos_hombres,
                         alumnos_mujeres,
                         control as tipo_control
                     FROM (
-                        SELECT cv_cct, nombrect, c_nom_loc, V608 as total_alumnos, (V562+V573) as alumnos_hombres, (V585+V596) as alumnos_mujeres, control
+                        SELECT cv_cct, nombrect, c_nom_loc, turno, V608 as total_alumnos, (V562+V573) as alumnos_hombres, (V585+V596) as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.prim_gral_$ini_ciclo
                         WHERE $filtroBase $filtro
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, V610 as total_alumnos, (V564+V575) as alumnos_hombres, (V587+V598) as alumnos_mujeres, control
+                        SELECT cv_cct, nombrect, c_nom_loc, turno, V610 as total_alumnos, (V564+V575) as alumnos_hombres, (V587+V598) as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.prim_ind_$ini_ciclo
                         WHERE $filtroBase $filtro
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, V515 as total_alumnos, (V469+V480) as alumnos_hombres, (V492+V503) as alumnos_mujeres, control
+                        SELECT cv_cct, nombrect, c_nom_loc, turno, V515 as total_alumnos, (V469+V480) as alumnos_hombres, (V492+V503) as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.prim_comuni_$ini_ciclo
                         WHERE $filtroBase $filtro
                     ) AS primaria_dir
-                    ORDER BY cv_cct";
+                    ORDER BY cv_cct, turno";
 
         case 'secundaria_directorio':
             return "SELECT cv_cct,
                         nombrect as nombre_escuela,
                         c_nom_loc as localidad,
+                        turno,
                         total_alumnos,
                         alumnos_hombres,
                         alumnos_mujeres,
                         control as tipo_control
                     FROM (
-                        SELECT cv_cct, nombrect, c_nom_loc, V340 as total_alumnos, (V306+V314) as alumnos_hombres, (V323+V331) as alumnos_mujeres, control
+                        SELECT cv_cct, nombrect, c_nom_loc, turno, V340 as total_alumnos, (V306+V314) as alumnos_hombres, (V323+V331) as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.sec_gral_$ini_ciclo
                         WHERE $filtroBase $filtro
                         UNION ALL
-                        SELECT cv_cct, nombrect, c_nom_loc, V257 as total_alumnos, (V223+V231) as alumnos_hombres, (V240+V248) as alumnos_mujeres, control
+                        SELECT cv_cct, nombrect, c_nom_loc, turno, V257 as total_alumnos, (V223+V231) as alumnos_hombres, (V240+V248) as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.sec_comuni_$ini_ciclo
                         WHERE $filtroBase $filtro
                     ) AS secundaria_dir
-                    ORDER BY cv_cct";
+                    ORDER BY cv_cct, turno";
 
         default:
             return false;
@@ -3756,6 +3764,7 @@ function obtenerDirectorioEscuelas($municipio, $nivel_educativo, $ini_ciclo = nu
                 'cv_cct' => $row['cv_cct'],
                 'nombre_escuela' => $row['nombre_escuela'],
                 'localidad' => $row['localidad'],
+                'turno' => isset($row['turno']) ? $row['turno'] : null,
                 'total_alumnos' => $alumnos,
                 'alumnos_hombres' => (int) $row['alumnos_hombres'],
                 'alumnos_mujeres' => (int) $row['alumnos_mujeres'],
