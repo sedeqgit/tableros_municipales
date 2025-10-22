@@ -1,0 +1,96 @@
+{
+  "mapas_por_municipio": {
+    "AMEALCO DE BONFIL": {
+      "map_id": "1xzYxJhIMKNXkyNzL3Rr-QevtGmiFlDc",
+      "url": "https://www.google.com/maps/d/u/0/embed?mid=1xzYxJhIMKNXkyNzL3Rr-QevtGmiFlDc&ehbc=2E312F",
+      "descripcion": "Mapa de instituciones educativas del municipio de Amealco de Bonfil"
+    },
+    "ARROYO SECO": {
+      "map_id": "1gBuuaJTl3Vw8DZyHA8sue6A-pqvO_1U",
+      "url": "https://www.google.com/maps/d/u/0/embed?mid=1gBuuaJTl3Vw8DZyHA8sue6A-pqvO_1U&ehbc=2E312F&noprof=1",
+      "descripcion": "Mapa de instituciones educativas del municipio de Arroyo Seco"
+    },
+    "CADEREYTA DE MONTES": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de Cadereyta de Montes"
+    },
+    "COLÓN": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de Colón"
+    },
+    "CORREGIDORA": {
+      "map_id": "19biCSDkFVbUCc2yA2A2XHONFrWrFFuI",
+      "url": "https://www.google.com/maps/d/u/0/embed?mid=19biCSDkFVbUCc2yA2A2XHONFrWrFFuI&ehbc=2E312F&noprof=1",
+      "descripcion": "Mapa de instituciones educativas del municipio de Corregidora"
+    },
+    "EL MARQUÉS": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de El Marqués"
+    },
+    "EZEQUIEL MONTES": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de Ezequiel Montes"
+    },
+    "HUIMILPAN": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de Huimilpan"
+    },
+    "JALPAN DE SERRA": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de Jalpan de Serra"
+    },
+    "LANDA DE MATAMOROS": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de Landa de Matamoros"
+    },
+    "PEDRO ESCOBEDO": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de Pedro Escobedo"
+    },
+    "PEÑAMILLER": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de Peñamiller"
+    },
+    "PINAL DE AMOLES": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de Pinal de Amoles"
+    },
+    "QUERÉTARO": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de Querétaro"
+    },
+    "SAN JOAQUÍN": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de San Joaquín"
+    },
+    "SAN JUAN DEL RÍO": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de San Juan del Río"
+    },
+    "TEQUISQUIAPAN": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de Tequisquiapan"
+    },
+    "TOLIMÁN": {
+      "map_id": "",
+      "url": "",
+      "descripcion": "Mapa de instituciones educativas del municipio de Tolimán"
+    }
+  },
+  "ultima_actualizacion": "2025-01-22",
+  "version": "1.0"
+}

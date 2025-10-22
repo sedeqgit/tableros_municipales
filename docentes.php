@@ -252,6 +252,9 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                     </a>
                 </div>
             </div>
+            <a href="mapas.php<?php echo $paramMunicipio; ?>" class="sidebar-link"><i
+                    class="fas fa-map-marked-alt"></i>
+                <span>Mapas</span></a>
         </div>
     </div>
     </div>

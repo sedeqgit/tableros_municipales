@@ -279,6 +279,9 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
             <a href="docentes.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>" class="sidebar-link"><i
                     class="fas fa-chalkboard-teacher"></i>
                 <span>Docentes</span></a>
+            <a href="mapas.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>" class="sidebar-link"><i
+                    class="fas fa-map-marked-alt"></i>
+                <span>Mapas</span></a>
         </div>
         <div class="sidebar-footer">
             <a href="logout.php" class="logout-btn">
