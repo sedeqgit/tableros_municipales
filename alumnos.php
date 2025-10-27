@@ -5,7 +5,7 @@
  * =============================================================================
  * 
  * Esta página presenta las estadísticas consolidadas de matrícula estudiantil
- * por nivel educativo en el municipio de Corregidora, Querétaro.
+ * por nivel educativo en Querétaro.
  * 
  * FUNCIONALIDADES PRINCIPALES:
  * - Visualización de matrícula por nivel educativo

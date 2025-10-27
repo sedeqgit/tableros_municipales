@@ -4,8 +4,8 @@
  * PÁGINA DE DETALLE DE DOCENTES - SISTEMA SEDEQ
  * =============================================================================
  * 
- * Esta página presenta un análisis detallado del personal docente en el
- * municipio de Corregidora, Querétaro, incluyendo distribución por niveles
+ * Esta página presenta un análisis detallado del personal docente en
+ * Querétaro, incluyendo distribución por niveles
  * educativos, modalidades y análisis comparativo.
  * 
  * 
@@ -201,7 +201,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle de Docentes Corregidora | SEDEQ</title>
+    <title>Detalle de Docentes | SEDEQ</title>
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/resumen.css">
     <link rel="stylesheet" href="./css/escuelas_detalle.css">
@@ -252,8 +252,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                     </a>
                 </div>
             </div>
-            <a href="mapas.php<?php echo $paramMunicipio; ?>" class="sidebar-link"><i
-                    class="fas fa-map-marked-alt"></i>
+            <a href="mapas.php<?php echo $paramMunicipio; ?>" class="sidebar-link"><i class="fas fa-map-marked-alt"></i>
                 <span>Mapas</span></a>
         </div>
     </div>

@@ -2,7 +2,7 @@
 /**
  * =============================================================================
  * PÁGINA PRINCIPAL DEL SISTEMA - CENTRO DE DASHBOARDS
- * Sistema de Dashboard Estadístico - SEDEQ Corregidora
+ * Sistema de Dashboard Estadístico - SEDEQ 
  * =============================================================================
  * 
  * Esta página funciona como el centro de navegación principal del sistema,
@@ -209,6 +209,13 @@ function obtenerDatosMunicipio($municipio)
                     <li class="nav-item">
                         <a href="https://www.google.com/maps/d/edit?mid=1LLMZpgMl4X4QSjzNlHQsHgZoNLj1kv4&usp=sharing"
                             target="_blank"><i class="fas fa-map-marked-alt"></i> <span>Mapa Educativo</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="bibliotecas.php"><i class="fas fa-book"></i> <span>Bibliotecas</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="directorio_estatal.php"><i class="fas fa-search"></i> <span>Búsqueda de
+                                Escuelas</span></a>
                     </li>
                     <li class="nav-item">
                         <a href="historicos.php"><i class="fas fa-history"></i> <span>Históricos</span></a>
@@ -473,27 +480,7 @@ function obtenerDatosMunicipio($municipio)
                         <span class="selected-count" id="selectedCount">0</span>
                     </a>
                 </section> <!-- Sección de municipios -->
-                <section class="quick-access-section animate-up delay-3">
-                    <h2 class="section-title"><i class="fas fa-bolt"></i> Acceso Rápido</h2>
-                    <div class="quick-access-grid animate-sequence">
-                        <a href="directorio_estatal.php" class="quick-access-card">
-                            <i class="fas fa-search"></i>
-                            <h3>Búsqueda por Escuela</h3>
-                        </a>
-                        <a href="#" class="quick-access-card">
-                            <i class="fas fa-chart-line"></i>
-                            <h3>Tendencias Anuales</h3>
-                        </a>
-                        <a href="#" class="quick-access-card">
-                            <i class="fas fa-download"></i>
-                            <h3>Descarga de Reportes</h3>
-                        </a>
-                        <a href="#" class="quick-access-card">
-                            <i class="fas fa-table"></i>
-                            <h3>Tablas Comparativas</h3>
-                        </a>
-                    </div>
-                </section>
+
             </div>
 
             <!-- Pie de página -->

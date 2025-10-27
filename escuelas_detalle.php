@@ -309,7 +309,7 @@ $datosEducativos = $datosCompletosMunicipio;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle de Escuelas Corregidora | SEDEQ</title>
+    <title>Detalle de Escuelas | SEDEQ</title>
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/resumen.css">
     <link rel="stylesheet" href="./css/escuelas_detalle.css">
@@ -814,7 +814,7 @@ $datosEducativos = $datosCompletosMunicipio;
             </div>
         </div>
         -->
-
+        <h1>En periodo de pruebas, fallas identificadas</h1>
         <!-- Panel de Directorio de Escuelas Públicas -->
         <div id="directorio-publicas" class="matricula-panel animate-fade delay-4">
             <div class="matricula-header">
@@ -842,10 +842,12 @@ $datosEducativos = $datosCompletosMunicipio;
                         ?>
                     </select>
                     <div class="export-buttons">
-                        <button class="export-btn export-excel" onclick="exportarDirectorio('excel', 'publicas')" title="Exportar a Excel">
+                        <button class="export-btn export-excel" onclick="exportarDirectorio('excel', 'publicas')"
+                            title="Exportar a Excel">
                             <i class="fas fa-file-excel"></i> Excel
                         </button>
-                        <button class="export-btn export-pdf" onclick="exportarDirectorio('pdf', 'publicas')" title="Exportar a PDF">
+                        <button class="export-btn export-pdf" onclick="exportarDirectorio('pdf', 'publicas')"
+                            title="Exportar a PDF">
                             <i class="fas fa-file-pdf"></i> PDF
                         </button>
                     </div>
@@ -928,10 +930,12 @@ $datosEducativos = $datosCompletosMunicipio;
                         ?>
                     </select>
                     <div class="export-buttons">
-                        <button class="export-btn export-excel" onclick="exportarDirectorio('excel', 'privadas')" title="Exportar a Excel">
+                        <button class="export-btn export-excel" onclick="exportarDirectorio('excel', 'privadas')"
+                            title="Exportar a Excel">
                             <i class="fas fa-file-excel"></i> Excel
                         </button>
-                        <button class="export-btn export-pdf" onclick="exportarDirectorio('pdf', 'privadas')" title="Exportar a PDF">
+                        <button class="export-btn export-pdf" onclick="exportarDirectorio('pdf', 'privadas')"
+                            title="Exportar a PDF">
                             <i class="fas fa-file-pdf"></i> PDF
                         </button>
                     </div>

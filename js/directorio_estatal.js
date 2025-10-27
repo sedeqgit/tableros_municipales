@@ -13,9 +13,13 @@
  * - Búsqueda de texto en tiempo real (incluye municipio)
  * - Exportación a Excel y PDF con columna de municipio
  * - Responsive design y animaciones
+ * - Búsqueda optimizada con debouncing
  *
- * @version 1.0
+ * @version 1.1 - Optimizado con debouncing
  */
+
+// Variable global para almacenar timers de debouncing
+let searchTimers = {};
 
 document.addEventListener('DOMContentLoaded', function() {
     initDirectorioEstatal();
@@ -31,8 +35,34 @@ function initDirectorioEstatal() {
     // Inicializar búsquedas
     initSearch();
 
+    // Inicializar búsqueda maestra
+    initMasterSearch();
+
     // Mostrar estadísticas iniciales
     updateStats();
+}
+
+/**
+ * Función de debouncing para optimizar búsquedas
+ * Retrasa la ejecución hasta que el usuario deje de escribir
+ * @param {Function} func - Función a ejecutar
+ * @param {number} delay - Tiempo de espera en ms (default: 300ms)
+ * @param {string} timerId - ID único para el timer
+ * @returns {Function}
+ */
+function debounce(func, delay = 300, timerId = 'default') {
+    return function(...args) {
+        // Limpiar timer anterior
+        if (searchTimers[timerId]) {
+            clearTimeout(searchTimers[timerId]);
+        }
+
+        // Crear nuevo timer
+        searchTimers[timerId] = setTimeout(() => {
+            func.apply(this, args);
+            delete searchTimers[timerId];
+        }, delay);
+    };
 }
 
 /**
@@ -86,23 +116,235 @@ function initFilters() {
 }
 
 /**
- * Inicializa la funcionalidad de búsqueda
+ * Inicializa la funcionalidad de búsqueda con debouncing
  */
 function initSearch() {
     const publicasSearch = document.getElementById('search-publicas');
     const privadasSearch = document.getElementById('search-privadas');
 
+    // Crear funciones con debouncing para búsquedas locales
+    const debouncedPublicasSearch = debounce((value) => {
+        searchSchools('publicas', value);
+    }, 300, 'publicas');
+
+    const debouncedPrivadasSearch = debounce((value) => {
+        searchSchools('privadas', value);
+    }, 300, 'privadas');
+
     if (publicasSearch) {
         publicasSearch.addEventListener('input', function() {
-            searchSchools('publicas', this.value);
+            showSearchLoading('publicas', true);
+            debouncedPublicasSearch(this.value);
         });
     }
 
     if (privadasSearch) {
         privadasSearch.addEventListener('input', function() {
-            searchSchools('privadas', this.value);
+            showSearchLoading('privadas', true);
+            debouncedPrivadasSearch(this.value);
         });
     }
+}
+
+/**
+ * Inicializa la funcionalidad de búsqueda maestra con debouncing optimizado
+ * Busca simultáneamente en ambas tablas (públicas y privadas)
+ */
+function initMasterSearch() {
+    const masterSearch = document.getElementById('master-search');
+    const clearButton = document.getElementById('clear-master-search');
+    const searchSummary = document.getElementById('search-results-summary');
+
+    if (!masterSearch) return;
+
+    // Crear función con debouncing para búsqueda maestra
+    const debouncedMasterSearch = debounce((searchTerm) => {
+        if (searchTerm) {
+            performMasterSearch(searchTerm);
+
+            // Desactivar búsquedas locales
+            const publicasSearch = document.getElementById('search-publicas');
+            const privadasSearch = document.getElementById('search-privadas');
+            if (publicasSearch) publicasSearch.value = '';
+            if (privadasSearch) privadasSearch.value = '';
+        } else {
+            resetAllFilters();
+            if (searchSummary) searchSummary.style.display = 'none';
+            showSearchLoading('master', false);
+        }
+    }, 300, 'master');
+
+    // Evento de búsqueda con debouncing
+    masterSearch.addEventListener('input', function() {
+        const searchTerm = this.value.trim();
+
+        // Mostrar/ocultar botón de limpiar
+        if (clearButton) {
+            clearButton.style.display = searchTerm ? 'flex' : 'none';
+        }
+
+        // Mostrar indicador de carga
+        if (searchTerm) {
+            showSearchLoading('master', true);
+        }
+
+        // Ejecutar búsqueda con debouncing
+        debouncedMasterSearch(searchTerm);
+    });
+
+    // Botón de limpiar búsqueda
+    if (clearButton) {
+        clearButton.addEventListener('click', function() {
+            masterSearch.value = '';
+            this.style.display = 'none';
+            resetAllFilters();
+            if (searchSummary) searchSummary.style.display = 'none';
+            showSearchLoading('master', false);
+            masterSearch.focus();
+        });
+    }
+
+    // Limpiar con tecla Escape
+    masterSearch.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            this.value = '';
+            if (clearButton) clearButton.style.display = 'none';
+            resetAllFilters();
+            if (searchSummary) searchSummary.style.display = 'none';
+            showSearchLoading('master', false);
+        }
+    });
+}
+
+/**
+ * Realiza búsqueda maestra en ambas tablas simultáneamente (OPTIMIZADA)
+ * @param {string} searchTerm - Término de búsqueda
+ */
+function performMasterSearch(searchTerm) {
+    const term = searchTerm.toLowerCase();
+    let publicasCount = 0;
+    let privadasCount = 0;
+
+    // Función optimizada para buscar en una tabla
+    const searchInTable = (tableId, isPublica) => {
+        const table = document.getElementById(tableId);
+        if (!table) return 0;
+
+        const tbody = table.getElementsByTagName('tbody')[0];
+        const rows = tbody.getElementsByTagName('tr');
+        let count = 0;
+
+        // Primero contar y filtrar de forma síncrona
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+
+            // Buscar en data-attributes (más rápido que textContent)
+            const nombre = row.dataset.nombre || '';
+            const cct = (row.dataset.cct || '').toLowerCase();
+            const municipio = row.dataset.municipio || '';
+            const turno = row.dataset.turno || '';
+
+            // Buscar en celdas específicas solo si es necesario
+            const cells = row.cells;
+            const nivelTexto = cells[0]?.textContent.toLowerCase() || '';
+            const localidad = cells[5]?.textContent.toLowerCase() || '';
+
+            // Verificar coincidencias (usar includes es más rápido que múltiples condiciones)
+            const searchableText = `${nombre} ${cct} ${municipio} ${turno} ${nivelTexto} ${localidad}`;
+            const matchFound = searchableText.includes(term);
+
+            // Actualizar visibilidad
+            if (matchFound) {
+                row.style.display = '';
+                count++;
+                // Solo resaltar si hay pocos resultados (performance)
+                if (count <= 50) {
+                    highlightSearchTermOptimized(row, term);
+                }
+            } else {
+                row.style.display = 'none';
+            }
+        }
+
+        // Actualizar UI después de procesar
+        const type = isPublica ? 'publicas' : 'privadas';
+        updateSchoolCount(type);
+        showNoResultsMessage(type, count === 0);
+        showSearchLoading(type, false);
+
+        return count;
+    };
+
+    // Buscar en ambas tablas
+    publicasCount = searchInTable('tabla-publicas', true);
+    privadasCount = searchInTable('tabla-privadas', false);
+
+    // Actualizar resumen (después de un pequeño delay para permitir el render)
+    setTimeout(() => {
+        updateMasterSearchResults(publicasCount, privadasCount);
+        showSearchLoading('master', false);
+
+        // Scroll automático solo si hay pocos resultados
+        const total = publicasCount + privadasCount;
+        if (total > 0 && total <= 100) {
+            const targetPanel = publicasCount > 0 ?
+                document.getElementById('directorio-publicas') :
+                document.getElementById('directorio-privadas');
+
+            if (targetPanel) {
+                targetPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    }, 100);
+}
+
+/**
+ * Actualiza el resumen de resultados de la búsqueda maestra
+ * @param {number} publicasCount - Cantidad de escuelas públicas encontradas
+ * @param {number} privadasCount - Cantidad de escuelas privadas encontradas
+ */
+function updateMasterSearchResults(publicasCount, privadasCount) {
+    const searchSummary = document.getElementById('search-results-summary');
+    const totalResults = document.getElementById('total-results');
+    const publicasResults = document.getElementById('publicas-results');
+    const privadasResults = document.getElementById('privadas-results');
+
+    if (!searchSummary) return;
+
+    const total = publicasCount + privadasCount;
+
+    if (total > 0) {
+        searchSummary.style.display = 'block';
+        if (totalResults) totalResults.textContent = total.toLocaleString('es-MX');
+        if (publicasResults) publicasResults.textContent = publicasCount.toLocaleString('es-MX');
+        if (privadasResults) privadasResults.textContent = privadasCount.toLocaleString('es-MX');
+    } else {
+        searchSummary.style.display = 'block';
+        if (totalResults) totalResults.textContent = '0';
+        if (publicasResults) publicasResults.textContent = '0';
+        if (privadasResults) privadasResults.textContent = '0';
+    }
+}
+
+/**
+ * Resetea todos los filtros y búsquedas a su estado inicial
+ */
+function resetAllFilters() {
+    // Resetear filtros de nivel
+    const nivelPublicas = document.getElementById('nivel-filter-publicas');
+    const nivelPrivadas = document.getElementById('nivel-filter-privadas');
+    if (nivelPublicas) nivelPublicas.value = 'todos';
+    if (nivelPrivadas) nivelPrivadas.value = 'todos';
+
+    // Resetear filtros de municipio
+    const municipioPublicas = document.getElementById('municipio-filter-publicas');
+    const municipioPrivadas = document.getElementById('municipio-filter-privadas');
+    if (municipioPublicas) municipioPublicas.value = 'todos';
+    if (municipioPrivadas) municipioPrivadas.value = 'todos';
+
+    // Aplicar filtros (mostrar todo)
+    applyAllFilters('publicas');
+    applyAllFilters('privadas');
 }
 
 /**
@@ -196,6 +438,71 @@ function filterByLevel(type, level) {
 function searchSchools(type, searchTerm) {
     // Usar la función unificada de filtros
     applyAllFilters(type);
+
+    // Ocultar indicador de carga
+    showSearchLoading(type, false);
+}
+
+/**
+ * Muestra u oculta indicador de carga durante búsqueda
+ * @param {string} type - Tipo de búsqueda ('publicas', 'privadas' o 'master')
+ * @param {boolean} show - Si mostrar o ocultar
+ */
+function showSearchLoading(type, show) {
+    let targetElement;
+
+    if (type === 'master') {
+        targetElement = document.getElementById('master-search');
+    } else {
+        targetElement = document.getElementById('search-' + type);
+    }
+
+    if (!targetElement) return;
+
+    // Agregar o remover clase de carga
+    if (show) {
+        targetElement.classList.add('searching');
+        targetElement.style.borderColor = '#3b82f6';
+    } else {
+        targetElement.classList.remove('searching');
+        targetElement.style.borderColor = '';
+    }
+}
+
+/**
+ * Versión optimizada de resaltado de términos de búsqueda
+ * Solo resalta en las columnas más importantes
+ * @param {HTMLElement} row - Fila de la tabla
+ * @param {string} term - Término a resaltar
+ */
+function highlightSearchTermOptimized(row, term) {
+    if (!term) return;
+
+    // Solo resaltar en columnas importantes (índices 1, 2, 4, 5)
+    // 1: CCT, 2: Nombre, 4: Municipio, 5: Localidad
+    const indicesToHighlight = [1, 2, 4, 5];
+    const cells = row.cells;
+
+    indicesToHighlight.forEach(index => {
+        const cell = cells[index];
+        if (!cell) return;
+
+        // Guardar texto original si no existe
+        if (!cell.dataset.originalText) {
+            cell.dataset.originalText = cell.textContent;
+        }
+
+        const originalText = cell.dataset.originalText;
+        const lowerText = originalText.toLowerCase();
+
+        // Solo resaltar si hay coincidencia
+        if (lowerText.includes(term)) {
+            const regex = new RegExp(`(${term})`, 'gi');
+            cell.innerHTML = originalText.replace(regex, '<mark>$1</mark>');
+        } else {
+            cell.innerHTML = originalText;
+        }
+    });
 }
 
 /**

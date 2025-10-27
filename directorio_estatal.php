@@ -206,7 +206,8 @@ $infoCiclo = obtenerInfoCicloEscolar();
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>Directorio Estatal de Escuelas - Querétaro</h1>
+                <h1>Directorio Estatal de Escuelas - Querétaro </h1>
+                <h1>En periodo de pruebas, fallas identificadas</h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -228,13 +229,16 @@ $infoCiclo = obtenerInfoCicloEscolar();
                     <div class="stats-row">
                         <div class="stat-box animate-fade delay-1">
                             <div class="stat-value"><?php echo number_format($totalEscuelas); ?></div>
-                            <div class="stat-label">Total Escuelas Ciclo escolar <?php echo $infoCiclo['ciclo_completo'] ?? '2024-2025'; ?></div>
+                            <div class="stat-label">Total Escuelas Ciclo escolar
+                                <?php echo $infoCiclo['ciclo_completo'] ?? '2024-2025'; ?>
+                            </div>
                         </div>
                         <div class="stat-box animate-fade delay-2">
                             <div class="stat-value">
                                 <span class="public-schools"><?php echo number_format($totalEscuelasPublicas); ?></span>
                                 <span class="separator"> / </span>
-                                <span class="private-schools"><?php echo number_format($totalEscuelasPrivadas); ?></span>
+                                <span
+                                    class="private-schools"><?php echo number_format($totalEscuelasPrivadas); ?></span>
                             </div>
                             <div class="stat-label">Escuelas Públicas / Privadas</div>
                         </div>
@@ -256,6 +260,47 @@ $infoCiclo = obtenerInfoCicloEscolar();
                                     <span class="progress-label"><?php echo $porcentajePrivadas; ?>% Privadas</span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Búsqueda Maestra -->
+            <div id="busqueda-maestra" class="panel animate-fade delay-3">
+                <div class="panel-header">
+                    <h3 class="panel-title">
+                        <i class="fas fa-search"></i> Búsqueda General de Escuelas
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="master-search-container">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search search-icon"></i>
+                            <input type="text" id="master-search"
+                                placeholder="Busca por CCT, nombre de escuela, municipio o localidad..."
+                                class="master-search-input">
+                            <button id="clear-master-search" class="clear-search-btn" style="display: none;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div id="search-results-summary" class="search-summary" style="display: none;">
+                            <div class="summary-content">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="summary-text">
+                                    Encontradas: <strong id="total-results">0</strong> escuelas
+                                    (<span class="public-count"><strong id="publicas-results">0</strong>
+                                        públicas</span>,
+                                    <span class="private-count"><strong id="privadas-results">0</strong>
+                                        privadas</span>)
+                                </span>
+                            </div>
+                        </div>
+                        <div class="search-hints">
+                            <small>
+                                <i class="fas fa-lightbulb"></i>
+                                Tip: Escribe cualquier información que tengas. La búsqueda es inteligente y encontrará
+                                escuelas en ambas categorías.
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -300,10 +345,12 @@ $infoCiclo = obtenerInfoCicloEscolar();
                             <?php endforeach; ?>
                         </select>
                         <div class="export-buttons">
-                            <button class="export-btn export-excel" onclick="exportarDirectorioEstatal('excel', 'publicas')" title="Exportar a Excel">
+                            <button class="export-btn export-excel"
+                                onclick="exportarDirectorioEstatal('excel', 'publicas')" title="Exportar a Excel">
                                 <i class="fas fa-file-excel"></i> Excel
                             </button>
-                            <button class="export-btn export-pdf" onclick="exportarDirectorioEstatal('pdf', 'publicas')" title="Exportar a PDF">
+                            <button class="export-btn export-pdf" onclick="exportarDirectorioEstatal('pdf', 'publicas')"
+                                title="Exportar a PDF">
                                 <i class="fas fa-file-pdf"></i> PDF
                             </button>
                         </div>
@@ -351,12 +398,19 @@ $infoCiclo = obtenerInfoCicloEscolar();
                                             <td class="nivel-nombre"><?php echo $nombreNivel; ?></td>
                                             <td class="cct-codigo"><?php echo $escuela['cv_cct']; ?></td>
                                             <td class="escuela-nombre"><?php echo $escuela['nombre_escuela']; ?></td>
-                                            <td class="turno-escuela"><?php echo isset($escuela['turno']) ? $escuela['turno'] : 'N/A'; ?></td>
+                                            <td class="turno-escuela">
+                                                <?php echo isset($escuela['turno']) ? $escuela['turno'] : 'N/A'; ?>
+                                            </td>
                                             <td class="municipio-nombre"><?php echo $municipioFormateado; ?></td>
                                             <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
-                                            <td class="sector-publico"><?php echo number_format($escuela['total_alumnos']); ?></td>
-                                            <td class="alumnos-hombres"><?php echo number_format($escuela['alumnos_hombres']); ?></td>
-                                            <td class="alumnos-mujeres"><?php echo number_format($escuela['alumnos_mujeres']); ?></td>
+                                            <td class="sector-publico"><?php echo number_format($escuela['total_alumnos']); ?>
+                                            </td>
+                                            <td class="alumnos-hombres">
+                                                <?php echo number_format($escuela['alumnos_hombres']); ?>
+                                            </td>
+                                            <td class="alumnos-mujeres">
+                                                <?php echo number_format($escuela['alumnos_mujeres']); ?>
+                                            </td>
                                         </tr>
                                         <?php
                                     endforeach;
@@ -407,10 +461,12 @@ $infoCiclo = obtenerInfoCicloEscolar();
                             <?php endforeach; ?>
                         </select>
                         <div class="export-buttons">
-                            <button class="export-btn export-excel" onclick="exportarDirectorioEstatal('excel', 'privadas')" title="Exportar a Excel">
+                            <button class="export-btn export-excel"
+                                onclick="exportarDirectorioEstatal('excel', 'privadas')" title="Exportar a Excel">
                                 <i class="fas fa-file-excel"></i> Excel
                             </button>
-                            <button class="export-btn export-pdf" onclick="exportarDirectorioEstatal('pdf', 'privadas')" title="Exportar a PDF">
+                            <button class="export-btn export-pdf" onclick="exportarDirectorioEstatal('pdf', 'privadas')"
+                                title="Exportar a PDF">
                                 <i class="fas fa-file-pdf"></i> PDF
                             </button>
                         </div>
@@ -458,12 +514,19 @@ $infoCiclo = obtenerInfoCicloEscolar();
                                             <td class="nivel-nombre"><?php echo $nombreNivel; ?></td>
                                             <td class="cct-codigo"><?php echo $escuela['cv_cct']; ?></td>
                                             <td class="escuela-nombre"><?php echo $escuela['nombre_escuela']; ?></td>
-                                            <td class="turno-escuela"><?php echo isset($escuela['turno']) ? $escuela['turno'] : 'N/A'; ?></td>
+                                            <td class="turno-escuela">
+                                                <?php echo isset($escuela['turno']) ? $escuela['turno'] : 'N/A'; ?>
+                                            </td>
                                             <td class="municipio-nombre"><?php echo $municipioFormateado; ?></td>
                                             <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
-                                            <td class="sector-privado"><?php echo number_format($escuela['total_alumnos']); ?></td>
-                                            <td class="alumnos-hombres"><?php echo number_format($escuela['alumnos_hombres']); ?></td>
-                                            <td class="alumnos-mujeres"><?php echo number_format($escuela['alumnos_mujeres']); ?></td>
+                                            <td class="sector-privado"><?php echo number_format($escuela['total_alumnos']); ?>
+                                            </td>
+                                            <td class="alumnos-hombres">
+                                                <?php echo number_format($escuela['alumnos_hombres']); ?>
+                                            </td>
+                                            <td class="alumnos-mujeres">
+                                                <?php echo number_format($escuela['alumnos_mujeres']); ?>
+                                            </td>
                                         </tr>
                                         <?php
                                     endforeach;

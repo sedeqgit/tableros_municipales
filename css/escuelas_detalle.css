@@ -1619,3 +1619,293 @@
         font-size: 0.9rem;
     }
 }
+
+/* =============================================================================
+   ESTILOS PARA BÚSQUEDA MAESTRA (SEARCH MASTER)
+   ============================================================================= */
+
+/* Contenedor principal de búsqueda maestra */
+.master-search-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px 0;
+}
+
+/* Wrapper del input de búsqueda con iconos */
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.search-input-wrapper .search-icon {
+    position: absolute;
+    left: 15px;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Input principal de búsqueda maestra */
+.master-search-input {
+    width: 100%;
+    padding: 15px 50px 15px 45px;
+    border: 2px solid var(--medium-gray);
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    font-family: var(--font-primary);
+    transition: all 0.3s ease;
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+}
+
+.master-search-input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Indicador de carga durante búsqueda */
+.master-search-input.searching,
+.search-input.searching {
+    border-color: var(--primary-blue);
+    animation: searchPulse 1.5s ease-in-out infinite;
+    background: linear-gradient(90deg, var(--white) 0%, rgba(59, 130, 246, 0.05) 50%, var(--white) 100%);
+    background-size: 200% 100%;
+    animation: searchGradient 1.5s ease-in-out infinite;
+}
+
+@keyframes searchPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+}
+
+@keyframes searchGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.master-search-input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+/* Botón para limpiar búsqueda */
+.clear-search-btn {
+    position: absolute;
+    right: 15px;
+    background: var(--danger-red);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-full);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.clear-search-btn:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+.clear-search-btn:active {
+    transform: scale(0.95);
+}
+
+/* Resumen de resultados de búsqueda */
+.search-summary {
+    background: linear-gradient(135deg, var(--light-blue) 0%, rgba(59, 130, 246, 0.05) 100%);
+    border: 2px solid var(--primary-blue);
+    border-radius: var(--border-radius-md);
+    padding: 15px 20px;
+    margin-top: 5px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.summary-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1rem;
+}
+
+.summary-content i {
+    color: var(--primary-blue);
+    font-size: 1.3rem;
+}
+
+.summary-text {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+.summary-text strong {
+    color: var(--primary-blue);
+    font-weight: var(--font-weight-bold);
+    font-size: 1.1rem;
+}
+
+.summary-text .public-count {
+    color: var(--secondary-blue);
+}
+
+.summary-text .private-count {
+    color: var(--tertiary-gray);
+}
+
+.summary-text .public-count strong,
+.summary-text .private-count strong {
+    font-size: 1rem;
+}
+
+/* Sugerencias de búsqueda */
+.search-hints {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    background: var(--light-gray);
+    border-radius: var(--border-radius-sm);
+    border-left: 3px solid var(--accent-aqua);
+}
+
+.search-hints i {
+    color: var(--accent-aqua);
+    font-size: 1rem;
+}
+
+/* Panel de búsqueda maestra */
+#busqueda-maestra {
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, var(--white) 0%, var(--light-gray) 100%);
+    border: 1px solid var(--medium-gray);
+}
+
+#busqueda-maestra .panel-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+    border-bottom: none;
+}
+
+#busqueda-maestra .panel-title {
+    color: var(--white);
+}
+
+#busqueda-maestra .panel-title i {
+    color: var(--accent-aqua);
+}
+
+/* Resaltado de términos de búsqueda */
+mark {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: var(--font-weight-semibold);
+    animation: highlightPulse 0.5s ease-out;
+}
+
+@keyframes highlightPulse {
+    0% {
+        background: #ffeb3b;
+    }
+    100% {
+        background: #fff3cd;
+    }
+}
+
+/* Responsive design para búsqueda maestra */
+@media (max-width: 768px) {
+    .master-search-input {
+        padding: 12px 45px 12px 40px;
+        font-size: 0.95rem;
+    }
+
+    .search-input-wrapper .search-icon {
+        left: 12px;
+        font-size: 1rem;
+    }
+
+    .clear-search-btn {
+        right: 12px;
+        width: 26px;
+        height: 26px;
+    }
+
+    .summary-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .summary-text {
+        font-size: 0.9rem;
+    }
+
+    .search-hints {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .master-search-input {
+        padding: 10px 40px 10px 35px;
+        font-size: 0.9rem;
+    }
+
+    .master-search-container {
+        gap: 12px;
+    }
+
+    .search-summary {
+        padding: 12px 15px;
+    }
+
+    .summary-content i {
+        font-size: 1.1rem;
+    }
+
+    .summary-text {
+        font-size: 0.85rem;
+    }
+
+    .summary-text strong {
+        font-size: 1rem;
+    }
+
+    .search-hints {
+        font-size: 0.8rem;
+    }
+}
