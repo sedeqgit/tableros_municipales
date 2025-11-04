@@ -193,7 +193,7 @@ $infoCiclo = obtenerInfoCicloEscolar();
         </div>
         <div class="sidebar-links">
             <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
-            <a href="directorio_estatal_prueba.php" class="sidebar-link active">
+            <a href="directorio_estatal.php" class="sidebar-link active">
                 <i class="fas fa-school"></i>
                 <span>Directorio Estatal</span>
             </a>

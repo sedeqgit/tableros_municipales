@@ -73,6 +73,21 @@ function iniciarSesionDemo($requireAuth = true)
     // - $_SESSION['user_id']: Sesión válida de usuario autenticado
     // - $_GET['demo']: Parámetro que habilita el modo demostración
 
+    // =======================================================================
+    // BYPASS TEMPORAL DEL LOGIN - MODO DESARROLLO
+    // =======================================================================
+    // TODO: ELIMINAR EN PRODUCCIÓN
+    // Este bypass crea automáticamente una sesión demo si no existe
+    if (!isset($_SESSION['user_id'])) {
+        $_SESSION['user_id'] = 1;
+        $_SESSION['username'] = 'dev@sedeq.local';
+        $_SESSION['fullname'] = 'Usuario Desarrollo';
+        $_SESSION['role'] = 'Desarrollador';
+        $_SESSION['login_time'] = time();
+        $_SESSION['bypass_mode'] = true; // Marcador de bypass activo
+    }
+
+    /* CÓDIGO ORIGINAL COMENTADO TEMPORALMENTE
     if ($requireAuth && !isset($_SESSION['user_id']) && !isset($_GET['demo'])) {
         // REDIRECCIÓN DE SEGURIDAD
         // Si se requiere autenticación y no hay sesión válida ni modo demo,
@@ -84,6 +99,7 @@ function iniciarSesionDemo($requireAuth = true)
     // MODO DEMO ACTIVADO
     // Si se detecta el parámetro 'demo', el sistema permite acceso sin
     // credenciales para demostraciones y presentaciones públicas
+    */
 }
 
 /**

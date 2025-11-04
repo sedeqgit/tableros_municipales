@@ -1911,6 +1911,48 @@ function obtenerDatosPublicoPrivado($municipio = 'CORREGIDORA', $ini_ciclo = nul
     }
 }
 
+/**
+ * Función para obtener datos de USAER con desglose público/privado
+ * @param string $municipio Nombre del municipio
+ * @param string $ini_ciclo Ciclo escolar
+ * @return array|false Datos de USAER con desglose o false si no hay datos
+ */
+function obtenerDatosUSAER($municipio = 'CORREGIDORA', $ini_ciclo = null)
+{
+    // Usar ciclo escolar actual si no se especifica
+    if ($ini_ciclo === null) {
+        $ini_ciclo = obtenerCicloEscolarActual();
+    }
+    global $filtro_pub, $filtro_priv;
+
+    try {
+        $link = ConectarsePrueba();
+        if (!$link) {
+            throw new Exception("No se pudo conectar a la base de datos");
+        }
+
+        // Obtener número de municipio para el filtro
+        $num_munic = nombre_a_numero_municipio($municipio);
+        $filtro_mun = " AND cv_mun='" . $num_munic . "' ";
+
+        // Obtener datos de USAER con desglose público/privado
+        $datos_usaer = subnivel_con_control($link, 'ESPECIAL (USAER)', $ini_ciclo, 'especial_usaer', $filtro_mun);
+
+        pg_close($link);
+
+        // Si no hay datos o todos están en cero, retornar false
+        if (!$datos_usaer || $datos_usaer['tot_mat'] == 0) {
+            return false;
+        }
+
+        return $datos_usaer;
+
+    } catch (Exception $e) {
+        error_log("Error obteniendo datos USAER para $municipio: " . $e->getMessage());
+        return false;
+    }
+}
+
 // =============================================================================
 // MAPEO Y UTILIDADES DE MUNICIPIOS
 // =============================================================================
@@ -3772,6 +3814,15 @@ function obtenerDirectorioEscuelas($municipio, $nivel_educativo, $ini_ciclo = nu
             ];
         }
 
+
+        // Es hora de hacerse pendejo
+
+        /*
+        Salias de un templo un día,
+        Llorona
+
+
+        */
         pg_free_result($result);
         pg_close($link);
 

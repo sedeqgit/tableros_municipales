@@ -148,4 +148,44 @@ document.addEventListener('DOMContentLoaded', function() {
     if (usernameInput) {
         usernameInput.focus(); // Poner el foco en el campo de usuario al cargar
     }
+
+    // Asegúrate de que tu login.js incluya la verificación del CAPTCHA
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Limpiar mensajes de error previos
+    document.getElementById('usernameError').style.display = 'none';
+    document.getElementById('passwordError').style.display = 'none';
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('captchaError').style.display = 'none';
+    
+    const formData = new FormData(this);
+    
+    fetch('process_login.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = data.redirect;
+        } else {
+            if (data.type === 'captcha') {
+                document.getElementById('captchaError').style.display = 'block';
+                document.getElementById('captchaError').innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + data.message;
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+                document.getElementById('loginError').innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + data.message;
+            }
+            // Resetear el reCAPTCHA
+            if (typeof grecaptcha !== 'undefined') {
+                grecaptcha.reset();
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('loginError').style.display = 'block';
+    });
+});
 });

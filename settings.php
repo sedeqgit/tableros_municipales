@@ -5,6 +5,65 @@ require_once 'session_helper.php';
 // Iniciar sesión y configurar usuario de demo si es necesario
 iniciarSesionDemo();
 
+// Cargar utilidades de conexión para acceder al ciclo escolar actual
+require_once 'conexion_prueba_2024.php';
+
+// Variables para mostrar retroalimentación al usuario
+$preferencesMessage = null;
+$preferencesStatus = 'success';
+
+// Obtener el ciclo escolar actual definido en el sistema
+$currentCycle = defined('CICLO_ESCOLAR_ACTUAL') ? CICLO_ESCOLAR_ACTUAL : '24';
+
+// Procesar envío del formulario de actualización de ciclo escolar
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'actualizar_ciclo') {
+    $nuevoCiclo = isset($_POST['ciclo_escolar']) ? trim($_POST['ciclo_escolar']) : '';
+
+    if (preg_match('/^\d{2}$/', $nuevoCiclo)) {
+        if ($nuevoCiclo === $currentCycle) {
+            $preferencesMessage = 'El ciclo escolar ya está configurado con el valor proporcionado.';
+            $preferencesStatus = 'info';
+        } else {
+            $archivoConexion = __DIR__ . '/conexion_prueba_2024.php';
+            $contenidoConexion = @file_get_contents($archivoConexion);
+
+            if ($contenidoConexion === false) {
+                $preferencesMessage = 'No fue posible leer la configuración actual. Verifique los permisos del archivo.';
+                $preferencesStatus = 'error';
+            } else {
+                $reemplazos = 0;
+                $patron = "/define\(\s*'CICLO_ESCOLAR_ACTUAL'\s*,\s*'\d{2}'\s*\);/";
+                $nuevoContenido = preg_replace($patron, "define('CICLO_ESCOLAR_ACTUAL', '$nuevoCiclo');", $contenidoConexion, 1, $reemplazos);
+
+                if ($nuevoContenido === null || $reemplazos !== 1) {
+                    $preferencesMessage = 'No se pudo localizar la constante CICLO_ESCOLAR_ACTUAL en el archivo de conexión.';
+                    $preferencesStatus = 'error';
+                } else {
+                    $resultado = @file_put_contents($archivoConexion, $nuevoContenido, LOCK_EX);
+
+                    if ($resultado === false) {
+                        $preferencesMessage = 'Ocurrió un error al guardar la nueva configuración. Verifique permisos de escritura.';
+                        $preferencesStatus = 'error';
+                    } else {
+                        $preferencesMessage = "El ciclo escolar se actualizó correctamente a {$nuevoCiclo}.";
+                        $preferencesStatus = 'success';
+                        $currentCycle = $nuevoCiclo;
+                    }
+                }
+            }
+        }
+    } else {
+        $preferencesMessage = 'Ingrese únicamente dos dígitos para el ciclo escolar (ejemplo: 24).';
+        $preferencesStatus = 'error';
+    }
+}
+
+$preferencesIcons = [
+    'success' => 'fa-check-circle',
+    'error' => 'fa-exclamation-triangle',
+    'info' => 'fa-info-circle'
+];
+
 // Obtener información del usuario de la sesión
 $userFullname = isset($_SESSION['fullname']) ? $_SESSION['fullname'] : 'Usuario SEDEQ';
 $userEmail = isset($_SESSION['username']) ? $_SESSION['username'] : 'usuario@sedeq.gob.mx';
@@ -131,9 +190,13 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                 </div>
 
                 <!-- Sección: Preferencias -->
-                <div class="settings-panel animate-up delay-2">
-                    <h2 class="settings-title"><i class="fas fa-sliders-h"></i> Preferencias</h2>
-                    <div class="settings-content">
+                <div                         <?php if ($preferencesMessage): ?>
+                        <div class="settings-alert settings-alert-<?php echo htmlspecialchars($preferencesStatus); ?>">
+                            <i class="fas <?php echo htmlspecialchars($preferencesIcons[$preferencesStatus] ?? 'fa-info-circle'); ?>"></i>
+                            <span><?php echo htmlspecialchars($preferencesMessage); ?></span>
+                        </div>
+                        <?php endif; ?>
+
                         <div class="form-group animate-fade delay-3">
                             <label for="language">Idioma del Sistema</label>
                             <select id="language" class="form-control">
@@ -145,7 +208,30 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                         <div class="form-group">
                             <label for="notifications">Notificaciones</label>
                             <div class="checkbox-wrapper">
-                                <input type="checkbox" id="email_notifications" checked>
+                                <input type="checkbox                        <form method="POST" class="preferences-form">
+email_notifications">Recibir notificaciones por correo</label>
+                            </div>
+                        </div>
+
+                        <form method="POST" class="preferences-form" novalidate>
+                            <input type="hidden" name="accion" value="actualizar_ciclo">
+                            <div class="form-group">
+                                <label for="ciclo_escolar">Ciclo escolar actual (dos dígitos)</label>
+                                <div class="cycle-input-wrapper">
+                                                                   <span class="input-suffix">/<?php echo htmlspecialchars($nextCycleDisplay); ?></span>
+echo htmlspecialchars($currentCycle); ?>" maxlength="2" pattern="\d{2}" required>
+                                    <span class="input-suffix">/<?php echo htmlspecialchars((string) ((int) $currentCycle + 1)); ?></span>
+                                </div>
+                                <small class="form-text text-muted">Ejemplo: 24 representa el ciclo 2024-2025.</small>
+                            </div>
+
+                            <div class="form-actions form-actions-inline">
+                                <button type="submit" class="save-button save-button-secondary">
+                                    <i class="fas fa-sync-alt"></i> Actualizar ciclo escolar
+                                </button>
+                            </div>
+                        </form>
+d="email_notifications" checked>
                                 <label for="email_notifications">Recibir notificaciones por correo</label>
                             </div>
                         </div>

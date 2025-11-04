@@ -726,3 +726,16 @@ body::after {
 .input-focus-effect:focus {
     transform: scale(1.02);
 }
+
+.g-recaptcha {
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+}
+
+#captchaError {
+    display: none;
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}

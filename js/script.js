@@ -116,7 +116,7 @@ function configurarOpciones() {
     }
     
     if (tipoVisualizacion === 'ambos' || tipoVisualizacion === 'alumnos') {
-        datosAjustados.addColumn('number', 'Alumnos');
+        datosAjustados.addColumn('number', 'Matrícula');
     }
     
     // Añadir los datos según la visualización seleccionada
@@ -144,7 +144,10 @@ function configurarOpciones() {
             fontSize: 16,
             bold: true
         },
-        colors: ['#004990', '#9D2449'],
+        // Paleta de colores distintiva para cada nivel educativo
+        colors: tipoGrafico === 'pie'
+            ? ['#004990', '#9D2449', '#1976D2', '#D32F2F', '#388E3C', '#F57C00', '#7B1FA2', '#0097A7']
+            : ['#004990', '#9D2449'],
         animation: {
             startup: true,
             duration: 1000,
@@ -177,8 +180,16 @@ function configurarOpciones() {
         options.bar = { groupWidth: '70%' };
     } else if (tipoGrafico === 'pie') {
         options.pieSliceText = 'percentage';
-        options.pieSliceTextStyle = { fontSize: 14 };
-        options.tooltip = { text: 'value' };
+        options.pieSliceTextStyle = { fontSize: 12 };
+        options.tooltip = {
+            text: 'both', // Muestra tanto el valor como el porcentaje
+            showColorCode: true,
+            textStyle: {
+                fontSize: 13
+            }
+        };
+        options.sliceVisibilityThreshold = 0; // Muestra todos los porcentajes sin importar el tamaño
+        options.pieResidueSliceLabel = 'Otros'; // Etiqueta para porciones pequeñas si se agrupan
         options.slices = {
             0: { offset: 0.05 },
             1: { offset: 0 },
@@ -321,115 +332,87 @@ function actualizarAnalisis() {
 }
 
 /**
- * Exporta los datos a Excel
+ * Exporta los datos a Excel usando utilidades comunes
  */
 function exportarExcel() {
-    const nombreArchivo = 'Estadistica_Educativa_Queretaro.xlsx';
-    const wb = XLSX.utils.book_new();
-    
-    // Preparar datos para exportación
-    const datosExport = [
-        ['Tipo Educativo', 'Escuelas', 'Alumnos']
-    ];
-    
-    for (let i = 1; i < datosEducativos.length; i++) {
-        datosExport.push([
-            datosEducativos[i][0],
-            datosEducativos[i][1],
-            datosEducativos[i][2]
-        ]);
+    try {
+        // Preparar datos para exportación
+        const datosExport = [
+            ['Tipo Educativo', 'Escuelas', 'Alumnos']
+        ];
+
+        let totalEscuelas = 0;
+        let totalAlumnos = 0;
+
+        for (let i = 1; i < datosEducativos.length; i++) {
+            datosExport.push([
+                datosEducativos[i][0],
+                datosEducativos[i][1],
+                datosEducativos[i][2]
+            ]);
+            totalEscuelas += datosEducativos[i][1];
+            totalAlumnos += datosEducativos[i][2];
+        }
+
+        // Añadir fila de totales
+        datosExport.push(['Total', totalEscuelas, totalAlumnos]);
+
+        // Usar utilidades para exportar
+        const nombreArchivo = FormatUtils.generateFilenameWithDate('Estadistica_Educativa_Corregidora');
+        ExcelUtils.exportMultiSheet([
+            { name: 'Estadística Educativa', data: datosExport }
+        ], nombreArchivo);
+
+    } catch (error) {
+        console.error('Error al exportar Excel:', error);
+        ExportNotifications.showError('Error al exportar los datos a Excel');
     }
-    
-    // Añadir fila de totales
-    let totalEscuelas = 0;
-    let totalAlumnos = 0;
-    
-    for (let i = 1; i < datosEducativos.length; i++) {
-        totalEscuelas += datosEducativos[i][1];
-        totalAlumnos += datosEducativos[i][2];
-    }
-    
-    datosExport.push(['Total', totalEscuelas, totalAlumnos]);
-    
-    const ws = XLSX.utils.aoa_to_sheet(datosExport);
-    XLSX.utils.book_append_sheet(wb, ws, 'Estadística Educativa');
-    
-    // Descargar archivo
-    XLSX.writeFile(wb, nombreArchivo);
 }
 
 /**
- * Exporta los datos a PDF
+ * Exporta los datos a PDF usando utilidades comunes
  */
 function exportarPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    
-    // Configurar cabecera
-    doc.setFontSize(18);
-    doc.setTextColor(0, 73, 144);
-    doc.text('Estadística Educativa de Querétaro', 14, 20);
-    
-    // Preparar datos para la tabla
-    const datosTabla = [];
-    
-    for (let i = 1; i < datosEducativos.length; i++) {
-        datosTabla.push([
-            datosEducativos[i][0],
-            datosEducativos[i][1].toString(),
-            datosEducativos[i][2].toString()
-        ]);
-    }
-    
-    // Calcular totales
-    let totalEscuelas = 0;
-    let totalAlumnos = 0;
-    
-    for (let i = 1; i < datosEducativos.length; i++) {
-        totalEscuelas += datosEducativos[i][1];
-        totalAlumnos += datosEducativos[i][2];
-    }
-    
-    datosTabla.push(['Total', totalEscuelas.toString(), totalAlumnos.toString()]);
-    
-    // Generar tabla
-    doc.autoTable({
-        head: [['Tipo Educativo', 'Escuelas', 'Alumnos']],
-        body: datosTabla,
-        startY: 30,
-        theme: 'grid',
-        styles: {
-            fontSize: 10,
-            cellPadding: 3,
-            lineColor: [0, 73, 144],
-            lineWidth: 0.1
-        },
-        headStyles: {
-            fillColor: [0, 73, 144],
-            textColor: [255, 255, 255],
-            fontStyle: 'bold'
-        },
-        footStyles: {
-            fillColor: [220, 220, 220],
-            fontStyle: 'bold'
-        },
-        alternateRowStyles: {
-            fillColor: [245, 247, 250]
+    try {
+        // Preparar datos para la tabla
+        const datosTabla = [];
+        let totalEscuelas = 0;
+        let totalAlumnos = 0;
+
+        for (let i = 1; i < datosEducativos.length; i++) {
+            datosTabla.push([
+                datosEducativos[i][0],
+                FormatUtils.formatNumber(datosEducativos[i][1]),
+                FormatUtils.formatNumber(datosEducativos[i][2])
+            ]);
+            totalEscuelas += datosEducativos[i][1];
+            totalAlumnos += datosEducativos[i][2];
         }
-    });
-    
-    // Añadir pie de página
-    const pageCount = doc.internal.getNumberOfPages();
-    doc.setFontSize(8);
-    doc.setTextColor(100, 100, 100);
-    
-    for (let i = 1; i <= pageCount; i++) {
-        doc.setPage(i);
-        doc.text(`Secretaría de Educación del Estado de Querétaro - Página ${i} de ${pageCount}`, 14, doc.internal.pageSize.height - 10);
+
+        // Añadir fila de totales
+        datosTabla.push([
+            'Total',
+            FormatUtils.formatNumber(totalEscuelas),
+            FormatUtils.formatNumber(totalAlumnos)
+        ]);
+
+        // Configuración del PDF
+        const nombreArchivo = FormatUtils.generateFilenameWithDate('Estadistica_Educativa_Corregidora');
+
+        PDFUtils.exportTablePDF({
+            title: 'Estadística Educativa de Corregidora - SEDEQ',
+            table: {
+                headers: ['Tipo Educativo', 'Escuelas', 'Matrícula'],
+                data: datosTabla
+            },
+            footer: 'Secretaría de Educación del Estado de Querétaro',
+            filename: nombreArchivo
+        });
+
+    } catch (error) {
+        console.error('Error al exportar PDF:', error);
+        ExportNotifications.showError('Error al exportar los datos a PDF');
     }
-    
-    // Descargar archivo
-    doc.save('Estadistica_Educativa_Queretaro.pdf');
 }
 
 /**
@@ -487,20 +470,39 @@ function initCustomTooltips() {
         icon.addEventListener('mouseenter', function(e) {
             const tooltipText = this.getAttribute('data-tooltip');
             tooltip.textContent = tooltipText;
-            
+
             // Posicionar el tooltip
             const iconRect = this.getBoundingClientRect();
-            tooltip.style.left = `${iconRect.left}px`;
-            tooltip.style.top = `${iconRect.bottom + 8}px`;
-            
-            // Asegurarse de que el tooltip no se salga de la ventana
-            const tooltipRect = tooltip.getBoundingClientRect();
-            if (tooltipRect.right > window.innerWidth) {
-                tooltip.style.left = `${window.innerWidth - tooltipRect.width - 10}px`;
-            }
-            
-            // Mostrar tooltip con animación
+
+            // Calcular posición inicial (debajo del icono)
+            let left = iconRect.left + window.scrollX;
+            let top = iconRect.bottom + window.scrollY + 8;
+
+            // Mostrar temporalmente para obtener dimensiones
             tooltip.style.display = 'block';
+            tooltip.style.opacity = '0';
+
+            const tooltipRect = tooltip.getBoundingClientRect();
+
+            // Ajustar si se sale por la derecha
+            if (iconRect.left + tooltipRect.width > window.innerWidth) {
+                left = iconRect.right + window.scrollX - tooltipRect.width;
+            }
+
+            // Ajustar si se sale por la izquierda
+            if (left < window.scrollX + 10) {
+                left = window.scrollX + 10;
+            }
+
+            // Si no hay espacio abajo, mostrar arriba
+            if (iconRect.bottom + tooltipRect.height + 8 > window.innerHeight + window.scrollY) {
+                top = iconRect.top + window.scrollY - tooltipRect.height - 8;
+            }
+
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${top}px`;
+
+            // Mostrar tooltip con animación
             setTimeout(() => {
                 tooltip.style.opacity = '1';
             }, 10);
@@ -517,380 +519,49 @@ function initCustomTooltips() {
 }
 
 /**
- * Exportar el gráfico con modal de opciones
+ * Exporta el gráfico actual como PNG usando html2canvas
  */
 function exportarGraficoModal() {
-    // Mostrar modal con opciones de exportación utilizando la función de export-graficos-mejorado.js
-    mostrarModalExportacion(
-        () => exportarGraficoDirecto(), // Exportar gráfico como PDF
-        () => exportarPDF(),            // Exportar tabla como PDF
-        () => exportarGraficoPNG(),     // Exportar gráfico como PNG
-        () => exportarExcel()           // Exportar datos como CSV/Excel
-    );
-}
-
-/**
- * Exporta el gráfico actual a PDF directamente
- */
-function exportarGraficoDirecto() {
-    const titulo = 'Estadística Educativa por Tipo - SEDEQ';
-    let subtitulo = '';
-    
-    // Determinar subtítulo según el tipo de visualización
-    if (tipoVisualizacion === 'ambos') {
-        subtitulo = 'Visualización de escuelas y alumnos';
-    } else if (tipoVisualizacion === 'escuelas') {
-        subtitulo = 'Visualización de escuelas';
-    } else {
-        subtitulo = 'Visualización de alumnos';
-    }
-    
-    subtitulo += ` - Gráfico tipo: ${tipoGrafico === 'column' ? 'Columnas' : (tipoGrafico === 'bar' ? 'Barras' : 'Pastel')}`;
-    
-    // Nombre del archivo
-    const nombreArchivo = `Estadistica_Educativa_${tipoVisualizacion}_${tipoGrafico}.pdf`;
-    
-    // Usar el método nativo de exportación
-    exportarGraficoConMetodoNativo('chart_div', titulo, subtitulo, nombreArchivo);
-}
-
-/**
- * Exporta el gráfico actual como PNG
- */
-function exportarGraficoPNG() {
-    // Mostrar indicador de carga
-    const exportButton = document.getElementById('export-pdf');
-    const originalText = exportButton.innerHTML;
-    exportButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando...';
-    exportButton.disabled = true;
-    
-    // Preparar el gráfico para exportación
-    prepararGraficoParaExportacion().then(() => {
-        // Usar html2canvas para capturar el gráfico
-        const chartElement = document.getElementById('chart_div');
-        if (!chartElement) {
-            mostrarMensajeError('No se pudo encontrar el gráfico para exportar');
-            restaurarBotonExport(exportButton, originalText);
+    try {
+        // Verificar que html2canvas esté disponible
+        if (typeof html2canvas === 'undefined') {
+            ExportNotifications.showError('La biblioteca html2canvas no está disponible');
             return;
         }
 
-        mostrarMensajeExito('Generando imagen PNG...');
-        
-        // Configuraciones optimizadas para la captura del gráfico
+        const chartElement = document.getElementById('chart_div');
+        if (!chartElement) {
+            ExportNotifications.showError('No se pudo encontrar el gráfico para exportar');
+            return;
+        }
+
+        ExportNotifications.showInfo('Generando imagen PNG del gráfico...');
+
+        // Capturar el gráfico con html2canvas
         html2canvas(chartElement, {
             backgroundColor: '#ffffff',
             scale: 2,
             logging: false,
             useCORS: true,
-            allowTaint: true
+            allowTaint: false
         }).then(canvas => {
             // Crear enlace de descarga
+            const nombreArchivo = FormatUtils.generateFilenameWithDate(
+                `Grafico_Educativo_${tipoVisualizacion}_${tipoGrafico}`
+            ) + '.png';
+
             const link = document.createElement('a');
-            const nombreArchivo = `Estadistica_Educativa_${tipoVisualizacion}_${tipoGrafico}.png`;
             link.download = nombreArchivo;
             link.href = canvas.toDataURL('image/png');
             link.click();
-            
-            mostrarMensajeExito('Imagen PNG descargada exitosamente');
-            
-            // Restaurar el gráfico a su estado normal
-            setTimeout(() => restaurarGraficoNormal(), 1000);
-            restaurarBotonExport(exportButton, originalText);
-            
+
+            ExportNotifications.showSuccess('Imagen PNG descargada exitosamente');
         }).catch(error => {
             console.error('Error al generar PNG:', error);
-            mostrarMensajeError('Error al generar la imagen PNG');
-            restaurarBotonExport(exportButton, originalText);
-            
-            // Restaurar el gráfico a su estado normal en caso de error
-            setTimeout(() => restaurarGraficoNormal(), 1000);
+            ExportNotifications.showError('Error al generar la imagen PNG. Intente de nuevo.');
         });
-    }).catch(error => {
-        console.error('Error al preparar gráfico para PNG:', error);
-        mostrarMensajeError('Error al preparar el gráfico para exportación');
-        restaurarBotonExport(exportButton, originalText);
-    });
-}
-
-/**
- * Restaura el estado original del botón de exportar
- */
-function restaurarBotonExport(button, originalText) {
-    if (button) {
-        button.innerHTML = originalText;
-        button.disabled = false;
+    } catch (error) {
+        console.error('Error en exportarGraficoModal:', error);
+        ExportNotifications.showError('Error inesperado al exportar el gráfico');
     }
-}
-
-/**
- * Muestra un mensaje de éxito temporal
- */
-function mostrarMensajeExito(mensaje) {
-    // Verificar si la función ya existe en export-graficos-mejorado.js
-    if (typeof window.mostrarMensajeExito === 'function') {
-        window.mostrarMensajeExito(mensaje);
-        return;
-    }
-    
-    const alert = document.createElement('div');
-    alert.className = 'alert-success';
-    alert.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #4CAF50;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 4px;
-        z-index: 10000;
-        font-family: Arial, sans-serif;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    `;
-    alert.innerHTML = `<i class="fas fa-check-circle"></i> ${mensaje}`;
-    document.body.appendChild(alert);
-    
-    setTimeout(() => {
-        alert.remove();
-    }, 3000);
-}
-
-/**
- * Muestra modal con opciones de exportación para el gráfico
- */
-function exportarGraficoModal() {
-    // Verificar que la función mostrarModalExportacion esté disponible
-    if (typeof mostrarModalExportacion !== 'function') {
-        console.error('La función mostrarModalExportacion no está disponible');
-        exportarGraficoDirecto();
-        return;
-    }
-    
-    // Mostrar modal con opciones de exportación
-    mostrarModalExportacion(
-        () => exportarGraficoDirecto(),
-        () => exportarPDF(),
-        () => exportarGraficoPNG(),
-        () => exportarExcel()
-    );
-}
-
-/**
- * Exporta el gráfico directamente a PDF con el método nativo
- */
-function exportarGraficoDirecto() {
-    // Definir título y subtítulo según el tipo de gráfico y visualización actual
-    let titulo = 'Estadística Educativa de Querétaro - SEDEQ';
-    let subtitulo;
-    
-    if (tipoGrafico === 'pie') {
-        if (tipoVisualizacion === 'escuelas') {
-            subtitulo = 'Distribución de Escuelas por Tipo Educativo';
-        } else {
-            subtitulo = 'Distribución de Alumnos por Tipo Educativo';
-        }
-    } else {
-        if (tipoVisualizacion === 'escuelas') {
-            subtitulo = 'Cantidad de Escuelas por Tipo Educativo';
-        } else if (tipoVisualizacion === 'alumnos') {
-            subtitulo = 'Cantidad de Alumnos por Tipo Educativo';
-        } else {
-            subtitulo = 'Comparativa de Escuelas y Alumnos por Tipo Educativo';
-        }
-    }
-    
-    // Nombre del archivo
-    const nombreArchivo = `Estadistica_Educativa_${tipoVisualizacion}_${tipoGrafico}.pdf`;
-    
-    // Verificar que la función exportarGraficoConMetodoNativo esté disponible
-    if (typeof exportarGraficoConMetodoNativo === 'function') {
-        exportarGraficoConMetodoNativo('chart_div', titulo, subtitulo, nombreArchivo);
-    } else {
-        console.error('La función exportarGraficoConMetodoNativo no está disponible');
-        // Usar el método estándar como fallback
-        exportarGraficoPNG();
-    }
-}
-
-/**
- * Exporta el gráfico actual como PNG
- */
-function exportarGraficoPNG() {
-    // Nombre del archivo
-    const nombreArchivo = `Estadistica_Educativa_${tipoVisualizacion}_${tipoGrafico}.png`;
-    
-    // Usar html2canvas para capturar el gráfico
-    if (typeof html2canvas === 'undefined') {
-        console.error('La biblioteca html2canvas no está disponible');
-        mostrarMensajeError('No se pudo exportar el gráfico como imagen. Falta la biblioteca necesaria.');
-        return;
-    }
-    
-    const chartElement = document.getElementById('chart_div');
-    if (!chartElement) {
-        mostrarMensajeError('No se pudo encontrar el gráfico para exportar');
-        return;
-    }
-
-    mostrarMensajeExito('Generando imagen PNG...');
-    
-    html2canvas(chartElement, {
-        backgroundColor: '#ffffff',
-        scale: 2,
-        logging: false,
-        useCORS: true
-    }).then(canvas => {
-        // Crear enlace de descarga
-        const link = document.createElement('a');
-        link.download = nombreArchivo;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        
-        mostrarMensajeExito('Imagen PNG descargada exitosamente');
-    }).catch(error => {
-        console.error('Error al generar PNG:', error);
-        mostrarMensajeError('Error al generar la imagen PNG');
-    });
-}
-
-/**
- * Muestra un mensaje de éxito temporal
- */
-function mostrarMensajeExito(mensaje) {
-    // Verificar si la función ya existe en export-graficos-mejorado.js
-    if (typeof window.mostrarMensajeExito === 'function') {
-        window.mostrarMensajeExito(mensaje);
-        return;
-    }
-    
-    const alert = document.createElement('div');
-    alert.className = 'alert-success';
-    alert.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #4CAF50;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 4px;
-        z-index: 10000;
-        font-family: Arial, sans-serif;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    `;
-    alert.innerHTML = `<i class="fas fa-check-circle"></i> ${mensaje}`;
-    document.body.appendChild(alert);
-    
-    setTimeout(() => {
-        alert.remove();
-    }, 3000);
-}
-
-/**
- * Muestra un mensaje de error temporal
- */
-function mostrarMensajeError(mensaje) {
-    // Verificar si la función ya existe en export-graficos-mejorado.js
-    if (typeof window.mostrarMensajeError === 'function') {
-        window.mostrarMensajeError(mensaje);
-        return;
-    }
-    
-    const alert = document.createElement('div');
-    alert.className = 'alert-error';
-    alert.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #f44336;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 4px;
-        z-index: 10000;
-        font-family: Arial, sans-serif;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    `;
-    alert.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${mensaje}`;
-    document.body.appendChild(alert);
-    
-    setTimeout(() => {
-        alert.remove();
-    }, 4000);
-}
-
-/**
- * Prepara el gráfico para exportación optimizando la compatibilidad
- * @returns {Promise} Promesa que se resuelve cuando el gráfico está listo
- */
-function prepararGraficoParaExportacion() {
-    return new Promise((resolve) => {
-        // Optimizar opciones del gráfico para exportación
-        const opcionesActuales = chart.getOptions();
-        
-        // Crear opciones optimizadas para exportación
-        const opcionesExportacion = {
-            ...opcionesActuales,
-            backgroundColor: '#ffffff',
-            titleTextStyle: {
-                ...opcionesActuales.titleTextStyle,
-                fontSize: 16
-            },
-            legend: {
-                ...opcionesActuales.legend,
-                textStyle: {
-                    fontSize: 12,
-                    color: '#333333'
-                }
-            },
-            chartArea: {
-                ...opcionesActuales.chartArea,
-                width: '80%',
-                height: '70%'
-            },
-            animation: false,
-            enableInteractivity: false
-        };
-        
-        // Añadir anotaciones a los datos para mejor visualización en PDF
-        chartData = obtenerDatosConAnotaciones();
-        
-        // Redibujar el gráfico con las nuevas opciones
-        chart.draw(chartData, opcionesExportacion);
-        
-        // Dar tiempo a que el gráfico termine de renderizarse
-        setTimeout(resolve, 200);
-    });
-}
-
-/**
- * Restaura el gráfico a su estado normal después de la exportación
- */
-function restaurarGraficoNormal() {
-    // Redibujar con las opciones originales
-    const options = configurarOpciones();
-    chart.draw(chartData, options);
-}
-
-/**
- * Obtiene los datos del gráfico con anotaciones para exportación
- * @returns {google.visualization.DataTable} Datos con anotaciones
- */
-function obtenerDatosConAnotaciones() {
-    // Clonar los datos actuales para no modificar los originales
-    const datosConAnotaciones = chartData.clone();
-    
-    // Si es un gráfico de columnas o barras, añadir anotaciones
-    if (tipoGrafico === 'column' || tipoGrafico === 'bar') {
-        // Añadir columna de anotación para cada serie numérica
-        for (let i = 1; i < datosConAnotaciones.getNumberOfColumns(); i++) {
-            const colIndex = datosConAnotaciones.getNumberOfColumns();
-            datosConAnotaciones.addColumn({type: 'string', role: 'annotation'});
-            
-            // Añadir valores como anotaciones
-            for (let j = 0; j < datosConAnotaciones.getNumberOfRows(); j++) {
-                const valor = datosConAnotaciones.getValue(j, i);
-                datosConAnotaciones.setValue(j, colIndex, valor.toLocaleString());
-            }
-        }
-    }
-    
-    return datosConAnotaciones;
 }

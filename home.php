@@ -285,8 +285,6 @@ function obtenerDatosMunicipio($municipio)
                             <h2>Bienvenido al Sistema de Estadística Educativa</h2>
                             <p>Accede a los tableros estadísticos de los diferentes municipios del Estado de
                                 Querétaro.</p>
-                            <!-- Fecha dinámica del sistema -->
-                            <p class="welcome-date"><?php echo fechaEnEspanol('d \d\e F \d\e Y'); ?></p>
                         </div>
                         <!-- Logo institucional con animación -->
                         <div class="welcome-image animate-scale delay-1">

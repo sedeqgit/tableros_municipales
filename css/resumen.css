@@ -192,29 +192,27 @@
 }
 
 /* Posiciones de tarjetas específicas - layout optimizado */
-.summary-card {
-    grid-column: 1 / 5;
-    grid-row: 1 / 3;
+/* =============================================
+   LAYOUT 2x2 PARA PRIMERA SECCIÓN
+   ============================================= */
+.analysis-card {
+    grid-column: 1 / 7;
+    grid-row: 1 / 2;
 }
 
 .chart-card {
-    grid-column: 5 / 13;
-    grid-row: 1 / 5;
+    grid-column: 7 / 13;
+    grid-row: 1 / 2;
+}
+
+.summary-card {
+    grid-column: 1 / 7;
+    grid-row: 2 / 3;
 }
 
 .controls-card {
-    grid-column: 1 / 5;
-    grid-row: 3 / 5;
-}
-
-.analysis-card {
-    grid-column: 1 / 7;
-    grid-row: 5 / 7;
-}
-
-.table-card {
     grid-column: 7 / 13;
-    grid-row: 5 / 7;
+    grid-row: 2 / 3;
 }
 
 /* Estilos de las métricas */
@@ -685,32 +683,32 @@
 
 @media (max-width: 1200px) {
     .dashboard-grid {
-        grid-template-columns: repeat(6, 1fr);
-    }
-    
-    .summary-card {
-        grid-column: 1 / 7;
-        grid-row: auto;
-    }
-    
-    .chart-card {
-        grid-column: 1 / 7;
-        grid-row: auto;
-    }
-    
-    .controls-card {
-        grid-column: 1 / 7;
-        grid-row: auto;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 20px;
     }
     
     .analysis-card {
-        grid-column: 1 / 7;
+        grid-column: 1 / -1;
         grid-row: auto;
+        order: 1;
     }
     
-    .table-card {
-        grid-column: 1 / 7;
+    .chart-card {
+        grid-column: 1 / -1;
         grid-row: auto;
+        order: 2;
+    }
+    
+    .summary-card {
+        grid-column: 1 / -1;
+        grid-row: auto;
+        order: 3;
+    }
+    
+    .controls-card {
+        grid-column: 1 / -1;
+        grid-row: auto;
+        order: 4;
     }
 }
 
@@ -756,6 +754,10 @@
         align-self: flex-end;
         width: 100%;
         justify-content: flex-end;
+    }
+
+    .resumen-ejecutivo-title {
+        font-size: 1.4rem !important;
     }
     
     .export-buttons {
@@ -1011,6 +1013,28 @@
     color: var(--text-secondary) !important;
     font-size: 1rem !important;
     margin: 5px 0 0 0 !important;
+}
+
+/* =============================================
+   SECCIÓN DE RESUMEN EJECUTIVO
+   ============================================= */
+.resumen-ejecutivo-section {
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+    padding: 0 20px !important;
+}
+
+.resumen-ejecutivo-title {
+    text-align: center !important;
+    color: var(--primary-blue) !important;
+    margin-bottom: 25px !important;
+    font-size: 1.8rem !important;
+    font-weight: 600 !important;
+}
+
+.resumen-ejecutivo-title i {
+    margin-right: 10px !important;
+    color: var(--primary-blue) !important;
 }
 
 /* Responsive para tarjetas de datos */

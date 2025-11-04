@@ -309,7 +309,57 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                 </div>
             </div>
         </div>
-        <div id="resumen-ejecutivo" class="dashboard-grid">
+
+        <!-- Sección de Resumen Ejecutivo -->
+        <div id="resumen-ejecutivo" class="resumen-ejecutivo-section">
+            <h2 class="resumen-ejecutivo-title">
+                <i class=""></i> Resumen Ejecutivo
+            </h2>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card analysis-card animate-fade delay-3">
+                <div class="card-header">
+                    <h2 class="panel-title"><i class="fas fa-table"></i> Datos Numéricos</h2>
+                    <div class="card-actions">
+                        <button id="exportExcel" class="action-button" title="Exportar a Excel">
+                            <i class="fas fa-file-excel"></i>
+                        </button>
+                        <button id="exportPDF" class="action-button" title="Exportar a PDF">
+                            <i class="fas fa-file-pdf"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body table-container">
+                    <table class="data-table animate-up delay-7" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>Tipo Educativo</th>
+                                <th>Escuelas</th>
+                                <th>Alumnos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                            <!-- Los datos se cargarán dinámicamente desde script.js -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card chart-card animate-fade delay-4">
+                <div class="card-header">
+                    <h2 class="panel-title"><i class="fas fa-chart-bar"></i> Estadística Educativa por Tipo</h2>
+                    <div class="export-buttons">
+                        <button id="export-pdf" class="export-button">
+                            <i class="fas fa-file-pdf"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="chart_div" class="animate-scale delay-5"></div>
+                </div>
+            </div>
+
             <div class="card summary-card animate-fade">
                 <div class="card-header">
                     <h2 class="panel-title"><i class="fas fa-info-circle"></i> Resumen Ejecutivo</h2>
@@ -359,33 +409,33 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                         </div>
                     </div>
 
-                    <div class="class metric">
-                        <div class="class metric-details"></div>
+                    <div class="metric">
+                        <div class="metric-icon" style="background-color: var(--warning-orange);">
+                            <i class="fas fa-hands-helping"></i>
+                        </div>
+                        <div class="metric-details">
+                            <h3 class="metric-title">USAER <i class="fas fa-info-circle info-icon" data-tooltip="Unidades de Servicios de Apoyo a la Educación Regular
+                                Estos datos NO se suman en el total general"></i>
+                            </h3>
+                            <p class="metric-value" id="metricUSAER">
+                                <?php
+                                $usaerEscuelas = isset($datosCompletosMunicipio['especial']['usaer_esc']) ?
+                                    (int) $datosCompletosMunicipio['especial']['usaer_esc'] : 0;
+                                $usaerAlumnos = isset($datosCompletosMunicipio['especial']['usaer_mat']) ?
+                                    (int) $datosCompletosMunicipio['especial']['usaer_mat'] : 0;
+                                $usaerDocentes = isset($datosCompletosMunicipio['especial']['usaer_doc']) ?
+                                    (int) $datosCompletosMunicipio['especial']['usaer_doc'] : 0;
+                                echo number_format($usaerEscuelas, 0, '.', ',') . ' escuelas';
+                                ?>
+                            </p>
+                            <p class="metric-change">
+                                <?php
+                                echo number_format($usaerAlumnos, 0, '.', ',') . ' alumnos | ';
+                                echo number_format($usaerDocentes, 0, '.', ',') . ' docentes';
+                                ?>
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="card analysis-card animate-fade delay-3">
-                <div class="card-header">
-                    <h2 class="panel-title"><i class="fas fa-analytics"></i> Análisis de Tendencias</h2>
-                </div>
-                <div class="card-body">
-                    <p id="analisisDinamico" class="animate-up delay-4">
-                        El análisis se actualizará dinámicamente...
-                    </p>
-                </div>
-            </div>
-            <div class="card chart-card animate-fade delay-4">
-                <div class="card-header">
-                    <h2 class="panel-title"><i class="fas fa-chart-bar"></i> Estadística Educativa por Tipo</h2>
-                    <div class="export-buttons">
-                        <button id="export-pdf" class="export-button">
-                            <i class="fas fa-file-pdf"></i> Exportar
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div id="chart_div" class="animate-scale delay-5"></div>
                 </div>
             </div>
             <div class="card controls-card animate-right delay-5">
@@ -427,33 +477,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                     </div>
                 </div>
             </div>
-            <div class="card table-card animate-fade delay-6">
-                <div class="card-header">
-                    <h2 class="panel-title"><i class="fas fa-table"></i> Datos Numéricos</h2>
-                    <div class="card-actions">
-                        <button id="exportExcel" class="action-button" title="Exportar a Excel">
-                            <i class="fas fa-file-excel"></i>
-                        </button>
-                        <button id="exportPDF" class="action-button" title="Exportar a PDF">
-                            <i class="fas fa-file-pdf"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body table-container">
-                    <table class="data-table animate-up delay-7" id="dataTable">
-                        <thead>
-                            <tr>
-                                <th>Tipo Educativo</th>
-                                <th>Escuelas</th>
-                                <th>Alumnos</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dataTableBody">
-                            <!-- Los datos se cargarán dinámicamente desde script.js -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+
         </div>
 
         <!-- Sección de Datos Detallados por Categoría -->

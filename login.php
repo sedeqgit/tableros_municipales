@@ -18,6 +18,8 @@ if (isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Script de reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 
 <body>
@@ -51,6 +53,15 @@ if (isset($_SESSION['user_id'])) {
                             <i class="fas fa-exclamation-circle"></i> Por favor ingrese su contraseña
                         </div>
                     </div>
+
+                    <!-- Widget de reCAPTCHA -->
+                    <div class="form-group">
+                        <div class="g-recaptcha" data-sitekey="6LfWfvwrAAAAAJPFlchZmy2JQl28qwFU7veRahpI"></div>
+                        <div id="captchaError" class="error-message">
+                            <i class="fas fa-exclamation-circle"></i> Por favor complete el CAPTCHA
+                        </div>
+                    </div>
+
                     <div id="loginError" class="error-message">
                         <i class="fas fa-exclamation-triangle"></i> Credenciales incorrectas. Por favor, intente de
                         nuevo.
