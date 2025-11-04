@@ -1752,3 +1752,177 @@
         margin-right: 15px !important;
     }
 }
+/* =============================================================================
+   ESTILOS PARA SECCIÓN USAER
+   ============================================================================= */
+
+/* Sección principal de USAER */
+.usaer-section {
+    background-color: var(--background-color) !important;
+    padding: 40px 20px !important;
+    margin-top: 40px !important;
+    border-top: 3px solid var(--accent-color) !important;
+}
+
+.usaer-title {
+    color: var(--primary-blue) !important;
+    font-size: 1.8rem !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    margin-bottom: 15px !important;
+}
+
+.usaer-title i {
+    margin-right: 10px !important;
+    color: var(--accent-color) !important;
+}
+
+.usaer-subtitle {
+    text-align: center !important;
+    color: var(--text-secondary) !important;
+    font-size: 1rem !important;
+    margin-bottom: 30px !important;
+    padding: 0 15px !important;
+    max-width: 900px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    line-height: 1.6 !important;
+    font-style: italic !important;
+}
+
+.usaer-container {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+}
+
+/* Resumen General de USAER (usa estilos de totales-municipales) */
+.usaer-resumen {
+    background-color: var(--white) !important;
+    border-radius: 15px !important;
+    padding: 30px !important;
+    margin-bottom: 30px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Desglose detallado */
+.usaer-desglose-detallado {
+    background-color: var(--white) !important;
+    border-radius: 15px !important;
+    padding: 30px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Grid para sostenimiento (público/privado) */
+.usaer-sostenimiento-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 25px !important;
+    margin-bottom: 30px !important;
+}
+
+.usaer-sostenimiento-card {
+    background: linear-gradient(135deg, var(--white) 0%, #f8f9fa 100%) !important;
+    border-radius: 12px !important;
+    padding: 25px !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.3s ease !important;
+    border-left: 4px solid transparent !important;
+}
+
+.usaer-sostenimiento-card h4 {
+    font-size: 1.3rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 20px !important;
+    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+}
+
+.usaer-sostenimiento-card.publico-card {
+    border-left-color: var(--success-color) !important;
+}
+
+.usaer-sostenimiento-card.publico-card h4 {
+    color: var(--success-color) !important;
+}
+
+.usaer-sostenimiento-card.privado-card {
+    border-left-color: var(--warning-color) !important;
+}
+
+.usaer-sostenimiento-card.privado-card h4 {
+    color: var(--warning-color) !important;
+}
+
+.usaer-sostenimiento-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+.usaer-dato-grupo {
+    margin-bottom: 15px !important;
+    padding: 12px !important;
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    border-radius: 8px !important;
+}
+
+.usaer-dato-grupo:last-child {
+    margin-bottom: 0 !important;
+}
+
+/* Secciones de sexo y personal */
+.usaer-sexo-section,
+.usaer-personal-section {
+    margin-top: 30px !important;
+    padding-top: 30px !important;
+    border-top: 2px solid var(--border-color) !important;
+}
+
+/* Responsive para USAER */
+@media (max-width: 768px) {
+    .usaer-section {
+        padding: 20px 10px !important;
+        margin-top: 20px !important;
+    }
+
+    .usaer-title {
+        font-size: 1.5rem !important;
+    }
+
+    .usaer-subtitle {
+        font-size: 0.9rem !important;
+    }
+
+    .usaer-resumen,
+    .usaer-desglose-detallado {
+        padding: 20px !important;
+    }
+
+    .usaer-sostenimiento-grid {
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+
+    .usaer-sostenimiento-card h4 {
+        font-size: 1.1rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .usaer-title {
+        font-size: 1.3rem !important;
+    }
+
+    .usaer-subtitle {
+        font-size: 0.85rem !important;
+        padding: 0 10px !important;
+    }
+
+    .usaer-resumen,
+    .usaer-desglose-detallado {
+        padding: 15px !important;
+    }
+}
+

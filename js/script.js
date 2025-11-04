@@ -473,7 +473,7 @@ function initCustomTooltips() {
 
             // Posicionar el tooltip
             const iconRect = this.getBoundingClientRect();
-
+            
             // Calcular posición inicial (debajo del icono)
             let left = iconRect.left + window.scrollX;
             let top = iconRect.bottom + window.scrollY + 8;

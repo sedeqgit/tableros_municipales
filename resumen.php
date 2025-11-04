@@ -210,7 +210,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tablero Estadístico Educativo <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> - Ciclo
+    <title>Tablero <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> (Estadística Educativa)- Ciclo
         <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?> | SEDEQ
     </title>
 
@@ -297,8 +297,8 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title">
-                <h1 class="section-title">Tablero Estadístico Educativo
-                    <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> - Ciclo
+                <h1 class="section-title">Tablero
+                    <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> (Estadística Educativa) - Ciclo
                     <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?>
                 </h1>
             </div>
@@ -320,7 +320,10 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
         <div class="dashboard-grid">
             <div class="card analysis-card animate-fade delay-3">
                 <div class="card-header">
-                    <h2 class="panel-title"><i class="fas fa-table"></i> Datos Numéricos</h2>
+                    <h2 class="panel-title"><i class="fas fa-table"></i> Tipo o Nivel Educativo <i
+                            class="fas fa-info-circle info-icon"
+                            data-tooltip="Los datos de matrícula y escuelas de los servicios USAER no se suman ya que se cuentan en los niveles correspondientes"></i>
+                    </h2>
                     <div class="card-actions">
                         <button id="exportExcel" class="action-button" title="Exportar a Excel">
                             <i class="fas fa-file-excel"></i>
@@ -336,7 +339,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                             <tr>
                                 <th>Tipo Educativo</th>
                                 <th>Escuelas</th>
-                                <th>Alumnos</th>
+                                <th>Matrícula</th>
                             </tr>
                         </thead>
                         <tbody id="dataTableBody">
@@ -348,7 +351,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
 
             <div class="card chart-card animate-fade delay-4">
                 <div class="card-header">
-                    <h2 class="panel-title"><i class="fas fa-chart-bar"></i> Estadística Educativa por Tipo</h2>
+                    <h2 class="panel-title"><i class="fas fa-chart-bar"></i> Estadística por Tipo o Nivel Educativo</h2>
                     <div class="export-buttons">
                         <button id="export-pdf" class="export-button">
                             <i class="fas fa-file-pdf"></i> Exportar
@@ -371,8 +374,9 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                         </div>
                         <div class="metric-details">
                             <h3 class="metric-title">Total Escuelas <i class="fas fa-info-circle info-icon"
-                                    data-tooltip="** En el total de Escuelas de Media Superior se cuantifican planteles y en Superior se cuantifican instituciones
-                                *** El total de Escuelas y docentes de Superior en el Estado no corresponde a la suma de escuelas en los municipios, debido a que en algunos casos sólo se registra la institución en la capital del Estado y no se desglosan las unidades académicas en los municipios donde se imparten estudios"></i>
+                                    data-tooltip="1. En el total de Escuelas de Media Superior se cuantifican planteles y en Superior se cuantifican instituciones
+                                2. El total de Escuelas de Superior en el Estado no corresponde a la suma de escuelas en los municipios, debido a que en algunos casos sólo se registra la institución en la capital del Estado y no se desglosan las unidades académicas en los municipios donde se imparten estudios
+                                3. Los datos de escuela de los servicios USAER no se suman ya que se encuentran en los niveles correspondientes"></i>
                             </h3>
                             <p class="metric-value" id="metricGrowth">
                                 <?php echo number_format($totalEscuelas, 0, '.', ','); ?>
@@ -385,8 +389,8 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                             <i class="fas fa-user-graduate"></i>
                         </div>
                         <div class="metric-details">
-                            <h3 class="metric-title">Total Alumnos <i class="fas fa-info-circle info-icon"
-                                    data-tooltip="* Los datos de alumnos y escuelas de los servicios USAER no se suman en básica ya que se cuentan en los niveles correspondientes."></i>
+                            <h3 class="metric-title">Total Matrícula <i class="fas fa-info-circle info-icon"
+                                    data-tooltip="1. Los datos de matrícula de los servicios de USAER no se suman ya que se encuentran en los niveles correspondientes"></i>
                             </h3>
                             <p class="metric-value" id="metricDecline">
                                 <?php echo number_format($totalAlumnos, 0, '.', ','); ?>
@@ -400,47 +404,25 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                         </div>
                         <div class="metric-details">
                             <h3 class="metric-title">Total Docentes <i class="fas fa-info-circle info-icon"
-                                    data-tooltip="NÚMERO TOTAL DE DOCENTES
-                                Distribuidos en todos los niveles educativos
-                                Desde educación inicial hasta superior"></i>
+                                    data-tooltip="1. El total de docentes de Superior en el
+                                        estado no corresponde a la suma de
+                                        docentes en los municipios, debido a que
+                                        en algunos casos sólo se registra la
+                                        institución en la capital del Estado y no se
+                                        desglosan las unidades académicas en los
+                                        municipios donde se imparten estudios"></i>
                             </h3>
                             <p class="metric-value"><?php echo number_format($totalDocentes, 0, '.', ','); ?></p>
                             <p class="metric-change">Ciclo escolar 2024-2025</p>
                         </div>
                     </div>
 
-                    <div class="metric">
-                        <div class="metric-icon" style="background-color: var(--warning-orange);">
-                            <i class="fas fa-hands-helping"></i>
-                        </div>
-                        <div class="metric-details">
-                            <h3 class="metric-title">USAER <i class="fas fa-info-circle info-icon" data-tooltip="Unidades de Servicios de Apoyo a la Educación Regular
-                                Estos datos NO se suman en el total general"></i>
-                            </h3>
-                            <p class="metric-value" id="metricUSAER">
-                                <?php
-                                $usaerEscuelas = isset($datosCompletosMunicipio['especial']['usaer_esc']) ?
-                                    (int) $datosCompletosMunicipio['especial']['usaer_esc'] : 0;
-                                $usaerAlumnos = isset($datosCompletosMunicipio['especial']['usaer_mat']) ?
-                                    (int) $datosCompletosMunicipio['especial']['usaer_mat'] : 0;
-                                $usaerDocentes = isset($datosCompletosMunicipio['especial']['usaer_doc']) ?
-                                    (int) $datosCompletosMunicipio['especial']['usaer_doc'] : 0;
-                                echo number_format($usaerEscuelas, 0, '.', ',') . ' escuelas';
-                                ?>
-                            </p>
-                            <p class="metric-change">
-                                <?php
-                                echo number_format($usaerAlumnos, 0, '.', ',') . ' alumnos | ';
-                                echo number_format($usaerDocentes, 0, '.', ',') . ' docentes';
-                                ?>
-                            </p>
-                        </div>
-                    </div>
+
                 </div>
             </div>
             <div class="card controls-card animate-right delay-5">
                 <div class="card-header">
-                    <h2 class="panel-title"><i class="fas fa-sliders-h"></i> Ajustes de Visualización</h2>
+                    <h2 class="panel-title"><i class="fas fa-sliders-h"></i> Ajustes de Visualización de Gráfica</h2>
                 </div>
                 <div class="card-body">
                     <div class="control-group animate-fade">
@@ -455,7 +437,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                 <input type="radio" name="visualizacion" value="escuelas"> Solo Escuelas
                             </label>
                             <label class="radio-container">
-                                <input type="radio" name="visualizacion" value="alumnos"> Solo Alumnos
+                                <input type="radio" name="visualizacion" value="alumnos"> Solo Matrícula
                             </label>
                         </div>
                     </div>
@@ -482,8 +464,8 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
 
         <!-- Sección de Datos Detallados por Categoría -->
         <div id="desglose-detallado" class="datos-section-title">
-            <h2>Desglose Detallado por Nivel Educativo</h2>
-            <p>Distribución específica de escuelas, alumnos y docentes según el nivel educativo</p>
+            <h2>Desglose Detallado por Nivel o Tipo Educativo</h2>
+            <p>Distribución específica de escuelas, alumnos y docentes según el nivel o tipo educativo</p>
         </div>
 
         <!-- Grid de tarjetas de datos detallados -->
@@ -495,7 +477,12 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                         <div class="card-icon">
                             <i class="fas fa-school"></i>
                         </div>
-                        <h3 class="card-title">Escuelas</h3>
+                        <h3 class="card-title">Escuelas <i class="fas fa-info-circle info-icon"
+                                data-tooltip="1. En el total de Escuelas de Media Superior se cuantifican planteles y en Superior se cuantifican instituciones
+                                2. El total de Escuelas de Superior en el Estado no corresponde a la suma de escuelas en los municipios, debido a que en algunos casos sólo se registra la institución en la capital del Estado y no se desglosan las unidades académicas en los municipios donde se imparten estudios
+                                3. Los datos de escuela de los servicios USAER no se suman ya que se encuentran en los niveles correspondientes"></i>
+
+                        </h3>
                     </div>
                     <div class="card-subtitle">No incluye USAER</div>
                     <div class="total-general">
@@ -534,7 +521,10 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                         <div class="card-icon">
                             <i class="fas fa-user-graduate"></i>
                         </div>
-                        <h3 class="card-title">Alumnos</h3>
+                        <h3 class="card-title">Matrícula <i class="fas fa-info-circle info-icon"
+                                data-tooltip="1. Los datos de matrícula de los servicios de USAER no se suman ya que se encuentran en los niveles correspondientes"></i>
+
+                        </h3>
                     </div>
                     <div class="card-subtitle">No incluye USAER</div>
                     <div class="total-general">
@@ -573,7 +563,15 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                         <div class="card-icon">
                             <i class="fas fa-chalkboard-teacher"></i>
                         </div>
-                        <h3 class="card-title">Docentes</h3>
+                        <h3 class="card-title">Docentes <i class="fas fa-info-circle info-icon" data-tooltip="1. El total de docentes de Superior en el
+                                        estado no corresponde a la suma de
+                                        docentes en los municipios, debido a que
+                                        en algunos casos sólo se registra la
+                                        institución en la capital del Estado y no se
+                                        desglosan las unidades académicas en los
+                                        municipios donde se imparten estudios"></i>
+
+                        </h3>
                     </div>
                     <div class="card-subtitle">Incluye todos los niveles educativos</div>
                     <div class="total-general">
@@ -623,12 +621,15 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
         <!-- Sección de Desglose Público vs Privado -->
         <div id="publico-privado" class="publico-privado-section">
             <h2 class="publico-privado-title">
-                <i class="fas fa-chart-pie"></i> Desglose Público vs Privado
+                <i class="fas fa-chart-pie"></i> Desglose Detallado por Nivel o Tipo Educativo
             </h2>
 
             <?php
             // Obtener datos con desglose público/privado
             $datosPublicoPrivado = obtenerDatosPublicoPrivado($municipioSeleccionado);
+
+            // Obtener datos de USAER
+            $datosUSAER = obtenerDatosUSAER($municipioSeleccionado);
             ?>
 
             <?php if (!empty($datosPublicoPrivado)): ?>
@@ -647,11 +648,26 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                             <!-- Totales -->
                             <div class="totales-generales">
                                 <div class="total-escuelas">
-                                    Total: <?php echo number_format($datos['tot_esc'], 0, '.', ','); ?> escuelas
+                                    Total: <?php echo number_format($datos['tot_esc'], 0, '.', ','); ?> escuelas <i
+                                        class="fas fa-info-circle info-icon"
+                                        data-tooltip="1. En el total de Escuelas de Media Superior se cuantifican planteles y en Superior se cuantifican instituciones
+                                2. El total de Escuelas de Superior en el Estado no corresponde a la suma de escuelas en los municipios, debido a que en algunos casos sólo se registra la institución en la capital del Estado y no se desglosan las unidades académicas en los municipios donde se imparten estudios
+                                3. Los datos de escuela de los servicios USAER no se suman ya que se encuentran en los niveles correspondientes"></i>
                                 </div>
                                 <div class="total-secundarios">
-                                    <?php echo number_format($datos['tot_mat'], 0, '.', ','); ?> alumnos |
-                                    <?php echo number_format($datos['tot_doc'], 0, '.', ','); ?> docentes
+                                    <?php echo number_format($datos['tot_mat'], 0, '.', ','); ?> matrícula <i
+                                        class="fas fa-info-circle info-icon"
+                                        data-tooltip="1. Los datos de matrícula de los servicios de USAER no se suman ya que se encuentran en los niveles correspondientes"></i>
+                                    |
+                                    <?php echo number_format($datos['tot_doc'], 0, '.', ','); ?> docentes <i
+                                        class="fas fa-info-circle info-icon" data-tooltip="1. El total de docentes de Superior en el
+                                        estado no corresponde a la suma de
+                                        docentes en los municipios, debido a que
+                                        en algunos casos sólo se registra la
+                                        institución en la capital del Estado y no se
+                                        desglosan las unidades académicas en los
+                                        municipios donde se imparten estudios"></i>
+
                                 </div>
                             </div>
 
@@ -660,7 +676,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                 <!-- Públicas -->
                                 <div class="publico-card">
                                     <h4>
-                                        <i class="fas fa-university"></i> Públicas
+                                        <i class="fas fa-university"></i> Público
                                     </h4>
                                     <div class="numero-principal">
                                         <?php echo number_format($datos['tot_esc_pub'], 0, '.', ','); ?> escuelas
@@ -670,7 +686,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
 
                                     </div>
                                     <div class="numero-principal">
-                                        <?php echo number_format($datos['tot_mat_pub'], 0, '.', ','); ?> alumnos
+                                        <?php echo number_format($datos['tot_mat_pub'], 0, '.', ','); ?> matrícula
                                     </div>
                                     <div class="porcentaje">
                                         <?php echo $datos['tot_mat'] > 0 ? round(($datos['tot_mat_pub'] / $datos['tot_mat']) * 100, 1) : 0; ?>%<br>
@@ -686,7 +702,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                 <!-- Privadas -->
                                 <div class="privado-card">
                                     <h4>
-                                        <i class="fas fa-building"></i> Privadas
+                                        <i class="fas fa-building"></i> Privado
                                     </h4>
                                     <div class="numero-principal">
                                         <?php echo number_format($datos['tot_esc_priv'], 0, '.', ','); ?> escuelas
@@ -695,7 +711,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                         <?php echo $datos['tot_esc'] > 0 ? round(($datos['tot_esc_priv'] / $datos['tot_esc']) * 100, 1) : 0; ?>%
                                     </div>
                                     <div class="numero-principal">
-                                        <?php echo number_format($datos['tot_mat_priv'], 0, '.', ','); ?> alumnos
+                                        <?php echo number_format($datos['tot_mat_priv'], 0, '.', ','); ?> matrícula
                                     </div>
                                     <div class="porcentaje">
                                         <?php echo $datos['tot_mat'] > 0 ? round(($datos['tot_mat_priv'] / $datos['tot_mat']) * 100, 1) : 0; ?>%<br>
@@ -725,7 +741,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
         <!-- Sección de Desglose de Alumnos por Sexo -->
         <div class="desglose-sexo-section" id="desglose-sexo">
             <h2 class="desglose-sexo-title">
-                <i class="fas fa-user-graduate"></i> Desglose de Alumnos por Sexo
+                <i class="fas fa-user-graduate"></i> Desglose de Matrícula por Sexo y Sostenimiento
             </h2>
 
             <?php if (!empty($datosPublicoPrivado)): ?>
@@ -744,14 +760,16 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                         <i class="fas fa-user-graduate"></i>
                                     </div>
                                     <h3 class="card-title">
-                                        <?php echo htmlspecialchars($datos['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?>
+                                        <?php echo htmlspecialchars($datos['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?> <i
+                                            class="fas fa-info-circle info-icon"
+                                            data-tooltip="1. Los datos de matrícula de los servicios de USAER no se suman ya que se encuentran en los niveles correspondientes"></i>
                                     </h3>
                                 </div>
 
                                 <!-- Total de Alumnos -->
                                 <div class="total-alumnos">
                                     <div class="numero-total">
-                                        Total: <?php echo number_format($totalAlumnosNivel, 0, '.', ','); ?>
+                                        Matrícula Total: <?php echo number_format($totalAlumnosNivel, 0, '.', ','); ?>
                                     </div>
                                 </div>
 
@@ -763,20 +781,20 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                             <i class="fas fa-mars"></i> Hombres
                                         </h4>
                                         <div class="numero-principal">
-                                            <?php echo number_format($datos['mat_h'], 0, '.', ','); ?> alumnos totales
+                                            <?php echo number_format($datos['mat_h'], 0, '.', ','); ?> Total
                                         </div>
                                         <div class="porcentaje">
                                             <?php echo $totalAlumnosNivel > 0 ? round(($datos['mat_h'] / $totalAlumnosNivel) * 100, 1) : 0; ?>%
 
                                         </div>
                                         <div class="numero-principal">
-                                            <?php echo number_format($datos['mat_h_pub'], 0, '.', ','); ?> alumnos públicos
+                                            <?php echo number_format($datos['mat_h_pub'], 0, '.', ','); ?> Público
                                         </div>
                                         <div class="porcentaje">
                                             <?php echo $datos['mat_h'] > 0 ? round(($datos['mat_h_pub'] / $datos['mat_h']) * 100, 1) : 0; ?>%
                                         </div>
                                         <div class="numero-principal">
-                                            <?php echo number_format($datos['mat_h_priv'], 0, '.', ','); ?> alumnos privados
+                                            <?php echo number_format($datos['mat_h_priv'], 0, '.', ','); ?> Privado
                                         </div>
                                         <div class="porcentaje">
                                             <?php echo $datos['mat_h'] > 0 ? round(($datos['mat_h_priv'] / $datos['mat_h']) * 100, 1) : 0; ?>%
@@ -826,7 +844,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
         <!-- Sección de Totales Municipales por Nivel -->
         <div id="totales-municipales" class="totales-municipales-section">
             <h2 class="totales-municipales-title">
-                <i class="fas fa-percentage"></i> Porcentajes Totales Municipales por Nivel Educativo
+                <i class="fas fa-percentage"></i> Porcentaje por Nivel o Tipo Educativo de los Totales del Municipio
             </h2>
 
             <?php if ($tieneDatos && !empty($datosCompletosMunicipio)): ?>
@@ -839,17 +857,6 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                         <div class="totales-generales-grid">
                             <div class="total-municipal-card">
                                 <div class="total-icono">
-                                    <i class="fas fa-user-graduate"></i>
-                                </div>
-                                <div class="total-contenido">
-                                    <span class="total-tipo">Total Matrícula</span>
-                                    <span
-                                        class="total-valor"><?php echo number_format($totalAlumnos, 0, '.', ','); ?></span>
-                                    <span class="total-subtitulo">alumnos</span>
-                                </div>
-                            </div>
-                            <div class="total-municipal-card">
-                                <div class="total-icono">
                                     <i class="fas fa-school"></i>
                                 </div>
                                 <div class="total-contenido">
@@ -859,6 +866,18 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                     <span class="total-subtitulo">escuelas</span>
                                 </div>
                             </div>
+                            <div class="total-municipal-card">
+                                <div class="total-icono">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="total-contenido">
+                                    <span class="total-tipo">Total Matrícula</span>
+                                    <span
+                                        class="total-valor"><?php echo number_format($totalAlumnos, 0, '.', ','); ?></span>
+                                    <span class="total-subtitulo">alumnos</span>
+                                </div>
+                            </div>
+
                             <div class="total-municipal-card">
                                 <div class="total-icono">
                                     <i class="fas fa-chalkboard-teacher"></i>
@@ -936,6 +955,257 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                 </div>
             <?php endif; ?>
         </div>
+
+        <!-- Sección de USAER (Unidad de Servicios de Apoyo a la Educación Regular) -->
+        <?php if ($datosUSAER): ?>
+            <div id="usaer-section" class="usaer-section">
+                <h2 class="usaer-title">
+                    <i class="fas fa-hands-helping"></i> USAER - Unidad de Servicios de Apoyo a la Educación Regular
+                </h2>
+                <p class="usaer-subtitle">
+                    Datos informativos de las Unidades de Servicios de Apoyo a la Educación Regular.
+                    Estos datos no se suman en los totales municipales ya que atienden a alumnos contabilizados en los
+                    niveles correspondientes.
+                </p>
+
+                <div class="usaer-container">
+                    <!-- Resumen General de USAER (estilo similar a Totales Municipales) -->
+                    <div class="usaer-resumen">
+                        <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                            <i class="fas fa-chart-bar"></i> Resumen General USAER
+                        </h3>
+                        <div class="totales-generales-grid">
+                            <div class="total-municipal-card">
+                                <div class="total-icono">
+                                    <i class="fas fa-school"></i>
+                                </div>
+                                <div class="total-contenido">
+                                    <span class="total-tipo">Total Unidades USAER <i class="fas fa-info-circle info-icon"
+                                            data-tooltip="1. En el total de Escuelas de Media Superior se cuantifican planteles y en Superior se cuantifican instituciones
+                                2. El total de Escuelas de Superior en el Estado no corresponde a la suma de escuelas en los municipios, debido a que en algunos casos sólo se registra la institución en la capital del Estado y no se desglosan las unidades académicas en los municipios donde se imparten estudios
+                                3. Los datos de escuela de los servicios USAER no se suman ya que se encuentran en los niveles correspondientes"></i></span>
+                                    <span
+                                        class="total-valor"><?php echo number_format($datosUSAER['tot_esc'], 0, '.', ','); ?></span>
+                                    <span class="total-subtitulo">unidades </span>
+                                </div>
+                            </div>
+                            <div class="total-municipal-card">
+                                <div class="total-icono">
+                                    <i class="fas fa-user-graduate"></i>
+                                </div>
+                                <div class="total-contenido">
+                                    <span class="total-tipo">Total Matrícula Atendida <i
+                                            class="fas fa-info-circle info-icon"
+                                            data-tooltip="1. Los datos de matrícula de los servicios de USAER no se suman ya que se encuentran en los niveles correspondientes"></i></span>
+                                    <span
+                                        class="total-valor"><?php echo number_format($datosUSAER['tot_mat'], 0, '.', ','); ?></span>
+                                    <span class="total-subtitulo">alumnos</span>
+                                </div>
+                            </div>
+                            <div class="total-municipal-card">
+                                <div class="total-icono">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                </div>
+                                <div class="total-contenido">
+                                    <span class="total-tipo">Total Personal</span>
+                                    <span
+                                        class="total-valor"><?php echo number_format($datosUSAER['tot_doc'], 0, '.', ','); ?></span>
+                                    <span class="total-subtitulo">personal</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Desglose detallado por sostenimiento y sexo (estilo similar a Desglose por Sexo) -->
+                    <div class="usaer-desglose-detallado">
+                        <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                            <i class="fas fa-chart-line"></i> Desglose Detallado por Sostenimiento y Sexo
+                        </h3>
+
+                        <!-- Desglose Público vs Privado -->
+                        <div class="usaer-sostenimiento-grid">
+                            <!-- Públicas -->
+                            <div class="usaer-sostenimiento-card publico-card">
+                                <h4>
+                                    <i class="fas fa-university"></i> Público
+                                </h4>
+                                <div class="usaer-dato-grupo">
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['tot_esc_pub'], 0, '.', ','); ?> unidades
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['tot_esc'] > 0 ? round(($datosUSAER['tot_esc_pub'] / $datosUSAER['tot_esc']) * 100, 1) : 0; ?>%
+                                    </div>
+                                </div>
+                                <div class="usaer-dato-grupo">
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['tot_mat_pub'], 0, '.', ','); ?> Matrícula
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['tot_mat'] > 0 ? round(($datosUSAER['tot_mat_pub'] / $datosUSAER['tot_mat']) * 100, 1) : 0; ?>%
+                                    </div>
+                                </div>
+                                <div class="usaer-dato-grupo">
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['tot_doc_pub'], 0, '.', ','); ?> personal
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['tot_doc'] > 0 ? round(($datosUSAER['tot_doc_pub'] / $datosUSAER['tot_doc']) * 100, 1) : 0; ?>%
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Privadas -->
+                            <div class="usaer-sostenimiento-card privado-card">
+                                <h4>
+                                    <i class="fas fa-building"></i> Privado
+                                </h4>
+                                <div class="usaer-dato-grupo">
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['tot_esc_priv'], 0, '.', ','); ?> unidades
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['tot_esc'] > 0 ? round(($datosUSAER['tot_esc_priv'] / $datosUSAER['tot_esc']) * 100, 1) : 0; ?>%
+                                    </div>
+                                </div>
+                                <div class="usaer-dato-grupo">
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['tot_mat_priv'], 0, '.', ','); ?> matrícula
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['tot_mat'] > 0 ? round(($datosUSAER['tot_mat_priv'] / $datosUSAER['tot_mat']) * 100, 1) : 0; ?>%
+                                    </div>
+                                </div>
+                                <div class="usaer-dato-grupo">
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['tot_doc_priv'], 0, '.', ','); ?> personal
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['tot_doc'] > 0 ? round(($datosUSAER['tot_doc_priv'] / $datosUSAER['tot_doc']) * 100, 1) : 0; ?>%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Desglose por Sexo -->
+                        <div class="usaer-sexo-section">
+                            <h4 style="text-align: center; margin: 30px 0 20px 0; color: var(--text-primary);">
+                                <i class="fas fa-venus-mars"></i> Distribución de Matrícula por Sexo
+                            </h4>
+                            <div class="sexo-grid">
+                                <!-- Hombres -->
+                                <div class="hombres-card">
+                                    <h4>
+                                        <i class="fas fa-mars"></i> Hombres
+                                    </h4>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['mat_h'], 0, '.', ','); ?> Total
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['tot_mat'] > 0 ? round(($datosUSAER['mat_h'] / $datosUSAER['tot_mat']) * 100, 1) : 0; ?>%
+                                    </div>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['mat_h_pub'], 0, '.', ','); ?> Público
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['mat_h'] > 0 ? round(($datosUSAER['mat_h_pub'] / $datosUSAER['mat_h']) * 100, 1) : 0; ?>%
+                                    </div>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['mat_h_priv'], 0, '.', ','); ?> Privado
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['mat_h'] > 0 ? round(($datosUSAER['mat_h_priv'] / $datosUSAER['mat_h']) * 100, 1) : 0; ?>%
+                                    </div>
+                                </div>
+
+                                <!-- Mujeres -->
+                                <div class="mujeres-card">
+                                    <h4>
+                                        <i class="fas fa-venus"></i> Mujeres
+                                    </h4>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['mat_m'], 0, '.', ','); ?> Total
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['tot_mat'] > 0 ? round(($datosUSAER['mat_m'] / $datosUSAER['tot_mat']) * 100, 1) : 0; ?>%
+                                    </div>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['mat_m_pub'], 0, '.', ','); ?> Público
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['mat_m'] > 0 ? round(($datosUSAER['mat_m_pub'] / $datosUSAER['mat_m']) * 100, 1) : 0; ?>%
+                                    </div>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['mat_m_priv'], 0, '.', ','); ?> Privado
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['mat_m'] > 0 ? round(($datosUSAER['mat_m_priv'] / $datosUSAER['mat_m']) * 100, 1) : 0; ?>%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Desglose de Personal por Sexo -->
+                        <div class="usaer-personal-section">
+                            <h4 style="text-align: center; margin: 30px 0 20px 0; color: var(--text-primary);">
+                                <i class="fas fa-user-tie"></i> Distribución de Personal por Sexo
+                            </h4>
+                            <div class="sexo-grid">
+                                <!-- Hombres -->
+                                <div class="hombres-card">
+                                    <h4>
+                                        <i class="fas fa-mars"></i> Hombres
+                                    </h4>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['doc_h'], 0, '.', ','); ?> Total
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['tot_doc'] > 0 ? round(($datosUSAER['doc_h'] / $datosUSAER['tot_doc']) * 100, 1) : 0; ?>%
+                                    </div>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['doc_h_pub'], 0, '.', ','); ?> Público
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['doc_h'] > 0 ? round(($datosUSAER['doc_h_pub'] / $datosUSAER['doc_h']) * 100, 1) : 0; ?>%
+                                    </div>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['doc_h_priv'], 0, '.', ','); ?> Privado
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['doc_h'] > 0 ? round(($datosUSAER['doc_h_priv'] / $datosUSAER['doc_h']) * 100, 1) : 0; ?>%
+                                    </div>
+                                </div>
+
+                                <!-- Mujeres -->
+                                <div class="mujeres-card">
+                                    <h4>
+                                        <i class="fas fa-venus"></i> Mujeres
+                                    </h4>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['doc_m'], 0, '.', ','); ?> Total
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['tot_doc'] > 0 ? round(($datosUSAER['doc_m'] / $datosUSAER['tot_doc']) * 100, 1) : 0; ?>%
+                                    </div>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['doc_m_pub'], 0, '.', ','); ?> Público
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['doc_m'] > 0 ? round(($datosUSAER['doc_m_pub'] / $datosUSAER['doc_m']) * 100, 1) : 0; ?>%
+                                    </div>
+                                    <div class="numero-principal">
+                                        <?php echo number_format($datosUSAER['doc_m_priv'], 0, '.', ','); ?> Privado
+                                    </div>
+                                    <div class="porcentaje">
+                                        <?php echo $datosUSAER['doc_m'] > 0 ? round(($datosUSAER['doc_m_priv'] / $datosUSAER['doc_m']) * 100, 1) : 0; ?>%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
 
         <footer class="dashboard-footer">
             <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
