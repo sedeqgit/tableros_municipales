@@ -268,6 +268,18 @@ foreach ($directoriosPorNivel as $nivel => $datos) {
     });
 }
 
+// Calcular totales de escuelas públicas y privadas para el directorio unificado
+$totalPublicas = 0;
+$totalPrivadas = 0;
+
+foreach ($escuelasPublicasPorNivel as $nivel => $escuelas) {
+    $totalPublicas += count($escuelas);
+}
+
+foreach ($escuelasPrivadasPorNivel as $nivel => $escuelas) {
+    $totalPrivadas += count($escuelas);
+}
+
 // Construir distribución por subcontrol con porcentajes
 $distribucionSubcontrol = [];
 foreach ($conteoSubcontrol as $subcontrol => $total) {
@@ -351,13 +363,9 @@ $datosEducativos = $datosCompletosMunicipio;
                         <i class="fas fa-building"></i>
                         <span>Subcontrol Educativo</span>
                     </a>
-                    <a href="#directorio-publicas" class="submenu-link">
-                        <i class="fas fa-landmark"></i>
-                        <span>Escuelas Públicas</span>
-                    </a>
-                    <a href="#directorio-privadas" class="submenu-link">
-                        <i class="fas fa-building"></i>
-                        <span>Escuelas Privadas</span>
+                    <a href="#directorio-escuelas" class="submenu-link">
+                        <i class="fas fa-school"></i>
+                        <span>Directorio de Escuelas</span>
                     </a>
                 </div>
             </div>
@@ -432,19 +440,20 @@ $datosEducativos = $datosCompletosMunicipio;
 
                     <div class="level-bars animate-sequence">
                         <div class="nivel-header">
-                            <h4>Distribución por Nivel</h4>
+                            <h4>Distribución por Nivel o Tipo Educativo</h4>
                             <div class="view-toggle-buttons">
-                                <button class="view-toggle-btn active" data-view="barras">
-                                    <i class="fas fa-chart-bar"></i> Vista Barras
-                                </button>
-                                <button class="view-toggle-btn" data-view="grafico">
+                                <button class="view-toggle-btn active" data-view="grafico">
                                     <i class="fas fa-chart-pie"></i> Vista Gráfico
                                 </button>
+                                <button class="view-toggle-btn" data-view="barras">
+                                    <i class="fas fa-chart-bar"></i> Vista Barras
+                                </button>
+
                             </div>
                         </div>
 
-                        <!-- Vista de Barras (Por defecto) -->
-                        <div id="vista-barras" class="visualization-container">
+                        <!-- Vista de Barras (Oculta por defecto) -->
+                        <div id="vista-barras" class="visualization-container" style="display: none;">
                             <div class="level-bar">
                                 <span class="level-name">Inicial (E)</span>
                                 <div class="level-track">
@@ -547,9 +556,9 @@ $datosEducativos = $datosCompletosMunicipio;
                         </div>
                         <!-- Fin Vista Barras -->
 
-                        <!-- Vista Gráfico (Oculto por defecto) -->
-                        <div id="vista-grafico" class="visualization-container" style="display: none;">
-                            <div id="pie-chart-nivel" style="width: 100%; height: 400px;"></div>
+                        <!-- Vista Gráfico (Visible por defecto) -->
+                        <div id="vista-grafico" class="visualization-container">
+                            <div id="pie-chart-nivel" style="width: 100%; height: 550px;"></div>
                         </div>
                         <!-- Fin Vista Gráfico -->
                     </div>
@@ -588,7 +597,9 @@ $datosEducativos = $datosCompletosMunicipio;
                                 <div class="subcontrol-card animate-scale" data-subcontrol="<?php echo $dataAttribute; ?>">
                                     <div class="subcontrol-header">
                                         <div class="subcontrol-info">
-                                            <h4 class="subcontrol-name"><?php echo $subcontrol; ?></h4>
+                                            <h4 class="subcontrol-name">
+                                                <?php echo $subcontrol === 'FEDERAL TRANSFERIDO' ? 'USEBEQ' : $subcontrol; ?>
+                                            </h4>
                                             <div class="subcontrol-stats">
                                                 <span
                                                     class="subcontrol-count"><?php echo number_format($datos['total']); ?></span>
@@ -693,311 +704,132 @@ $datosEducativos = $datosCompletosMunicipio;
                 </div>
             </div>
 
-            <!-- Panel de eficiencia educativa 
-            <div class="panel animate-up delay-2">
-                <div class="panel-header">
-                    <h3 class="panel-title"><i class="fas fa-chart-line"></i> Eficiencia del Sistema Educativo en
-                        Corregidora</h3>
-                    <div class="panel-actions">
-                        <label class="radio-option">
-                            <input type="radio" name="view-type" value="diagram" checked>
-                            <span>Vista Diagrama</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="view-type" value="data">
-                            <span>Vista Datos</span>
-                        </label>
-                    </div>
+            <h1>En periodo de pruebas, fallas identificadas</h1>
+            <!-- Panel de Directorio Unificado de Escuelas -->
+            <div id="directorio-escuelas" class="matricula-panel animate-fade delay-4">
+                <div class="matricula-header">
+                    <h3 class="matricula-title">
+                        <i class="fas fa-school"></i>
+                        Directorio de Escuelas - <?php echo $municipioSeleccionado; ?>
+                    </h3>
                 </div>
-                <div class="panel-body">
-                    <div id="efficiency-diagram-view" class="education-flow">
-                        <div id="flow-container">
-                        </div>
-                    </div>
-                    <div id="efficiency-chart-view" style="display:none; height:350px;">
-                        <div id="efficiency-chart" style="width:100%; height:100%;"></div>
-                    </div>
-                </div>
-            </div>
-                -->
-        </div> <!-- Panel de análisis de trayectorias 
-        <div class="panel animate-up delay-3">
-            <div class="panel-header">
-                <h3 class="panel-title"><i class="fa-solid fa-magnifying-glass"></i> Análisis de Trayectorias
-                    Educativas</h3>
-            </div>
-            <div class="panel-body">
-                <div class="analysis-tabs animate-fade delay-3">
-                    <div class="tab active animate-hover" data-tab="primaria-tab">Primaria</div>
-                    <div class="tab animate-hover" data-tab="secundaria-tab">Secundaria</div>
-                    <div class="tab animate-hover" data-tab="bachillerato-tab">Bachillerato</div>
-                    <div class="tab animate-hover" data-tab="superior-tab">Superior</div>
-                </div>
+                <div class="matricula-body">
+                    <div class="directorio-filters">
+                        <input type="text" id="search-escuelas" placeholder="Buscar escuela..." class="search-input">
 
-                <div id="primaria-tab" class="tab-content active">
-                    <div class="stats-card">
-                        <div class="stat-indicator up">
-                            <i class="fas fa-arrow-up"></i>
-                        </div>
-                        <div>
-                            <strong>Incremento:</strong> +11 estudiantes<br>
-                        </div>
-                    </div>
-                    <h4>Primaria (2006-2007 → 2011-2012)</h4>
-                    <p><strong>Ingreso:</strong> 100 estudiantes en 1° grado</p>
-                    <p><strong>Egreso:</strong> 111 estudiantes de 6° grado</p>
-                    <div class="interpretation">
-                        <strong>Interpretación:</strong> En primaria hay un ligero incremento en la transición de
-                        ingreso a egreso, lo que indica una muy buena retención en esos seis años.
-                    </div>
-                </div>
+                        <select id="control-filter" class="nivel-filter">
+                            <option value="todas">Todas</option>
+                            <option value="publicas">Públicas (<?php echo $totalPublicas; ?>)</option>
+                            <option value="privadas">Privadas (<?php echo $totalPrivadas; ?>)</option>
+                        </select>
 
-                <div id="secundaria-tab" class="tab-content">
-                    <div class="stats-card">
-                        <div class="stat-indicator down">
-                            <i class="fas fa-arrow-down"></i>
-                        </div>
-                        <div>
-                            <strong>Transición:</strong> -43 estudiantes<br>
-                            <strong>Incremento Interno:</strong> +22 estudiantes<br>
-                        </div>
-                    </div>
-                    <h4>Secundaria (2012-2013 → 2014-2015)</h4>
-                    <p><strong>Ingreso:</strong> 68 estudiantes en 1° grado</p>
-                    <p><strong>Egreso:</strong> 90 estudiantes de 3° grado</p>
-                    <div class="interpretation">
-                        <strong>Interpretación:</strong> Hay una fuga importante al inicio de secundaria
-                        (posiblemente por cambio de escuela, traslados o abandono), pero de quienes sí inician, la
-                        mayoría alcanza el egreso de tercer grado.
-                    </div>
-                </div>
-
-                <div id="bachillerato-tab" class="tab-content">
-                    <div class="stats-card">
-                        <div class="stat-indicator up">
-                            <i class="fas fa-arrow-up"></i>
-                        </div>
-                        <div>
-                            <strong>Transición:</strong> +60 estudiantes<br>
-                            <strong>Decremento Interno:</strong> -45 estudiantes<br>
-                        </div>
-                    </div>
-                    <h4>Bachillerato (2015-2016 → 2017-2018)</h4>
-                    <p><strong>Ingreso:</strong> 150 estudiantes en 1° semestre</p>
-                    <p><strong>Egreso:</strong> 105 estudiantes de 3° año</p>
-                    <div class="interpretation">
-                        <strong>Interpretación:</strong> La atracción hacia el bachillerato es fuerte (quizá por
-                        oferta o convenios), pero la deserción durante los años de preparación técnica o
-                        preuniversitaria es significativa.
-                    </div>
-                </div>
-
-                <div id="superior-tab" class="tab-content">
-                    <div class="stats-card">
-                        <div class="stat-indicator down">
-                            <i class="fas fa-arrow-down"></i>
-                        </div>
-                        <div>
-                            <strong>Transición:</strong> -73 estudiantes<br>
-                            <strong>Incremento Interno:</strong> +2 estudiantes<br>
-                        </div>
-                    </div>
-                    <h4>Educación Superior (2018-2019 → 2022-2023)</h4>
-                    <p><strong>Ingreso:</strong> 32 estudiantes en 1° año</p>
-                    <p><strong>Egreso:</strong> 34 estudiantes graduados</p>
-                    <div class="interpretation">
-                        <strong>Interpretación:</strong> Existe una enorme brecha entre quienes finalizan
-                        bachillerato y quienes acceden a la universidad dentro del municipio (posiblemente por
-                        traslado a otras ciudades o falta de oferta local). Sin embargo, quienes sí entran tienen
-                        muy buena probabilidad de graduarse.
-                    </div>
-                </div>
-            </div>
-        </div>
-        -->
-        <h1>En periodo de pruebas, fallas identificadas</h1>
-        <!-- Panel de Directorio de Escuelas Públicas -->
-        <div id="directorio-publicas" class="matricula-panel animate-fade delay-4">
-            <div class="matricula-header">
-                <h3 class="matricula-title">
-                    <i class="fas fa-landmark"></i>
-                    Directorio de Escuelas Públicas - <?php echo $municipioSeleccionado; ?>
-                </h3>
-            </div>
-            <div class="matricula-body">
-                <div class="directorio-filters">
-                    <input type="text" id="search-publicas" placeholder="Buscar escuela pública..."
-                        class="search-input">
-                    <select id="nivel-filter-publicas" class="nivel-filter">
-                        <option value="todos">Todos los niveles</option>
-                        <?php foreach ($nivelesDisponibles as $codigo => $nombre):
-                            $cantPublicas = isset($escuelasPublicasPorNivel[$codigo]) ? count($escuelasPublicasPorNivel[$codigo]) : 0;
-                            if ($cantPublicas > 0):
-                                ?>
-                                <option value="<?php echo $codigo; ?>">
-                                    <?php echo $nombre; ?> (<?php echo $cantPublicas; ?>)
-                                </option>
-                                <?php
-                            endif;
-                        endforeach;
-                        ?>
-                    </select>
-                    <div class="export-buttons">
-                        <button class="export-btn export-excel" onclick="exportarDirectorio('excel', 'publicas')"
-                            title="Exportar a Excel">
-                            <i class="fas fa-file-excel"></i> Excel
-                        </button>
-                        <button class="export-btn export-pdf" onclick="exportarDirectorio('pdf', 'publicas')"
-                            title="Exportar a PDF">
-                            <i class="fas fa-file-pdf"></i> PDF
-                        </button>
-                    </div>
-                    <div class="school-count">
-                        <span class="count-label">Total:</span>
-                        <span class="count-number" id="count-publicas">
-                            <?php
-                            $totalPublicas = 0;
-                            foreach ($escuelasPublicasPorNivel as $escuelas) {
-                                $totalPublicas += count($escuelas);
-                            }
-                            echo $totalPublicas;
-                            ?>
-                        </span>
-                        <span class="count-text">escuelas</span>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table class="data-table" id="tabla-publicas">
-                        <thead>
-                            <tr>
-                                <th>Nivel Educativo</th>
-                                <th>CCT</th>
-                                <th>Nombre de la Escuela</th>
-                                <th>Localidad</th>
-                                <th>Total Alumnos</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-publicas">
-                            <?php
-                            foreach ($nivelesDisponibles as $codigo => $nombreNivel):
-                                if (!isset($escuelasPublicasPorNivel[$codigo]))
-                                    continue;
-                                foreach ($escuelasPublicasPorNivel[$codigo] as $escuela):
+                        <select id="nivel-filter-escuelas" class="nivel-filter">
+                            <option value="todos">Todos los niveles</option>
+                            <?php foreach ($nivelesDisponibles as $codigo => $nombre):
+                                $cantTotal = 0;
+                                if (isset($escuelasPublicasPorNivel[$codigo])) {
+                                    $cantTotal += count($escuelasPublicasPorNivel[$codigo]);
+                                }
+                                if (isset($escuelasPrivadasPorNivel[$codigo])) {
+                                    $cantTotal += count($escuelasPrivadasPorNivel[$codigo]);
+                                }
+                                if ($cantTotal > 0):
                                     ?>
-                                    <tr data-nivel="<?php echo $codigo; ?>"
-                                        data-nombre="<?php echo strtolower($escuela['nombre_escuela']); ?>"
-                                        data-cct="<?php echo $escuela['cv_cct']; ?>">
-                                        <td class="nivel-nombre"><?php echo $nombreNivel; ?></td>
-                                        <td class="cct-codigo"><?php echo $escuela['cv_cct']; ?></td>
-                                        <td class="escuela-nombre"><?php echo $escuela['nombre_escuela']; ?></td>
-                                        <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
-                                        <td class="sector-publico"><?php echo number_format($escuela['total_alumnos']); ?></td>
-                                    </tr>
+                                    <option value="<?php echo $codigo; ?>">
+                                        <?php echo $nombre; ?> (<?php echo $cantTotal; ?>)
+                                    </option>
                                     <?php
-                                endforeach;
+                                endif;
                             endforeach;
                             ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+                        </select>
 
-        <!-- Panel de Directorio de Escuelas Privadas -->
-        <div id="directorio-privadas" class="matricula-panel animate-fade delay-5">
-            <div class="matricula-header">
-                <h3 class="matricula-title">
-                    <i class="fas fa-building"></i>
-                    Directorio de Escuelas Privadas - <?php echo $municipioSeleccionado; ?>
-                </h3>
-            </div>
-            <div class="matricula-body">
-                <div class="directorio-filters">
-                    <input type="text" id="search-privadas" placeholder="Buscar escuela privada..."
-                        class="search-input">
-                    <select id="nivel-filter-privadas" class="nivel-filter">
-                        <option value="todos">Todos los niveles</option>
-                        <?php foreach ($nivelesDisponibles as $codigo => $nombre):
-                            $cantPrivadas = isset($escuelasPrivadasPorNivel[$codigo]) ? count($escuelasPrivadasPorNivel[$codigo]) : 0;
-                            if ($cantPrivadas > 0):
-                                ?>
-                                <option value="<?php echo $codigo; ?>">
-                                    <?php echo $nombre; ?> (<?php echo $cantPrivadas; ?>)
-                                </option>
+                        <div class="export-buttons">
+                            <button class="export-btn export-excel" onclick="exportarDirectorioUnificado('excel')"
+                                title="Exportar a Excel">
+                                <i class="fas fa-file-excel"></i> Excel
+                            </button>
+                            <button class="export-btn export-pdf" onclick="exportarDirectorioUnificado('pdf')"
+                                title="Exportar a PDF">
+                                <i class="fas fa-file-pdf"></i> PDF
+                            </button>
+                        </div>
+                        <div class="school-count">
+                            <span class="count-label">Total:</span>
+                            <span class="count-number" id="count-escuelas">
+                                <?php echo ($totalPublicas + $totalPrivadas); ?>
+                            </span>
+                            <span class="count-text">escuelas</span>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table" id="tabla-escuelas">
+                            <thead>
+                                <tr>
+                                    <th>Nivel Educativo</th>
+                                    <th>CCT</th>
+                                    <th>Nombre de la Escuela</th>
+                                    <th>Localidad</th>
+                                    <th>Control</th>
+                                    <th>Total Alumnos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-escuelas">
                                 <?php
-                            endif;
-                        endforeach;
-                        ?>
-                    </select>
-                    <div class="export-buttons">
-                        <button class="export-btn export-excel" onclick="exportarDirectorio('excel', 'privadas')"
-                            title="Exportar a Excel">
-                            <i class="fas fa-file-excel"></i> Excel
-                        </button>
-                        <button class="export-btn export-pdf" onclick="exportarDirectorio('pdf', 'privadas')"
-                            title="Exportar a PDF">
-                            <i class="fas fa-file-pdf"></i> PDF
-                        </button>
-                    </div>
-                    <div class="school-count">
-                        <span class="count-label">Total:</span>
-                        <span class="count-number" id="count-privadas">
-                            <?php
-                            $totalPrivadas = 0;
-                            foreach ($escuelasPrivadasPorNivel as $escuelas) {
-                                $totalPrivadas += count($escuelas);
-                            }
-                            echo $totalPrivadas;
-                            ?>
-                        </span>
-                        <span class="count-text">escuelas</span>
-                    </div>
-                </div>
+                                // Combinar escuelas públicas y privadas
+                                foreach ($nivelesDisponibles as $codigo => $nombreNivel):
+                                    // Primero las públicas
+                                    if (isset($escuelasPublicasPorNivel[$codigo])):
+                                        foreach ($escuelasPublicasPorNivel[$codigo] as $escuela):
+                                            ?>
+                                            <tr data-nivel="<?php echo $codigo; ?>" data-control="publicas"
+                                                data-nombre="<?php echo strtolower($escuela['nombre_escuela']); ?>"
+                                                data-cct="<?php echo $escuela['cv_cct']; ?>">
+                                                <td class="nivel-nombre"><?php echo $nombreNivel; ?></td>
+                                                <td class="cct-codigo"><?php echo $escuela['cv_cct']; ?></td>
+                                                <td class="escuela-nombre"><?php echo $escuela['nombre_escuela']; ?></td>
+                                                <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
+                                                <td class="control-tipo"><span class="badge-publico">Público</span></td>
+                                                <td class="sector-publico"><?php echo number_format($escuela['total_alumnos']); ?>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        endforeach;
+                                    endif;
 
-                <div class="table-container">
-                    <table class="data-table" id="tabla-privadas">
-                        <thead>
-                            <tr>
-                                <th>Nivel Educativo</th>
-                                <th>CCT</th>
-                                <th>Nombre de la Escuela</th>
-                                <th>Localidad</th>
-                                <th>Total Alumnos</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbody-privadas">
-                            <?php
-                            foreach ($nivelesDisponibles as $codigo => $nombreNivel):
-                                if (!isset($escuelasPrivadasPorNivel[$codigo]))
-                                    continue;
-                                foreach ($escuelasPrivadasPorNivel[$codigo] as $escuela):
-                                    ?>
-                                    <tr data-nivel="<?php echo $codigo; ?>"
-                                        data-nombre="<?php echo strtolower($escuela['nombre_escuela']); ?>"
-                                        data-cct="<?php echo $escuela['cv_cct']; ?>">
-                                        <td class="nivel-nombre"><?php echo $nombreNivel; ?></td>
-                                        <td class="cct-codigo"><?php echo $escuela['cv_cct']; ?></td>
-                                        <td class="escuela-nombre"><?php echo $escuela['nombre_escuela']; ?></td>
-                                        <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
-                                        <td class="sector-privado"><?php echo number_format($escuela['total_alumnos']); ?></td>
-                                    </tr>
-                                    <?php
+                                    // Luego las privadas
+                                    if (isset($escuelasPrivadasPorNivel[$codigo])):
+                                        foreach ($escuelasPrivadasPorNivel[$codigo] as $escuela):
+                                            ?>
+                                            <tr data-nivel="<?php echo $codigo; ?>" data-control="privadas"
+                                                data-nombre="<?php echo strtolower($escuela['nombre_escuela']); ?>"
+                                                data-cct="<?php echo $escuela['cv_cct']; ?>">
+                                                <td class="nivel-nombre"><?php echo $nombreNivel; ?></td>
+                                                <td class="cct-codigo"><?php echo $escuela['cv_cct']; ?></td>
+                                                <td class="escuela-nombre"><?php echo $escuela['nombre_escuela']; ?></td>
+                                                <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
+                                                <td class="control-tipo"><span class="badge-privado">Privado</span></td>
+                                                <td class="sector-privado"><?php echo number_format($escuela['total_alumnos']); ?>
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        endforeach;
+                                    endif;
                                 endforeach;
-                            endforeach;
-                            ?>
-                        </tbody>
-                    </table>
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+
         </div>
 
-    </div>
-
-    <footer class="dashboard-footer">
-        <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
-            reservados</p>
-    </footer>
+        <footer class="dashboard-footer">
+            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
+                reservados</p>
+        </footer>
     </div>
     <script>
         <?php

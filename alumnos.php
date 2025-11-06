@@ -467,7 +467,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
                             <i class="fas fa-exclamation-triangle"></i>
                             <h3>No hay datos disponibles</h3>
                             <p>No se pudieron obtener datos totales para el municipio de
-                                <?php echo strtoupper($municipioSeleccionado); ?>.</p>
+                                <?php echo strtoupper($municipioSeleccionado); ?>.
+                            </p>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -777,7 +778,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                     </div>
                                     <div class="total-contenido">
                                         <span class="total-tipo">Total Matrícula Atendida</span>
-                                        <span class="total-valor"><?php echo number_format($datosUSAER['tot_mat'], 0, '.', ','); ?></span>
+                                        <span
+                                            class="total-valor"><?php echo number_format($datosUSAER['tot_mat'], 0, '.', ','); ?></span>
                                         <span class="total-subtitulo">alumnos</span>
                                     </div>
                                 </div>

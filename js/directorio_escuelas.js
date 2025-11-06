@@ -636,3 +636,300 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// =============================================================================
+// FUNCIONES PARA DIRECTORIO UNIFICADO DE ESCUELAS
+// =============================================================================
+
+/**
+ * Inicializa el directorio unificado
+ */
+function initDirectorioUnificado() {
+    const controlFilter = document.getElementById('control-filter');
+    const nivelFilter = document.getElementById('nivel-filter-escuelas');
+    const searchInput = document.getElementById('search-escuelas');
+    
+    if (controlFilter) {
+        controlFilter.addEventListener('change', function() {
+            filterDirectorioUnificado();
+        });
+    }
+    
+    if (nivelFilter) {
+        nivelFilter.addEventListener('change', function() {
+            filterDirectorioUnificado();
+        });
+    }
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            filterDirectorioUnificado();
+        });
+    }
+}
+
+/**
+ * Filtra el directorio unificado según control, nivel y búsqueda
+ */
+function filterDirectorioUnificado() {
+    const controlFilter = document.getElementById('control-filter').value;
+    const nivelFilter = document.getElementById('nivel-filter-escuelas').value;
+    const searchText = document.getElementById('search-escuelas').value.toLowerCase();
+    
+    const table = document.getElementById('tabla-escuelas');
+    if (!table) return;
+    
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    let visibleCount = 0;
+    
+    Array.from(rows).forEach(row => {
+        const control = row.getAttribute('data-control');
+        const nivel = row.getAttribute('data-nivel');
+        const nombre = row.getAttribute('data-nombre');
+        const cct = row.getAttribute('data-cct').toLowerCase();
+        
+        let showByControl = controlFilter === 'todas' || control === controlFilter;
+        let showByNivel = nivelFilter === 'todos' || nivel === nivelFilter;
+        let showBySearch = searchText === '' || nombre.includes(searchText) || cct.includes(searchText);
+        
+        if (showByControl && showByNivel && showBySearch) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    // Actualizar contador
+    const countElement = document.getElementById('count-escuelas');
+    if (countElement) {
+        countElement.textContent = visibleCount;
+    }
+}
+
+/**
+ * Exporta el directorio unificado a Excel o PDF
+ */
+function exportarDirectorioUnificado(formato) {
+    const controlFilter = document.getElementById('control-filter').value;
+    const nivelFilter = document.getElementById('nivel-filter-escuelas').value;
+    const municipio = typeof municipioActual !== 'undefined' ? municipioActual : 'Corregidora';
+    
+    // Determinar texto del tipo de control
+    let tipoTexto = 'Todas las Escuelas';
+    if (controlFilter === 'publicas') {
+        tipoTexto = 'Escuelas Públicas';
+    } else if (controlFilter === 'privadas') {
+        tipoTexto = 'Escuelas Privadas';
+    }
+    
+    // Determinar texto del nivel
+    const nivelSelect = document.getElementById('nivel-filter-escuelas');
+    const nivelTexto = nivelFilter === 'todos' 
+        ? 'Todos los niveles' 
+        : nivelSelect.options[nivelSelect.selectedIndex].text;
+    
+    if (formato === 'excel') {
+        exportarUnificadoExcel(tipoTexto, nivelTexto, municipio, controlFilter, nivelFilter);
+    } else if (formato === 'pdf') {
+        exportarUnificadoPDF(tipoTexto, nivelTexto, municipio, controlFilter, nivelFilter);
+    }
+}
+
+/**
+ * Exporta el directorio unificado a Excel
+ */
+function exportarUnificadoExcel(tipoTexto, nivelTexto, municipio, controlFilter, nivelFilter) {
+    const table = document.getElementById('tabla-escuelas');
+    if (!table) {
+        alert('No se encontró la tabla de escuelas');
+        return;
+    }
+
+    // Crear workbook
+    const wb = XLSX.utils.book_new();
+
+    // Obtener datos de la tabla (solo filas visibles)
+    const data = getTableDataUnificado(table, false);
+
+    // Verificar si hay datos para exportar
+    if (data.length <= 1) {
+        alert('No hay datos visibles para exportar. Verifica los filtros aplicados.');
+        return;
+    }
+
+    // Agregar información de filtros al inicio
+    const dataWithHeader = [];
+    dataWithHeader.push(['Directorio de Escuelas - ' + tipoTexto]);
+    dataWithHeader.push(['Municipio de ' + municipio + ', Querétaro']);
+    dataWithHeader.push(['Ciclo Escolar 2024-2025']);
+    dataWithHeader.push(['Nivel: ' + nivelTexto]);
+    dataWithHeader.push(['Total de escuelas: ' + (data.length - 1)]);
+    dataWithHeader.push(['Fecha de exportación: ' + new Date().toLocaleDateString('es-MX')]);
+    dataWithHeader.push([]); // Fila vacía
+
+    // Agregar los datos de la tabla
+    dataWithHeader.push(...data);
+
+    // Crear worksheet
+    const ws = XLSX.utils.aoa_to_sheet(dataWithHeader);
+
+    // Configurar anchos de columna
+    const colWidths = [
+        { wch: 25 }, // Nivel
+        { wch: 15 }, // CCT
+        { wch: 50 }, // Nombre
+        { wch: 25 }, // Localidad
+        { wch: 15 }, // Control
+        { wch: 15 }  // Alumnos
+    ];
+    ws['!cols'] = colWidths;
+
+    // Añadir worksheet al workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Directorio Escuelas');
+
+    // Generar nombre de archivo
+    const controlSuffix = controlFilter !== 'todas' ? '_' + controlFilter : '';
+    const nivelSuffix = nivelFilter !== 'todos' ? '_' + nivelFilter : '';
+    const fileName = `Directorio_Escuelas${controlSuffix}${nivelSuffix}_${municipio}.xlsx`;
+
+    // Descargar archivo
+    XLSX.writeFile(wb, fileName);
+
+    // Mostrar mensaje de éxito
+    showExportMessage('Excel', fileName);
+}
+
+/**
+ * Exporta el directorio unificado a PDF
+ */
+function exportarUnificadoPDF(tipoTexto, nivelTexto, municipio, controlFilter, nivelFilter) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('l', 'mm', 'a4'); // Orientación horizontal
+
+    const table = document.getElementById('tabla-escuelas');
+    if (!table) {
+        alert('No se encontró la tabla de escuelas');
+        return;
+    }
+
+    // Obtener datos de la tabla (solo filas visibles)
+    const data = getTableDataUnificado(table, false);
+
+    // Verificar si hay datos para exportar
+    if (data.length <= 1) {
+        alert('No hay datos visibles para exportar. Verifica los filtros aplicados.');
+        return;
+    }
+
+    const headers = data[0];
+    const rows = data.slice(1);
+
+    // Configurar encabezado del documento
+    doc.setFontSize(16);
+    doc.setFont(undefined, 'bold');
+    doc.text('Directorio de Escuelas - ' + tipoTexto, 15, 15);
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'normal');
+    doc.text('Municipio de ' + municipio + ', Querétaro', 15, 22);
+    doc.text('Ciclo Escolar 2024-2025', 15, 28);
+
+    doc.setFont(undefined, 'bold');
+    doc.text('Nivel: ' + nivelTexto, 15, 34);
+
+    doc.setFont(undefined, 'normal');
+    doc.text('Total de escuelas: ' + rows.length, 15, 40);
+    doc.text('Fecha de exportación: ' + new Date().toLocaleDateString('es-MX', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    }), 15, 46);
+
+    // Configurar tabla
+    doc.autoTable({
+        head: [headers],
+        body: rows,
+        startY: 52,
+        styles: {
+            fontSize: 7,
+            cellPadding: 2,
+            overflow: 'linebreak',
+            halign: 'left'
+        },
+        headStyles: {
+            fillColor: [41, 128, 185],
+            textColor: 255,
+            fontStyle: 'bold',
+            halign: 'center'
+        },
+        alternateRowStyles: {
+            fillColor: [245, 245, 245]
+        },
+        columnStyles: {
+            0: { cellWidth: 35 },  // Nivel Educativo
+            1: { cellWidth: 25 },  // CCT
+            2: { cellWidth: 100 }, // Nombre de la Escuela
+            3: { cellWidth: 45 },  // Localidad
+            4: { cellWidth: 25 },  // Control
+            5: { cellWidth: 20, halign: 'right' } // Total Alumnos
+        },
+        margin: { top: 52, left: 15, right: 15 },
+        didDrawPage: function(data) {
+            // Pie de página
+            const pageCount = doc.internal.getNumberOfPages();
+            doc.setFontSize(8);
+            doc.setTextColor(150);
+            doc.text(
+                'Página ' + data.pageNumber + ' de ' + pageCount,
+                doc.internal.pageSize.width / 2,
+                doc.internal.pageSize.height - 10,
+                { align: 'center' }
+            );
+        }
+    });
+
+    // Generar nombre de archivo
+    const controlSuffix = controlFilter !== 'todas' ? '_' + controlFilter : '';
+    const nivelSuffix = nivelFilter !== 'todos' ? '_' + nivelFilter : '';
+    const fileName = `Directorio_Escuelas${controlSuffix}${nivelSuffix}_${municipio}.pdf`;
+
+    // Descargar archivo
+    doc.save(fileName);
+
+    // Mostrar mensaje de éxito
+    showExportMessage('PDF', fileName);
+}
+
+/**
+ * Obtiene los datos de la tabla unificada como array
+ * @param {HTMLElement} table - Elemento tabla
+ * @param {boolean} includeHidden - Si incluir filas ocultas
+ * @returns {Array} Datos de la tabla
+ */
+function getTableDataUnificado(table, includeHidden = true) {
+    const data = [];
+    
+    // Obtener encabezados
+    const headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent.trim());
+    data.push(headers);
+    
+    // Obtener filas de datos
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    Array.from(rows).forEach(row => {
+        if (!includeHidden && row.style.display === 'none') return;
+        
+        const cells = Array.from(row.getElementsByTagName('td')).map(cell => {
+            // Limpiar HTML y obtener solo texto
+            return cell.textContent.trim();
+        });
+        data.push(cells);
+    });
+    
+    return data;
+}
+
+// Inicializar el directorio unificado cuando el DOM esté listo
+if (document.getElementById('directorio-escuelas')) {
+    document.addEventListener('DOMContentLoaded', initDirectorioUnificado);
+}

@@ -338,32 +338,27 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = google.visualization.arrayToDataTable(datosGrafico);
 
             const options = {
-                title: getTituloGrafico(tipo),
-                titleTextStyle: {
-                    fontSize: 16,
-                    bold: true,
-                    color: '#333'
-                },
-                pieHole: 0, // 0 para pie normal, 0.4 para donut
+                pieHole: 0.4, // 0 para pie normal, 0.4 para donut
                 colors: ['#4A90E2', '#7CB342', '#FFA726', '#AB47BC', '#26C6DA', '#EF5350', '#78909C', '#FDD835'],
                 legend: {
                     position: 'right',
                     textStyle: {
-                        fontSize: 13
+                        fontSize: 14
                     }
                 },
                 pieSliceText: 'percentage',
                 pieSliceTextStyle: {
                     color: 'white',
-                    fontSize: 12
+                    fontSize: 14,
+                    bold: true
                 },
                 tooltip: {
                     text: 'both',
                     showColorCode: true
                 },
                 chartArea: {
-                    width: '85%',
-                    height: '80%'
+                    width: '90%',
+                    height: '85%'
                 },
                 animation: {
                     startup: true,
@@ -457,6 +452,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Ejecutar diagnóstico después de cargar la página
     setTimeout(diagnosticarDatos, 2000);
+    
+    // Inicializar el gráfico de pie al cargar la página (vista por defecto)
+    // Se ejecuta después de que Google Charts se haya cargado
+    if (typeof google !== 'undefined' && google.charts) {
+        google.charts.setOnLoadCallback(function() {
+            crearGraficoPieNivel(filtroActual);
+        });
+    } else {
+        // Si Google Charts no está cargado aún, esperar un momento
+        setTimeout(function() {
+            if (typeof google !== 'undefined' && google.charts) {
+                google.charts.setOnLoadCallback(function() {
+                    crearGraficoPieNivel(filtroActual);
+                });
+            }
+        }, 500);
+    }
 });
 
 // Agregar una función auxiliar para formatear números

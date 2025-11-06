@@ -1879,6 +1879,37 @@ mark {
     }
 }
 
+/* =============================================
+   BADGES DE CONTROL (PÚBLICO/PRIVADO)
+   ============================================= */
+
+.badge-publico,
+.badge-privado {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.badge-publico {
+    background-color: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #90caf9;
+}
+
+.badge-privado {
+    background-color: #f3e5f5;
+    color: #6a1b9a;
+    border: 1px solid #ce93d8;
+}
+
+.control-tipo {
+    text-align: center;
+}
+
 @media (max-width: 480px) {
     .master-search-input {
         padding: 10px 40px 10px 35px;
@@ -1909,3 +1940,4 @@ mark {
         font-size: 0.8rem;
     }
 }
+
