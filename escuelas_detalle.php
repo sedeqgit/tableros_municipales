@@ -375,7 +375,7 @@ $datosEducativos = $datosCompletosMunicipio;
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>Detalle de Escuelas Ciclo 2024 - 2025 </h1>
+                <h1>Detalle de Escuelas <?php echo $municipioSeleccionado; ?> Ciclo 2024 - 2025 </h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -389,7 +389,7 @@ $datosEducativos = $datosCompletosMunicipio;
             <!-- Panel de resumen de escuelas -->
             <div id="resumen-escuelas" class="panel animate-up">
                 <div class="panel-header">
-                    <h3 class="panel-title"><i class="fas fa-school"></i> Resumen de Escuelas en
+                    <h3 class="panel-title"><i class="fas fa-school"></i> Resumen General de Escuelas en
                         <?php echo $municipioSeleccionado; ?>
                     </h3>
                 </div>
@@ -411,12 +411,7 @@ $datosEducativos = $datosCompletosMunicipio;
 
                     <!-- Gráfico de distribución pública vs privada -->
                     <div class="sostenimiento-chart animate-fade delay-3">
-                        <h4>Distribución por Sostenimiento</h4>
-                        <div class="sostenimiento-filters">
-                            <button class="filter-btn active" data-filter="total">Total</button>
-                            <button class="filter-btn" data-filter="publico">Público</button>
-                            <button class="filter-btn" data-filter="privado">Privado</button>
-                        </div>
+                        <h4>Distribución por Tipo de Sostenimiento</h4>
                         <div class="progress-container">
                             <div class="progress-bar">
                                 <div class="progress-fill public" style="width: <?php echo $porcentajePublicas; ?>%">
@@ -427,6 +422,12 @@ $datosEducativos = $datosCompletosMunicipio;
                                 </div>
                             </div>
                         </div>
+                        <div class="sostenimiento-filters">
+                            <button class="filter-btn active" data-filter="total">Total</button>
+                            <button class="filter-btn" data-filter="publico">Público</button>
+                            <button class="filter-btn" data-filter="privado">Privado</button>
+                        </div>
+
                     </div>
 
                     <div class="level-bars animate-sequence">
@@ -558,7 +559,7 @@ $datosEducativos = $datosCompletosMunicipio;
             <!-- Panel de distribución por subcontrol educativo -->
             <div id="subcontrol-educativo" class="panel animate-up delay-1">
                 <div class="panel-header">
-                    <h3 class="panel-title"><i class="fas fa-building"></i> Distribución por Subcontrol Educativo</h3>
+                    <h3 class="panel-title"><i class="fas fa-building"></i> Distribución por Tipo de Sostenimiento</h3>
                 </div>
                 <div class="panel-body">
                     <?php

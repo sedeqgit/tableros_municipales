@@ -256,19 +256,23 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                     </a>
                     <a href="#desglose-detallado" class="submenu-link">
                         <i class="fas fa-chart-pie"></i>
-                        <span>Desglose Detallado por Nivel</span>
+                        <span>Desglose Detallado por Nivel o Tipo Educativo</span>
                     </a>
                     <a href="#publico-privado" class="submenu-link">
                         <i class="fas fa-balance-scale"></i>
-                        <span>Desglose Público vs Privado</span>
+                        <span>Desglose Detallado por Nivel o Tipo Educativo</span>
                     </a>
                     <a href="#desglose-sexo" class="submenu-link">
                         <i class="fas fa-user-graduate"></i>
-                        <span>Desglose Alumnos por Sexo</span>
+                        <span>Desglose de Matrícula por Sexo y Sostenimiento</span>
                     </a>
                     <a href="#totales-municipales" class="submenu-link">
                         <i class="fas fa-percentage"></i>
-                        <span>Porcentajes Totales Municipales por Nivel</span>
+                        <span>Porcentaje por Nivel o Tipo Educativo de los Totales del Municipio</span>
+                    </a>
+                    <a href="#usaer-section" class="submenu-link">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>USAER</span>
                     </a>
                 </div>
             </div>
@@ -980,10 +984,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                     <i class="fas fa-school"></i>
                                 </div>
                                 <div class="total-contenido">
-                                    <span class="total-tipo">Total Unidades USAER <i class="fas fa-info-circle info-icon"
-                                            data-tooltip="1. En el total de Escuelas de Media Superior se cuantifican planteles y en Superior se cuantifican instituciones
-                                2. El total de Escuelas de Superior en el Estado no corresponde a la suma de escuelas en los municipios, debido a que en algunos casos sólo se registra la institución en la capital del Estado y no se desglosan las unidades académicas en los municipios donde se imparten estudios
-                                3. Los datos de escuela de los servicios USAER no se suman ya que se encuentran en los niveles correspondientes"></i></span>
+                                    <span class="total-tipo">Total Unidades USAER </span>
                                     <span
                                         class="total-valor"><?php echo number_format($datosUSAER['tot_esc'], 0, '.', ','); ?></span>
                                     <span class="total-subtitulo">unidades </span>
@@ -994,9 +995,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                     <i class="fas fa-user-graduate"></i>
                                 </div>
                                 <div class="total-contenido">
-                                    <span class="total-tipo">Total Matrícula Atendida <i
-                                            class="fas fa-info-circle info-icon"
-                                            data-tooltip="1. Los datos de matrícula de los servicios de USAER no se suman ya que se encuentran en los niveles correspondientes"></i></span>
+                                    <span class="total-tipo">Total Matrícula Atendida</span>
                                     <span
                                         class="total-valor"><?php echo number_format($datosUSAER['tot_mat'], 0, '.', ','); ?></span>
                                     <span class="total-subtitulo">alumnos</span>

@@ -61,6 +61,9 @@ $datosCompletosMunicipio = obtenerResumenMunicipioCompleto($municipioSeleccionad
 // Obtener datos de desglose público/privado para el municipio
 $datosPublicoPrivado = obtenerDatosPublicoPrivado($municipioSeleccionado);
 
+// Obtener datos de USAER
+$datosUSAER = obtenerDatosUSAER($municipioSeleccionado);
+
 // Verificar si hay datos
 $hayError = !$datosCompletosMunicipio;
 $tieneDatos = $datosCompletosMunicipio && isset($datosCompletosMunicipio['total_matricula']) && $datosCompletosMunicipio['total_matricula'] > 0;
@@ -212,7 +215,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
                 <a href="alumnos.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>"
                     class="sidebar-link active has-submenu">
                     <i class="fas fa-user-graduate"></i>
-                    <span>Estudiantes</span>
+                    <span>Matrícula</span>
                     <i class="fas fa-chevron-down submenu-arrow"></i>
                 </a>
                 <div class="submenu active">
@@ -236,6 +239,10 @@ foreach ($datosPorNivel as $nivel => $datos) {
                         <i class="fas fa-list-alt"></i>
                         <span>Detalle por Subnivel</span>
                     </a>
+                    <a href="#usaer-section" class="submenu-link">
+                        <i class="fas fa-hands-helping"></i>
+                        <span>USAER</span>
+                    </a>
                 </div>
             </div>
             <a href="escuelas_detalle.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>"
@@ -256,7 +263,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>Matrícula Estudiantil por Nivel Educativo -
+                <h1>Detalle de la Matrícula Estudiantil -
                     <?php echo htmlspecialchars($municipioSeleccionado, ENT_QUOTES, 'UTF-8'); ?>
                 </h1>
                 <?php if (!$tieneDatos): ?>
@@ -291,12 +298,12 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     <div class="stats-row">
                         <div class="stat-box total-general">
                             <div class="stat-value"><?php echo number_format($totales['general']); ?></div>
-                            <div class="stat-label">Total de Alumnos</div>
+                            <div class="stat-label">Matrícula</div>
                             <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
                         </div>
                         <div class="stat-box sector-publico">
                             <div class="stat-value"><?php echo number_format($totales['publico']); ?></div>
-                            <div class="stat-label">Sector Público</div>
+                            <div class="stat-label">Público</div>
                             <div class="stat-percentage">
                                 <?php echo round(($totales['publico'] / $totales['general']) * 100, 1); ?>%
                             </div>
@@ -304,7 +311,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
                         </div>
                         <div class="stat-box sector-privado">
                             <div class="stat-value"><?php echo number_format($totales['privado']); ?></div>
-                            <div class="stat-label">Sector Privado</div>
+                            <div class="stat-label">Privado</div>
                             <div class="stat-percentage">
                                 <?php echo round(($totales['privado'] / $totales['general']) * 100, 1); ?>%
                             </div>
@@ -316,18 +323,18 @@ foreach ($datosPorNivel as $nivel => $datos) {
             <!-- Panel de tabla detallada -->
             <div id="desglose-sostenimiento" class="matricula-panel animate-fade delay-2">
                 <div class="matricula-header">
-                    <h3 class="matricula-title"><i class="fas fa-table"></i> Desglose por Sostenimiento</h3>
+                    <h3 class="matricula-title"><i class="fas fa-table"></i> Desglose por Tipo de Sostenimiento</h3>
                 </div>
                 <div class="matricula-body">
                     <div class="table-container">
                         <table id="tabla-matricula" class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Nivel Educativo</th>
+                                    <th>Nivel o Tipo Educativo</th>
                                     <th>Total</th>
-                                    <th>Sector Público</th>
+                                    <th>Público</th>
                                     <th>% Público</th>
-                                    <th>Sector Privado</th>
+                                    <th>Privado</th>
                                     <th>% Privado</th>
                                 </tr>
                             </thead>
@@ -372,72 +379,103 @@ foreach ($datosPorNivel as $nivel => $datos) {
                 </div>
             </div>
 
-            <!-- Panel de análisis de tendencias (aislado de herencia global) -->
-            <div id="analisis-nivel" class="matricula-panel animate-fade delay-3 panel-nivelaislado">
-                <div class="header-nivelaislado">
-                    <h3 class="title-nivelaislado"><i class="fas fa-chart-line"></i> Análisis por Nivel Educativo
-                        (porcentaje del
-                        total del municipio)</h3>
-                    <div class="toggle-nivelaislado">
-                        <button id="toggle-view" class="toggle-btn-nivelaislado" data-view="cards">
-                            <i class="fas fa-chart-bar"></i> Ver Gráfico
-                        </button>
-                    </div>
+            <!-- Panel de Porcentaje por Nivel Educativo de los Totales del Municipio -->
+            <div id="analisis-nivel" class="matricula-panel animate-fade delay-3">
+                <div class="matricula-header">
+                    <h3><i class="fas fa-percentage"></i> Porcentaje por Nivel o Tipo Educativo de la Matrícula Total
+                        del Municipio</h3>
                 </div>
-                <div class="body-nivelaislado">
-                    <!-- Vista de tarjetas (por defecto) -->
-                    <div id="cards-view" class="grid-nivelaislado">
-                        <?php foreach ($datosPorNivel as $nivel => $datos): ?>
-                            <?php
-                            $porcentajePublico = $datos['total'] > 0 ? round(($datos['publico'] / $datos['total']) * 100, 1) : 0;
-                            $dominante = $datos['publico'] > $datos['privado'] ? 'público' : 'privado';
-                            $participacion = round(($datos['total'] / $totales['general']) * 100, 1);
-                            ?>
-                            <div class="card-nivelaislado">
-                                <div class="header-card-nivelaislado">
-                                    <h4><?php echo $nivel; ?></h4>
-                                    <span class="participacion-nivelaislado"><?php echo $participacion; ?>% del total</span>
-                                </div>
-                                <div class="content-nivelaislado">
-                                    <div class="sectorinfo-nivelaislado">
-                                        <div class="sectordom-nivelaislado <?php echo $dominante; ?>">
-                                            <span class="sectorlabel-nivelaislado">Sector dominante:</span>
-                                            <span class="sectorvalue-nivelaislado"><?php echo ucfirst($dominante); ?></span>
+                <div class="matricula-body">
+                    <?php if ($tieneDatos && !empty($datosPublicoPrivado)): ?>
+                        <div class="totales-municipales-container">
+                            <!-- Resumen de Totales Municipales -->
+                            <div class="totales-resumen">
+                                <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                                    <i class="fas fa-chart-bar"></i> Resumen General del Municipio
+                                </h3>
+                                <div class="totales-generales-grid">
+                                    <div class="total-municipal-card">
+                                        <div class="total-icono">
+                                            <i class="fas fa-user-graduate"></i>
                                         </div>
-                                        <div class="sectorstats-nivelaislado">
-                                            <div class="statmini-nivelaislado">
-                                                <span
-                                                    class="valuenivelaislado"><?php echo number_format($datos['publico']); ?></span>
-                                                <span class="labelnivelaislado">Públicos</span>
-                                            </div>
-                                            <div class="statmini-nivelaislado">
-                                                <span
-                                                    class="valuenivelaislado"><?php echo number_format($datos['privado']); ?></span>
-                                                <span class="labelnivelaislado">Privados</span>
-                                            </div>
+                                        <div class="total-contenido">
+                                            <span class="total-tipo">Total Matrícula</span>
+                                            <span
+                                                class="total-valor"><?php echo number_format($totales['general'], 0, '.', ','); ?></span>
+                                            <span class="total-subtitulo">alumnos</span>
                                         </div>
-                                    </div>
-                                    <div class="progressbar-nivelaislado">
-                                        <div class="progresspublico-nivelaislado"
-                                            style="width: <?php echo $porcentajePublico; ?>%"></div>
-                                        <div class="progressprivado-nivelaislado"
-                                            style="width: <?php echo 100 - $porcentajePublico; ?>%"></div>
                                     </div>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
-                    </div>
 
-                    <!-- Vista de gráfico (oculta por defecto) -->
-                    <div id="chart-view" class="chart-container" style="display: none;">
-                        <div id="chart-comparativo" style="width:100%; height:500px;"></div>
-                    </div>
+                            <!-- Desglose por Nivel Educativo con Porcentajes Municipales -->
+                            <div class="porcentajes-niveles-detalle">
+                                <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                                    <i class="fas fa-chart-line"></i> Análisis por Nivel Educativo (porcentaje del total del
+                                    municipio)
+                                </h3>
+                                <div class="niveles-municipales-grid">
+                                    <?php foreach ($datosPublicoPrivado as $nivel => $datos): ?>
+                                        <?php if ($datos['tot_mat'] > 0): ?>
+                                            <?php
+                                            // Calcular datos de sector dominante
+                                            $totalMatricula = isset($datos['tot_mat']) ? (int) $datos['tot_mat'] : 0;
+                                            $matriculaPublica = isset($datos['tot_mat_pub']) ? (int) $datos['tot_mat_pub'] : 0;
+                                            $matriculaPrivada = isset($datos['tot_mat_priv']) ? (int) $datos['tot_mat_priv'] : 0;
+                                            $porcentajePublico = $totalMatricula > 0 ? round(($matriculaPublica / $totalMatricula) * 100, 1) : 0;
+                                            $porcentajePrivado = $totalMatricula > 0 ? round(($matriculaPrivada / $totalMatricula) * 100, 1) : 0;
+                                            $dominante = $matriculaPublica > $matriculaPrivada ? 'Público' : 'Privado';
+                                            $participacion = $totales['general'] > 0 ? round(($totalMatricula / $totales['general']) * 100, 2) : 0;
+                                            ?>
+                                            <div class="nivel-municipal-card">
+                                                <div class="nivel-header">
+                                                    <h4><?php echo htmlspecialchars($datos['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?>
+                                                    </h4>
+                                                    <span class="participacion-badge"><?php echo $participacion; ?>% del
+                                                        total</span>
+                                                </div>
+
+                                                <!-- Datos detallados -->
+                                                <div class="nivel-totales-detalle">
+                                                    <div class="total-item-detalle">
+                                                        <span class="total-label">Matrícula:</span>
+                                                        <span class="porcentaje-municipal"><?php echo $participacion; ?>%</span>
+                                                        <span
+                                                            class="total-numero"><?php echo number_format($totalMatricula, 0, '.', ','); ?></span>
+                                                    </div>
+                                                    <div class="total-item-detalle">
+                                                        <span class="total-label">Público:</span>
+                                                        <span class="porcentaje-municipal"><?php echo $porcentajePublico; ?>%</span>
+                                                        <span
+                                                            class="total-numero"><?php echo number_format($matriculaPublica, 0, '.', ','); ?></span>
+                                                    </div>
+                                                    <div class="total-item-detalle">
+                                                        <span class="total-label">Privado:</span>
+                                                        <span class="porcentaje-municipal"><?php echo $porcentajePrivado; ?>%</span>
+                                                        <span
+                                                            class="total-numero"><?php echo number_format($matriculaPrivada, 0, '.', ','); ?></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <div class="totales-municipales-error">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>No hay datos disponibles</h3>
+                            <p>No se pudieron obtener datos totales para el municipio de
+                                <?php echo strtoupper($municipioSeleccionado); ?>.</p>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
             <!-- Panel de resumen general por género -->
             <div id="analisis-genero" class="matricula-panel animate-fade delay-2">
                 <div class="matricula-header">
-                    <h3 class="matricula-title"><i class="fas fa-venus-mars"></i> Resumen General por Género</h3>
+                    <h3 class="matricula-title"><i class="fas fa-venus-mars"></i> Resumen General por Sexo</h3>
                 </div>
                 <div class="matricula-body">
                     <div class="stats-row">
@@ -454,7 +492,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
                         ?>
                         <div class="stat-box total-general">
                             <div class="stat-value"><?php echo number_format($totalGeneralGenero); ?></div>
-                            <div class="stat-label">Total de Alumnos</div>
+                            <div class="stat-label">Matrícula</div>
                             <div class="stat-icon"><i class="fas fa-users"></i></div>
                         </div>
                         <div class="stat-box sector-hombres">
@@ -481,14 +519,14 @@ foreach ($datosPorNivel as $nivel => $datos) {
             <!-- Panel de tabla detallada por género (diseño igual que Análisis por Nivel) -->
             <div class="matricula-panel animate-fade delay-4 matricula-genero">
                 <div class="matricula-header">
-                    <h3 class="matricula-title"><i class="fas fa-venus-mars"></i> Matrícula por Género</h3>
+                    <h3 class="matricula-title"><i class="fas fa-venus-mars"></i> Matrícula por Sexo</h3>
                 </div>
                 <div class="matricula-body">
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>Nivel Educativo</th>
+                                    <th>Nivel o Tipo Educativo</th>
                                     <th>Total</th>
                                     <th><i class="fas fa-mars"></i> Hombres</th>
                                     <th>% Hombres</th>
@@ -538,67 +576,10 @@ foreach ($datosPorNivel as $nivel => $datos) {
             </div>
 
             <!-- Panel de análisis de tendencias por género (tarjetas, diseño igual que Análisis por Nivel) -->
-            <div class="matricula-panel animate-fade delay-5 panel-nivelaislado panel-genero">
-                <div class="header-nivelaislado">
-                    <h3 class="title-nivelaislado"><i class="fas fa-venus-mars"></i> Análisis por Nivel</h3>
-                </div>
-                <div class="body-nivelaislado">
-                    <div id="cards-view-genero" class="grid-nivelaislado">
-                        <?php foreach ($matriculaPorGenero as $fila): ?>
-                            <?php
-                            $porcH = $fila['total'] > 0 ? round(($fila['hombres'] / $fila['total']) * 100, 1) : 0;
-                            $porcM = $fila['total'] > 0 ? round(($fila['mujeres'] / $fila['total']) * 100, 1) : 0;
-                            $dominante = $fila['hombres'] > $fila['mujeres'] ? 'hombres' : 'mujeres';
-                            $participacion = $totalGeneralGenero > 0 ? round(($fila['total'] / $totalGeneralGenero) * 100, 1) : 0;
-                            ?>
-                            <div class="card-nivelaislado">
-                                <div class="header-card-nivelaislado">
-                                    <h4><?php echo htmlspecialchars($fila['titulo_fila']); ?></h4>
-                                    <span class="participacion-nivelaislado" style="color: var(--text-accent)">
-                                        <?php echo $participacion; ?>% del total</span>
-                                </div>
-                                <div class="content-nivelaislado">
-                                    <div class="sectorinfo-nivelaislado">
-                                        <div class="sectordom-nivelaislado <?php echo $dominante; ?>"
-                                            style="font-weight:bold;">
-                                            <span class="sectorlabel-nivelaislado">Género dominante:</span>
-                                            <span class="sectorvalue-nivelaislado"
-                                                style="color:<?php echo $dominante == 'hombres' ? '#5b8df6' : '#f472b6'; ?>;">
-                                                <?php echo ucfirst($dominante); ?>
-                                            </span>
-                                        </div>
-                                        <div class="sectorstats-nivelaislado">
-                                            <div class="statmini-nivelaislado">
-                                                <span class="valuenivelaislado" style="color:#5b8df6;">
-                                                    <?php echo number_format($fila['hombres']); ?> </span>
-                                                <span class="labelnivelaislado">Hombres</span>
-                                            </div>
-                                            <div class="statmini-nivelaislado">
-                                                <span class="valuenivelaislado" style="color:#f472b6;">
-                                                    <?php echo number_format($fila['mujeres']); ?> </span>
-                                                <span class="labelnivelaislado">Mujeres</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="progressbar-nivelaislado"
-                                        style="height: 18px; background: #ede9fe; border-radius: 8px; overflow: hidden;">
-                                        <div class="progresspublico-nivelaislado"
-                                            style="width: <?php echo $porcH; ?>%; background: #5b8df6; height: 100%; float:left;">
-                                        </div>
-                                        <div class="progressprivado-nivelaislado"
-                                            style="width: <?php echo $porcM; ?>%; background: #f472b6; height: 100%; float:left;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </div>
 
             <!-- Tabla detallada por subnivel educativo -->
             <div id="tabla-detallada-alumnos" class="detailed-table animate-fade delay-6">
-                <h4>Detalle por Subnivel Educativo</h4>
+                <h4>Detalle por Servicio Educativo</h4>
                 <p class="note-info">
                     <i class="fas fa-info-circle"></i>
                     <strong>Nota:</strong> El subnivel "General" contabiliza tanto alumnos de escuelas públicas como
@@ -614,13 +595,13 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Nivel Educativo</th>
-                                <th>Subnivel</th>
-                                <th>Total Alumnos</th>
+                                <th>Nivel o Tipo Educativo</th>
+                                <th>Servicio</th>
+                                <th>Total Matrícula</th>
                                 <th>% del Total General</th>
-                                <th>Alumnos Hombres</th>
+                                <th>Hombres</th>
                                 <th>% Hombres</th>
-                                <th>Alumnas Mujeres</th>
+                                <th>Mujeres</th>
                                 <th>% Mujeres</th>
                             </tr>
                         </thead>
@@ -767,6 +748,135 @@ foreach ($datosPorNivel as $nivel => $datos) {
             </div>
 
         </div>
+
+        <!-- Sección de USAER (Unidad de Servicios de Apoyo a la Educación Regular) -->
+        <?php if ($datosUSAER): ?>
+            <div id="usaer-section" class="matricula-panel animate-fade delay-7">
+                <div class="matricula-header">
+                    <h3 class="matricula-title">
+                        <i class="fas fa-hands-helping"></i> USAER - Unidad de Servicios de Apoyo a la Educación Regular
+                    </h3>
+                </div>
+                <div class="matricula-body">
+                    <p class="usaer-subtitle">
+                        Datos informativos de las Unidades de Servicios de Apoyo a la Educación Regular.
+                        Estos datos no se suman en los totales municipales ya que atienden a alumnos contabilizados en los
+                        niveles correspondientes.
+                    </p>
+
+                    <div class="usaer-container">
+                        <!-- Resumen General de USAER -->
+                        <div class="usaer-resumen">
+                            <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                                <i class="fas fa-chart-bar"></i> Resumen de Matrícula USAER
+                            </h3>
+                            <div class="totales-generales-grid" style="grid-template-columns: 1fr;">
+                                <div class="total-municipal-card">
+                                    <div class="total-icono">
+                                        <i class="fas fa-user-graduate"></i>
+                                    </div>
+                                    <div class="total-contenido">
+                                        <span class="total-tipo">Total Matrícula Atendida</span>
+                                        <span class="total-valor"><?php echo number_format($datosUSAER['tot_mat'], 0, '.', ','); ?></span>
+                                        <span class="total-subtitulo">alumnos</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Desglose detallado -->
+                        <div class="usaer-desglose-detallado">
+                            <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                                <i class="fas fa-chart-line"></i> Desglose de Matrícula por Sostenimiento y Sexo
+                            </h3>
+
+                            <!-- Desglose Público vs Privado -->
+                            <div class="usaer-sostenimiento-grid">
+                                <!-- Público -->
+                                <div class="usaer-sostenimiento-card publico-card">
+                                    <h4>
+                                        <i class="fas fa-university"></i> Público
+                                    </h4>
+                                    <div class="usaer-dato-grupo">
+                                        <div class="numero-principal">
+                                            <?php echo number_format($datosUSAER['tot_mat_pub'], 0, '.', ','); ?> Matrícula
+                                        </div>
+                                        <div class="porcentaje">
+                                            <?php echo $datosUSAER['tot_mat'] > 0 ? round(($datosUSAER['tot_mat_pub'] / $datosUSAER['tot_mat']) * 100, 1) : 0; ?>%
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Privado -->
+                                <div class="usaer-sostenimiento-card privado-card">
+                                    <h4>
+                                        <i class="fas fa-building"></i> Privado
+                                    </h4>
+                                    <div class="usaer-dato-grupo">
+                                        <div class="numero-principal">
+                                            <?php echo number_format($datosUSAER['tot_mat_priv'], 0, '.', ','); ?> matrícula
+                                        </div>
+                                        <div class="porcentaje">
+                                            <?php echo $datosUSAER['tot_mat'] > 0 ? round(($datosUSAER['tot_mat_priv'] / $datosUSAER['tot_mat']) * 100, 1) : 0; ?>%
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Desglose por Sexo -->
+                            <div class="usaer-sexo-section">
+                                <h4 style="text-align: center; margin: 30px 0 20px 0; color: var(--text-primary);">
+                                    <i class="fas fa-venus-mars"></i> Distribución de Matrícula por Sexo
+                                </h4>
+                                <div class="sexo-grid">
+                                    <!-- Hombres -->
+                                    <div class="hombres-card">
+                                        <h4>
+                                            <i class="fas fa-mars"></i> Hombres
+                                        </h4>
+                                        <div class="numero-principal">
+                                            <?php echo number_format($datosUSAER['mat_h'], 0, '.', ','); ?> Total
+                                        </div>
+                                        <div class="porcentaje">
+                                            <?php echo $datosUSAER['tot_mat'] > 0 ? round(($datosUSAER['mat_h'] / $datosUSAER['tot_mat']) * 100, 1) : 0; ?>%
+                                        </div>
+                                        <div class="detalles-secundarios">
+                                            <?php echo number_format($datosUSAER['mat_h_pub'], 0, '.', ','); ?> Público
+                                            (<?php echo $datosUSAER['mat_h'] > 0 ? round(($datosUSAER['mat_h_pub'] / $datosUSAER['mat_h']) * 100, 1) : 0; ?>%)
+                                        </div>
+                                        <div class="detalles-secundarios">
+                                            <?php echo number_format($datosUSAER['mat_h_priv'], 0, '.', ','); ?> Privado
+                                            (<?php echo $datosUSAER['mat_h'] > 0 ? round(($datosUSAER['mat_h_priv'] / $datosUSAER['mat_h']) * 100, 1) : 0; ?>%)
+                                        </div>
+                                    </div>
+
+                                    <!-- Mujeres -->
+                                    <div class="mujeres-card">
+                                        <h4>
+                                            <i class="fas fa-venus"></i> Mujeres
+                                        </h4>
+                                        <div class="numero-principal">
+                                            <?php echo number_format($datosUSAER['mat_m'], 0, '.', ','); ?> Total
+                                        </div>
+                                        <div class="porcentaje">
+                                            <?php echo $datosUSAER['tot_mat'] > 0 ? round(($datosUSAER['mat_m'] / $datosUSAER['tot_mat']) * 100, 1) : 0; ?>%
+                                        </div>
+                                        <div class="detalles-secundarios">
+                                            <?php echo number_format($datosUSAER['mat_m_pub'], 0, '.', ','); ?> Público
+                                            (<?php echo $datosUSAER['mat_m'] > 0 ? round(($datosUSAER['mat_m_pub'] / $datosUSAER['mat_m']) * 100, 1) : 0; ?>%)
+                                        </div>
+                                        <div class="detalles-secundarios">
+                                            <?php echo number_format($datosUSAER['mat_m_priv'], 0, '.', ','); ?> Privado
+                                            (<?php echo $datosUSAER['mat_m'] > 0 ? round(($datosUSAER['mat_m_priv'] / $datosUSAER['mat_m']) * 100, 1) : 0; ?>%)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
         <!-- BARRERAS DE APRENDIZAJE -->
 
 
