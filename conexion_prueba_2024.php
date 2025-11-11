@@ -3545,6 +3545,7 @@ function obtenerResumenEstadoCompleto($ini_ciclo = null)
         $media_sup = rs_consulta_segura($link, "media_sup", $ini_ciclo, $filtro_mun) ?: datos_vacion();
         $superior = rs_consulta_segura($link, "superior", $ini_ciclo, $filtro_mun) ?: datos_vacion();
         $especial = rs_consulta_segura($link, "especial_tot", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $usaer = rs_consulta_segura($link, "especial_usaer", $ini_ciclo, $filtro_mun) ?: datos_vacion();
 
         // Calcular totales estatales (como en bolsillo)
         $total_matricula = $inicial_esc["tot_mat"] + $inicial_no_esc["tot_mat"] +
@@ -3552,10 +3553,11 @@ function obtenerResumenEstadoCompleto($ini_ciclo = null)
             $secundaria["tot_mat"] + $media_sup["tot_mat"] +
             $superior["tot_mat"] + $especial["tot_mat"];
 
+        // NOTA: Se incluyen docentes de USAER en el total estatal
         $total_docentes = $inicial_esc["tot_doc"] + $inicial_no_esc["tot_doc"] +
             $preescolar["tot_doc"] + $primaria["tot_doc"] +
             $secundaria["tot_doc"] + $media_sup["tot_doc"] +
-            $superior["tot_doc"] + $especial["tot_doc"];
+            $superior["tot_doc"] + $especial["tot_doc"] + $usaer["tot_doc"];
 
         // CORRECCIÓN: Calcular escuelas municipio por municipio con ajustes bolsillo
         // para aplicar los mismos ajustes de unidades superiores que se usan individualmente
