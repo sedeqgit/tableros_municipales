@@ -1887,6 +1887,7 @@ function obtenerDatosPublicoPrivado($municipio = 'CORREGIDORA', $ini_ciclo = nul
             'inicial_esc' => 'INICIAL ESCOLARIZADA',
             'inicial_no_esc' => 'INICIAL NO ESCOLARIZADA',
             'especial_tot' => 'ESPECIAL (CAM)',
+            'especial_usaer' => 'ESPECIAL (USAER)',
             'preescolar' => 'PREESCOLAR',
             'primaria' => 'PRIMARIA',
             'secundaria' => 'SECUNDARIA',
@@ -2364,6 +2365,7 @@ function obtenerResumenMunicipioCompleto($municipio, $ini_ciclo = null)
         $media_sup = rs_consulta_segura($link, "media_sup", $ini_ciclo, $filtro_mun) ?: datos_vacion();
         $superior = rs_consulta_segura($link, "superior", $ini_ciclo, $filtro_mun) ?: datos_vacion();
         $especial = rs_consulta_segura($link, "especial_tot", $ini_ciclo, $filtro_mun) ?: datos_vacion();
+        $usaer = rs_consulta_segura($link, "especial_usaer", $ini_ciclo, $filtro_mun) ?: datos_vacion();
 
         // Calcular totales (como en bolsillo)
         $total_matricula = $inicial_esc["tot_mat"] + $inicial_no_esc["tot_mat"] +
@@ -2371,10 +2373,11 @@ function obtenerResumenMunicipioCompleto($municipio, $ini_ciclo = null)
             $secundaria["tot_mat"] + $media_sup["tot_mat"] +
             $superior["tot_mat"] + $especial["tot_mat"];
 
+        // NOTA: Se incluyen docentes de USAER en el total municipal
         $total_docentes = $inicial_esc["tot_doc"] + $inicial_no_esc["tot_doc"] +
             $preescolar["tot_doc"] + $primaria["tot_doc"] +
             $secundaria["tot_doc"] + $media_sup["tot_doc"] +
-            $superior["tot_doc"] + $especial["tot_doc"];
+            $superior["tot_doc"] + $especial["tot_doc"] + $usaer["tot_doc"];
 
         $total_escuelas = $inicial_esc["tot_esc"] + $inicial_no_esc["tot_esc"] +
             $preescolar["tot_esc"] + $primaria["tot_esc"] +
@@ -2559,9 +2562,23 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
         FROM nonce_pano_$ini_ciclo.esp_cam_$ini_ciclo
         WHERE cv_mun = '$codigo_municipio'
           AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
-        
+
         UNION ALL
-        
+
+        -- ESPECIAL USAER
+        SELECT
+            cv_cct as cct,
+            'Especial Usaer' as nivel,
+            'Usaer' as subnivel,
+            (v2828+V2973+V2974)::integer as total_docentes,
+            V2973::integer as doc_hombres,
+            V2974::integer as doc_mujeres
+        FROM nonce_pano_$ini_ciclo.esp_usaer_$ini_ciclo
+        WHERE cv_mun = '$codigo_municipio'
+          AND (cv_estatus_captura = 0 OR cv_estatus_captura = 10)
+
+        UNION ALL
+
         -- PREESCOLAR (pree_gral_24)
         SELECT
             cv_cct as cct,
@@ -2747,11 +2764,12 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
             WHEN 'Inicial Escolarizada' THEN 1
             WHEN 'Inicial No Escolarizada' THEN 2
             WHEN 'Especial Cam' THEN 3
-            WHEN 'Preescolar' THEN 4
-            WHEN 'Primaria' THEN 5
-            WHEN 'Secundaria' THEN 6
-            WHEN 'Media Superior' THEN 7
-            WHEN 'Superior' THEN 8
+            WHEN 'Especial Usaer' THEN 4
+            WHEN 'Preescolar' THEN 5
+            WHEN 'Primaria' THEN 6
+            WHEN 'Secundaria' THEN 7
+            WHEN 'Media Superior' THEN 8
+            WHEN 'Superior' THEN 9
         END,
         subnivel";
 
