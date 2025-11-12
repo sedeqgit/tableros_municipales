@@ -374,12 +374,12 @@ function obtenerDatosMunicipio($municipio)
                                     </p>
                                     <div class="municipality-stats">
                                         <div class="stat">
-                                            <i class="fas fa-school"></i>
-                                            <?php echo number_format($datosMunicipio['escuelas'], 0, '.', ','); ?>
-                                        </div>
-                                        <div class="stat">
                                             <i class="fas fa-user-graduate"></i>
                                             <?php echo number_format($datosMunicipio['alumnos'], 0, '.', ','); ?>
+                                        </div>
+                                        <div class="stat">
+                                            <i class="fas fa-school"></i>
+                                            <?php echo number_format($datosMunicipio['escuelas'], 0, '.', ','); ?>
                                         </div>
                                         <div class="stat">
                                             <i class="fas fa-chalkboard-teacher"></i>

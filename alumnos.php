@@ -81,6 +81,7 @@ if ($tieneDatos) {
     ];
 
     // Calcular totales público/privado desde los datos de desglose
+    // NOTA: Se excluye USAER de los totales (no se suma en público ni privado)
     if (!empty($datosPublicoPrivado)) {
         foreach ($datosPublicoPrivado as $nivel => $datos) {
             $datosMatricula['totales']['publico'] += isset($datos['tot_mat_pub']) ? (int) $datos['tot_mat_pub'] : 0;
@@ -93,6 +94,14 @@ if ($tieneDatos) {
                 'total' => isset($datos['tot_mat']) ? (int) $datos['tot_mat'] : 0
             ];
         }
+    }
+
+    // Restar USAER del total de público si existe
+    if ($datosUSAER && isset($datosUSAER['tot_mat_pub'])) {
+        $datosMatricula['totales']['publico'] -= (int) $datosUSAER['tot_mat_pub'];
+    }
+    if ($datosUSAER && isset($datosUSAER['tot_mat_priv'])) {
+        $datosMatricula['totales']['privado'] -= (int) $datosUSAER['tot_mat_priv'];
     }
 
     // Preparar datos de género (formato simplificado para compatibilidad)
