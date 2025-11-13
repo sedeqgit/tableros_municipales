@@ -20,6 +20,9 @@ if (!in_array($municipioSeleccionado, $municipiosValidos)) {
 // Obtener datos completos del municipio
 $datosCompletosMunicipio = obtenerResumenMunicipioCompleto($municipioSeleccionado);
 
+// Obtener datos de USAER
+$datosUSAER = obtenerDatosUSAER($municipioSeleccionado);
+
 // Verificar si hay datos
 $hayError = !$datosCompletosMunicipio;
 $tieneDatos = $datosCompletosMunicipio &&
@@ -72,9 +75,18 @@ if ($tieneDatos) {
     $especialMat = $obtenerDatoSeguro($datosCompletosMunicipio, 'especial', 'tot_mat');
     if ($especialMat > 0) {
         $datosEducativos[] = [
-            'Especial',
+            'Especial CAM',
             $obtenerDatoSeguro($datosCompletosMunicipio, 'especial', 'tot_esc'),
             $especialMat
+        ];
+    }
+
+    // Agregar USAER inmediatamente después de CAM si hay datos disponibles (datos informativos, no se suman en totales)
+    if ($datosUSAER && isset($datosUSAER['tot_mat']) && $datosUSAER['tot_mat'] > 0) {
+        $datosEducativos[] = [
+            'Especial USAER',
+            isset($datosUSAER['tot_esc']) ? (int) $datosUSAER['tot_esc'] : 0,
+            (int) $datosUSAER['tot_mat']
         ];
     }
 
@@ -324,18 +336,18 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
         <div class="dashboard-grid">
             <div class="card analysis-card animate-fade delay-3">
                 <div class="card-header">
-                    <h2 class="panel-title"><i class="fas fa-table"></i> Tipo o Nivel Educativo <i
+                    <h2 class="panel-title"><i class="fas fa-table"></i> Datos por Tipo o Nivel Educativo <i
                             class="fas fa-info-circle info-icon"
                             data-tooltip="Los datos de matrícula y escuelas de los servicios USAER no se suman ya que se cuentan en los niveles correspondientes"></i>
                     </h2>
-                    <div class="card-actions">
+                    <!--                     <div class="card-actions">
                         <button id="exportExcel" class="action-button" title="Exportar a Excel">
                             <i class="fas fa-file-excel"></i>
                         </button>
                         <button id="exportPDF" class="action-button" title="Exportar a PDF">
                             <i class="fas fa-file-pdf"></i>
                         </button>
-                    </div>
+                    </div>-->
                 </div>
                 <div class="card-body table-container">
                     <table class="data-table animate-up delay-7" id="dataTable">
@@ -357,9 +369,9 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                 <div class="card-header">
                     <h2 class="panel-title"><i class="fas fa-chart-bar"></i> Estadística por Tipo o Nivel Educativo</h2>
                     <div class="export-buttons">
-                        <button id="export-pdf" class="export-button">
+                        <!--                         <button id="export-pdf" class="export-button">
                             <i class="fas fa-file-pdf"></i> Exportar
-                        </button>
+                        </button>-->
                     </div>
                 </div>
                 <div class="card-body">
@@ -435,10 +447,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                         </label>
                         <div class="control-options">
                             <label class="radio-container">
-                                <input type="radio" name="visualizacion" value="ambos" checked> Ambos
-                            </label>
-                            <label class="radio-container">
-                                <input type="radio" name="visualizacion" value="escuelas"> Solo Escuelas
+                                <input type="radio" name="visualizacion" value="escuelas" checked> Solo Escuelas
                             </label>
                             <label class="radio-container">
                                 <input type="radio" name="visualizacion" value="alumnos"> Solo Matrícula
@@ -1273,6 +1282,11 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
     <!-- Script para manejar el modal de exportación -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Inicializar tooltips personalizados
+            if (typeof initCustomTooltips === 'function') {
+                initCustomTooltips();
+            }
+
             const exportButton = document.getElementById('export-pdf');
             const modal = document.getElementById('exportModal');
             const closeModal = document.getElementById('closeModal');

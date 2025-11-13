@@ -69,9 +69,9 @@ let chart;
 
 /**
  * @type {string} tipoVisualizacion - Filtro de datos activo
- * Valores: 'ambos', 'escuelas', 'alumnos'
+ * Valores: 'escuelas', 'alumnos'
  */
-let tipoVisualizacion = 'ambos';
+let tipoVisualizacion = 'escuelas';
 
 /**
  * @type {string} tipoGrafico - Tipo de gráfico seleccionado
@@ -110,30 +110,34 @@ function configurarOpciones() {
     // Ajustar datos según la visualización
     let datosAjustados = new google.visualization.DataTable();
     datosAjustados.addColumn('string', 'Tipo Educativo');
-    
-    if (tipoVisualizacion === 'ambos' || tipoVisualizacion === 'escuelas') {
+
+    if (tipoVisualizacion === 'escuelas') {
         datosAjustados.addColumn('number', 'Escuelas');
-    }
-    
-    if (tipoVisualizacion === 'ambos' || tipoVisualizacion === 'alumnos') {
+        datosAjustados.addColumn({ type: 'string', role: 'style' });
+    } else if (tipoVisualizacion === 'alumnos') {
         datosAjustados.addColumn('number', 'Matrícula');
+        datosAjustados.addColumn({ type: 'string', role: 'style' });
     }
-    
+
+    // Paleta de colores por nivel educativo
+    const coloresPorNivel = ['#1A237E', '#3949AB', '#00897B', '#FB8C00', '#E53935', '#5E35B1', '#43A047', '#0288D1', '#00ACC1', '#6A1B9A'];
+
     // Añadir los datos según la visualización seleccionada
     for (let i = 1; i < datosEducativos.length; i++) {
         let row = [datosEducativos[i][0]];
-        
-        if (tipoVisualizacion === 'ambos') {
-            row.push(datosEducativos[i][1], datosEducativos[i][2]);
-        } else if (tipoVisualizacion === 'escuelas') {
+        const colorIndex = (i - 1) % coloresPorNivel.length;
+
+        if (tipoVisualizacion === 'escuelas') {
             row.push(datosEducativos[i][1]);
+            row.push(coloresPorNivel[colorIndex]);
         } else if (tipoVisualizacion === 'alumnos') {
             row.push(datosEducativos[i][2]);
+            row.push(coloresPorNivel[colorIndex]);
         }
-        
+
         datosAjustados.addRow(row);
     }
-    
+
     chartData = datosAjustados;
     
     // Definir opciones base del gráfico
@@ -144,10 +148,6 @@ function configurarOpciones() {
             fontSize: 16,
             bold: true
         },
-        // Paleta de colores distintiva para cada nivel educativo
-        colors: tipoGrafico === 'pie'
-            ? ['#004990', '#9D2449', '#1976D2', '#D32F2F', '#388E3C', '#F57C00', '#7B1FA2', '#0097A7']
-            : ['#004990', '#9D2449'],
         animation: {
             startup: true,
             duration: 1000,
@@ -158,7 +158,7 @@ function configurarOpciones() {
             height: '70%'
         },
         legend: {
-            position: 'top'
+            position: 'none'
         },
         hAxis: {
             title: 'Tipo Educativo',
@@ -216,21 +216,13 @@ function crearGrafico(options) {
     } else if (tipoGrafico === 'bar') {
         chart = new google.visualization.BarChart(chartDiv);
     } else if (tipoGrafico === 'pie') {
-        // Para pastel, solo podemos mostrar una serie a la vez
-        if (tipoVisualizacion === 'ambos') {
-            // Si se seleccionaron ambos, mostramos escuelas por defecto
-            let datosEscuelas = new google.visualization.DataTable();
-            datosEscuelas.addColumn('string', 'Tipo Educativo');
-            datosEscuelas.addColumn('number', 'Escuelas');
-            
-            for (let i = 1; i < datosEducativos.length; i++) {
-                datosEscuelas.addRow([datosEducativos[i][0], datosEducativos[i][1]]);
-            }
-            
-            chartData = datosEscuelas;
+        // Para pastel, usamos los datos ya ajustados según la visualización
+        if (tipoVisualizacion === 'escuelas') {
             options.title = 'Distribución de Escuelas por Tipo Educativo';
+        } else if (tipoVisualizacion === 'alumnos') {
+            options.title = 'Distribución de Matrícula por Tipo Educativo';
         }
-        
+
         chart = new google.visualization.PieChart(chartDiv);
     }
     
@@ -244,47 +236,64 @@ function crearGrafico(options) {
 function actualizarTabla() {
     const tbody = document.getElementById('dataTableBody');
     tbody.innerHTML = '';
-    
+
     let totalEscuelas = 0;
     let totalAlumnos = 0;
-    
+
     // Añadir filas de datos
     for (let i = 1; i < datosEducativos.length; i++) {
         const fila = document.createElement('tr');
-        
+        const tipoEducativo = datosEducativos[i][0];
+
+        // Verificar si es USAER (informativo, no se suma)
+        const esInformativo = tipoEducativo.includes('Especial USAER');
+
+        // Agregar clase especial si es informativo
+        if (esInformativo) {
+            fila.className = 'fila-informativa';
+        }
+
         const tipoCell = document.createElement('td');
-        tipoCell.textContent = datosEducativos[i][0];
+        tipoCell.textContent = tipoEducativo;
         fila.appendChild(tipoCell);
-        
+
         const escuelasCell = document.createElement('td');
         escuelasCell.textContent = Number(datosEducativos[i][1]).toLocaleString();
         fila.appendChild(escuelasCell);
-        totalEscuelas += Number(datosEducativos[i][1]);
-        
+
+        // Solo sumar al total si NO es informativo
+        if (!esInformativo) {
+            totalEscuelas += Number(datosEducativos[i][1]);
+        }
+
         const alumnosCell = document.createElement('td');
         alumnosCell.textContent = Number(datosEducativos[i][2]).toLocaleString();
         fila.appendChild(alumnosCell);
-        totalAlumnos += Number(datosEducativos[i][2]);
-        
+
+        // Solo sumar al total si NO es informativo
+        if (!esInformativo) {
+            totalAlumnos += Number(datosEducativos[i][2]);
+        }
+
         tbody.appendChild(fila);
     }
-    
+
     // Añadir fila de totales
     const filaTotal = document.createElement('tr');
     filaTotal.className = 'total-row';
-    
+
     const totalLabel = document.createElement('td');
     totalLabel.textContent = 'Total';
     filaTotal.appendChild(totalLabel);
-    
+
     const totalEscuelasCell = document.createElement('td');
     totalEscuelasCell.textContent = totalEscuelas.toLocaleString();
     filaTotal.appendChild(totalEscuelasCell);
-    
+
     const totalAlumnosCell = document.createElement('td');
     totalAlumnosCell.textContent = totalAlumnos.toLocaleString();
     filaTotal.appendChild(totalAlumnosCell);
-    
+
     tbody.appendChild(filaTotal);
 }
 
@@ -295,23 +304,29 @@ function actualizarAnalisis() {
     // Encontrar tipo educativo con más escuelas
     let maxEscuelas = { tipo: '', valor: 0 };
     let maxAlumnos = { tipo: '', valor: 0 };
-    
+
     for (let i = 1; i < datosEducativos.length; i++) {
+        // Excluir datos informativos (USAER) del análisis
+        if (datosEducativos[i][0].includes('Especial USAER')) continue;
+
         if (datosEducativos[i][1] > maxEscuelas.valor) {
             maxEscuelas.tipo = datosEducativos[i][0];
             maxEscuelas.valor = datosEducativos[i][1];
         }
-        
+
         if (datosEducativos[i][2] > maxAlumnos.valor) {
             maxAlumnos.tipo = datosEducativos[i][0];
             maxAlumnos.valor = datosEducativos[i][2];
         }
     }
-    
+
     // Encontrar relación alumnos/escuela más alta
     let maxRelacion = { tipo: '', valor: 0 };
-    
+
     for (let i = 1; i < datosEducativos.length; i++) {
+        // Excluir datos informativos (USAER) del análisis
+        if (datosEducativos[i][0].includes('Especial USAER')) continue;
+
         const relacion = datosEducativos[i][2] / datosEducativos[i][1];
         if (relacion > maxRelacion.valor) {
             maxRelacion.tipo = datosEducativos[i][0];
