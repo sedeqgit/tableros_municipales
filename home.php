@@ -227,11 +227,11 @@ function obtenerDatosMunicipio($municipio)
                 </ul>
             </nav>
             <!-- Pie de la barra lateral con opción de logout -->
-            <div class="sidebar-footer">
+            <!--             <div class="sidebar-footer">
                 <a href="logout.php" class="logout-btn">
                     <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
                 </a>
-            </div>
+            </div>-->
         </aside> <!-- ======================================== -->
         <!-- CONTENIDO PRINCIPAL DE LA APLICACIÓN    -->
         <!-- ======================================== -->

@@ -153,7 +153,16 @@ if ($tieneDatos) {
 
     $especialDoc = $obtenerDatoSeguro($datosCompletosMunicipio, 'especial', 'tot_doc');
     if ($especialDoc > 0) {
-        $datosDocentes[] = ['Especial', 'CAM/USAER', $especialDoc];
+        $datosDocentes[] = ['Especial', 'CAM', $especialDoc];
+    }
+
+    // Agregar USAER inmediatamente después de CAM si hay datos disponibles
+    if ($datosUSAER && isset($datosUSAER['tot_doc']) && $datosUSAER['tot_doc'] > 0) {
+        $datosDocentes[] = [
+            'Especial',
+            'USAER',
+            (int) $datosUSAER['tot_doc']
+        ];
     }
 
     $preescolarDoc = $obtenerDatoSeguro($datosCompletosMunicipio, 'preescolar', 'tot_doc');
@@ -299,11 +308,11 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                     class="fas fa-map-marked-alt"></i>
                 <span>Mapas</span></a>
         </div>
-        <div class="sidebar-footer">
+        <!--  <div class="sidebar-footer">
             <a href="logout.php" class="logout-btn">
                 <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
             </a>
-        </div>
+        </div>-->
     </div>
     </div>
 
@@ -369,9 +378,9 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                 <div class="card-header">
                     <h2 class="panel-title"><i class="fas fa-chart-bar"></i> Estadística por Tipo o Nivel Educativo</h2>
                     <div class="export-buttons">
-                        <!--                         <button id="export-pdf" class="export-button">
-                            <i class="fas fa-file-pdf"></i> Exportar
-                        </button>-->
+                        <button id="export-chart-btn" class="export-button" title="Exportar gráfico">
+                            <i class="fas fa-download"></i> Exportar
+                        </button>
                     </div>
                 </div>
                 <div class="card-body">
@@ -386,22 +395,6 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                 <div class="card-body">
                     <div class="metric animate-left delay-2">
                         <div class="metric-icon growth">
-                            <i class="fas fa-school"></i>
-                        </div>
-                        <div class="metric-details">
-                            <h3 class="metric-title">Total Escuelas <i class="fas fa-info-circle info-icon"
-                                    data-tooltip="1. En el total de Escuelas de Media Superior se cuantifican planteles y en Superior se cuantifican instituciones
-                                2. El total de Escuelas de Superior en el Estado no corresponde a la suma de escuelas en los municipios, debido a que en algunos casos sólo se registra la institución en la capital del Estado y no se desglosan las unidades académicas en los municipios donde se imparten estudios
-                                3. Los datos de escuela de los servicios USAER no se suman ya que se encuentran en los niveles correspondientes"></i>
-                            </h3>
-                            <p class="metric-value" id="metricGrowth">
-                                <?php echo number_format($totalEscuelas, 0, '.', ','); ?>
-                            </p>
-                            <p class="metric-change" id="metricGrowthChange">Ciclo escolar 2024-2025</p>
-                        </div>
-                    </div>
-                    <div class="metric animate-left delay-1">
-                        <div class="metric-icon decline">
                             <i class="fas fa-user-graduate"></i>
                         </div>
                         <div class="metric-details">
@@ -412,6 +405,24 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                 <?php echo number_format($totalAlumnos, 0, '.', ','); ?>
                             </p>
                             <p class="metric-change" id="metricDeclineChange">Ciclo escolar 2024-2025</p>
+                        </div>
+                    </div>
+                    <div class="metric animate-left delay-1">
+                        <div class="metric-icon decline">
+                            <i class="fas fa-school"></i>
+                        </div>
+                        <div class="metric-details">
+
+
+                            <h3 class="metric-title">Total Escuelas <i class="fas fa-info-circle info-icon"
+                                    data-tooltip="1. En el total de Escuelas de Media Superior se cuantifican planteles y en Superior se cuantifican instituciones
+                                2. El total de Escuelas de Superior en el Estado no corresponde a la suma de escuelas en los municipios, debido a que en algunos casos sólo se registra la institución en la capital del Estado y no se desglosan las unidades académicas en los municipios donde se imparten estudios
+                                3. Los datos de escuela de los servicios USAER no se suman ya que se encuentran en los niveles correspondientes"></i>
+                            </h3>
+                            <p class="metric-value" id="metricGrowth">
+                                <?php echo number_format($totalEscuelas, 0, '.', ','); ?>
+                            </p>
+                            <p class="metric-change" id="metricGrowthChange">Ciclo escolar 2024-2025</p>
                         </div>
                     </div>
                     <div class="metric">
@@ -612,6 +623,14 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                 echo "<span class='nivel-cantidad'>" . number_format($cantidad, 0, '.', ',') . "</span>";
                                 echo "</div>";
                             }
+
+                            // Agregar USAER inmediatamente después de Especial (CAM)
+                            if ($nivel === 'especial' && $datosUSAER && isset($datosUSAER['tot_doc']) && $datosUSAER['tot_doc'] > 0) {
+                                echo "<div class='detalle-nivel'>";
+                                echo "<span class='nivel-nombre'>Especial (USAER)</span>";
+                                echo "<span class='nivel-cantidad'>" . number_format($datosUSAER['tot_doc'], 0, '.', ',') . "</span>";
+                                echo "</div>";
+                            }
                         }
                         ?>
                     </div>
@@ -631,10 +650,10 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
             <?php endif; ?>
         </div>
 
-        <!-- Sección de Desglose Público vs Privado -->
+        <!--  -->
         <div id="publico-privado" class="publico-privado-section">
             <h2 class="publico-privado-title">
-                <i class="fas fa-chart-pie"></i> Desglose Detallado por Nivel o Tipo Educativo
+                <i class="fas fa-chart-pie"></i> Desglose Detallado por Nivel y Tipo de Sostenimiento
             </h2>
 
             <?php
@@ -754,7 +773,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
         <!-- Sección de Desglose de Alumnos por Sexo -->
         <div class="desglose-sexo-section" id="desglose-sexo">
             <h2 class="desglose-sexo-title">
-                <i class="fas fa-user-graduate"></i> Desglose de Matrícula por Sexo y Sostenimiento
+                <i class="fas fa-user-graduate"></i> Desglose de Matrícula por Sexo y Tipo de Sostenimiento
             </h2>
 
             <?php if (!empty($datosPublicoPrivado)): ?>
@@ -1027,7 +1046,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                     <!-- Desglose detallado por sostenimiento y sexo (estilo similar a Desglose por Sexo) -->
                     <div class="usaer-desglose-detallado">
                         <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
-                            <i class="fas fa-chart-line"></i> Desglose Detallado por Sostenimiento y Sexo
+                            <i class="fas fa-chart-line"></i> Desglose Detallado por Sostenimiento
                         </h3>
 
                         <!-- Desglose Público vs Privado -->
@@ -1098,7 +1117,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                         <!-- Desglose por Sexo -->
                         <div class="usaer-sexo-section">
                             <h4 style="text-align: center; margin: 30px 0 20px 0; color: var(--text-primary);">
-                                <i class="fas fa-venus-mars"></i> Distribución de Matrícula por Sexo
+                                <i class="fas fa-venus-mars"></i> Distribución de Matrícula por Sexo y Sostenimiento
                             </h4>
                             <div class="sexo-grid">
                                 <!-- Hombres -->
@@ -1156,7 +1175,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                         <!-- Desglose de Personal por Sexo -->
                         <div class="usaer-personal-section">
                             <h4 style="text-align: center; margin: 30px 0 20px 0; color: var(--text-primary);">
-                                <i class="fas fa-user-tie"></i> Distribución de Personal por Sexo
+                                <i class="fas fa-user-tie"></i> Distribución de Personal por Sexo y Sostenimiento
                             </h4>
                             <div class="sexo-grid">
                                 <!-- Hombres -->
@@ -1221,31 +1240,40 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
         </footer>
     </div>
 
-    <!-- Modal de información de exportación -->
-    <div id="exportModal" class="modal-overlay">
+    <!-- Modal de selección de formato de exportación -->
+    <div id="exportChartModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-info-circle"></i> Información de Exportación</h3>
-                <button class="modal-close" id="closeModal">
+                <h3><i class="fas fa-download"></i> Exportar Gráfico</h3>
+                <button class="modal-close" id="closeExportModal">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="modal-icon">
-                    <i class="fas fa-tools"></i>
-                </div>
                 <p class="modal-message">
-                    Trabajo en proceso de estandarización.
+                    Selecciona el formato de exportación:
                 </p>
-                <p class="modal-submessage">
-                    Ir a <strong>Históricos</strong> para muestra de funcionalidad.
-                </p>
+                <div class="export-options"
+                    style="display: flex; gap: 15px; margin-top: 20px; justify-content: center;">
+                    <button class="btn-export-option" id="exportPNGBtn"
+                        style="flex: 1; padding: 15px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                        <i class="fas fa-image" style="font-size: 24px;"></i>
+                        <span>PNG (Imagen)</span>
+                    </button>
+                    <button class="btn-export-option" id="exportExcelChartBtn"
+                        style="flex: 1; padding: 15px; background: #2196F3; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                        <i class="fas fa-file-excel" style="font-size: 24px;"></i>
+                        <span>Excel</span>
+                    </button>
+                    <button class="btn-export-option" id="exportPDFChartBtn"
+                        style="flex: 1; padding: 15px; background: #FF5722; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                        <i class="fas fa-file-pdf" style="font-size: 24px;"></i>
+                        <span>PDF</span>
+                    </button>
+                </div>
             </div>
             <div class="modal-actions">
-                <button class="btn-secondary" id="cancelBtn">Cerrar</button>
-                <button class="btn-primary" id="goToStudents">
-                    <i class="fas fa-user-graduate"></i> Ir a Históricos
-                </button>
+                <button class="btn-secondary" id="cancelExportBtn">Cancelar</button>
             </div>
         </div>
     </div> <!-- Script con datos desde PHP -->
@@ -1287,57 +1315,79 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                 initCustomTooltips();
             }
 
-            const exportButton = document.getElementById('export-pdf');
-            const modal = document.getElementById('exportModal');
-            const closeModal = document.getElementById('closeModal');
-            const cancelBtn = document.getElementById('cancelBtn');
-            const goToStudents = document.getElementById('goToStudents');
+            // Manejo del modal de exportación de gráfico
+            const exportChartButton = document.getElementById('export-chart-btn');
+            const exportChartModal = document.getElementById('exportChartModal');
+            const closeExportModal = document.getElementById('closeExportModal');
+            const cancelExportBtn = document.getElementById('cancelExportBtn');
 
-            // Mostrar modal cuando se haga clic en exportar
-            if (exportButton) {
-                exportButton.addEventListener('click', function (e) {
+            // Botones de exportación
+            const exportPNGBtn = document.getElementById('exportPNGBtn');
+            const exportExcelChartBtn = document.getElementById('exportExcelChartBtn');
+            const exportPDFChartBtn = document.getElementById('exportPDFChartBtn');
+
+            // Mostrar modal de exportación
+            if (exportChartButton) {
+                exportChartButton.addEventListener('click', function (e) {
                     e.preventDefault();
-                    modal.classList.add('show');
+                    exportChartModal.classList.add('show');
                 });
             }
 
             // Cerrar modal
-            function closeModalFunction() {
-                modal.classList.remove('show');
+            function closeExportModalFunction() {
+                exportChartModal.classList.remove('show');
             }
 
-            if (closeModal) {
-                closeModal.addEventListener('click', closeModalFunction);
+            if (closeExportModal) {
+                closeExportModal.addEventListener('click', closeExportModalFunction);
             }
 
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', closeModalFunction);
+            if (cancelExportBtn) {
+                cancelExportBtn.addEventListener('click', closeExportModalFunction);
             }
 
-            // Ir a página de estudiantes
-            if (goToStudents) {
-                goToStudents.addEventListener('click', function () {
-                    window.location.href = 'estudiantes.php';
+            // Exportar como PNG
+            if (exportPNGBtn) {
+                exportPNGBtn.addEventListener('click', function () {
+                    closeExportModalFunction();
+                    exportarGraficoComoImagen();
+                });
+            }
+
+            // Exportar como Excel
+            if (exportExcelChartBtn) {
+                exportExcelChartBtn.addEventListener('click', function () {
+                    closeExportModalFunction();
+                    exportarGraficoExcel();
+                });
+            }
+
+            // Exportar como PDF
+            if (exportPDFChartBtn) {
+                exportPDFChartBtn.addEventListener('click', function () {
+                    closeExportModalFunction();
+                    exportarGraficoPDF();
                 });
             }
 
             // Cerrar modal al hacer clic fuera del contenido
-            modal.addEventListener('click', function (e) {
-                if (e.target === modal) {
-                    closeModalFunction();
+            exportChartModal.addEventListener('click', function (e) {
+                if (e.target === exportChartModal) {
+                    closeExportModalFunction();
                 }
             });
 
             // Cerrar modal con tecla ESC
             document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape' && modal.classList.contains('show')) {
-                    closeModalFunction();
+                if (e.key === 'Escape' && exportChartModal.classList.contains('show')) {
+                    closeExportModalFunction();
                 }
             });
         });
     </script> <!-- Script del dashboard -->
+    <script src="./js/export-utils.js"></script>
     <script src="./js/script.js"></script>
-    <script src="./js/export-graficos-mejorado.js"></script>
     <script src="./js/animations_global.js"></script>
     <script src="./js/sidebar.js"></script>
 </body>

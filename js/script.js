@@ -534,9 +534,9 @@ function initCustomTooltips() {
 }
 
 /**
- * Exporta el gráfico actual como PNG usando html2canvas
+ * Exporta el gráfico actual como PNG con anotaciones
  */
-function exportarGraficoModal() {
+async function exportarGraficoComoImagen() {
     try {
         // Verificar que html2canvas esté disponible
         if (typeof html2canvas === 'undefined') {
@@ -544,39 +544,380 @@ function exportarGraficoModal() {
             return;
         }
 
-        const chartElement = document.getElementById('chart_div');
-        if (!chartElement) {
-            ExportNotifications.showError('No se pudo encontrar el gráfico para exportar');
-            return;
+        ExportNotifications.showInfo('Generando imagen PNG con anotaciones...');
+
+        // Crear gráfico temporal con anotaciones
+        const annotatedChart = await crearGraficoConAnotaciones();
+
+        if (!annotatedChart) {
+            throw new Error('No se pudo crear el gráfico con anotaciones');
         }
 
-        ExportNotifications.showInfo('Generando imagen PNG del gráfico...');
-
         // Capturar el gráfico con html2canvas
-        html2canvas(chartElement, {
+        const canvas = await html2canvas(annotatedChart, {
             backgroundColor: '#ffffff',
             scale: 2,
             logging: false,
             useCORS: true,
-            allowTaint: false
-        }).then(canvas => {
-            // Crear enlace de descarga
-            const nombreArchivo = FormatUtils.generateFilenameWithDate(
-                `Grafico_Educativo_${tipoVisualizacion}_${tipoGrafico}`
-            ) + '.png';
+            allowTaint: true,
+            foreignObjectRendering: false
+        });
 
+        // Limpiar elemento temporal
+        if (annotatedChart.parentNode) {
+            annotatedChart.parentNode.removeChild(annotatedChart);
+        }
+
+        // Restaurar gráfico original
+        const options = configurarOpciones();
+        chart = crearGrafico(options);
+
+        // Descargar imagen
+        const nombreArchivo = FormatUtils.generateFilenameWithDate(
+            `Grafico_Educativo_${tipoVisualizacion}`
+        ) + '.png';
+
+        canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
+            link.href = url;
             link.download = nombreArchivo;
-            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
 
             ExportNotifications.showSuccess('Imagen PNG descargada exitosamente');
-        }).catch(error => {
-            console.error('Error al generar PNG:', error);
-            ExportNotifications.showError('Error al generar la imagen PNG. Intente de nuevo.');
-        });
+        }, 'image/png', 1.0);
+
     } catch (error) {
-        console.error('Error en exportarGraficoModal:', error);
-        ExportNotifications.showError('Error inesperado al exportar el gráfico');
+        console.error('Error al generar PNG:', error);
+        ExportNotifications.showError('Error al generar la imagen PNG: ' + error.message);
+    }
+}
+
+/**
+ * Crea un gráfico temporal con anotaciones para exportación
+ */
+async function crearGraficoConAnotaciones() {
+    try {
+        // Crear contenedor temporal
+        const tempContainer = document.createElement('div');
+        tempContainer.style.cssText = `
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            width: 800px;
+            height: 500px;
+            background: white;
+            padding: 20px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        `;
+        document.body.appendChild(tempContainer);
+
+        // Preparar datos con anotaciones
+        let datosConAnotaciones = new google.visualization.DataTable();
+        datosConAnotaciones.addColumn('string', 'Tipo Educativo');
+
+        if (tipoVisualizacion === 'escuelas') {
+            datosConAnotaciones.addColumn('number', 'Escuelas');
+            datosConAnotaciones.addColumn({type: 'string', role: 'annotation'});
+            datosConAnotaciones.addColumn({type: 'string', role: 'style'});
+        } else {
+            datosConAnotaciones.addColumn('number', 'Matrícula');
+            datosConAnotaciones.addColumn({type: 'string', role: 'annotation'});
+            datosConAnotaciones.addColumn({type: 'string', role: 'style'});
+        }
+
+        // Paleta de colores
+        const coloresPorNivel = ['#1A237E', '#3949AB', '#00897B', '#FB8C00', '#E53935', '#5E35B1', '#43A047', '#0288D1', '#00ACC1', '#6A1B9A'];
+
+        // Añadir los datos con anotaciones
+        for (let i = 1; i < datosEducativos.length; i++) {
+            const colorIndex = (i - 1) % coloresPorNivel.length;
+            const valor = tipoVisualizacion === 'escuelas' ? datosEducativos[i][1] : datosEducativos[i][2];
+
+            datosConAnotaciones.addRow([
+                datosEducativos[i][0],
+                valor,
+                valor.toString(),
+                coloresPorNivel[colorIndex]
+            ]);
+        }
+
+        // Configurar opciones con anotaciones según el tipo de gráfico
+        let options = {
+            title: tipoVisualizacion === 'escuelas' ? 'Escuelas por Tipo Educativo' : 'Matrícula por Tipo Educativo',
+            titleTextStyle: {
+                fontSize: 18,
+                bold: true,
+                color: '#333',
+                fontName: 'Arial'
+            },
+            width: 760,
+            height: 460,
+            chartArea: {
+                width: '80%',
+                height: '65%',
+                left: '10%',
+                top: '15%'
+            },
+            backgroundColor: {
+                fill: '#ffffff',
+                stroke: '#f5f5f5',
+                strokeWidth: 1
+            },
+            enableInteractivity: false
+        };
+
+        // Configurar opciones específicas según el tipo de gráfico
+        if (tipoGrafico === 'pie') {
+            options.pieSliceText = 'percentage';
+            options.pieSliceTextStyle = { fontSize: 12, bold: true };
+            options.tooltip = { text: 'both' };
+            options.legend = { position: 'right', textStyle: { fontSize: 11 } };
+            options.sliceVisibilityThreshold = 0; // Muestra todos los porcentajes sin importar el tamaño
+            options.pieResidueSliceLabel = 'Otros';
+        } else {
+            // Para columnas y barras
+            options.legend = { position: 'none' };
+            options.annotations = {
+                alwaysOutside: true,
+                textStyle: {
+                    fontSize: 11,
+                    color: '#333',
+                    fontName: 'Arial',
+                    bold: true
+                },
+                stemColor: 'transparent',
+                stemLength: 0
+            };
+            options.bar = { groupWidth: '70%' };
+
+            if (tipoGrafico === 'column') {
+                options.hAxis = {
+                    title: 'Tipo Educativo',
+                    titleTextStyle: { color: '#333', italic: false, bold: true, fontSize: 12 },
+                    textStyle: { fontSize: 11, color: '#555' }
+                };
+                options.vAxis = {
+                    title: 'Cantidad',
+                    minValue: 0,
+                    titleTextStyle: { color: '#333', italic: false, bold: true, fontSize: 12 },
+                    textStyle: { fontSize: 11, color: '#555' },
+                    format: '#,###'
+                };
+            } else if (tipoGrafico === 'bar') {
+                options.hAxis = {
+                    title: 'Cantidad',
+                    minValue: 0,
+                    titleTextStyle: { color: '#333', italic: false, bold: true, fontSize: 12 },
+                    textStyle: { fontSize: 11, color: '#555' },
+                    format: '#,###'
+                };
+                options.vAxis = {
+                    title: 'Tipo Educativo',
+                    titleTextStyle: { color: '#333', italic: false, bold: true, fontSize: 12 },
+                    textStyle: { fontSize: 11, color: '#555' }
+                };
+            }
+        }
+
+        // Crear y dibujar gráfico temporal según el tipo seleccionado
+        let tempChart;
+        if (tipoGrafico === 'column') {
+            tempChart = new google.visualization.ColumnChart(tempContainer);
+        } else if (tipoGrafico === 'bar') {
+            tempChart = new google.visualization.BarChart(tempContainer);
+        } else if (tipoGrafico === 'pie') {
+            tempChart = new google.visualization.PieChart(tempContainer);
+        }
+
+        tempChart.draw(datosConAnotaciones, options);
+
+        // Esperar a que se renderice
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        return tempContainer;
+
+    } catch (error) {
+        console.error('Error al crear gráfico con anotaciones:', error);
+        return null;
+    }
+}
+
+/**
+ * Exporta el gráfico y datos como Excel
+ */
+function exportarGraficoExcel() {
+    try {
+        if (typeof XLSX === 'undefined') {
+            ExportNotifications.showError('La biblioteca XLSX no está disponible');
+            return;
+        }
+
+        ExportNotifications.showInfo('Generando archivo Excel...');
+
+        // Preparar datos para Excel con información adicional
+        const datosExport = [
+            ['Estadística Educativa - ' + (tipoVisualizacion === 'escuelas' ? 'Escuelas' : 'Matrícula')],
+            ['Tipo de visualización:', tipoVisualizacion === 'escuelas' ? 'Número de Escuelas' : 'Matrícula Total'],
+            ['Fecha de generación:', new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })],
+            [],
+            ['Tipo Educativo', tipoVisualizacion === 'escuelas' ? 'Escuelas' : 'Matrícula']
+        ];
+
+        let total = 0;
+        for (let i = 1; i < datosEducativos.length; i++) {
+            const valor = tipoVisualizacion === 'escuelas' ? datosEducativos[i][1] : datosEducativos[i][2];
+
+            // Excluir USAER del total si está presente
+            if (!datosEducativos[i][0].includes('Especial USAER')) {
+                total += valor;
+            }
+
+            datosExport.push([
+                datosEducativos[i][0],
+                valor
+            ]);
+        }
+
+        // Añadir totales
+        datosExport.push([]);
+        datosExport.push(['Total (sin USAER)', total]);
+        datosExport.push([]);
+        datosExport.push(['Nota:', 'Los datos de USAER son informativos y no se suman en los totales.']);
+
+        // Crear workbook
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(datosExport);
+
+        // Ajustar anchos de columna
+        ws['!cols'] = [
+            { wch: 30 },
+            { wch: 15 }
+        ];
+
+        XLSX.utils.book_append_sheet(wb, ws, 'Estadísticas');
+
+        // Descargar archivo
+        const fileName = FormatUtils.generateFilenameWithDate(
+            `Estadisticas_${tipoVisualizacion}`
+        ) + '.xlsx';
+
+        XLSX.writeFile(wb, fileName);
+
+        ExportNotifications.showSuccess('Archivo Excel descargado exitosamente');
+
+    } catch (error) {
+        console.error('Error al exportar Excel:', error);
+        ExportNotifications.showError('Error al generar archivo Excel: ' + error.message);
+    }
+}
+
+/**
+ * Exporta el gráfico y datos como PDF
+ */
+function exportarGraficoPDF() {
+    try {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+            ExportNotifications.showError('La biblioteca jsPDF no está disponible');
+            return;
+        }
+
+        ExportNotifications.showInfo('Generando archivo PDF...');
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('portrait');
+
+        // Título principal
+        doc.setFontSize(18);
+        doc.setTextColor(0, 73, 144);
+        doc.text('Estadísticas Educativas - SEDEQ', 14, 20);
+
+        // Información del documento
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Tipo de visualización: ${tipoVisualizacion === 'escuelas' ? 'Escuelas' : 'Matrícula'}`, 14, 30);
+        doc.text(`Fecha: ${new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}`, 14, 36);
+
+        // Preparar datos para la tabla
+        const datosTabla = [];
+        let total = 0;
+
+        for (let i = 1; i < datosEducativos.length; i++) {
+            const valor = tipoVisualizacion === 'escuelas' ? datosEducativos[i][1] : datosEducativos[i][2];
+
+            // Excluir USAER del total
+            if (!datosEducativos[i][0].includes('Especial USAER')) {
+                total += valor;
+            }
+
+            datosTabla.push([
+                datosEducativos[i][0],
+                FormatUtils.formatNumber(valor)
+            ]);
+        }
+
+        // Añadir fila de total
+        datosTabla.push(['Total (sin USAER)', FormatUtils.formatNumber(total)]);
+
+        // Crear tabla
+        doc.autoTable({
+            head: [['Tipo Educativo', tipoVisualizacion === 'escuelas' ? 'Escuelas' : 'Matrícula']],
+            body: datosTabla,
+            startY: 44,
+            theme: 'grid',
+            styles: {
+                fontSize: 10,
+                cellPadding: 3,
+                lineColor: [0, 73, 144],
+                lineWidth: 0.1
+            },
+            headStyles: {
+                fillColor: [0, 73, 144],
+                textColor: [255, 255, 255],
+                fontStyle: 'bold'
+            },
+            alternateRowStyles: {
+                fillColor: [245, 247, 250]
+            },
+            footStyles: {
+                fillColor: [220, 230, 240],
+                fontStyle: 'bold'
+            }
+        });
+
+        // Nota al pie
+        const finalY = doc.lastAutoTable.finalY + 10;
+        doc.setFontSize(9);
+        doc.setTextColor(100, 100, 100);
+        doc.text('Nota: Los datos de USAER son informativos y no se suman en los totales municipales.', 14, finalY);
+
+        // Pie de página
+        const pageCount = doc.internal.getNumberOfPages();
+        doc.setFontSize(8);
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.text(
+                `Secretaría de Educación del Estado de Querétaro - Página ${i} de ${pageCount}`,
+                14,
+                doc.internal.pageSize.height - 10
+            );
+        }
+
+        // Descargar archivo
+        const fileName = FormatUtils.generateFilenameWithDate(
+            `Estadisticas_${tipoVisualizacion}`
+        ) + '.pdf';
+
+        doc.save(fileName);
+
+        ExportNotifications.showSuccess('Archivo PDF descargado exitosamente');
+
+    } catch (error) {
+        console.error('Error al exportar PDF:', error);
+        ExportNotifications.showError('Error al generar archivo PDF: ' + error.message);
     }
 }

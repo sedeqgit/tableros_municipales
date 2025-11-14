@@ -297,11 +297,6 @@ foreach ($datosPorNivel as $nivel => $datos) {
             <div id="resumen-general" class="matricula-panel animate-fade delay-1">
                 <div class="matricula-header">
                     <h3 class="matricula-title"><i class="fas fa-users"></i> Resumen General de Matrícula</h3>
-                    <div class="export-buttons">
-                        <button id="export-btn" class="export-button">
-                            <i class="fas fa-download"></i> Exportar
-                        </button>
-                    </div>
                 </div>
                 <div class="matricula-body">
                     <div class="stats-row">

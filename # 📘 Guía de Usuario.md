@@ -54,9 +54,9 @@ El **Sistema de Estadística Educativa SEDEQ** es una plataforma web integral de
 
 ### Menú Lateral (Sidebar)
 
-El sistema cuenta con un menú lateral permanente que permite acceder rápidamente a diversas secciones del home:
+El sistema cuenta con un menú lateral permanente que permite acceder rápidamente a diversas secciones del centro de tableros y tableros municipales:
 
-#### **Elementos del Menú**
+#### **Elementos del Menú en Centro de Tableros**
 
 | Sección | Descripción |
 |---------|-------------|
@@ -67,11 +67,24 @@ El sistema cuenta con un menú lateral permanente que permite acceder rápidamen
 | **Históricos** | Análisis de tendencias y datos históricos |
 | **Configuración** | Ajustes del sistema y preferencias |
 
+#### **Elementos del Menú en Tableros Municipales**
+
+| Sección | Descripción |
+|---------|-------------|
+| **Regresar al home** | Página principal con acceso a todos los municipios |
+| **Resumen** | Enlace a Google Maps con ubicaciones educativas |
+| **Estudiantes** | Mapa interactivo de bibliotecas del estado |
+| **Escuelas** | Directorio estatal completo de instituciones |
+| **Docentes** | Análisis de tendencias y datos históricos |
+| **Mapas** | Ajustes del sistema y preferencias |
+
 #### **Cómo Usar el Menú**
 
 1. **En Escritorio:** El menú se muestra siempre visible en el lado izquierdo
 2. **En Móvil/Tablet:** Pulse el botón ☰ (hamburguesa) en la esquina superior izquierda para abrir el menú
 3. **Cerrar en Móvil:** Pulse fuera del menú o el botón ☰ nuevamente
+
+
 
 ### Barra Superior
 
@@ -154,20 +167,23 @@ Cuando seleccione 2 o 3 municipios:
 
 ---
 
-## 4. Tablero de Resumen Municipal
+## 4. Tableros Municipales
+
+### Módulo de Resumen Ejecutivo
 
 Al hacer clic en "Acceder" desde cualquier tarjeta municipal, se abre el **Tablero de Resumen** con información detallada del municipio. Mostrando un resumen ejecutivo de 4 secciones. 
 
-### Estructura del Tablero
+### Estructura del Resumen Ejecutivo
+#### **1. Gráfico de Datos por Nivel o Tipo Educativo**
 
-#### **Métricas por Tipo o Nivel Educativo**
-
-En la parte superior izquierda encontrará una tabla con 3 columnas:
+**Tipo:** Tabla
+**Ubicación:** Superior Izquierda
+**Muestra:**
 
 1. **Tipo educativo**
     ***Niveles incluidos***
     - Inicial (Escolarizado y No Escolarizado)
-    - Especial
+    - Especial (CAM y USAER)
     - Preescolar
     - Primaria
     - Secundaria
@@ -180,19 +196,22 @@ En la parte superior izquierda encontrará una tabla con 3 columnas:
 3. **Matricula**
    - Matrícula total del municipio 
 
+**Interactividad:**
+- Pase el cursor sobre los íconos de información para ver las notas sobre los datos
+
 #### 
 
-#### **1. Gráfico de Estadística por Nivel Educativo**
+#### **2. Gráfico de Estadística por Nivel Educativo**
 
-**Tipo:** Gráfico de columnas
-**Ubicación:** Centro izquierdo
+**Tipo:** Gráfico de columnas, barras o pastel
+**Ubicación:** Superior Derecha
 **Muestra:**
 - Escuelas por nivel educativo
 - Alumnos por nivel educativo
 
 **Niveles incluidos:**
 - Inicial (Escolarizado y No Escolarizado)
-- Especial
+- Especial (CAM y USAER)
 - Preescolar
 - Primaria
 - Secundaria
@@ -200,42 +219,230 @@ En la parte superior izquierda encontrará una tabla con 3 columnas:
 - Superior
 
 **Interactividad:**
-- Pase el cursor sobre las barras para ver valores exactos
-- Los colores diferencian entre escuelas y alumnos
 
-#### **2. Gráfico de Distribución Público/Privado**
+- Los colores diferencian entre escuelas y alumnos; además de por nivel educativo
 
-**Tipo:** Gráfico circular (pie chart)
-**Ubicación:** Centro derecho
+- Botón de exportación en la parte superior derecha permite la exportación de la gráfica generada en diferentes formatos: PNG, PDF, Excel
+
+#### **3. Gráficos de Resumen Ejecutivo**
+
+**Tipo:** Gráfico en lista con íconos demostrativos
+**Ubicación:** Inferior Izquierda
 **Muestra:**
-- Porcentaje de escuelas públicas vs privadas
-- Distribución de la matrícula
+- Cantidad Total de Matrícula por Municipio
+- Cantidad Total de Escuelas por Municipio
+- Cantidad Total de Docentes por Municipio
 
 **Interactividad:**
-- Pase el cursor para ver porcentajes exactos
-- Clic en las leyendas para ocultar/mostrar segmentos
+- Pase el cursor sobre los íconos de información para ver las notas sobre los datos
 
-### 🎛️ Botones de Navegación Rápida
+#### **4. Controles de Visualización de Gráfica**
 
-En la parte inferior del tablero encontrará **botones de acceso rápido** a módulos específicos:
+**Tipo:** Botones radiales
+**Ubicación:** Derecha
+**Muestra:**
+- Sección con botones para cambiar la estadística mostrada (Solo Escuelas y Solo Matrícula)
+- Sección con botones para cambiar el tipo de gráfico visualizado
 
-| Botón | Icono | Destino |
-|-------|-------|---------|
-| **Ver Estudiantes** | 👨‍🎓 | Módulo de análisis detallado de estudiantes |
-| **Ver Docentes** | 👨‍🏫 | Módulo de análisis detallado de docentes |
-| **Ver Escuelas** | �� | Directorio de escuelas del municipio |
+**Interactividad:**
+- Seleccione uno de los botones en las diferentes secciones para cambiar los parámetros de la gráfica
 
-### 🔙 Navegación
 
-**Botón "Regresar":** En la esquina superior, permite volver a la página de inicio
+Al continuar con el scroll vertical se cambia a la sección de **Desglose Detallado por Nivel o Tipo Educativo**.
 
+### Estructura del Desglose Detallado por Nivel o Tipo Educativo
+#### **1. Desglose de Escuelas**
+
+**Tipo:** Tarjetas
+**Ubicación:** Izquierda
+**Muestra:**
+- Total de Escuela en el municipio
+- Total de Escuelas por Nivel Educativo
+
+**Niveles incluidos:**
+- Inicial (Escolarizado y No Escolarizado)
+- Especial (CAM)
+- Preescolar
+- Primaria
+- Secundaria
+- Media Superior
+- Superior
+
+**Interactividad:**
+- Pase el cursor sobre los íconos de información para ver las notas sobre los datos
+
+#### **2. Desglose de Matrícula**
+
+**Tipo:** Tarjetas
+**Ubicación:** Centro
+**Muestra:**
+- Total de Matrícula en el municipio
+- Total de Matrícula por Nivel Educativo
+
+**Niveles incluidos:**
+- Inicial (Escolarizado y No Escolarizado)
+- Especial (CAM)
+- Preescolar
+- Primaria
+- Secundaria
+- Media Superior
+- Superior
+
+**Interactividad:**
+- Pase el cursor sobre los íconos de información para ver las notas sobre los datos
+
+**Interactividad:**
+- Pase el cursor sobre los íconos de información para ver las notas sobre los datos
+
+#### **2. Desglose de Matrícula**
+
+**Tipo:** Tarjetas
+**Ubicación:** Centro
+**Muestra:**
+- Total de Matrícula en el municipio
+- Total de Matrícula por Nivel Educativo
+
+**Niveles incluidos:**
+- Inicial (Escolarizado y No Escolarizado)
+- Especial (CAM)
+- Preescolar
+- Primaria
+- Secundaria
+- Media Superior
+- Superior
+
+**Interactividad:**
+- Pase el cursor sobre los íconos de información para ver las notas sobre los datos
+
+#### **3. Desglose de Docentes**
+
+**Tipo:** Tarjetas
+**Ubicación:** Derecha
+**Muestra:**
+- Total de Docentes en el municipio
+- Total de Docentes por Nivel Educativo
+
+**Niveles incluidos:**
+- Inicial (Escolarizado y No Escolarizado)
+- Especial (CAM y USAER)
+- Preescolar
+- Primaria
+- Secundaria
+- Media Superior
+- Superior
+
+**Interactividad:**
+- Pase el cursor sobre los íconos de información para ver las notas sobre los datos
+
+Al continuar con el scroll vertical se cambia a la sección de **Desglose detallado por Nivel y Tipo de Sostenimiento**.
+
+### Estructura de Detallado por Nivel y Tipo de Sostenimiento
+#### **1. Desglose de Detallado**
+
+**Tipo:** Tarjetas
+**Ubicación:** Centro
+**Muestra:**
+- Total de Escuelas en el municipio
+- Total de Matrícula en el municipio
+- Total de Docentes en el municipio
+- Desglose entre públco y privado de la estadística municipal
+
+
+**Niveles incluidos:**
+- Inicial (Escolarizado y No Escolarizado)
+- Especial (CAM y USAER)
+- Preescolar
+- Primaria
+- Secundaria
+- Media Superior
+- Superior
+
+**Interactividad:**
+- Pase el cursor sobre los íconos de información para ver las notas sobre los datos
+
+Al continuar con el scroll vertical se cambia a la sección de **Desglose de Matrícula por Nivel y Tipo de Sostenimiento**.
+
+### Estructura de Matrícula por Nivel y Tipo de Sostenimiento
+#### **1. Desglose de Matrícula**
+
+**Tipo:** Tarjetas
+**Ubicación:** Centro
+**Muestra:**
+- Total de Matrícula en el municipio
+- Total de Matrícula Masculina en el municipio
+- Total de Matrícula Femenina en el municipio
+- Desglose entre públco y privado de la matrícula municipal
+
+**Niveles incluidos:**
+- Inicial (Escolarizado y No Escolarizado)
+- Especial (CAM y USAER)
+- Preescolar
+- Primaria
+- Secundaria
+- Media Superior
+- Superior
+
+**Interactividad:**
+- Pase el cursor sobre los íconos de información para ver las notas sobre los datos
+
+Al continuar con el scroll vertical se cambia a la sección de **Porcentaje por Nivel o Tipo de Educativo**.
+
+### Estructura de Porcentaje por Nivel o Tipo de Educativo
+#### **1. Resumen General del Municipio**
+
+**Tipo:** Tarjetas
+**Ubicación:** Centro Superior
+**Muestra:**
+- Total de Escuelas en el municipio
+- Total de Matrícula en el municipio
+- Total de Docentes en el municipio
+
+#### **2. Distribución por Nivel Educativo**
+
+**Tipo:** Tarjetas
+**Ubicación:** Centro Inferior
+**Muestra:**
+- Porcentaje de Matrícula por Nivel Educativo con respecto al total del municipio
+- Porcentaje de Escuelas por Nivel Educativo con respecto al total del municipio
+- Porcentaje de Docentes por Nivel Educativo con respecto al total del municipio
+- Total de Matrícula por Nivel Educativo en el municipio
+- Total de Escuelas por Nivel Educativo en el municipio
+- Total de Docentes por Nivel Educativo en el municipio
+
+Al continuar con el scroll vertical se cambia a la sección de **USAER - Unidad de Servicios de Apoyo a la Educación Regular**.
+
+### Estructura de USAER - Unidad de Servicios de Apoyo a la Educación Regular
+#### **1. Resumen General USAER**
+
+**Tipo:** Tarjetas
+**Ubicación:** Centro Superior
+**Muestra:**
+- Total de Unidades USAER en el municipio
+- Total de Matrícula en USAER del municipio
+- Total de Personal Docente en USAER del municipio
+
+#### **2. Distribución de Matrícula por Sexo y Sostenimiento**
+**Tipo:** Tarjetas
+**Ubicación:** Centro
+**Muestra:**
+- Total de Matrícula Masculina en USAER del municipio
+- Total de Matrícula Femenina en USAER del municipio
+- Desglose entre públco y privado de la matrícula USAER del municipio
+
+#### **3. Distribución de Personal por Sexo y Sostenimiento**
+**Tipo:** Tarjetas
+**Ubicación:** Centro Inferior
+**Muestra:**
+- Total de Personal Docente Masculino en USAER del municipio
+- Total de Personal Docente Femenino en USAER del municipio
+- Desglose entre públco y privado del personal docente USAER del municipio
 ---
 
 ## 5. Módulo de Estudiantes
 
 Este módulo proporciona un análisis exhaustivo de la matrícula estudiantil del municipio.
 
-### 📊 Paneles de Información
+### Paneles de Información
 
 #### **Estadísticas Generales**
 
@@ -251,7 +458,7 @@ Este módulo proporciona un análisis exhaustivo de la matrícula estudiantil de
 - Estudiantes en escuelas privadas
 - Porcentaje del total
 
-### �� Visualizaciones Disponibles
+### Visualizaciones Disponibles
 
 #### **1. Gráfico de Matrícula por Nivel Educativo**
 
