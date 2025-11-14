@@ -206,6 +206,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
     <!-- Bibliotecas para exportación -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
 <body>
@@ -388,6 +390,14 @@ foreach ($datosPorNivel as $nivel => $datos) {
                 <div class="matricula-header">
                     <h3><i class="fas fa-percentage"></i> Porcentaje por Nivel o Tipo Educativo de la Matrícula Total
                         del Municipio</h3>
+                    <div class="export-buttons-section">
+                        <button class="export-section-btn" onclick="exportarSeccionPNG('analisis-nivel')" title="Exportar como PNG">
+                            <i class="fas fa-image"></i> PNG
+                        </button>
+                        <button class="export-section-btn" onclick="exportarSeccionPDF('analisis-nivel')" title="Exportar como PDF">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                    </div>
                 </div>
                 <div class="matricula-body">
                     <?php if ($tieneDatos && !empty($datosPublicoPrivado)): ?>

@@ -169,9 +169,36 @@ Cuando seleccione 2 o 3 municipios:
 
 ## 4. Tableros Municipales
 
+### Funciones generales y estructura de los tableros municipales 
+
+### Exportación de Datos
+
+**Botones disponibles:**
+
+1. **Exportar a PDF**
+   - Genera reporte en formato PDF
+   - Incluye gráficos y tablas
+   - Formato profesional para presentaciones
+
+2. **Exportar a Excel**
+   - Descarga archivo .xlsx
+   - Datos tabulares para análisis
+   - Compatible con Microsoft Excel y Google Sheets
+
+3. **Exportar a PNG**
+   - Descarga gráfica en formato de imagen PNG
+   - Ideal para presentaciones y documentos
+
+**Cómo exportar:**
+1. Localice los botones de exportación en la parte superior de la sección 
+2. Seleccione el formato deseado (PDF, Excel o PNG)
+3. El archivo se descargará automáticamente
+
+
 ### Módulo de Resumen Ejecutivo
 
 Al hacer clic en "Acceder" desde cualquier tarjeta municipal, se abre el **Tablero de Resumen** con información detallada del municipio. Mostrando un resumen ejecutivo de 4 secciones. 
+
 
 ### Estructura del Resumen Ejecutivo
 #### **1. Gráfico de Datos por Nivel o Tipo Educativo**
@@ -523,24 +550,7 @@ El sistema muestra información detallada de subniveles educativos:
 - Bachillerato Tecnológico
 - Profesional Técnico
 
-### 📥 Exportación de Datos
 
-**Botones disponibles:**
-
-1. **📄 Exportar a PDF**
-   - Genera reporte en formato PDF
-   - Incluye gráficos y tablas
-   - Formato profesional para presentaciones
-
-2. **📊 Exportar a Excel**
-   - Descarga archivo .xlsx
-   - Datos tabulares para análisis
-   - Compatible con Microsoft Excel y Google Sheets
-
-**Cómo exportar:**
-1. Localice los botones de exportación en la parte superior del módulo
-2. Seleccione el formato deseado (PDF o Excel)
-3. El archivo se descargará automáticamente
 
 ---
 
