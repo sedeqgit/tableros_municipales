@@ -7,7 +7,7 @@
 
 ---
 
-## 📋 Tabla de Contenidos
+## Tabla de Contenidos
 
 1. [Introducción al Sistema](#1-introducción-al-sistema)
 2. [Navegación Principal](#2-navegación-principal)
@@ -96,8 +96,7 @@ La barra superior contiene:
 
 #### **Opciones del Menú de Usuario**
 
-- **Mi Perfil**: Configuración de cuenta
-- **Notificaciones**: Alertas del sistema
+- **Mi Perfil**: Configuración de cuenta y del sistema
 - **Cerrar Sesión** : Salir del sistema
 
 ---
@@ -487,47 +486,17 @@ Este módulo proporciona un análisis exhaustivo de la matrícula estudiantil de
 
 ### Visualizaciones Disponibles
 
-#### **1. Gráfico de Matrícula por Nivel Educativo**
-
-**Muestra:**
-- Distribución de estudiantes por cada nivel
-- Comparativa visual entre niveles
-
-**Niveles detallados:**
-- Inicial Escolarizada
-- Inicial No Escolarizada
-- Especial (CAM y USAER)
-- Preescolar (General, Indígena, Comunitario)
-- Primaria (General, Indígena, Comunitaria)
-- Secundaria (General, Técnica, Telesecundaria, Comunitaria)
-- Media Superior (Bachillerato, Técnico)
-- Superior (Licenciatura, Posgrado)
-
-#### **2. Gráfico Comparativo Público vs Privado**
-
-**Tipo:** Gráfico de barras agrupadas
-**Compara:**
-- Matrícula pública por nivel
-- Matrícula privada por nivel
-- Total por nivel
-
-#### **3. Tabla Detallada de Matrícula**
-
-**Columnas:**
-- Nivel Educativo
-- Subnivel
-- Matrícula Pública
-- Matrícula Privada
-- Total
-- % del Total
-
-**Funcionalidades:**
-- Ordenar por cualquier columna (clic en encabezado)
-- Ver detalles completos de cada nivel
-
-### 🎨 Desglose por Subniveles
+### Desglose por Subniveles
 
 El sistema muestra información detallada de subniveles educativos:
+**Inicial Escolarizada**
+- Lactante y Maternal
+- General
+
+**Inicial No Escolarizada**
+- No Escolarizada
+- Comunitario
+- Indígena
 
 **Preescolar:**
 - General
@@ -548,17 +517,251 @@ El sistema muestra información detallada de subniveles educativos:
 **Media Superior:**
 - Bachillerato General
 - Bachillerato Tecnológico
-- Profesional Técnico
+
+**Superior**
+- Licenciatura
+- Posgrado
 
 
+#### **1. Tabla de Matrícula por Tipo de Sostenimiento**
 
+**Muestra:**
+- Distribución de estudiantes por cada nivel
+- Distribución de estudiantes por sostenimiento
+- Distribución de estudiantes por sexo
+
+**Columnas:**
+- Nivel Educativo
+- Subnivel
+- Matrícula Pública
+- Matrícula Privada
+- Total
+- % del Total
+
+**Niveles detallados:**
+- Inicial Escolarizada
+- Inicial No Escolarizada
+- Especial (CAM y USAER)
+- Preescolar (General, Indígena, Comunitario)
+- Primaria (General, Indígena, Comunitaria)
+- Secundaria (General, Técnica, Telesecundaria, Comunitaria)
+- Media Superior (Bachillerato, Técnico)
+- Superior (Licenciatura, Posgrado)
+
+### Estructura de Porcentaje por Nivel o Tipo de Educativo
+#### **1. Resumen General del Municipio**
+
+**Tipo:** Tarjetas
+**Ubicación:** Centro Superior
+**Muestra:**
+- Total de Matrícula en el municipio
+
+
+#### **2. Distribución por Nivel Educativo**
+
+**Tipo:** Tarjetas
+**Ubicación:** Centro Inferior
+**Muestra:**
+- Porcentaje de Matrícula por Nivel Educativo con respecto al total del municipio
+- Total de Matrícula por Nivel Educativo en el municipio
+
+### **Distribución por Sexo**
+
+**Panel 1: Matrícula Total**
+- Número total de estudiantes en el municipio
+- Indicador visual con icono de graduación
+
+**Panel 2: Matrícula Total Hombres**
+- Estudiantes hombres
+- Porcentaje del total
+
+**Panel 3: Matrícula Total Mujeres**
+- Estudiantes mujeres
+- Porcentaje del total
+
+#### **1. Tabla de Matrícula por Sexo**
+
+**Muestra:**
+- Distribución de estudiantes por cada nivel
+- Distribución de estudiantes por sexo
+
+**Columnas:**
+- Nivel Educativo
+- Total
+- Matrícula Hombres
+- Porcentaje con respecto al total
+- Matrícula Mujeres
+- Porcentaje con respecto al total
+
+**Niveles detallados:**
+- Inicial Escolarizada
+- Inicial No Escolarizada
+- Especial (CAM y USAER)
+- Preescolar (General, Indígena, Comunitario)
+- Primaria (General, Indígena, Comunitaria)
+- Secundaria (General, Técnica, Telesecundaria, Comunitaria)
+- Media Superior (Bachillerato, Técnico)
+- Superior (Licenciatura, Posgrado)
+
+### **Detalle por Servicio**
+**Muestra:**
+- Distribución de estudiantes por cada nivel
+- Distribución de estudiantes por sexo
+- Sección de búsqueda y filtrado de los datos por nivel o servicio
+
+**Columnas:**
+- Nivel Educativo
+- Servicio
+- Total Matrícula
+- Porcentaje del total general
+- Matrícula Hombres
+- Porcentaje con respecto al total
+- Matrícula Mujeres
+- Porcentaje con respecto al total
+
+**Interactividad**
+- Puede buscar y filtrar la tabla por nivel o servicio escribiendo en el apartado correspondiente
+
+**Niveles detallados:**
+- *Nota: El subnivel "General" contabiliza tanto alumnos de escuelas públicas como de escuelas privadas*
+- Inicial Escolarizada
+- Inicial No Escolarizada
+- Especial (CAM y USAER)
+- Preescolar (General, Indígena, Comunitario)
+- Primaria (General, Indígena, Comunitaria)
+- Secundaria (General, Técnica, Telesecundaria, Comunitaria)
+- Media Superior (Bachillerato, Técnico)
+- Superior (Licenciatura, Posgrado)
+
+### Estructura de USAER - Unidad de Servicios de Apoyo a la Educación Regular
+#### **1. Resumen General USAER**
+
+**Tipo:** Tarjetas
+**Ubicación:** Centro Superior
+**Muestra:**
+- Total de Matrícula en USAER del municipio
+
+#### **2. Distribución de Matrícula por Sostenimiento**
+**Tipo:** Tarjetas
+**Ubicación:** Centro
+**Muestra:**
+- Desglose entre públco y privado de la matrícula USAER del municipio
+
+#### **3. Distribución de Matrícula por Sexo**
+**Tipo:** Tarjetas
+**Ubicación:** Centro Inferior
+**Muestra:**
+- Desglose entre públco y privado de la matrícula USAER del municipio
 ---
 
-## 6. Módulo de Docentes
+## 6. Módulo de Escuela
+
+Análisis completo de las escuelas a nivel municipal
+
+### Estadísticas Principales
+
+#### **Paneles de Resumen**
+
+1. **Total de escuelas**
+   - Número total de escuelas
+   - Escuelas activas en el ciclo
+
+2. **Dsglose de esucuelas públicas contra esculas privadas**
+   - Cantidad de escuelas por sostenimiento
+
+
+#### **Distribución de Escuelas por Sostenimiento**
+**Tipo:** Barra de Progreso
+**Ubicación:** Centro Superior
+**Muestra:**
+- Desglose porcentual entre públco y privado de las escuelas en el municipio
+
+### Gráficos y Visualizaciones
+
+#### **1. Distribución de Escuelas por Nivel**
+
+**Gráfico de anillo y barras horizontales**
+**Muestra:**
+- Cantidad de escuelas por nivel educativo
+- Comparación visual entre niveles
+
+**Niveles incluidos:**
+- Inicial Escolarizado
+- Inicial No Escolarizado
+- Especial (CAM)
+- Preescolar
+- Primaria
+- Secundaria
+- Media Superior
+- Superior
+
+**Interactividad**
+- Botones para cambiar la contabilización de escuelas según el sostenimiento (Total, Público y Privado)
+- Botones para cambiar la visualización del gráfico (Anillo y Barras Horizontales)
+
+### Distribución por Sostenimiento
+**Tipo:** tarjetas
+**Ubicación:** Centro
+**Muestra:**
+- Desglose de cantidad de escuelas por sostenimiento en el municipio
+
+**Tipos de Sostenimiento Incluidos:**
+- USEBEQ
+- Federal
+- Estatal
+- Autónomo
+- Privado
+
+### **Directorio Estatal de Escuelas**
+
+Búsqueda y consulta de instituciones educativas en el municipio 
+
+### Funcionalidades de Búsqueda
+
+**Campos de búsqueda:**
+
+1. **Buscar por Nombre o CCT**
+   - Campo de texto libre
+   - Busca en nombre de la escuela o Clave de Centro de Trabajo (CCT)
+   - Búsqueda en tiempo real
+
+2. **Filtrar por Sostenimiento**
+   - Menú desplegable
+   - Lista los 2 tipos de sostenimiento
+
+3. **Filtrar por Nivel Educativo**
+   - Menú desplegable
+   - Opciones:
+     - Todos los niveles
+     - Inicial Escolarizada
+     - Inicial No Escolarizada
+     - Especial (CAM)
+     - Preescolar
+     - Primaria
+     - Secundaria
+     - Media Superior
+     - Superior
+   - Todos los niveles
+
+### Tabla de Resultados
+
+#### **Columnas de Información**
+
+| Columna | Descripción |
+|---------|-------------|
+|**Nivel Educativo**| Nivel de la institución |
+| **CCT** | Clave de Centro de Trabajo (identificador único) |
+| **Nombre** | Nombre oficial de la institución |
+| **Localidad** | Localidad específica |
+| **Control** | Tipo de sostenimiento|
+| **Matrícula** | Matrícula actual |
+
+---
+## 7. Módulo de Docentes
 
 Análisis completo del personal docente del municipio.
 
-### 👨‍🏫 Estadísticas Principales
+### Estadísticas Principales
 
 #### **Paneles de Resumen**
 
@@ -566,15 +769,18 @@ Análisis completo del personal docente del municipio.
    - Número total de profesores
    - Personal activo en el ciclo
 
-2. **Docentes Hombres**
-   - Cantidad de docentes masculinos
-   - Porcentaje del total
+2. **Docentes Públicos**
+   - Cantidad de docentes públicos
 
-3. **Docentes Mujeres**
-   - Cantidad de docentes femeninas
-   - Porcentaje del total
+3. **Nivel Educativo con mayor cantidad de docentes**
+   - Porcentaje de concentración de docentes
 
-### 📊 Gráficos y Visualizaciones
+### Gráficos y Visualizaciones
+#### **Distribución de Escuelas por Sostenimiento**
+**Tipo:** Gráfico de Anillo
+**Ubicación:** Centro Superior
+**Muestra:**
+- Desglose porcentual entre públco y privado de las escuelas en el municipio
 
 #### **1. Distribución de Docentes por Nivel**
 
@@ -584,73 +790,49 @@ Análisis completo del personal docente del municipio.
 - Comparación visual entre niveles
 
 **Niveles incluidos:**
-- Inicial
-- Especial
+- Inicial Escolarizado
+- Inicial No Escolarizado
+- Especial (CAM y USAER)
 - Preescolar
 - Primaria
 - Secundaria
 - Media Superior
 - Superior
 
-#### **2. Distribución por Género**
+**Interactividad**
+- Botón para cambiar el tipo de gráfico a gráfico de anillo
+- Pasar el puntero por encima para ver números exactos
+- Botones para cambiar la contabilización acorde al sostenimiento
 
-**Gráfico circular (Pie chart)**
-**Visualiza:**
-- Porcentaje de docentes hombres
-- Porcentaje de docentes mujeres
-- Proporción visual
+### **Detalle por Servicio Educativo**
+**Muestra:**
+- Distribución de Docentes por cada nivel
+- Distribución de Docentes por sexo
+- Sección de búsqueda y filtrado de los datos por nivel o servicio
 
-**Interactividad:**
-- Hover para ver números exactos
-- Porcentajes automáticos
+**Columnas:**
+- Nivel Educativo
+- Subnivel
+- Total Docentes
+- Porcentaje del total general
+- Matrícula Hombres
+- Porcentaje con respecto al total
+- Matrícula Mujeres
+- Porcentaje con respecto al total
 
-#### **3. Docentes por Nivel y Subnivel**
+**Interactividad**
+- Puede buscar y filtrar la tabla por nivel o servicio escribiendo en el apartado correspondiente
 
-**Tabla detallada con:**
-- Nivel educativo
-- Subnivel específico
-- Total de docentes
-- Docentes hombres
-- Docentes mujeres
-- % Hombres
-- % Mujeres
-
-**Subniveles detallados:**
-
-**Preescolar:**
-- General
-- Indígena
-- Comunitario
-
-**Primaria:**
-- General
-- Indígena
-- Comunitaria
-
-**Secundaria:**
-- General
-- Técnica
-- Telesecundaria
-
-### 📈 Análisis Público/Privado
-
-**Gráfico comparativo:**
-- Docentes en sector público
-- Docentes en sector privado
-- Distribución por nivel educativo
-
-### 📥 Opciones de Exportación
-
-**Formatos disponibles:**
-
-1. **PDF:** Reporte ejecutivo con gráficos
-2. **Excel:** Datos tabulares para análisis adicional
-
-**Incluye:**
-- Todas las tablas de datos
-- Resúmenes estadísticos
-- Desgloses por nivel y género
-
+**Niveles detallados:**
+- *Nota: El subnivel "General" contabiliza tanto alumnos de escuelas públicas como de escuelas privadas*
+- Inicial Escolarizada
+- Inicial No Escolarizada
+- Especial (CAM y USAER)
+- Preescolar (General, Indígena, Comunitario)
+- Primaria (General, Indígena, Comunitaria)
+- Secundaria (General, Técnica, Telesecundaria, Comunitaria)
+- Media Superior (Bachillerato, Técnico)
+- Superior (Licenciatura, Posgrado)
 ---
 
 ## 7. Directorio Estatal de Escuelas

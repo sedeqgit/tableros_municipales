@@ -757,6 +757,14 @@ function setupChartsDocentes() {
 
     // Configurar el gráfico inicial si es necesario
     window.docentesChart = true;
+
+    // Dibujar el gráfico de anillo automáticamente si la vista de gráfico está visible
+    const vistaGrafico = document.getElementById('vista-grafico');
+    if (vistaGrafico && vistaGrafico.style.display !== 'none') {
+        setTimeout(() => {
+            drawDocentesNivelChart();
+        }, 200);
+    }
 }
 
 /**

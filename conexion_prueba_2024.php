@@ -1097,6 +1097,19 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                     WHERE cv_estatus_captura = 0 $filtro
                     ORDER BY cv_cct, turno";
 
+        case 'especial_usaer_directorio':
+            return "SELECT cv_cct,
+                        nombrect as nombre_escuela,
+                        c_nom_loc as localidad,
+                        turno,
+                        v2827 as total_alumnos,
+                        (V2814+V2816+V2818+V2820) as alumnos_hombres,
+                        (V2815+V2817+V2819+V2821) as alumnos_mujeres,
+                        control as tipo_control
+                    FROM nonce_pano_$ini_ciclo.esp_usaer_$ini_ciclo
+                    WHERE (cv_estatus_captura = 0 OR cv_estatus_captura = 10) $filtro
+                    ORDER BY cv_cct, turno";
+
         case 'superior_directorio':
             return "SELECT cct_ins_pla as cv_cct,
                         MAX(nombre_ins_pla) as nombre_escuela,

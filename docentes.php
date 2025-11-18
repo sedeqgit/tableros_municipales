@@ -53,6 +53,9 @@ if (!in_array($municipioSeleccionado, $municipiosValidos)) {
 $datosCompletos = obtenerResumenMunicipioCompleto($municipioSeleccionado);
 $datosPublicoPrivado = obtenerDatosPublicoPrivado($municipioSeleccionado);
 
+// Obtener datos de USAER
+$datosUSAER = obtenerDatosUSAER($municipioSeleccionado);
+
 // =============================================================================
 // PROCESAMIENTO DE DATOS POR NIVEL EDUCATIVO
 // =============================================================================
@@ -250,6 +253,10 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                         <i class="fas fa-table"></i>
                         <span>Tabla Detallada</span>
                     </a>
+                    <a href="#usaer-section" class="submenu-link">
+                        <i class="fas fa-hands-helping"></i>
+                        <span>USAER</span>
+                    </a>
                 </div>
             </div>
             <a href="mapas.php<?php echo $paramMunicipio; ?>" class="sidebar-link"><i class="fas fa-map-marked-alt"></i>
@@ -279,8 +286,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
             <!-- Panel de resumen de docentes -->
             <div id="resumen-docentes" class="panel animate-up">
                 <div class="panel-header">
-                    <h3 class="panel-title"><i class="fas fa-chalkboard-teacher"></i> Resumen de docentes en
-                        <?php echo ucwords(strtolower($municipioSeleccionado)); ?>
+                    <h3 class="panel-title"><i class="fas fa-chalkboard-teacher"></i> Resumen General de Docentes
                     </h3>
                 </div>
                 <div class="panel-body">
@@ -292,28 +298,21 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                         <div class="stat-box animate-fade delay-2">
                             <div class="stat-value">
                                 <span class="public-schools"><?php echo $docentesPublicos; ?></span>
-                                <span class="separator"> / </span>
-                                <span class="private-schools"><?php echo $docentesPrivados; ?></span>
                             </div>
-                            <div class="stat-label">Docentes Públicos / Privados</div>
+                            <div class="stat-label">Público</div>
                         </div>
                         <div class="stat-box animate-fade delay-3">
                             <div class="stat-value">
-                                <span class="highlight-text"><?php echo $nivelMayorConcentracion; ?></span>
+                                <span class="private-schools"><?php echo $docentesPrivados; ?></span>
                             </div>
-                            <div class="stat-label">Nivel con Mayor Concentración
-                                (<?php echo $porcentajeMayorConcentracion; ?>%)</div>
+                            <div class="stat-label">Privados</div>
                         </div>
                     </div>
 
                     <!-- Gráfico de distribución pública vs privada -->
                     <div class="sostenimiento-chart animate-fade delay-3">
-                        <h4>Distribución por Sostenimiento</h4>
-                        <div class="sostenimiento-filters">
-                            <button class="filter-btn active" data-filter="total">Total</button>
-                            <button class="filter-btn" data-filter="publico">Público</button>
-                            <button class="filter-btn" data-filter="privado">Privado</button>
-                        </div>
+                        <h4>Distribución por Tipo Sostenimiento</h4>
+
                         <div class="progress-container">
                             <div class="progress-bar">
                                 <div class="progress-fill public" style="width: <?php echo $porcentajePublicos; ?>%">
@@ -324,24 +323,30 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                 </div>
                             </div>
                         </div>
+                        <div class="sostenimiento-filters">
+                            <button class="filter-btn active" data-filter="total">Total</button>
+                            <button class="filter-btn" data-filter="publico">Público</button>
+                            <button class="filter-btn" data-filter="privado">Privado</button>
+                        </div>
                     </div>
 
                     <!-- Barras de progreso por nivel -->
                     <div id="distribucion-nivel" class="level-bars animate-sequence">
                         <div class="nivel-header">
-                            <h4>Distribución por Nivel</h4>
+                            <h4>Distribución por Nivel o Tipo Educativo</h4>
                             <div class="view-toggle-buttons">
-                                <button class="view-toggle-btn active" data-view="barras">
-                                    <i class="fas fa-chart-bar"></i> Vista Barras
-                                </button>
-                                <button class="view-toggle-btn" data-view="grafico">
+                                <button class="view-toggle-btn active" data-view="grafico">
                                     <i class="fas fa-chart-pie"></i> Vista Gráfico
                                 </button>
+                                <button class="view-toggle-btn" data-view="barras">
+                                    <i class="fas fa-chart-bar"></i> Vista Barras
+                                </button>
+
                             </div>
                         </div>
 
-                        <!-- Vista de Barras (Por defecto) -->
-                        <div id="vista-barras" class="visualization-container">
+                        <!-- Vista de Barras -->
+                        <div id="vista-barras" class="visualization-container" style="display: none;">
                             <?php
                             // Función para determinar el orden educativo basado en palabras clave
                             function obtenerOrdenEducativo($nivel)
@@ -394,8 +399,8 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                         </div>
                         <!-- Fin Vista Barras -->
 
-                        <!-- Vista Gráfico (Oculto por defecto) -->
-                        <div id="vista-grafico" class="visualization-container" style="display: none;">
+                        <!-- Vista Gráfico (Por defecto) -->
+                        <div id="vista-grafico" class="visualization-container">
                             <div id="pie-chart-nivel" style="width: 100%; height: 400px;"></div>
                         </div>
                         <!-- Fin Vista Gráfico -->
@@ -403,7 +408,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
 
                     <!-- Tabla detallada -->
                     <div id="tabla-detallada" class="detailed-table animate-fade delay-4">
-                        <h4>Detalle por Subnivel Educativo</h4>
+                        <h4>Detalle por Servicio Educativo</h4>
                         <p class="note-info"
                             style="margin-top: 10px; margin-bottom: 15px; font-size: 0.9em; color: #666; font-style: italic;">
                             <strong>Nota:</strong> El subnivel "General" contabiliza tanto docentes públicos como
@@ -414,12 +419,12 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                 <thead>
                                     <tr>
                                         <th>Nivel Educativo</th>
-                                        <th>Subnivel</th>
+                                        <th>Servicio</th>
                                         <th>Total Docentes</th>
                                         <th>% del Total General</th>
-                                        <th>Docentes Hombres</th>
+                                        <th>Hombres</th>
                                         <th>% Hombres</th>
-                                        <th>Docentes Mujeres</th>
+                                        <th>Mujeres</th>
                                         <th>% Mujeres</th>
                                     </tr>
                                 </thead>
@@ -570,6 +575,148 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                     </div>
                 </div>
             </div>
+
+            <!-- Sección de USAER (Unidad de Servicios de Apoyo a la Educación Regular) -->
+            <?php if ($datosUSAER && isset($datosUSAER['tot_doc']) && $datosUSAER['tot_doc'] > 0): ?>
+                <?php
+                // Preparar datos de USAER con valores seguros (evitar nulls)
+                $totalDocUSAER = isset($datosUSAER['tot_doc']) ? (int)$datosUSAER['tot_doc'] : 0;
+                $totalDocPubUSAER = isset($datosUSAER['tot_doc_pub']) ? (int)$datosUSAER['tot_doc_pub'] : 0;
+                $totalDocPrivUSAER = isset($datosUSAER['tot_doc_priv']) ? (int)$datosUSAER['tot_doc_priv'] : 0;
+                $docHUSAER = isset($datosUSAER['doc_h']) ? (int)$datosUSAER['doc_h'] : 0;
+                $docHPubUSAER = isset($datosUSAER['doc_h_pub']) ? (int)$datosUSAER['doc_h_pub'] : 0;
+                $docHPrivUSAER = isset($datosUSAER['doc_h_priv']) ? (int)$datosUSAER['doc_h_priv'] : 0;
+                $docMUSAER = isset($datosUSAER['doc_m']) ? (int)$datosUSAER['doc_m'] : 0;
+                $docMPubUSAER = isset($datosUSAER['doc_m_pub']) ? (int)$datosUSAER['doc_m_pub'] : 0;
+                $docMPrivUSAER = isset($datosUSAER['doc_m_priv']) ? (int)$datosUSAER['doc_m_priv'] : 0;
+                ?>
+                <div id="usaer-section" class="panel animate-fade delay-5">
+                    <div class="panel-header">
+                        <h3 class="panel-title">
+                            <i class="fas fa-hands-helping"></i> USAER - Unidad de Servicios de Apoyo a la Educación Regular
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <p class="note-info" style="margin-bottom: 20px;">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Nota:</strong> Datos informativos de las Unidades de Servicios de Apoyo a la Educación Regular.
+                            Estos datos no se suman en los totales municipales ya que atienden a alumnos contabilizados en los
+                            niveles correspondientes.
+                        </p>
+
+                        <div class="usaer-container">
+                            <!-- Resumen General de USAER -->
+                            <div class="usaer-resumen">
+                                <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                                    <i class="fas fa-chart-bar"></i> Resumen de Personal USAER
+                                </h3>
+                                <div class="totales-generales-grid" style="grid-template-columns: 1fr;">
+                                    <div class="total-municipal-card">
+                                        <div class="total-icono">
+                                            <i class="fas fa-chalkboard-teacher"></i>
+                                        </div>
+                                        <div class="total-contenido">
+                                            <span class="total-tipo">Total Personal</span>
+                                            <span class="total-valor"><?php echo number_format($totalDocUSAER, 0, '.', ','); ?></span>
+                                            <span class="total-subtitulo">personal</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Desglose detallado -->
+                            <div class="usaer-desglose-detallado">
+                                <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                                    <i class="fas fa-chart-line"></i> Desglose de Personal por Sostenimiento y Sexo
+                                </h3>
+
+                                <!-- Desglose Público vs Privado -->
+                                <div class="usaer-sostenimiento-grid">
+                                    <!-- Público -->
+                                    <div class="usaer-sostenimiento-card publico-card">
+                                        <h4>
+                                            <i class="fas fa-university"></i> Público
+                                        </h4>
+                                        <div class="usaer-dato-grupo">
+                                            <div class="numero-principal">
+                                                <?php echo number_format($totalDocPubUSAER, 0, '.', ','); ?> Personal
+                                            </div>
+                                            <div class="porcentaje">
+                                                <?php echo $totalDocUSAER > 0 ? round(($totalDocPubUSAER / $totalDocUSAER) * 100, 1) : 0; ?>%
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Privado -->
+                                    <div class="usaer-sostenimiento-card privado-card">
+                                        <h4>
+                                            <i class="fas fa-building"></i> Privado
+                                        </h4>
+                                        <div class="usaer-dato-grupo">
+                                            <div class="numero-principal">
+                                                <?php echo number_format($totalDocPrivUSAER, 0, '.', ','); ?> personal
+                                            </div>
+                                            <div class="porcentaje">
+                                                <?php echo $totalDocUSAER > 0 ? round(($totalDocPrivUSAER / $totalDocUSAER) * 100, 1) : 0; ?>%
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Desglose por Sexo -->
+                                <div class="usaer-sexo-section">
+                                    <h4 style="text-align: center; margin: 30px 0 20px 0; color: var(--text-primary);">
+                                        <i class="fas fa-venus-mars"></i> Distribución de Personal por Sexo
+                                    </h4>
+                                    <div class="sexo-grid">
+                                        <!-- Hombres -->
+                                        <div class="hombres-card">
+                                            <h4>
+                                                <i class="fas fa-mars"></i> Hombres
+                                            </h4>
+                                            <div class="numero-principal">
+                                                <?php echo number_format($docHUSAER, 0, '.', ','); ?> Total
+                                            </div>
+                                            <div class="porcentaje">
+                                                <?php echo $totalDocUSAER > 0 ? round(($docHUSAER / $totalDocUSAER) * 100, 1) : 0; ?>%
+                                            </div>
+                                            <div class="detalles-secundarios">
+                                                <?php echo number_format($docHPubUSAER, 0, '.', ','); ?> Público
+                                                (<?php echo $docHUSAER > 0 ? round(($docHPubUSAER / $docHUSAER) * 100, 1) : 0; ?>%)
+                                            </div>
+                                            <div class="detalles-secundarios">
+                                                <?php echo number_format($docHPrivUSAER, 0, '.', ','); ?> Privado
+                                                (<?php echo $docHUSAER > 0 ? round(($docHPrivUSAER / $docHUSAER) * 100, 1) : 0; ?>%)
+                                            </div>
+                                        </div>
+
+                                        <!-- Mujeres -->
+                                        <div class="mujeres-card">
+                                            <h4>
+                                                <i class="fas fa-venus"></i> Mujeres
+                                            </h4>
+                                            <div class="numero-principal">
+                                                <?php echo number_format($docMUSAER, 0, '.', ','); ?> Total
+                                            </div>
+                                            <div class="porcentaje">
+                                                <?php echo $totalDocUSAER > 0 ? round(($docMUSAER / $totalDocUSAER) * 100, 1) : 0; ?>%
+                                            </div>
+                                            <div class="detalles-secundarios">
+                                                <?php echo number_format($docMPubUSAER, 0, '.', ','); ?> Público
+                                                (<?php echo $docMUSAER > 0 ? round(($docMPubUSAER / $docMUSAER) * 100, 1) : 0; ?>%)
+                                            </div>
+                                            <div class="detalles-secundarios">
+                                                <?php echo number_format($docMPrivUSAER, 0, '.', ','); ?> Privado
+                                                (<?php echo $docMUSAER > 0 ? round(($docMPrivUSAER / $docMUSAER) * 100, 1) : 0; ?>%)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
         <footer class="dashboard-footer">
             <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos

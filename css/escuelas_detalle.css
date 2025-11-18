@@ -1449,6 +1449,12 @@
     text-align: right;
 }
 
+.data-table .alumnos-hombres,
+.data-table .alumnos-mujeres {
+    text-align: right;
+    font-weight: var(--font-weight-medium);
+}
+
 
 /* Responsive design */
 @media (max-width: 768px) {

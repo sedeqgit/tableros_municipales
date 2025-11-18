@@ -675,32 +675,37 @@ function filterDirectorioUnificado() {
     const controlFilter = document.getElementById('control-filter').value;
     const nivelFilter = document.getElementById('nivel-filter-escuelas').value;
     const searchText = document.getElementById('search-escuelas').value.toLowerCase();
-    
+
     const table = document.getElementById('tabla-escuelas');
     if (!table) return;
-    
+
     const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
     let visibleCount = 0;
-    
+
+    // Usar Set para rastrear CCTs únicos visibles
+    const cctsUnicos = new Set();
+
     Array.from(rows).forEach(row => {
         const control = row.getAttribute('data-control');
         const nivel = row.getAttribute('data-nivel');
         const nombre = row.getAttribute('data-nombre');
         const cct = row.getAttribute('data-cct').toLowerCase();
-        
+
         let showByControl = controlFilter === 'todas' || control === controlFilter;
         let showByNivel = nivelFilter === 'todos' || nivel === nivelFilter;
         let showBySearch = searchText === '' || nombre.includes(searchText) || cct.includes(searchText);
-        
+
         if (showByControl && showByNivel && showBySearch) {
             row.style.display = '';
-            visibleCount++;
+            // Contar CCTs únicos en lugar de registros
+            cctsUnicos.add(row.getAttribute('data-cct'));
         } else {
             row.style.display = 'none';
         }
     });
-    
-    // Actualizar contador
+
+    // Actualizar contador con CCTs únicos
+    visibleCount = cctsUnicos.size;
     const countElement = document.getElementById('count-escuelas');
     if (countElement) {
         countElement.textContent = visibleCount;
