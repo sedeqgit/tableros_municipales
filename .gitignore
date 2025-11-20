@@ -1,0 +1,66 @@
+# Archivos de configuración con credenciales
+conexion.php
+conexion_prueba_2024.php
+
+# Archivos temporales
+*_tmp.html
+*.tmp
+*.bak
+*.swp
+*~
+
+# Archivos de prueba y desarrollo
+prueba_*.php
+*_prueba.php
+bolsillo (1) (1).php
+
+# Capturas de pantalla y recursos temporales
+image.png
+image-*.png
+*.png
+
+# PDFs generados (mantener en local, no versionar)
+*.pdf
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs y editores
+.vscode/
+.idea/
+*.sublime-*
+.project
+.settings/
+
+# Dependencias de PHP
+/vendor/
+composer.phar
+composer.lock
+
+# Archivos de sesión y logs
+*.log
+*.session
+/logs/
+/tmp/
+
+# Archivos de caché
+/cache/
+*.cache
+
+# Archivos de entorno
+.env
+.env.local
+.env.*.local
+
+# Archivos mal nombrados (migrar a .gitignore)
+git.ignore
+
+# Node modules si usas npm para assets
+node_modules/
+package-lock.json
+
+# Build artifacts
+/dist/
+/build/

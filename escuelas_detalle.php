@@ -206,8 +206,8 @@ foreach ($ordenNiveles as $nivel) {
         }
     } elseif ($nivel === 'Especial (USAER)') {
         // Agregar USAER (no se cuenta en el total pero se muestra en gráficos)
-        $escuelasPorNivelOrdenado[$nivel] = isset($datosUSAER['tot_esc']) ? (int)$datosUSAER['tot_esc'] : 0;
-        $alumnosPorNivelOrdenado[$nivel] = isset($datosUSAER['tot_mat']) ? (int)$datosUSAER['tot_mat'] : 0;
+        $escuelasPorNivelOrdenado[$nivel] = isset($datosUSAER['tot_esc']) ? (int) $datosUSAER['tot_esc'] : 0;
+        $alumnosPorNivelOrdenado[$nivel] = isset($datosUSAER['tot_mat']) ? (int) $datosUSAER['tot_mat'] : 0;
     } else {
         // Copiar valores existentes
         if (isset($escuelasPorNivel[$nivel])) {
@@ -520,17 +520,15 @@ $datosEducativos = $datosCompletosMunicipio;
                                 </div>
                             </div>
                         </div>
-                        <div class="sostenimiento-filters">
-                            <button class="filter-btn active" data-filter="total">Total</button>
-                            <button class="filter-btn" data-filter="publico">Público</button>
-                            <button class="filter-btn" data-filter="privado">Privado</button>
-                        </div>
+
 
                     </div>
 
                     <div class="level-bars animate-sequence">
                         <div class="nivel-header">
                             <h4>Distribución por Nivel o Tipo Educativo</h4>
+
+
                             <div class="view-toggle-buttons">
                                 <button class="view-toggle-btn active" data-view="grafico">
                                     <i class="fas fa-chart-pie"></i> Vista Gráfico
@@ -543,6 +541,12 @@ $datosEducativos = $datosCompletosMunicipio;
                         </div>
 
                         <!-- Vista de Barras (Oculta por defecto) -->
+
+                        <div class="sostenimiento-filters">
+                            <button class="filter-btn active" data-filter="total">Total</button>
+                            <button class="filter-btn" data-filter="publico">Público</button>
+                            <button class="filter-btn" data-filter="privado">Privado</button>
+                        </div>
                         <div id="vista-barras" class="visualization-container" style="display: none;">
                             <div class="level-bar">
                                 <span class="level-name">Inicial (E)</span>
@@ -585,17 +589,19 @@ $datosEducativos = $datosCompletosMunicipio;
                                     class="level-percent"><?php echo isset($porcentajes['Especial (CAM)']) ? $porcentajes['Especial (CAM)'] : 0; ?>%</span>
                             </div>
                             <?php if (isset($escuelasPorNivel['Especial (USAER)']) && $escuelasPorNivel['Especial (USAER)'] > 0): ?>
-                            <div class="level-bar">
-                                <span class="level-name">Especial (USAER)</span>
-                                <div class="level-track">
-                                    <div class="level-fill" style="width: <?php echo $porcentajes['Especial (USAER)']; ?>%">
-                                        <span class="escuelas-count"><?php echo $escuelasPorNivel['Especial (USAER)']; ?></span>
-                                        <?php if (isset($escuelasNivelSostenimiento['Especial (USAER)'])): ?>
-                                        <?php endif; ?>
+                                <div class="level-bar">
+                                    <span class="level-name">Especial (USAER)</span>
+                                    <div class="level-track">
+                                        <div class="level-fill"
+                                            style="width: <?php echo $porcentajes['Especial (USAER)']; ?>%">
+                                            <span
+                                                class="escuelas-count"><?php echo $escuelasPorNivel['Especial (USAER)']; ?></span>
+                                            <?php if (isset($escuelasNivelSostenimiento['Especial (USAER)'])): ?>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
+                                    <span class="level-percent"><?php echo $porcentajes['Especial (USAER)']; ?>%*</span>
                                 </div>
-                                <span class="level-percent"><?php echo $porcentajes['Especial (USAER)']; ?>%*</span>
-                            </div>
                             <?php endif; ?>
                             <div class="level-bar">
                                 <span class="level-name">Preescolar</span>
@@ -807,7 +813,6 @@ $datosEducativos = $datosCompletosMunicipio;
                 </div>
             </div>
 
-            <h1>En periodo de pruebas, fallas identificadas</h1>
             <!-- Panel de Directorio Unificado de Escuelas -->
             <div id="directorio-escuelas" class="matricula-panel animate-fade delay-4">
                 <div class="matricula-header">
@@ -882,7 +887,7 @@ $datosEducativos = $datosCompletosMunicipio;
                                     <th>Nombre de la Escuela</th>
                                     <th>Localidad</th>
                                     <th>Control</th>
-                                    <th>Total Alumnos</th>
+                                    <th>Total Matrícula</th>
                                     <th>Hombres</th>
                                     <th>Mujeres</th>
                                 </tr>
@@ -957,18 +962,18 @@ $datosEducativos = $datosCompletosMunicipio;
                 <div style="margin-top: 40px;"></div>
                 <?php
                 // Preparar datos de USAER con valores seguros (evitar nulls)
-                $totalEscUSAER = isset($datosUSAER['tot_esc']) ? (int)$datosUSAER['tot_esc'] : 0;
-                $totalEscPubUSAER = isset($datosUSAER['tot_esc_pub']) ? (int)$datosUSAER['tot_esc_pub'] : 0;
-                $totalEscPrivUSAER = isset($datosUSAER['tot_esc_priv']) ? (int)$datosUSAER['tot_esc_priv'] : 0;
-                $totalMatUSAER = isset($datosUSAER['tot_mat']) ? (int)$datosUSAER['tot_mat'] : 0;
-                $totalMatPubUSAER = isset($datosUSAER['tot_mat_pub']) ? (int)$datosUSAER['tot_mat_pub'] : 0;
-                $totalMatPrivUSAER = isset($datosUSAER['tot_mat_priv']) ? (int)$datosUSAER['tot_mat_priv'] : 0;
-                $matHUSAER = isset($datosUSAER['mat_h']) ? (int)$datosUSAER['mat_h'] : 0;
-                $matHPubUSAER = isset($datosUSAER['mat_h_pub']) ? (int)$datosUSAER['mat_h_pub'] : 0;
-                $matHPrivUSAER = isset($datosUSAER['mat_h_priv']) ? (int)$datosUSAER['mat_h_priv'] : 0;
-                $matMUSAER = isset($datosUSAER['mat_m']) ? (int)$datosUSAER['mat_m'] : 0;
-                $matMPubUSAER = isset($datosUSAER['mat_m_pub']) ? (int)$datosUSAER['mat_m_pub'] : 0;
-                $matMPrivUSAER = isset($datosUSAER['mat_m_priv']) ? (int)$datosUSAER['mat_m_priv'] : 0;
+                $totalEscUSAER = isset($datosUSAER['tot_esc']) ? (int) $datosUSAER['tot_esc'] : 0;
+                $totalEscPubUSAER = isset($datosUSAER['tot_esc_pub']) ? (int) $datosUSAER['tot_esc_pub'] : 0;
+                $totalEscPrivUSAER = isset($datosUSAER['tot_esc_priv']) ? (int) $datosUSAER['tot_esc_priv'] : 0;
+                $totalMatUSAER = isset($datosUSAER['tot_mat']) ? (int) $datosUSAER['tot_mat'] : 0;
+                $totalMatPubUSAER = isset($datosUSAER['tot_mat_pub']) ? (int) $datosUSAER['tot_mat_pub'] : 0;
+                $totalMatPrivUSAER = isset($datosUSAER['tot_mat_priv']) ? (int) $datosUSAER['tot_mat_priv'] : 0;
+                $matHUSAER = isset($datosUSAER['mat_h']) ? (int) $datosUSAER['mat_h'] : 0;
+                $matHPubUSAER = isset($datosUSAER['mat_h_pub']) ? (int) $datosUSAER['mat_h_pub'] : 0;
+                $matHPrivUSAER = isset($datosUSAER['mat_h_priv']) ? (int) $datosUSAER['mat_h_priv'] : 0;
+                $matMUSAER = isset($datosUSAER['mat_m']) ? (int) $datosUSAER['mat_m'] : 0;
+                $matMPubUSAER = isset($datosUSAER['mat_m_pub']) ? (int) $datosUSAER['mat_m_pub'] : 0;
+                $matMPrivUSAER = isset($datosUSAER['mat_m_priv']) ? (int) $datosUSAER['mat_m_priv'] : 0;
                 ?>
                 <div id="usaer-section" class="matricula-panel animate-fade delay-5">
                     <div class="matricula-header">
@@ -979,7 +984,8 @@ $datosEducativos = $datosCompletosMunicipio;
                     <div class="matricula-body">
                         <p class="usaer-subtitle">
                             Datos informativos de las Unidades de Servicios de Apoyo a la Educación Regular.
-                            Estos datos no se suman en los totales municipales ya que atienden a alumnos contabilizados en los
+                            Estos datos no se suman en los totales municipales ya que atienden a alumnos contabilizados en
+                            los
                             niveles correspondientes.
                         </p>
 
@@ -996,7 +1002,8 @@ $datosEducativos = $datosCompletosMunicipio;
                                         </div>
                                         <div class="total-contenido">
                                             <span class="total-tipo">Total Unidades USAER</span>
-                                            <span class="total-valor"><?php echo number_format($totalEscUSAER, 0, '.', ','); ?></span>
+                                            <span
+                                                class="total-valor"><?php echo number_format($totalEscUSAER, 0, '.', ','); ?></span>
                                             <span class="total-subtitulo">unidades</span>
                                         </div>
                                     </div>
@@ -1006,7 +1013,8 @@ $datosEducativos = $datosCompletosMunicipio;
                                         </div>
                                         <div class="total-contenido">
                                             <span class="total-tipo">Total Matrícula Atendida</span>
-                                            <span class="total-valor"><?php echo number_format($totalMatUSAER, 0, '.', ','); ?></span>
+                                            <span
+                                                class="total-valor"><?php echo number_format($totalMatUSAER, 0, '.', ','); ?></span>
                                             <span class="total-subtitulo">alumnos</span>
                                         </div>
                                     </div>

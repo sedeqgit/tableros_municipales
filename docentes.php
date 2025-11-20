@@ -323,11 +323,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                 </div>
                             </div>
                         </div>
-                        <div class="sostenimiento-filters">
-                            <button class="filter-btn active" data-filter="total">Total</button>
-                            <button class="filter-btn" data-filter="publico">Público</button>
-                            <button class="filter-btn" data-filter="privado">Privado</button>
-                        </div>
+
                     </div>
 
                     <!-- Barras de progreso por nivel -->
@@ -344,7 +340,11 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
 
                             </div>
                         </div>
-
+                        <div class="sostenimiento-filters">
+                            <button class="filter-btn active" data-filter="total">Total</button>
+                            <button class="filter-btn" data-filter="publico">Público</button>
+                            <button class="filter-btn" data-filter="privado">Privado</button>
+                        </div>
                         <!-- Vista de Barras -->
                         <div id="vista-barras" class="visualization-container" style="display: none;">
                             <?php
@@ -580,15 +580,15 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
             <?php if ($datosUSAER && isset($datosUSAER['tot_doc']) && $datosUSAER['tot_doc'] > 0): ?>
                 <?php
                 // Preparar datos de USAER con valores seguros (evitar nulls)
-                $totalDocUSAER = isset($datosUSAER['tot_doc']) ? (int)$datosUSAER['tot_doc'] : 0;
-                $totalDocPubUSAER = isset($datosUSAER['tot_doc_pub']) ? (int)$datosUSAER['tot_doc_pub'] : 0;
-                $totalDocPrivUSAER = isset($datosUSAER['tot_doc_priv']) ? (int)$datosUSAER['tot_doc_priv'] : 0;
-                $docHUSAER = isset($datosUSAER['doc_h']) ? (int)$datosUSAER['doc_h'] : 0;
-                $docHPubUSAER = isset($datosUSAER['doc_h_pub']) ? (int)$datosUSAER['doc_h_pub'] : 0;
-                $docHPrivUSAER = isset($datosUSAER['doc_h_priv']) ? (int)$datosUSAER['doc_h_priv'] : 0;
-                $docMUSAER = isset($datosUSAER['doc_m']) ? (int)$datosUSAER['doc_m'] : 0;
-                $docMPubUSAER = isset($datosUSAER['doc_m_pub']) ? (int)$datosUSAER['doc_m_pub'] : 0;
-                $docMPrivUSAER = isset($datosUSAER['doc_m_priv']) ? (int)$datosUSAER['doc_m_priv'] : 0;
+                $totalDocUSAER = isset($datosUSAER['tot_doc']) ? (int) $datosUSAER['tot_doc'] : 0;
+                $totalDocPubUSAER = isset($datosUSAER['tot_doc_pub']) ? (int) $datosUSAER['tot_doc_pub'] : 0;
+                $totalDocPrivUSAER = isset($datosUSAER['tot_doc_priv']) ? (int) $datosUSAER['tot_doc_priv'] : 0;
+                $docHUSAER = isset($datosUSAER['doc_h']) ? (int) $datosUSAER['doc_h'] : 0;
+                $docHPubUSAER = isset($datosUSAER['doc_h_pub']) ? (int) $datosUSAER['doc_h_pub'] : 0;
+                $docHPrivUSAER = isset($datosUSAER['doc_h_priv']) ? (int) $datosUSAER['doc_h_priv'] : 0;
+                $docMUSAER = isset($datosUSAER['doc_m']) ? (int) $datosUSAER['doc_m'] : 0;
+                $docMPubUSAER = isset($datosUSAER['doc_m_pub']) ? (int) $datosUSAER['doc_m_pub'] : 0;
+                $docMPrivUSAER = isset($datosUSAER['doc_m_priv']) ? (int) $datosUSAER['doc_m_priv'] : 0;
                 ?>
                 <div id="usaer-section" class="panel animate-fade delay-5">
                     <div class="panel-header">
@@ -599,8 +599,10 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                     <div class="panel-body">
                         <p class="note-info" style="margin-bottom: 20px;">
                             <i class="fas fa-info-circle"></i>
-                            <strong>Nota:</strong> Datos informativos de las Unidades de Servicios de Apoyo a la Educación Regular.
-                            Estos datos no se suman en los totales municipales ya que atienden a alumnos contabilizados en los
+                            <strong>Nota:</strong> Datos informativos de las Unidades de Servicios de Apoyo a la Educación
+                            Regular.
+                            Estos datos no se suman en los totales municipales ya que atienden a alumnos contabilizados en
+                            los
                             niveles correspondientes.
                         </p>
 
@@ -617,7 +619,8 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                         </div>
                                         <div class="total-contenido">
                                             <span class="total-tipo">Total Personal</span>
-                                            <span class="total-valor"><?php echo number_format($totalDocUSAER, 0, '.', ','); ?></span>
+                                            <span
+                                                class="total-valor"><?php echo number_format($totalDocUSAER, 0, '.', ','); ?></span>
                                             <span class="total-subtitulo">personal</span>
                                         </div>
                                     </div>

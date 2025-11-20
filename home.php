@@ -217,13 +217,17 @@ function obtenerDatosMunicipio($municipio)
                         <a href="directorio_estatal.php"><i class="fas fa-search"></i> <span>Búsqueda de
                                 Escuelas</span></a>
                     </li>
-                    <li class="nav-item">
+
+                    <!-- <li class="nav-item">
                         <a href="historicos.php"><i class="fas fa-history"></i> <span>Históricos</span></a>
-                    </li>
-                    <!-- Enlace a configuraciones del sistema -->
-                    <li class="nav-item">
+                    </li>-->
+
+                    <!-- Enlace a configuraciones del sistema 
+                     <li class="nav-item">
                         <a href="settings.php"><i class="fas fa-cog"></i> <span>Configuración</span></a>
-                    </li>
+                    </li> 
+                    -->
+
                 </ul>
             </nav>
             <!-- Pie de la barra lateral con opción de logout -->
@@ -264,7 +268,7 @@ function obtenerDatosMunicipio($municipio)
                     <!-- Dropdown con opciones de usuario -->
                     <div class="user-dropdown">
                         <ul>
-                            <li><a href="settings.php"><i class="fas fa-user-cog"></i> Mi Perfil</a></li>
+                            <li><a href="#"><i class="fas fa-user-cog"></i> Mi Perfil</a></li>
                             <li><a href="#"><i class="fas fa-bell"></i> Notificaciones</a></li>
                             <li><a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
                         </ul>
