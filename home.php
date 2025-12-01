@@ -222,11 +222,10 @@ function obtenerDatosMunicipio($municipio)
                         <a href="historicos.php"><i class="fas fa-history"></i> <span>Históricos</span></a>
                     </li>-->
 
-                    <!-- Enlace a configuraciones del sistema 
-                     <li class="nav-item">
+                    <!-- Enlace a configuraciones del sistema -->
+                    <li class="nav-item">
                         <a href="settings.php"><i class="fas fa-cog"></i> <span>Configuración</span></a>
-                    </li> 
-                    -->
+                    </li>
 
                 </ul>
             </nav>

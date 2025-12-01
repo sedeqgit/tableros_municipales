@@ -139,31 +139,37 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
 
 <body>
     <!-- Overlay para cerrar el menú en móviles -->
-    <div class="sidebar-overlay"></div> <!-- Barra lateral -->
+    <div class="sidebar-overlay"></div>
+    
+    <!-- ======================================== -->
+    <!-- BARRA LATERAL DE NAVEGACIÓN             -->
+    <!-- ======================================== -->
     <aside class="sidebar">
         <nav class="sidebar-nav">
             <ul>
+                <!-- Enlace a página principal -->
                 <li class="nav-item">
                     <a href="home.php"><i class="fas fa-home"></i> <span>Inicio</span></a>
                 </li>
+                <!-- Enlace a mapa educativo -->
                 <li class="nav-item">
-                    <a href="#"><i class="fas fa-map-marked-alt"></i> <span>Mapa Educativo</span></a>
+                    <a href="https://www.google.com/maps/d/edit?mid=1LLMZpgMl4X4QSjzNlHQsHgZoNLj1kv4&usp=sharing"
+                        target="_blank"><i class="fas fa-map-marked-alt"></i> <span>Mapa Educativo</span></a>
                 </li>
+                <!-- Enlace a bibliotecas -->
                 <li class="nav-item">
-                    <a href="historicos.php"><i class="fas fa-history"></i> <span>Históricos</span></a>
+                    <a href="bibliotecas.php"><i class="fas fa-book"></i> <span>Bibliotecas</span></a>
                 </li>
+                <!-- Enlace a búsqueda de escuelas -->
                 <li class="nav-item">
-                    <a href="#"><i class="fas fa-file-alt"></i> <span>Reportes</span></a>
+                    <a href="directorio_estatal.php"><i class="fas fa-search"></i> <span>Búsqueda de Escuelas</span></a>
                 </li>
+                <!-- Enlace a configuración (ACTIVO) -->
                 <li class="nav-item active">
                     <a href="settings.php"><i class="fas fa-cog"></i> <span>Configuración</span></a>
                 </li>
             </ul>
         </nav>
-        <div class="sidebar-footer">
-            <a href="logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i> <span>Cerrar
-                    Sesión</span></a>
-        </div>
     </aside>
 
     <div class="main-content">

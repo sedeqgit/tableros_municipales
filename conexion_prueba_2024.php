@@ -13,7 +13,23 @@
  */
 
 
-define('CICLO_ESCOLAR_ACTUAL', '24');
+define('CICLO_ESCOLAR_ACTUAL', '23');
+
+/**
+ * Verifica si el ciclo escolar actual tiene soporte para tablas de unidades
+ * Las tablas sup_unidades_XX solo existen desde el ciclo 24 (2024-2025) en adelante
+ * 
+ * @param string $ini_ciclo Ciclo escolar (formato: '24', '25', etc.)
+ * @return bool True si el ciclo tiene tablas de unidades, False en caso contrario
+ */
+function tieneUnidades($ini_ciclo)
+{
+    // Convertir a entero para comparación
+    $ciclo = intval($ini_ciclo);
+
+    // Las tablas de unidades existen desde el ciclo 24 (2024-2025)
+    return $ciclo >= 24;
+}
 
 /**
  * Función para obtener el ciclo escolar actual
@@ -580,6 +596,11 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                     WHERE cv_motivo = '0' AND cv_carrera LIKE '5%' $filtro";
 
         case 'unidades_sup':
+            // VALIDAR: Solo generar consulta si el ciclo tiene tablas de unidades (≥ 24)
+            if (!tieneUnidades($ini_ciclo)) {
+                return false; // No generar consulta para ciclos sin unidades
+            }
+
             return "SELECT CONCAT('UNIDADES SUPERIOR') AS titulo_fila,
                         SUM(total_matricula) AS total_matricula,
                         SUM(mat_hombres) AS mat_hombres,
@@ -1111,7 +1132,8 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                     ORDER BY cv_cct, turno";
 
         case 'superior_directorio':
-            return "SELECT cct_ins_pla as cv_cct,
+            // Construir consulta base con sup_carrera y sup_posgrado
+            $query_base = "SELECT cct_ins_pla as cv_cct,
                         MAX(nombre_ins_pla) as nombre_escuela,
                         MAX(localidad) as localidad,
                         SUM(total_alumnos) as total_alumnos,
@@ -1125,14 +1147,23 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
                         UNION ALL
                         SELECT cct_ins_pla, nombre_ins_pla, c_nom_loc as localidad, V142 as total_alumnos, V140 as alumnos_hombres, V141 as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.sup_posgrado_$ini_ciclo
-                        WHERE cv_motivo = '0' $filtro AND V142 > 0
+                        WHERE cv_motivo = '0' $filtro AND V142 > 0";
+
+            // Solo agregar sup_unidades si el ciclo las tiene (≥ 24)
+            if (tieneUnidades($ini_ciclo)) {
+                $query_base .= "
                         UNION ALL
                         SELECT cct_ins_pla, nombre_ins_pla, c_nom_mun as localidad, total_matricula as total_alumnos, mat_hombres as alumnos_hombres, mat_mujeres as alumnos_mujeres, control
                         FROM nonce_pano_$ini_ciclo.sup_unidades_$ini_ciclo
-                        WHERE 1=1 $filtro AND total_matricula > 0
+                        WHERE 1=1 $filtro AND total_matricula > 0";
+            }
+
+            $query_base .= "
                     ) AS superior_dir
                     GROUP BY cct_ins_pla
                     ORDER BY cct_ins_pla";
+
+            return $query_base;
 
         case 'superior_directorio_queretaro':
             // Querétaro: Muestra cada registro de sup_escuela_24 (83 registros = campus/turnos)
@@ -1454,6 +1485,13 @@ function acum_unidades_superior($link, $ini_ciclo, $filtro_pub, $filtro_priv, $f
  */
 function acum_unidades($link, $ini_ciclo, $filtro_pub, $filtro_priv, $filtro_extra, $titulo_fila, $arr_nivel1, $arr_nivel2)
 {
+    // VERIFICAR SI EL CICLO TIENE TABLAS DE UNIDADES
+    // Las tablas sup_unidades_XX solo existen desde el ciclo 24 (2024-2025)
+    if (!tieneUnidades($ini_ciclo)) {
+        // Si el ciclo es anterior a 24, retornar datos sin ajuste de unidades
+        return $arr_nivel1;
+    }
+
     // Extraer el número de municipio del filtro
     $datos_filtro_s1 = explode('=', $filtro_extra);
     if (count($datos_filtro_s1) < 2) {
@@ -1575,6 +1613,13 @@ function calcular_superior_muni_unidades($link, $ini_ciclo, $filtro)
     global $filtro_pub, $filtro_priv;
 
     try {
+        // VERIFICAR SI EL CICLO TIENE TABLAS DE UNIDADES
+        // Las tablas sup_unidades_XX solo existen desde el ciclo 24 (2024-2025)
+        if (!tieneUnidades($ini_ciclo)) {
+            // Si el ciclo es anterior a 24, solo retornar datos base sin ajuste de unidades
+            return rs_consulta_segura($link, 'superior', $ini_ciclo, $filtro);
+        }
+
         // 1. Obtener datos base del superior (equivalente a total_sedeq_sup)
         $datos_superior_base = rs_consulta_segura($link, 'superior', $ini_ciclo, $filtro);
         if (!$datos_superior_base) {
@@ -2820,6 +2865,8 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
  * Las unidades estatales (UPN 22DUP0002U, TecNM 22DIT0001M) operan físicamente en varios municipios
  * pero administrativamente pertenecen a Querétaro.
  * 
+ * IMPORTANTE: Solo aplica para ciclos 24 (2024-2025) en adelante
+ * 
  * @param resource $link Conexión a la base de datos
  * @param string $ini_ciclo Ciclo escolar
  * @param string $codigo_municipio Código del municipio
@@ -2828,6 +2875,13 @@ function obtenerDocentesPorNivelYSubnivel($municipio = 'CORREGIDORA', $ini_ciclo
  */
 function aplicarAjusteUnidadesSuperior($link, $ini_ciclo, $codigo_municipio, $datos)
 {
+    // VERIFICAR SI EL CICLO TIENE TABLAS DE UNIDADES
+    // Las tablas sup_unidades_XX solo existen desde el ciclo 24 (2024-2025)
+    if (!tieneUnidades($ini_ciclo)) {
+        // Si el ciclo es anterior a 24, retornar datos sin ajuste
+        return $datos;
+    }
+
     if ($codigo_municipio == '14') {
         // CASO QUERÉTARO: RESTAR todas las unidades estatales (sin filtro municipal)
         $consulta_unidades = str_consulta_segura('unidades_sup', $ini_ciclo, '');
@@ -4098,12 +4152,12 @@ function obtenerSubcontrolPorNivel($link, $codigo_nivel, $ini_ciclo, $filtro_mun
             GROUP BY subcontrol",
 
         // Superior: sup_escuela con cct_ins_pla (según rs_consulta_segura línea 833-876)
-        // IMPORTANTE: Se incluyen unidades de sup_unidades que no están en sup_escuela
-        // (Tecnológico Nacional y Universidad Pedagógica Nacional)
-        'superior' => "
-            SELECT subcontrol, COUNT(DISTINCT cct_ins_pla) as total
+        // IMPORTANTE: Solo incluye unidades si el ciclo >= 24
+        'superior' => tieneUnidades($ini_ciclo) ?
+            // Con unidades (ciclo >= 24)
+            "SELECT subcontrol, COUNT(DISTINCT cct_ins_pla) as total
             FROM (
-                -- Escuelas principales de sup_escuela_24
+                -- Escuelas principales de sup_escuela
                 SELECT cct_ins_pla, subcontrol
                 FROM nonce_pano_$ini_ciclo.sup_escuela_$ini_ciclo
                 WHERE cv_mun = '$muni_num' AND control <> 'PRIVADO'
@@ -4111,13 +4165,12 @@ function obtenerSubcontrolPorNivel($link, $codigo_nivel, $ini_ciclo, $filtro_mun
                 
                 UNION
                 
-                -- Unidades de sup_unidades_24 que NO están en sup_escuela_24
-                -- Estas son las unidades del Tecnológico Nacional y UPN
+                -- Unidades de sup_unidades que NO están en sup_escuela
                 SELECT DISTINCT 
                     u.cct_ins_pla,
                     CASE 
-                        WHEN u.cv_cct = '22DIT0001M' THEN 'FEDERAL'  -- Tecnológico Nacional
-                        WHEN u.cv_cct = '22DUP0002U' THEN 'FEDERAL'  -- UPN
+                        WHEN u.cv_cct = '22DIT0001M' THEN 'FEDERAL'
+                        WHEN u.cv_cct = '22DUP0002U' THEN 'FEDERAL'
                         ELSE 'FEDERAL'
                     END as subcontrol
                 FROM nonce_pano_$ini_ciclo.sup_unidades_$ini_ciclo u
@@ -4130,6 +4183,12 @@ function obtenerSubcontrolPorNivel($link, $codigo_nivel, $ini_ciclo, $filtro_mun
                             AND e.cv_mun = u.cv_mun
                     )
             ) t
+            GROUP BY subcontrol" :
+            // Sin unidades (ciclo < 24)
+            "SELECT subcontrol, COUNT(DISTINCT cct_ins_pla) as total
+            FROM nonce_pano_$ini_ciclo.sup_escuela_$ini_ciclo
+            WHERE cv_mun = '$muni_num' AND control <> 'PRIVADO'
+                AND cv_motivo = '0'
             GROUP BY subcontrol"
     ];
 
