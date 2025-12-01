@@ -5,58 +5,113 @@ require_once 'session_helper.php';
 // Iniciar sesión y configurar usuario de demo si es necesario
 iniciarSesionDemo();
 
-// Cargar utilidades de conexión para acceder al ciclo escolar actual
-require_once 'conexion_prueba_2024.php';
-
 // Variables para mostrar retroalimentación al usuario
 $preferencesMessage = null;
 $preferencesStatus = 'success';
 
-// Obtener el ciclo escolar actual definido en el sistema
-$currentCycle = defined('CICLO_ESCOLAR_ACTUAL') ? CICLO_ESCOLAR_ACTUAL : '24';
-
-// Procesar envío del formulario de actualización de ciclo escolar
+// Procesar envío del formulario de actualización de ciclo escolar ANTES de cargar el archivo
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['accion'] === 'actualizar_ciclo') {
+    // LOG DE DEPURACIÓN
+    error_log("===== INICIO ACTUALIZACIÓN CICLO =====");
+    error_log("POST recibido: " . print_r($_POST, true));
+    
     $nuevoCiclo = isset($_POST['ciclo_escolar']) ? trim($_POST['ciclo_escolar']) : '';
+    error_log("Nuevo ciclo después de trim: '$nuevoCiclo'");
 
     if (preg_match('/^\d{2}$/', $nuevoCiclo)) {
-        if ($nuevoCiclo === $currentCycle) {
+        error_log("Validación de patrón exitosa");
+        
+        $archivoConexion = __DIR__ . '/conexion_prueba_2024.php';
+        error_log("Ruta del archivo: $archivoConexion");
+        
+        // Leer el ciclo actual del archivo directamente
+        $contenidoConexion = file_get_contents($archivoConexion);
+        $cicloActualEnArchivo = '24'; // Valor por defecto
+        if (preg_match("/define\s*\(\s*['\"]CICLO_ESCOLAR_ACTUAL['\"]\s*,\s*['\"](\d{2})['\"]\s*\)\s*;/", $contenidoConexion, $matches)) {
+            $cicloActualEnArchivo = $matches[1];
+        }
+        error_log("Ciclo actual en archivo: '$cicloActualEnArchivo'");
+        
+        if ($nuevoCiclo === $cicloActualEnArchivo) {
+            error_log("El ciclo es el mismo, no se actualizará");
             $preferencesMessage = 'El ciclo escolar ya está configurado con el valor proporcionado.';
             $preferencesStatus = 'info';
         } else {
-            $archivoConexion = __DIR__ . '/conexion_prueba_2024.php';
-            $contenidoConexion = @file_get_contents($archivoConexion);
-
-            if ($contenidoConexion === false) {
-                $preferencesMessage = 'No fue posible leer la configuración actual. Verifique los permisos del archivo.';
+            error_log("Procediendo con actualización de '$cicloActualEnArchivo' a '$nuevoCiclo'");
+            
+            // Verificar que el archivo existe
+            if (!file_exists($archivoConexion)) {
+                error_log("ERROR: El archivo no existe");
+                $preferencesMessage = 'El archivo de conexión no existe: ' . $archivoConexion;
                 $preferencesStatus = 'error';
             } else {
-                $reemplazos = 0;
-                $patron = "/define\(\s*'CICLO_ESCOLAR_ACTUAL'\s*,\s*'\d{2}'\s*\);/";
-                $nuevoContenido = preg_replace($patron, "define('CICLO_ESCOLAR_ACTUAL', '$nuevoCiclo');", $contenidoConexion, 1, $reemplazos);
-
-                if ($nuevoContenido === null || $reemplazos !== 1) {
-                    $preferencesMessage = 'No se pudo localizar la constante CICLO_ESCOLAR_ACTUAL en el archivo de conexión.';
+                // Verificar permisos de lectura
+                if (!is_readable($archivoConexion)) {
+                    error_log("ERROR: El archivo no es legible");
+                    $preferencesMessage = 'No se puede leer el archivo de conexión. Verifique los permisos.';
                     $preferencesStatus = 'error';
                 } else {
-                    $resultado = @file_put_contents($archivoConexion, $nuevoContenido, LOCK_EX);
-
-                    if ($resultado === false) {
-                        $preferencesMessage = 'Ocurrió un error al guardar la nueva configuración. Verifique permisos de escritura.';
+                    if ($contenidoConexion === false) {
+                        error_log("ERROR: No se pudo leer el contenido");
+                        $preferencesMessage = 'Error al leer el contenido del archivo de conexión.';
                         $preferencesStatus = 'error';
                     } else {
-                        $preferencesMessage = "El ciclo escolar se actualizó correctamente a {$nuevoCiclo}.";
-                        $preferencesStatus = 'success';
-                        $currentCycle = $nuevoCiclo;
+                        $reemplazos = 0;
+                        $patron = "/define\s*\(\s*['\"]CICLO_ESCOLAR_ACTUAL['\"]\s*,\s*['\"](\d{2})['\"]\s*\)\s*;/";
+                        $nuevoContenido = preg_replace($patron, "define('CICLO_ESCOLAR_ACTUAL', '$nuevoCiclo');", $contenidoConexion, 1, $reemplazos);
+                        
+                        error_log("Reemplazos realizados: $reemplazos");
+
+                        if ($nuevoContenido === null) {
+                            error_log("ERROR: preg_replace devolvió null");
+                            $preferencesMessage = 'Error en el patrón de búsqueda. Contacte al administrador.';
+                            $preferencesStatus = 'error';
+                        } elseif ($reemplazos !== 1) {
+                            error_log("ERROR: No se hizo exactamente 1 reemplazo");
+                            $preferencesMessage = 'No se pudo localizar la constante CICLO_ESCOLAR_ACTUAL en el archivo de conexión. Reemplazos: ' . $reemplazos;
+                            $preferencesStatus = 'error';
+                        } else {
+                            // Verificar permisos de escritura
+                            if (!is_writable($archivoConexion)) {
+                                error_log("ERROR: El archivo no tiene permisos de escritura");
+                                $preferencesMessage = 'El archivo no tiene permisos de escritura. Contacte al administrador.';
+                                $preferencesStatus = 'error';
+                            } else {
+                                error_log("Intentando escribir archivo...");
+                                $resultado = file_put_contents($archivoConexion, $nuevoContenido, LOCK_EX);
+                                
+                                error_log("Resultado de file_put_contents: " . ($resultado === false ? 'FALSE' : $resultado . ' bytes'));
+
+                                if ($resultado === false) {
+                                    error_log("ERROR: No se pudo escribir el archivo");
+                                    $preferencesMessage = 'Error al guardar los cambios en el archivo de conexión.';
+                                    $preferencesStatus = 'error';
+                                } else {
+                                    error_log("ÉXITO: Archivo actualizado correctamente");
+                                    $preferencesMessage = "El ciclo escolar se actualizó correctamente de {$cicloActualEnArchivo} a {$nuevoCiclo}. Los cambios se aplicarán en la próxima carga de la página.";
+                                    $preferencesStatus = 'success';
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     } else {
+        error_log("ERROR: El valor no cumple con el patrón de 2 dígitos");
         $preferencesMessage = 'Ingrese únicamente dos dígitos para el ciclo escolar (ejemplo: 24).';
         $preferencesStatus = 'error';
     }
+    
+    error_log("===== FIN ACTUALIZACIÓN CICLO =====");
 }
+
+// AHORA cargar el archivo de conexión (después de procesarlo si hubo POST)
+require_once 'conexion_prueba_2024.php';
+
+// Obtener el ciclo escolar actual definido en el sistema
+$currentCycle = defined('CICLO_ESCOLAR_ACTUAL') ? CICLO_ESCOLAR_ACTUAL : '24';
+$nextCycleDisplay = (string) ((int) $currentCycle + 1);
 
 $preferencesIcons = [
     'success' => 'fa-check-circle',
@@ -190,7 +245,10 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                 </div>
 
                 <!-- Sección: Preferencias -->
-                <div                         <?php if ($preferencesMessage): ?>
+                <div class="settings-panel animate-up delay-2">
+                    <h2 class="settings-title"><i class="fas fa-sliders-h"></i> Preferencias del Sistema</h2>
+                    <div class="settings-content">
+                        <?php if ($preferencesMessage): ?>
                         <div class="settings-alert settings-alert-<?php echo htmlspecialchars($preferencesStatus); ?>">
                             <i class="fas <?php echo htmlspecialchars($preferencesIcons[$preferencesStatus] ?? 'fa-info-circle'); ?>"></i>
                             <span><?php echo htmlspecialchars($preferencesMessage); ?></span>
@@ -208,33 +266,28 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                         <div class="form-group">
                             <label for="notifications">Notificaciones</label>
                             <div class="checkbox-wrapper">
-                                <input type="checkbox                        <form method="POST" class="preferences-form">
-email_notifications">Recibir notificaciones por correo</label>
+                                <input type="checkbox" id="email_notifications" checked>
+                                <label for="email_notifications">Recibir notificaciones por correo</label>
                             </div>
                         </div>
 
-                        <form method="POST" class="preferences-form" novalidate>
+                        <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="preferences-form" novalidate>
                             <input type="hidden" name="accion" value="actualizar_ciclo">
                             <div class="form-group">
                                 <label for="ciclo_escolar">Ciclo escolar actual (dos dígitos)</label>
                                 <div class="cycle-input-wrapper">
-                                                                   <span class="input-suffix">/<?php echo htmlspecialchars($nextCycleDisplay); ?></span>
-echo htmlspecialchars($currentCycle); ?>" maxlength="2" pattern="\d{2}" required>
-                                    <span class="input-suffix">/<?php echo htmlspecialchars((string) ((int) $currentCycle + 1)); ?></span>
+                                    <input type="text" id="ciclo_escolar" name="ciclo_escolar" class="form-control cycle-input" value="<?php echo htmlspecialchars($currentCycle); ?>" maxlength="2" pattern="\d{2}" required>
+                                    <span class="input-suffix">/<?php echo htmlspecialchars($nextCycleDisplay); ?></span>
                                 </div>
                                 <small class="form-text text-muted">Ejemplo: 24 representa el ciclo 2024-2025.</small>
                             </div>
 
                             <div class="form-actions form-actions-inline">
-                                <button type="submit" class="save-button save-button-secondary">
+                                <button type="submit" class="btn-update-cycle save-button-secondary" onclick="console.log('Formulario enviado:', document.querySelector('input[name=ciclo_escolar]').value);">
                                     <i class="fas fa-sync-alt"></i> Actualizar ciclo escolar
                                 </button>
                             </div>
                         </form>
-d="email_notifications" checked>
-                                <label for="email_notifications">Recibir notificaciones por correo</label>
-                            </div>
-                        </div>
                     </div>
                 </div> <!-- Acciones de formulario -->
                 <div class="form-actions animate-fade delay-3">

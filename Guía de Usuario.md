@@ -1,10 +1,20 @@
-# Guía de Usuario - Sistema de Estadística Educativa SEDEQ
+<div style="page-break-after: always; height: 100vh; background-color:rgb(253, 253, 253); margin: -20px; padding: 0; display: flex; align-items: center;">
+  <div style="border-left: 6px solid #4a90e2; padding-left: 40px; padding-top: 60px; padding-bottom: 60px; width: 100%;">
+    <p style="font-size: 14px; font-weight: normal; margin-bottom: 40px; color: #333333;">Gobierno del Estado de Querétaro</p>
+    <h1 style="font-size: 56px; font-weight: bold; line-height: 1.2; margin-bottom: 10px; color: #1a1a1a;">Guía de Usuario —<br>Sistema de<br>Estadística Educativa<br>SEDEQ</h1>
+    <p style="font-size: 16px; font-weight: normal; margin-top: 80px; color: #333333;">Secretaría de Educación del Estado de Querétaro</p>
+  </div>
+</div>
+
+<div style="page-break-after: always;">
+
+
 
 ## **Manual Completo del Usuario Final**
 
 ### Secretaría de Educación del Estado de Querétaro
 
-**Versión 0.8 | Ciclo Escolar 2024-2025**
+**Versión 1.0 | Ciclo Escolar 2024-2025**
 
 ---
 
@@ -24,6 +34,8 @@
 12. [Preguntas Frecuentes](#12-preguntas-frecuentes)
 
 ---
+
+<div style="page-break-before: always;"></div>
 
 ## 1. Introducción al Sistema
 
@@ -50,6 +62,8 @@ El **Sistema de Estadística Educativa SEDEQ** es una plataforma web integral de
 - Desglose por nivel educativo y subcontrol
 
 ---
+
+<div style="page-break-before: always;"></div>
 
 ## 2. Navegación Principal
 
@@ -108,6 +122,8 @@ La barra superior contiene:
 ![Barra Superior](./img/User-Guide/Captura%20de%20pantalla%20(135).png)
 
 ---
+
+<div style="page-break-before: always;"></div>
 
 ## 3. Página de Inicio (Home)
 
@@ -187,6 +203,8 @@ Cuando seleccione 2 o 3 municipios:
 ![Botón Flotante de Comparación](./img/User-Guide/Captura%20de%20pantalla%20(137).png)
 
 ---
+
+<div style="page-break-before: always;"></div>
 
 ## 4. Tableros Municipales
 
@@ -521,7 +539,10 @@ Al continuar con el scroll vertical se cambia a la sección de **USAER - Unidad 
 - Desglose entre públco y privado del personal docente USAER del municipio
 
 ![Distribución de Personal por Sexo y Sostenimiento](./img/User-Guide/Captura%20de%20pantalla%20(154).png)
+
 ---
+
+<div style="page-break-before: always;"></div>
 
 ## 5. Módulo de Estudiantes
 
@@ -768,6 +789,8 @@ El sistema muestra información detallada de subniveles educativos:
 
 ---
 
+<div style="page-break-before: always;"></div>
+
 ## 6. Módulo de Escuelas
 
 Análisis completo de las escuelas a nivel municipal
@@ -900,6 +923,8 @@ Búsqueda y consulta de instituciones educativas en el municipio
 
 ---
 
+<div style="page-break-before: always;"></div>
+
 ## 7. Módulo de Docentes
 
 Análisis completo del personal docente del municipio.
@@ -994,7 +1019,44 @@ Análisis completo del personal docente del municipio.
 - Media Superior (Bachillerato, Técnico)
 - Superior (Licenciatura, Posgrado)
 
+![Docentes detalle](./img/User-Guide/Captura%20de%20pantalla%20(167).PNG)
+
+### Estructura de USAER - Unidad de Servicios de Apoyo a la Educación Regular
+
+#### **1. Resumen General USAER**
+
+**Tipo:** Tarjetas
+**Ubicación:** Centro Superior
+**Muestra:**
+
+- Total de Personal Docente USAER en el municipio
+
+![alt text](image-8.png)
+
+#### **2. Distribución de personal por Sostenimiento**
+
+**Tipo:** Tarjetas
+**Ubicación:** Centro
+**Muestra:**
+
+- Desglose entre público y privado de la matrícula USAER del municipio
+
+![alt text](image-9.png)
+
+#### **3. Distribución de Matrícula por Sexo**
+
+**Tipo:** Tarjetas
+**Ubicación:** Centro Inferior
+**Muestra:**
+
+- Desglose de la personal USAER del municipio por sexo
+
+![alt text](image-10.png)
+
 ---
+
+<div style="page-break-before: always;"></div>
+
 ## 8. Módulo de Mapas de Escuelas
 
 Visualización geográfica de las escuelas en el municipio.
@@ -1011,10 +1073,13 @@ Visualización geográfica de las escuelas en el municipio.
 - **Pantalla Completa:** Cada escuela contiene un botón dedicado a visualzar en pantalla completa
 
 **Muestra:**
+
 - Ubicación geográfica de todas las escuelas del municipio
 - Distinción visual entre escuelas públicas y privadas mediante diferentes colores de marcadores
 - Marcadores únicos para cada nivel educativo
 - Panel de estadísticas resumidas del municipio en la parte superior
+
+![alt text](image-11.png)
 
 ### Información de Escuelas
 
@@ -1031,13 +1096,40 @@ Visualización geográfica de las escuelas en el municipio.
 - Clave del centro de trabajo (CCT)
 - Total de Alumnado
 
+![alt text](image-12.png)
+
 ### Modo Pantalla Completa
 
 **Botón de pantalla completa:**
 
-- Ubicación: Esquina superior derecha del mapa
+- Ubicación: Esquina superior derecha del encabezado
 - Función: Expande el mapa a toda la pantalla
 - Salir: Tecla ESC o botón de cerrar
+
+![Botón de pantalla completa](./img/User-Guide/Captura%20de%20pantalla%20(168).PNG)
+
+### Modo Ventana Nueva
+
+**Botón de venta nueva**
+
+- Ubicación: Esquina superior derecha del mapa
+- Función: Abre el mapa en una ventana nueva para visualizarlo de manera más amplia
+- Salir: Cerrar la nueva ventana
+
+![Botón de ventana nueva](./img/User-Guide/Captura%20de%20pantalla%20(169).PNG)
+
+### Compartir
+
+**Botón de compartir**
+
+- Ubicación: Esquina superior derecha del mapa
+- Función: Genera un menú con diferentes opciones de compartir:
+   - Compartir en Facebook
+   - Compartir en Twitter (X)
+   - Compartir por medio de correo electrónico
+   - Incorporar a otro sitio web  
+
+![Botón de compartir](./img/User-Guide/Captura%20de%20pantalla%20(170).PNG)
 
 ### Responsividad
 
@@ -1049,9 +1141,34 @@ Visualización geográfica de las escuelas en el municipio.
 
 ---
 
+<div style="page-break-before: always;"></div>
+
 ## 9. Directorio Estatal de Escuelas
 
 Búsqueda y consulta de instituciones educativas en todo el Estado de Querétaro.
+
+### Estadísticas Principales
+
+#### **Paneles de Resumen**
+
+1. **Total de Escuelas**
+   - Número total de escuelas en el municipio
+
+2. **Escuelas Públicas/Privadas**
+   - Desglose estatal de escuelas por tipo de sostenimiento
+
+3. **Matrícula**
+   - Cantidad total de matrícula estatal
+
+#### **Distribución de Escuelas por Sostenimiento**
+
+**Tipo:** Barra de Progreso
+**Ubicación:** Centro Superior
+**Muestra:**
+
+- Desglose porcentual entre públco y privado de las escuelas en el estado
+
+![alt text](image-13.png)
 
 ### Funcionalidades de Búsqueda
 
@@ -1064,7 +1181,16 @@ Búsqueda y consulta de instituciones educativas en todo el Estado de Querétaro
 1. **Buscar por Nombre o CCT**
    - Campo de texto libre
    - Busca en nombre de la escuela o Clave de Centro de Trabajo (CCT)
-   - Búsqueda en tiempo real
+
+La búsqueda se visualizará en su respectiva sección de tipo de sostenimiento, es decir, sí la escuela buscada es pública, se visualizará en la sección de las escuelas públicas.
+
+![alt text](image-14.png)
+
+### **Panel de Búsqueda por Sostenimiento**
+
+Esta descripción funciona tanto para escuelas públicas o privadas
+
+**Ubicación:** Centro
 
 2. **Filtrar por Municipio**
    - Menú desplegable
@@ -1090,7 +1216,7 @@ Búsqueda y consulta de instituciones educativas en todo el Estado de Querétaro
 
 | Columna | Descripción |
 |---------|-------------|
-| **Nivel** | Nivel educativo |
+| **Nivel Educativo** | Nivel educativo |
 | **CCT** | Clave de Centro de Trabajo (identificador único) |
 | **Nombre** | Nombre oficial de la institución |
 | **Turno** | Turno de la institución |
@@ -1099,6 +1225,8 @@ Búsqueda y consulta de instituciones educativas en todo el Estado de Querétaro
 | **Total Matricula** | Matrícula actual |
 | **Hombres** | Matrícula hombres |
 | **Mujeres** | Matrícula mujeres |
+
+![alt text](image-15.png)
 
 ### Exportar Directorio
 
@@ -1120,7 +1248,11 @@ Búsqueda y consulta de instituciones educativas en todo el Estado de Querétaro
 2. Pulse el botón de exportación
 3. El archivo se genera con los datos filtrados
 
+![Exportar Directorio](./img/User-Guide/Captura%20de%20pantalla%20(171).PNG)
+
 ---
+
+<div style="page-break-before: always;"></div>
 
 ## 10. Comparación de Municipios
 
@@ -1142,6 +1274,8 @@ Herramienta para comparar estadísticas educativas entre 2 o 3 municipios simult
 
 #### **Panel de Selección**
 
+![alt text](image-16.png)
+
 **Controles:**
 
 1. **Municipio 1** (Desplegable)
@@ -1158,7 +1292,8 @@ Herramienta para comparar estadísticas educativas entre 2 o 3 municipios simult
 | Total Escuelas | X | Y | Z |
 | Total Alumnado | X | Y | Z |
 | Total Docentes | X | Y | Z |
-| Total Grupos | X | Y | Z |
+
+![alt text](image-17.png)
 
 ### Gráficos Comparativos
 
@@ -1175,11 +1310,15 @@ Herramienta para comparar estadísticas educativas entre 2 o 3 municipios simult
 - Cada municipio tiene un color distintivo
 - Leyenda interactiva
 
+![alt text](image-18.png)
+
 ---
+
+<div style="page-break-before: always;"></div>
 
 ## 11. Mapa de Bibliotecas
 
-Visualización geográfica de las bibliotecas públicas del Estado de Querétaro.
+Visualización geográfica de las bibliotecas públicas del Estado de Querétaro. Comparte estilos y funcionalidades a los mapas de escuelas por municipio
 
 ### Características del Mapa
 
@@ -1191,6 +1330,8 @@ Visualización geográfica de las bibliotecas públicas del Estado de Querétaro
 - **Navegación:** Arrastrar para moverse por el mapa
 - **Marcadores:** Cada biblioteca tiene un marcador identificador
 - **Pantalla Completa:** Cada biblioteca contiene un botón dedicado a visualzar en pantalla completa
+
+![alt text](image-20.png)
 
 ### Información de Bibliotecas
 
@@ -1207,6 +1348,8 @@ Visualización geográfica de las bibliotecas públicas del Estado de Querétaro
 - Computadoras
 - Latitud
 - Longitud
+
+![alt text](image-19.png)
 
 ### Modo Pantalla Completa
 
@@ -1225,6 +1368,8 @@ Visualización geográfica de las bibliotecas públicas del Estado de Querétaro
 - Gestos táctiles (pellizcar para zoom)
 
 ---
+
+<div style="page-break-before: always;"></div>
 
 ## 12. Preguntas Frecuentes
 
@@ -1281,6 +1426,8 @@ R: Sí, son interactivos touch-friendly. Use gestos táctiles.
 R: Sí, los archivos se descargan normalmente a la carpeta de Descargas del dispositivo.
 
 ---
+
+<div style="page-break-before: always;"></div>
 
 ## Contacto y Soporte
 

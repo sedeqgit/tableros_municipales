@@ -244,7 +244,7 @@ $infoCiclo = obtenerInfoCicloEscolar();
                         </div>
                         <div class="stat-box animate-fade delay-3">
                             <div class="stat-value"><?php echo number_format($totalAlumnos); ?></div>
-                            <div class="stat-label">Total de Alumnos</div>
+                            <div class="stat-label">Matrícula</div>
                         </div>
                     </div>
 
@@ -373,7 +373,7 @@ $infoCiclo = obtenerInfoCicloEscolar();
                                     <th>Turno</th>
                                     <th>Municipio</th>
                                     <th>Localidad</th>
-                                    <th>Total Alumnos</th>
+                                    <th>Total Matrícula</th>
                                     <th>Hombres</th>
                                     <th>Mujeres</th>
                                 </tr>

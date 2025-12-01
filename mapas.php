@@ -203,12 +203,12 @@ function formatearNombreMunicipio($municipio)
                 </div>
             </div>
         </div>
-        <div class="sidebar-footer">
+        <!-- <div class="sidebar-footer">
             <a href="logout.php" class="logout-btn">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Cerrar Sesión</span>
             </a>
-        </div>
+        </div>-->
     </div>
 
     <!-- ========================================== -->
@@ -257,7 +257,8 @@ function formatearNombreMunicipio($municipio)
                     <!-- Estadísticas Relacionadas -->
                     <div class="info-section">
                         <h3><i class="fas fa-chart-bar"></i> Estadísticas de
-                            <?php echo formatearNombreMunicipio($municipioSeleccionado); ?></h3>
+                            <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
+                        </h3>
                         <div class="stats-grid">
                             <div class="stat-item">
                                 <div class="stat-icon schools">

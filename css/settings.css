@@ -567,3 +567,92 @@
 .checkbox-wrapper label:hover {
     color: var(--primary-blue);
 }
+
+/* Estilos para el botón de actualizar ciclo escolar */
+.btn-update-cycle {
+    padding: 10px 20px;
+    background-color: var(--primary-blue);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    color: var(--white);
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-update-cycle:hover {
+    background-color: var(--secondary-blue);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-update-cycle i {
+    font-size: 0.9rem;
+}
+
+/* Estilos para el formulario de preferencias */
+.preferences-form {
+    margin-top: 20px;
+}
+
+.form-actions-inline {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* Estilos para el input del ciclo escolar */
+.cycle-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.cycle-input {
+    max-width: 80px;
+}
+
+.input-suffix {
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* Estilos para alertas de preferencias */
+.settings-alert {
+    padding: 12px 16px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-primary);
+}
+
+.settings-alert i {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.settings-alert-success {
+    background-color: rgba(46, 125, 50, 0.1);
+    border: 1px solid var(--success-green);
+    color: var(--success-green);
+}
+
+.settings-alert-error {
+    background-color: rgba(220, 53, 69, 0.1);
+    border: 1px solid var(--danger-red);
+    color: var(--danger-red);
+}
+
+.settings-alert-info {
+    background-color: rgba(13, 110, 253, 0.1);
+    border: 1px solid var(--primary-blue);
+    color: var(--primary-blue);
+}
