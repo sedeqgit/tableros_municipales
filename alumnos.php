@@ -51,6 +51,20 @@ if (!in_array($municipioSeleccionado, $municipiosValidos)) {
     $municipioSeleccionado = 'CORREGIDORA'; // Fallback a Corregidora si el municipio no es válido
 }
 
+/**
+ * Formatea nombres de municipios para display en formato título
+ */
+function formatearNombreMunicipio($municipio)
+{
+    // Convertir de mayúsculas a formato título
+    $formatted = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
+
+    // Correcciones específicas para preposiciones y artículos
+    $formatted = str_replace([' De ', ' Del ', ' El '], [' de ', ' del ', ' El '], $formatted);
+
+    return $formatted;
+}
+
 // =============================================================================
 // PROCESAMIENTO DE DATOS DE MATRÍCULA
 // =============================================================================
@@ -274,14 +288,14 @@ foreach ($datosPorNivel as $nivel => $datos) {
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>Detalle de la Matrícula Estudiantil -
-                    <?php echo htmlspecialchars($municipioSeleccionado, ENT_QUOTES, 'UTF-8'); ?>
+                <h1>Detalle de la Matrícula Estudiantil <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
+                    - Ciclo <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?>
                 </h1>
                 <?php if (!$tieneDatos): ?>
                     <div
                         style="color: #856404; background-color: #fff3cd; padding: 8px 12px; border-radius: 4px; margin-top: 8px; font-size: 0.9rem;">
                         <i class="fas fa-info-circle"></i> Este municipio no tiene datos disponibles en el ciclo escolar
-                        2024-2025
+                        <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?>
                     </div>
                 <?php endif; ?>
             </div>
@@ -391,10 +405,12 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     <h3><i class="fas fa-percentage"></i> Porcentaje por Nivel o Tipo Educativo de la Matrícula Total
                         del Municipio</h3>
                     <div class="export-buttons-section">
-                        <button class="export-section-btn" onclick="exportarSeccionPNG('analisis-nivel')" title="Exportar como PNG">
+                        <button class="export-section-btn" onclick="exportarSeccionPNG('analisis-nivel')"
+                            title="Exportar como PNG">
                             <i class="fas fa-image"></i> PNG
                         </button>
-                        <button class="export-section-btn" onclick="exportarSeccionPDF('analisis-nivel')" title="Exportar como PDF">
+                        <button class="export-section-btn" onclick="exportarSeccionPDF('analisis-nivel')"
+                            title="Exportar como PDF">
                             <i class="fas fa-file-pdf"></i> PDF
                         </button>
                     </div>

@@ -62,6 +62,20 @@ if (!in_array($municipioSeleccionado, $municipiosValidos)) {
     $municipioSeleccionado = 'QUERÉTARO'; // Fallback a Querétaro si el municipio no es válido
 }
 
+/**
+ * Formatea nombres de municipios para display en formato título
+ */
+function formatearNombreMunicipio($municipio)
+{
+    // Convertir de mayúsculas a formato título
+    $formatted = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
+
+    // Correcciones específicas para preposiciones y artículos
+    $formatted = str_replace([' De ', ' Del ', ' El '], [' de ', ' del ', ' El '], $formatted);
+
+    return $formatted;
+}
+
 // =============================================================================
 // OBTENCIÓN Y PROCESAMIENTO DE DATOS EDUCATIVOS
 // =============================================================================
@@ -473,7 +487,9 @@ $datosEducativos = $datosCompletosMunicipio;
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>Detalle de Escuelas <?php echo $municipioSeleccionado; ?> Ciclo 2024 - 2025 </h1>
+                <h1>Detalle de Escuelas <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> - Ciclo
+                    <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?>
+                </h1>
             </div>
             <div class="utilities">
                 <div class="date-display">
@@ -495,7 +511,9 @@ $datosEducativos = $datosCompletosMunicipio;
                     <div class="stats-row">
                         <div class="stat-box animate-fade delay-1">
                             <div class="stat-value"><?php echo $totalEscuelas; ?> </div>
-                            <div class="stat-label">Total Escuelas Ciclo escolar 2024-2025</div>
+                            <div class="stat-label">Total Escuelas Ciclo escolar
+                                <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?>
+                            </div>
                         </div>
                         <div class="stat-box animate-fade delay-2">
                             <div class="stat-value">

@@ -49,6 +49,20 @@ if (!in_array($municipioSeleccionado, $municipiosValidos)) {
     $municipioSeleccionado = 'CORREGIDORA'; // Fallback a Corregidora si el municipio no es válido
 }
 
+/**
+ * Formatea nombres de municipios para display en formato título
+ */
+function formatearNombreMunicipio($municipio)
+{
+    // Convertir de mayúsculas a formato título
+    $formatted = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
+
+    // Correcciones específicas para preposiciones y artículos
+    $formatted = str_replace([' De ', ' Del ', ' El '], [' de ', ' del ', ' El '], $formatted);
+
+    return $formatted;
+}
+
 // Obtener datos completos del municipio usando la función correcta
 $datosCompletos = obtenerResumenMunicipioCompleto($municipioSeleccionado);
 $datosPublicoPrivado = obtenerDatosPublicoPrivado($municipioSeleccionado);
@@ -271,7 +285,8 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                 <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
             </div>
             <div class="page-title top-bar-title">
-                <h1>Detalle de Docentes - <?php echo ucwords(strtolower($municipioSeleccionado)); ?> - Ciclo 2024-2025
+                <h1>Detalle de Docentes <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> - Ciclo
+                    <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?>
                 </h1>
             </div>
             <div class="utilities">
