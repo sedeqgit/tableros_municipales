@@ -190,6 +190,18 @@
     border-bottom: 1px solid var(--medium-gray);
 }
 
+/* Alinear a la derecha los valores numéricos del desglose por sostenimiento */
+#tabla-matricula th:not(:first-child),
+#tabla-matricula td:not(:first-child) {
+    text-align: right;
+}
+
+/* Alinear numéricos en la tabla Matrícula por Sexo */
+.matricula-genero .data-table th:not(:first-child),
+.matricula-genero .data-table td:not(:first-child) {
+    text-align: right;
+}
+
 .data-table th {
     background-color: var(--primary-blue);
     color: var(--white);
@@ -513,14 +525,22 @@
 
 /* Panel de tabla detallada (delay-2) - Asegurar espacio suficiente para la tabla */
 .matricula-panel.delay-2 .table-container {
-    min-height: 500px;
+    min-height: 650px;
+    max-height: none;
     padding-bottom: 20px;
     border-radius: var(--border-radius-md);
-
+    overflow-y: visible;
 }
 
 .matricula-panel.delay-2 .matricula-body {
     padding: 30px 24px;
+}
+
+/* Panel Matrícula por Sexo: más altura para evitar scroll interno */
+.matricula-genero .table-container {
+    min-height: 520px;
+    max-height: none;
+    overflow-y: visible;
 }
 
 /* Panel de análisis por nivel (aislado de herencia global) */

@@ -65,6 +65,11 @@ function formatearNombreMunicipio($municipio)
     return $formatted;
 }
 
+function formatPercent($value, $decimals = 2)
+{
+    return number_format((float) $value, $decimals, '.', ',');
+}
+
 // =============================================================================
 // PROCESAMIENTO DE DATOS DE MATRÍCULA
 // =============================================================================
@@ -315,6 +320,9 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     <h3 class="matricula-title"><i class="fas fa-users"></i> Resumen General de Matrícula</h3>
                 </div>
                 <div class="matricula-body">
+                    <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
+                        <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
+                    </div>
                     <div class="stats-row">
                         <div class="stat-box total-general">
                             <div class="stat-value"><?php echo number_format($totales['general']); ?></div>
@@ -325,7 +333,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
                             <div class="stat-value"><?php echo number_format($totales['publico']); ?></div>
                             <div class="stat-label">Público</div>
                             <div class="stat-percentage">
-                                <?php echo round(($totales['publico'] / $totales['general']) * 100, 1); ?>%
+                                <?php echo formatPercent(($totales['publico'] / $totales['general']) * 100); ?>%
                             </div>
                             <div class="stat-icon"><i class="fas fa-university"></i></div>
                         </div>
@@ -333,7 +341,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
                             <div class="stat-value"><?php echo number_format($totales['privado']); ?></div>
                             <div class="stat-label">Privado</div>
                             <div class="stat-percentage">
-                                <?php echo round(($totales['privado'] / $totales['general']) * 100, 1); ?>%
+                                <?php echo formatPercent(($totales['privado'] / $totales['general']) * 100); ?>%
                             </div>
                             <div class="stat-icon"><i class="fas fa-building"></i></div>
                         </div>
@@ -346,6 +354,9 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     <h3 class="matricula-title"><i class="fas fa-table"></i> Desglose por Tipo de Sostenimiento</h3>
                 </div>
                 <div class="matricula-body">
+                    <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
+                        <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
+                    </div>
                     <div class="table-container">
                         <table id="tabla-matricula" class="data-table">
                             <thead>
@@ -361,16 +372,18 @@ foreach ($datosPorNivel as $nivel => $datos) {
                             <tbody>
                                 <?php foreach ($datosPorNivel as $nivel => $datos): ?>
                                     <?php
-                                    $porcentajePublico = $datos['total'] > 0 ? round(($datos['publico'] / $datos['total']) * 100, 1) : 0;
-                                    $porcentajePrivado = $datos['total'] > 0 ? round(($datos['privado'] / $datos['total']) * 100, 1) : 0;
+                                    $porcentajePublico = $datos['total'] > 0 ? round(($datos['publico'] / $datos['total']) * 100, 2) : 0;
+                                    $porcentajePrivado = $datos['total'] > 0 ? round(($datos['privado'] / $datos['total']) * 100, 2) : 0;
                                     ?>
                                     <tr>
                                         <td class="nivel-nombre"><?php echo $nivel; ?></td>
                                         <td class="total-nivel"><?php echo number_format($datos['total']); ?></td>
                                         <td class="sector-publico"><?php echo number_format($datos['publico']); ?></td>
-                                        <td class="porcentaje-publico"><?php echo $porcentajePublico; ?>%</td>
+                                        <td class="porcentaje-publico"><?php echo formatPercent($porcentajePublico); ?>%
+                                        </td>
                                         <td class="sector-privado"><?php echo number_format($datos['privado']); ?></td>
-                                        <td class="porcentaje-privado"><?php echo $porcentajePrivado; ?>%</td>
+                                        <td class="porcentaje-privado"><?php echo formatPercent($porcentajePrivado); ?>%
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -384,13 +397,13 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                         <strong><?php echo number_format($totales['publico']); ?></strong>
                                     </td>
                                     <td class="porcentaje-publico">
-                                        <strong><?php echo round(($totales['publico'] / $totales['general']) * 100, 1); ?>%</strong>
+                                        <strong><?php echo formatPercent(($totales['publico'] / $totales['general']) * 100); ?>%</strong>
                                     </td>
                                     <td class="sector-privado">
                                         <strong><?php echo number_format($totales['privado']); ?></strong>
                                     </td>
                                     <td class="porcentaje-privado">
-                                        <strong><?php echo round(($totales['privado'] / $totales['general']) * 100, 1); ?>%</strong>
+                                        <strong><?php echo formatPercent(($totales['privado'] / $totales['general']) * 100); ?>%</strong>
                                     </td>
                                 </tr>
                             </tfoot>
@@ -402,7 +415,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
             <!-- Panel de Porcentaje por Nivel Educativo de los Totales del Municipio -->
             <div id="analisis-nivel" class="matricula-panel animate-fade delay-3">
                 <div class="matricula-header">
-                    <h3><i class="fas fa-percentage"></i> Porcentaje por Nivel o Tipo Educativo de la Matrícula Total
+                    <h3><i class="fas fa-percentage"></i> Proporción de los totales por Nivel o Tipo Educativo de la
+                        Matrícula Total
                         del Municipio</h3>
                     <div class="export-buttons-section">
                         <button class="export-section-btn" onclick="exportarSeccionPNG('analisis-nivel')"
@@ -416,6 +430,9 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     </div>
                 </div>
                 <div class="matricula-body">
+                    <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
+                        <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
+                    </div>
                     <?php if ($tieneDatos && !empty($datosPublicoPrivado)): ?>
                         <div class="totales-municipales-container">
                             <!-- Resumen de Totales Municipales -->
@@ -452,8 +469,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                             $totalMatricula = isset($datos['tot_mat']) ? (int) $datos['tot_mat'] : 0;
                                             $matriculaPublica = isset($datos['tot_mat_pub']) ? (int) $datos['tot_mat_pub'] : 0;
                                             $matriculaPrivada = isset($datos['tot_mat_priv']) ? (int) $datos['tot_mat_priv'] : 0;
-                                            $porcentajePublico = $totalMatricula > 0 ? round(($matriculaPublica / $totalMatricula) * 100, 1) : 0;
-                                            $porcentajePrivado = $totalMatricula > 0 ? round(($matriculaPrivada / $totalMatricula) * 100, 1) : 0;
+                                            $porcentajePublico = $totalMatricula > 0 ? round(($matriculaPublica / $totalMatricula) * 100, 2) : 0;
+                                            $porcentajePrivado = $totalMatricula > 0 ? round(($matriculaPrivada / $totalMatricula) * 100, 2) : 0;
                                             $dominante = $matriculaPublica > $matriculaPrivada ? 'Público' : 'Privado';
                                             $participacion = $totales['general'] > 0 ? round(($totalMatricula / $totales['general']) * 100, 2) : 0;
                                             ?>
@@ -461,7 +478,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                                 <div class="nivel-header">
                                                     <h4><?php echo htmlspecialchars($datos['titulo_fila'], ENT_QUOTES, 'UTF-8'); ?>
                                                     </h4>
-                                                    <span class="participacion-badge"><?php echo $participacion; ?>% del
+                                                    <span class="participacion-badge"><?php echo formatPercent($participacion); ?>%
+                                                        del
                                                         total</span>
                                                 </div>
 
@@ -469,19 +487,22 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                                 <div class="nivel-totales-detalle">
                                                     <div class="total-item-detalle">
                                                         <span class="total-label">Matrícula:</span>
-                                                        <span class="porcentaje-municipal"><?php echo $participacion; ?>%</span>
+                                                        <span
+                                                            class="porcentaje-municipal"><?php echo formatPercent($participacion); ?>%</span>
                                                         <span
                                                             class="total-numero"><?php echo number_format($totalMatricula, 0, '.', ','); ?></span>
                                                     </div>
                                                     <div class="total-item-detalle">
                                                         <span class="total-label">Público:</span>
-                                                        <span class="porcentaje-municipal"><?php echo $porcentajePublico; ?>%</span>
+                                                        <span
+                                                            class="porcentaje-municipal"><?php echo formatPercent($porcentajePublico); ?>%</span>
                                                         <span
                                                             class="total-numero"><?php echo number_format($matriculaPublica, 0, '.', ','); ?></span>
                                                     </div>
                                                     <div class="total-item-detalle">
                                                         <span class="total-label">Privado:</span>
-                                                        <span class="porcentaje-municipal"><?php echo $porcentajePrivado; ?>%</span>
+                                                        <span
+                                                            class="porcentaje-municipal"><?php echo formatPercent($porcentajePrivado); ?>%</span>
                                                         <span
                                                             class="total-numero"><?php echo number_format($matriculaPrivada, 0, '.', ','); ?></span>
                                                     </div>
@@ -509,6 +530,9 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     <h3 class="matricula-title"><i class="fas fa-venus-mars"></i> Resumen General por Sexo</h3>
                 </div>
                 <div class="matricula-body">
+                    <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
+                        <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
+                    </div>
                     <div class="stats-row">
                         <?php
                         // Calcular totales de hombres y mujeres
@@ -531,7 +555,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
                             </div>
                             <div class="stat-label">Total Hombres</div>
                             <div class="stat-percentage">
-                                <?php echo $totalGeneralGenero > 0 ? round(($totalHombres / $totalGeneralGenero) * 100, 1) : 0; ?>%
+                                <?php echo formatPercent($totalGeneralGenero > 0 ? ($totalHombres / $totalGeneralGenero) * 100 : 0); ?>%
                             </div>
                             <div class="stat-icon"><i class="fas fa-mars"></i></div>
                         </div>
@@ -540,7 +564,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
                             </div>
                             <div class="stat-label">Total Mujeres</div>
                             <div class="stat-percentage">
-                                <?php echo $totalGeneralGenero > 0 ? round(($totalMujeres / $totalGeneralGenero) * 100, 1) : 0; ?>%
+                                <?php echo formatPercent($totalGeneralGenero > 0 ? ($totalMujeres / $totalGeneralGenero) * 100 : 0); ?>%
                             </div>
                             <div class="stat-icon"><i class="fas fa-venus"></i></div>
                         </div>
@@ -553,6 +577,9 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     <h3 class="matricula-title"><i class="fas fa-venus-mars"></i> Matrícula por Sexo</h3>
                 </div>
                 <div class="matricula-body">
+                    <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
+                        <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
+                    </div>
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
@@ -574,16 +601,16 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                     $totalHombres += $fila['hombres'];
                                     $totalMujeres += $fila['mujeres'];
                                     $totalGeneralGenero += $fila['total'];
-                                    $porcH = $fila['total'] > 0 ? round(($fila['hombres'] / $fila['total']) * 100, 1) : 0;
-                                    $porcM = $fila['total'] > 0 ? round(($fila['mujeres'] / $fila['total']) * 100, 1) : 0;
+                                    $porcH = $fila['total'] > 0 ? round(($fila['hombres'] / $fila['total']) * 100, 2) : 0;
+                                    $porcM = $fila['total'] > 0 ? round(($fila['mujeres'] / $fila['total']) * 100, 2) : 0;
                                     ?>
                                     <tr>
                                         <td><?php echo htmlspecialchars($fila['titulo_fila']); ?></td>
                                         <td><?php echo number_format($fila['total']); ?></td>
                                         <td class="col-hombres"><?php echo number_format($fila['hombres']); ?></td>
-                                        <td><?php echo $porcH; ?>%</td>
+                                        <td><?php echo formatPercent($porcH); ?>%</td>
                                         <td class="col-mujeres"><?php echo number_format($fila['mujeres']); ?></td>
-                                        <td><?php echo $porcM; ?>%</td>
+                                        <td><?php echo formatPercent($porcM); ?>%</td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -593,11 +620,11 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                     <td><strong><?php echo number_format($totalGeneralGenero); ?></strong></td>
                                     <td class="col-hombres"><strong><?php echo number_format($totalHombres); ?></strong>
                                     </td>
-                                    <td><strong><?php echo $totalGeneralGenero > 0 ? round(($totalHombres / $totalGeneralGenero) * 100, 1) : 0; ?>%</strong>
+                                    <td><strong><?php echo formatPercent($totalGeneralGenero > 0 ? ($totalHombres / $totalGeneralGenero) * 100 : 0); ?>%</strong>
                                     </td>
                                     <td class="col-mujeres"><strong><?php echo number_format($totalMujeres); ?></strong>
                                     </td>
-                                    <td><strong><?php echo $totalGeneralGenero > 0 ? round(($totalMujeres / $totalGeneralGenero) * 100, 1) : 0; ?>%</strong>
+                                    <td><strong><?php echo formatPercent($totalGeneralGenero > 0 ? ($totalMujeres / $totalGeneralGenero) * 100 : 0); ?>%</strong>
                                     </td>
                                 </tr>
                             </tfoot>
@@ -610,10 +637,13 @@ foreach ($datosPorNivel as $nivel => $datos) {
 
             <!-- Tabla detallada por subnivel educativo -->
             <div id="tabla-detallada-alumnos" class="detailed-table animate-fade delay-6">
+                <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
+                    <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
+                </div>
                 <h4>Detalle por Servicio Educativo</h4>
                 <p class="note-info">
                     <i class="fas fa-info-circle"></i>
-                    <strong>Nota:</strong> El subnivel "General" contabiliza tanto alumnos de escuelas públicas como
+                    <strong>Nota:</strong> El servicio "General" contabiliza tanto alumnos de escuelas públicas como
                     privadas.
                 </p>
                 <!-- Filtro de búsqueda -->
@@ -734,11 +764,13 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                     <td><?php echo htmlspecialchars($nivel, ENT_QUOTES, 'UTF-8'); ?></td>
                                     <td><?php echo htmlspecialchars($subnivel, ENT_QUOTES, 'UTF-8'); ?></td>
                                     <td class="text-center"><?php echo number_format($totalNivel); ?></td>
-                                    <td class="text-center"><?php echo $porcentajeDelTotal; ?>%</td>
+                                    <td class="text-center"><?php echo formatPercent($porcentajeDelTotal); ?>%</td>
                                     <td class="text-center alumnos-hombres"><?php echo number_format($hombres); ?></td>
-                                    <td class="text-center porcentaje-hombres"><?php echo $porcentajeHombres; ?>%</td>
+                                    <td class="text-center porcentaje-hombres">
+                                        <?php echo formatPercent($porcentajeHombres); ?>%</td>
                                     <td class="text-center alumnos-mujeres"><?php echo number_format($mujeres); ?></td>
-                                    <td class="text-center porcentaje-mujeres"><?php echo $porcentajeMujeres; ?>%</td>
+                                    <td class="text-center porcentaje-mujeres">
+                                        <?php echo formatPercent($porcentajeMujeres); ?>%</td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -757,20 +789,20 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                     $totalHombresSubnivel += $datosAlumnosGenero[$i][3];
                                     $totalMujeresSubnivel += $datosAlumnosGenero[$i][4];
                                 }
-                                $porcentajeTotalHombres = $totalAlumnosSubnivel > 0 ? round(($totalHombresSubnivel / $totalAlumnosSubnivel) * 100, 1) : 0;
-                                $porcentajeTotalMujeres = $totalAlumnosSubnivel > 0 ? round(($totalMujeresSubnivel / $totalAlumnosSubnivel) * 100, 1) : 0;
+                                $porcentajeTotalHombres = $totalAlumnosSubnivel > 0 ? round(($totalHombresSubnivel / $totalAlumnosSubnivel) * 100, 2) : 0;
+                                $porcentajeTotalMujeres = $totalAlumnosSubnivel > 0 ? round(($totalMujeresSubnivel / $totalAlumnosSubnivel) * 100, 2) : 0;
                                 ?>
                                 <td class="text-center alumnos-hombres">
                                     <strong><?php echo number_format($totalHombresSubnivel); ?></strong>
                                 </td>
                                 <td class="text-center porcentaje-hombres">
-                                    <strong><?php echo $porcentajeTotalHombres . '%'; ?></strong>
+                                    <strong><?php echo formatPercent($porcentajeTotalHombres) . '%'; ?></strong>
                                 </td>
                                 <td class="text-center alumnos-mujeres">
                                     <strong><?php echo number_format($totalMujeresSubnivel); ?></strong>
                                 </td>
                                 <td class="text-center porcentaje-mujeres">
-                                    <strong><?php echo $porcentajeTotalMujeres . '%'; ?></strong>
+                                    <strong><?php echo formatPercent($porcentajeTotalMujeres) . '%'; ?></strong>
                                 </td>
                             </tr>
                         </tfoot>
@@ -789,6 +821,9 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     </h3>
                 </div>
                 <div class="matricula-body">
+                    <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
+                        <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
+                    </div>
                     <p class="usaer-subtitle">
                         Datos informativos de las Unidades de Servicios de Apoyo a la Educación Regular.
                         Estos datos no se suman en los totales municipales ya que atienden a alumnos contabilizados en los
@@ -846,7 +881,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                     </h4>
                                     <div class="usaer-dato-grupo">
                                         <div class="numero-principal">
-                                            <?php echo number_format($datosUSAER['tot_mat_priv'], 0, '.', ','); ?> matrícula
+                                            <?php echo number_format($datosUSAER['tot_mat_priv'], 0, '.', ','); ?> Matrícula
                                         </div>
                                         <div class="porcentaje">
                                             <?php echo $datosUSAER['tot_mat'] > 0 ? round(($datosUSAER['tot_mat_priv'] / $datosUSAER['tot_mat']) * 100, 1) : 0; ?>%
@@ -913,7 +948,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
 
 
         <footer class="dashboard-footer">
-            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
+            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Poder Ejecutivo del Estado de Querétaro - Todos
+                los derechos
                 reservados</p>
         </footer>
     </div>

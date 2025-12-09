@@ -215,7 +215,8 @@ $datosMapaBibliotecas = obtenerMapaBibliotecas();
             <div class="panel-body">
                 <?php if ($datosMapaBibliotecas): ?>
                     <div id="map-container" class="map-container">
-                        <iframe id="map-iframe" src="<?php echo htmlspecialchars($datosMapaBibliotecas['url'], ENT_QUOTES, 'UTF-8'); ?>"
+                        <iframe id="map-iframe"
+                            src="<?php echo htmlspecialchars($datosMapaBibliotecas['url'], ENT_QUOTES, 'UTF-8'); ?>"
                             allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
                     </div>
@@ -243,7 +244,8 @@ $datosMapaBibliotecas = obtenerMapaBibliotecas();
 
         <!-- Footer -->
         <footer class="dashboard-footer">
-            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
+            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Poder Ejecutivo del Estado de Querétaro - Todos
+                los derechos
                 reservados</p>
         </footer>
     </div>

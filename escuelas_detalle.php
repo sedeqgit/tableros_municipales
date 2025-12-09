@@ -544,7 +544,7 @@ $datosEducativos = $datosCompletosMunicipio;
 
                     <div class="level-bars animate-sequence">
                         <div class="nivel-header">
-                            <h4>Distribución por Nivel o Tipo Educativo</h4>
+                            <h4>Distribución por Tipo o Nivel Educativo</h4>
 
 
                             <div class="view-toggle-buttons">
@@ -1152,7 +1152,8 @@ $datosEducativos = $datosCompletosMunicipio;
         </div>
 
         <footer class="dashboard-footer">
-            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
+            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Poder Ejecutivo del Estado de Querétaro - Todos
+                los derechos
                 reservados</p>
         </footer>
     </div>

@@ -142,7 +142,7 @@ function configurarOpciones() {
     
     // Definir opciones base del gráfico
     let options = {
-        title: 'Estadística Educativa por Tipo',
+        title: 'Estadística Educativa por Tipo o Nivel Educativo',
         titleTextStyle: {
             color: '#004990',
             fontSize: 16,
@@ -161,7 +161,7 @@ function configurarOpciones() {
             position: 'none'
         },
         hAxis: {
-            title: 'Tipo Educativo',
+            title: 'Tipo o Nivel Educativo',
             titleTextStyle: { color: '#333', italic: false, bold: true }
         },
         vAxis: {

@@ -63,6 +63,14 @@ function formatearNombreMunicipio($municipio)
     return $formatted;
 }
 
+/**
+ * Formatea porcentajes con un número fijo de decimales.
+ */
+function formatPercent($value, $decimals = 2)
+{
+    return number_format((float) $value, $decimals, '.', '');
+}
+
 // Obtener datos completos del municipio usando la función correcta
 $datosCompletos = obtenerResumenMunicipioCompleto($municipioSeleccionado);
 $datosPublicoPrivado = obtenerDatosPublicoPrivado($municipioSeleccionado);
@@ -147,8 +155,8 @@ if ($datosDocentesPorSubnivel && is_array($datosDocentesPorSubnivel)) {
         $docentesM = intval($fila['doc_mujeres']);
 
         // Calcular porcentajes de género
-        $porcH = $docentes > 0 ? round(($docentesH / $docentes) * 100, 1) : 0;
-        $porcM = $docentes > 0 ? round(($docentesM / $docentes) * 100, 1) : 0;
+        $porcH = $docentes > 0 ? round(($docentesH / $docentes) * 100, 2) : 0;
+        $porcM = $docentes > 0 ? round(($docentesM / $docentes) * 100, 2) : 0;
 
         // Agregar a datos de género
         $datosDocentesGenero[] = array($nivelPrincipal, $nombreSubnivel, $docentes, $docentesH, $docentesM, $porcH, $porcM);
@@ -190,8 +198,8 @@ if (isset($datosPublicoPrivado) && is_array($datosPublicoPrivado)) {
 
 // Calcular porcentajes
 $totalGeneral = $docentesPublicos + $docentesPrivados;
-$porcentajePublicos = $totalGeneral > 0 ? round(($docentesPublicos / $totalGeneral) * 100, 1) : 0;
-$porcentajePrivados = $totalGeneral > 0 ? round(($docentesPrivados / $totalGeneral) * 100, 1) : 0;
+$porcentajePublicos = $totalGeneral > 0 ? round(($docentesPublicos / $totalGeneral) * 100, 2) : 0;
+$porcentajePrivados = $totalGeneral > 0 ? round(($docentesPrivados / $totalGeneral) * 100, 2) : 0;
 
 // =============================================================================
 // CÁLCULOS COMPLEMENTARIOS
@@ -200,7 +208,7 @@ $porcentajePrivados = $totalGeneral > 0 ? round(($docentesPrivados / $totalGener
 // Calcular distribución porcentual para análisis comparativo
 $porcentajesDocentes = array();
 foreach ($docentesPorNivel as $nivel => $cantidad) {
-    $porcentajesDocentes[$nivel] = round(($cantidad / $totalDocentes) * 100, 1);
+    $porcentajesDocentes[$nivel] = round(($cantidad / $totalDocentes) * 100, 2);
 }
 
 // Análisis de concentración (niveles con mayor cantidad de docentes)
@@ -330,11 +338,15 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
 
                         <div class="progress-container">
                             <div class="progress-bar">
-                                <div class="progress-fill public" style="width: <?php echo $porcentajePublicos; ?>%">
-                                    <span class="progress-label"><?php echo $porcentajePublicos; ?>% Públicos</span>
+                                <div class="progress-fill public"
+                                    style="width: <?php echo formatPercent($porcentajePublicos); ?>%">
+                                    <span class="progress-label"><?php echo formatPercent($porcentajePublicos); ?>%
+                                        Públicos</span>
                                 </div>
-                                <div class="progress-fill private" style="width: <?php echo $porcentajePrivados; ?>%">
-                                    <span class="progress-label"><?php echo $porcentajePrivados; ?>% Privados</span>
+                                <div class="progress-fill private"
+                                    style="width: <?php echo formatPercent($porcentajePrivados); ?>%">
+                                    <span class="progress-label"><?php echo formatPercent($porcentajePrivados); ?>%
+                                        Privados</span>
                                 </div>
                             </div>
                         </div>
@@ -404,11 +416,11 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                     <span
                                         class="level-name"><?php echo htmlspecialchars($nivel, ENT_QUOTES, 'UTF-8'); ?></span>
                                     <div class="level-track">
-                                        <div class="level-fill" style="width: <?php echo $porcentaje; ?>%">
+                                        <div class="level-fill" style="width: <?php echo formatPercent($porcentaje); ?>%">
                                             <span class="escuelas-count"><?php echo number_format($cantidad); ?></span>
                                         </div>
                                     </div>
-                                    <span class="level-percent"><?php echo $porcentaje; ?>%</span>
+                                    <span class="level-percent"><?php echo formatPercent($porcentaje); ?>%</span>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -541,14 +553,16 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                             <td><?php echo htmlspecialchars($nivel, ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td><?php echo htmlspecialchars($subnivel, ENT_QUOTES, 'UTF-8'); ?></td>
                                             <td class="text-center"><?php echo number_format($totalNivel); ?></td>
-                                            <td class="text-center"><?php echo $porcentajeDelTotal; ?>%</td>
+                                            <td class="text-center"><?php echo formatPercent($porcentajeDelTotal); ?>%</td>
                                             <td class="text-center docentes-hombres"><?php echo number_format($hombres); ?>
                                             </td>
-                                            <td class="text-center porcentaje-hombres"><?php echo $porcentajeHombres; ?>%
+                                            <td class="text-center porcentaje-hombres">
+                                                <?php echo formatPercent($porcentajeHombres); ?>%
                                             </td>
                                             <td class="text-center docentes-mujeres"><?php echo number_format($mujeres); ?>
                                             </td>
-                                            <td class="text-center porcentaje-mujeres"><?php echo $porcentajeMujeres; ?>%
+                                            <td class="text-center porcentaje-mujeres">
+                                                <?php echo formatPercent($porcentajeMujeres); ?>%
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -559,7 +573,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                         <td class="text-center">
                                             <strong><?php echo number_format($totalDocentes); ?></strong>
                                         </td>
-                                        <td class="text-center"><strong>100.0%</strong></td>
+                                        <td class="text-center"><strong><?php echo formatPercent(100); ?>%</strong></td>
                                         <?php
                                         // Calcular totales de género
                                         $totalHombres = 0;
@@ -568,20 +582,20 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                             $totalHombres += $datosDocentesGenero[$i][3];
                                             $totalMujeres += $datosDocentesGenero[$i][4];
                                         }
-                                        $porcentajeTotalHombres = $totalDocentes > 0 ? round(($totalHombres / $totalDocentes) * 100, 1) : 0;
-                                        $porcentajeTotalMujeres = $totalDocentes > 0 ? round(($totalMujeres / $totalDocentes) * 100, 1) : 0;
+                                        $porcentajeTotalHombres = $totalDocentes > 0 ? round(($totalHombres / $totalDocentes) * 100, 2) : 0;
+                                        $porcentajeTotalMujeres = $totalDocentes > 0 ? round(($totalMujeres / $totalDocentes) * 100, 2) : 0;
                                         ?>
                                         <td class="text-center">
                                             <strong><?php echo number_format($totalHombres); ?></strong>
                                         </td>
                                         <td class="text-center">
-                                            <strong><?php echo $porcentajeTotalHombres; ?>%</strong>
+                                            <strong><?php echo formatPercent($porcentajeTotalHombres); ?>%</strong>
                                         </td>
                                         <td class="text-center">
                                             <strong><?php echo number_format($totalMujeres); ?></strong>
                                         </td>
                                         <td class="text-center">
-                                            <strong><?php echo $porcentajeTotalMujeres; ?>%</strong>
+                                            <strong><?php echo formatPercent($porcentajeTotalMujeres); ?>%</strong>
                                         </td>
                                     </tr>
                                 </tfoot>
@@ -660,7 +674,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                                 <?php echo number_format($totalDocPubUSAER, 0, '.', ','); ?> Personal
                                             </div>
                                             <div class="porcentaje">
-                                                <?php echo $totalDocUSAER > 0 ? round(($totalDocPubUSAER / $totalDocUSAER) * 100, 1) : 0; ?>%
+                                                <?php echo formatPercent($totalDocUSAER > 0 ? ($totalDocPubUSAER / $totalDocUSAER) * 100 : 0); ?>%
                                             </div>
                                         </div>
                                     </div>
@@ -675,7 +689,7 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                                 <?php echo number_format($totalDocPrivUSAER, 0, '.', ','); ?> personal
                                             </div>
                                             <div class="porcentaje">
-                                                <?php echo $totalDocUSAER > 0 ? round(($totalDocPrivUSAER / $totalDocUSAER) * 100, 1) : 0; ?>%
+                                                <?php echo formatPercent($totalDocUSAER > 0 ? ($totalDocPrivUSAER / $totalDocUSAER) * 100 : 0); ?>%
                                             </div>
                                         </div>
                                     </div>
@@ -696,15 +710,15 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                                 <?php echo number_format($docHUSAER, 0, '.', ','); ?> Total
                                             </div>
                                             <div class="porcentaje">
-                                                <?php echo $totalDocUSAER > 0 ? round(($docHUSAER / $totalDocUSAER) * 100, 1) : 0; ?>%
+                                                <?php echo formatPercent($totalDocUSAER > 0 ? ($docHUSAER / $totalDocUSAER) * 100 : 0); ?>%
                                             </div>
                                             <div class="detalles-secundarios">
                                                 <?php echo number_format($docHPubUSAER, 0, '.', ','); ?> Público
-                                                (<?php echo $docHUSAER > 0 ? round(($docHPubUSAER / $docHUSAER) * 100, 1) : 0; ?>%)
+                                                (<?php echo formatPercent($docHUSAER > 0 ? ($docHPubUSAER / $docHUSAER) * 100 : 0); ?>%)
                                             </div>
                                             <div class="detalles-secundarios">
                                                 <?php echo number_format($docHPrivUSAER, 0, '.', ','); ?> Privado
-                                                (<?php echo $docHUSAER > 0 ? round(($docHPrivUSAER / $docHUSAER) * 100, 1) : 0; ?>%)
+                                                (<?php echo formatPercent($docHUSAER > 0 ? ($docHPrivUSAER / $docHUSAER) * 100 : 0); ?>%)
                                             </div>
                                         </div>
 
@@ -717,15 +731,15 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                                 <?php echo number_format($docMUSAER, 0, '.', ','); ?> Total
                                             </div>
                                             <div class="porcentaje">
-                                                <?php echo $totalDocUSAER > 0 ? round(($docMUSAER / $totalDocUSAER) * 100, 1) : 0; ?>%
+                                                <?php echo formatPercent($totalDocUSAER > 0 ? ($docMUSAER / $totalDocUSAER) * 100 : 0); ?>%
                                             </div>
                                             <div class="detalles-secundarios">
                                                 <?php echo number_format($docMPubUSAER, 0, '.', ','); ?> Público
-                                                (<?php echo $docMUSAER > 0 ? round(($docMPubUSAER / $docMUSAER) * 100, 1) : 0; ?>%)
+                                                (<?php echo formatPercent($docMUSAER > 0 ? ($docMPubUSAER / $docMUSAER) * 100 : 0); ?>%)
                                             </div>
                                             <div class="detalles-secundarios">
                                                 <?php echo number_format($docMPrivUSAER, 0, '.', ','); ?> Privado
-                                                (<?php echo $docMUSAER > 0 ? round(($docMPrivUSAER / $docMUSAER) * 100, 1) : 0; ?>%)
+                                                (<?php echo formatPercent($docMUSAER > 0 ? ($docMPrivUSAER / $docMUSAER) * 100 : 0); ?>%)
                                             </div>
                                         </div>
                                     </div>
@@ -737,7 +751,8 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
             <?php endif; ?>
         </div>
         <footer class="dashboard-footer">
-            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
+            <p>© <?php echo date('Y'); ?> Secretaría de Educación del Poder Ejecutivo del Estado de Querétaro - Todos
+                los derechos
                 reservados</p>
         </footer>
     </div><!-- Scripts -->

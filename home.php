@@ -300,7 +300,7 @@ function obtenerDatosMunicipio($municipio)
                 <?php if ($datosEstado && !empty($datosEstado)): ?>
                     <section class="estadisticas-estado animate-up delay-2">
                         <div class="estado-header">
-                            <h2><i class="fas fa-chart-bar"></i> Estadísticas del Estado de Querétaro</h2>
+                            <h2><i class="fas fa-chart-bar"></i> Estadística del Estado de Querétaro</h2>
                             <p><?php echo isset($infoCiclo['descripcion']) ? $infoCiclo['descripcion'] : 'Ciclo Escolar 2024-2025'; ?>
                                 - Totales Estatales</p>
                         </div>
@@ -486,7 +486,9 @@ function obtenerDatosMunicipio($municipio)
 
             <!-- Pie de página -->
             <footer class="main-footer">
-                <p>&copy; <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
+                <p>&copy; <?php echo date('Y'); ?> Secretaría de Educación del Poder Ejecutivo del Estado de Querétaro -
+                    Todos
+                    los derechos
                     reservados</p>
             </footer>
         </main>

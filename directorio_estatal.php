@@ -541,7 +541,9 @@ $infoCiclo = obtenerInfoCicloEscolar();
         </div>
 
         <footer class="dashboard-footer">
-            <p>&copy; <?php echo date('Y'); ?> Secretaría de Educación del Estado de Querétaro - Todos los derechos
+            <p>&copy; <?php echo date('Y'); ?> Secretaría de Educación del Poder Ejecutivo del Estado de Querétaro -
+                Todos
+                los derechos
                 reservados</p>
         </footer>
     </div>
