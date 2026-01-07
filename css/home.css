@@ -1297,3 +1297,241 @@ img {
     }
 }
 
+/* =============================================================================
+   ESTILOS DEL FOOTER
+   ============================================================================= */
+
+/* Footer principal */
+.main-footer {
+    width: 100%;
+    margin-top: auto;
+}
+
+/* Sección superior del footer con logos */
+.top-top-ft2 {
+    background: url(https://queretaro.gob.mx/o/queretaro-theme/css/images/bg-footer.png) no-repeat center center;
+    background-size: cover;
+    min-height: 263px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.logo-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+.logo-footer img {
+    max-width: 200px;
+    height: auto;
+}
+
+/* Sección con información de contacto */
+.top-footer2 {
+    background-color:#266fb6;
+    color: white;
+    padding: 50px 20px 60px;
+}
+
+.top-footer2 .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+.top-footer2 .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+}
+
+.top-footer2 .col-lg-3,
+.top-footer2 .col-md-6,
+.top-footer2 .col-sm-6,
+.top-footer2 .col-6 {
+    padding: 0 15px;
+    flex: 0 0 25%;
+    max-width: 25%;
+}
+
+.link-footer {
+    text-align: center;
+    padding: 20px 15px;
+        height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.link-footer img {
+    display: block;
+    margin: 0 auto 20px;
+    width: 80px;
+    height: auto;
+    
+}
+
+.link-footer h3 {
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0 0 15px 0;
+    letter-spacing: 0.5px;
+}
+
+.p-footer {
+    color: white;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0;
+    text-align: center;
+}
+
+/* Sección inferior con copyright y redes sociales */
+.bottom-footer2 {
+    background-color: #2d335a;
+    color: white;
+    padding: 40px 20px;
+}
+
+.bottom-footer2 .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.bottom-footer2 p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.aviso {
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+}
+
+.aviso:hover {
+    text-decoration: underline;
+}
+
+/* Redes sociales */
+.social-links {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.social-links ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 5px;
+}
+
+.social-links li {
+    margin: 0;
+    padding: 0;
+}
+
+.social_ {
+    list-style: none !important;
+}
+
+.social_::marker {
+    display: none !important;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    transition: opacity 0.3s ease;
+}
+
+.social-links a:hover {
+    opacity: 0.8;
+}
+
+.social-links svg {
+    height: 1.3em;
+    width: auto;
+}
+
+/* Responsive para footer */
+@media (max-width: 768px) {
+    .top-top-ft2 {
+        min-height: 150px;
+        padding: 30px 15px;
+    }
+
+    .logo-footer img {
+        max-width: 150px;
+    }
+
+    .top-footer2 {
+        padding: 40px 15px;
+    }
+
+    .link-footer {
+        padding: 20px 10px;
+    }
+
+    .link-footer img {
+        width: 60px;
+        margin-bottom: 15px;
+    }
+
+    .link-footer h3 {
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .p-footer {
+        font-size: 0.8rem;
+    }
+
+    .bottom-footer2 {
+        padding: 30px 15px;
+    }
+
+    .bottom-footer2 .text-md-right {
+        text-align: center !important;
+        margin-top: 20px;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+
+    .social-links ul {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 576px) {
+    .top-footer2 .col-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 30px;
+    }
+
+    .link-footer img {
+        width: 70px;
+    }
+
+    .link-footer h3 {
+        font-size: 0.95rem;
+    }
+}
+

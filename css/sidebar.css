@@ -178,18 +178,45 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     position: relative;
-    border-bottom: 3px solid transparent;
+}
+
+.header-nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #00C851, #00A040);
+    border-radius: 0 0 2px 2px;
+    transition: width 0.4s ease-out;
+}
+
+.header-nav-link:hover::before {
+    width: 85%;
 }
 
 .header-nav-link:hover {
     color: #00C851;
-    border-bottom-color: #00C851;
 }
 
 .header-nav-link.active {
     color: #00C851;
     font-weight: 600;
-    border-bottom-color: #00C851;
+}
+
+.header-nav-link.active::before {
+    animation: expandFromCenter 0.4s ease-out forwards;
+}
+
+@keyframes expandFromCenter {
+    0% {
+        width: 0;
+    }
+    100% {
+        width: 85%;
+    }
 }
 
 .header-search {
@@ -473,6 +500,30 @@
     background-color: var(--white);
     color: var(--primary-blue);
     font-weight: 500;
+    position: relative;
+}
+
+/* Línea de acento superior con animación de expansión */
+.nav-item.active a::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+    border-radius: 0 0 2px 2px;
+    animation: expandFromCenter 0.4s ease-out forwards;
+}
+
+@keyframes expandFromCenter {
+    0% {
+        width: 0;
+    }
+    100% {
+        width: 85%;
+    }
 }
 
 /* Footer del sidebar */
