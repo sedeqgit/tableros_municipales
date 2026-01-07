@@ -159,43 +159,69 @@ img {
     margin-bottom: 30px;
 }
 
-.welcome-card {
-    background-color: var(--white);
+.welcome-banner {
+    background: linear-gradient(135deg, #004990 0%, #0066CC 100%);
     border-radius: var(--card-border-radius);
     box-shadow: var(--shadow-md);
-    padding: 20px;
+    padding: 40px 50px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    color: white;
+    min-height: 180px;
 }
 
-/* Títulos de bienvenida - usa --font-primary */
-.welcome-text h2 {
-    color: var(--text-primary);
+.welcome-content h1 {
+    color: white;
+    font-size: 2.2rem;
+    margin-bottom: 5px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+}
+
+.welcome-subtitle {
     font-size: 1.5rem;
+    font-weight: 600;
     margin-bottom: 10px;
-    font-family: var(--font-primary);
+    opacity: 0.95;
 }
 
-.welcome-text p {
-    color: var(--text-secondary);
-    margin-bottom: 10px;
+.welcome-description {
+    font-size: 1.05rem;
+    opacity: 0.9;
+    max-width: 600px;
+    line-height: 1.5;
 }
 
-.welcome-date {
-    font-weight: 500;
-    color: var(--primary-blue);
+.welcome-stats-mini {
+    display: flex;
+    gap: 40px;
+    align-items: center;
 }
 
-.welcome-image {
-    max-width: 400px;
+.stat-mini {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 20px 30px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    min-width: 120px;
 }
 
-.welcome-image img {
-    width: 100%;
-    height: auto;
-    border-radius: 20px;
-    box-shadow: 0 8px 24px rgba(36, 43, 87, 0.25);
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    text-align: center;
 }
 
 /* Títulos de sección - usa --font-heading */
@@ -1170,6 +1196,104 @@ img {
                 padding: 3px 8px;
                 font-size: 0.85rem;
             }
+
+            /* Sección de bienvenida responsive */
+            .welcome-banner {
+                padding: 25px 20px;
+                flex-direction: column;
+                text-align: center;
+                min-height: auto;
+            }
+
+            .welcome-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .welcome-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .welcome-description {
+                font-size: 0.9rem;
+            }
+
+            .welcome-stats-mini {
+                margin-top: 20px;
+                flex-direction: column;
+                gap: 15px;
+                width: 100%;
+            }
+
+            .stat-mini {
+                min-width: 100px;
+                padding: 15px 25px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .stat-label {
+                font-size: 0.85rem;
+            }
         }
-    
+
+/* Estilos responsivos para la sección de bienvenida */
+@media (max-width: 992px) {
+    .welcome-banner {
+        padding: 35px 30px;
+        flex-direction: column;
+        text-align: center;
+        gap: 25px;
+    }
+
+    .welcome-content h1 {
+        font-size: 1.8rem;
+    }
+
+    .welcome-subtitle {
+        font-size: 1.3rem;
+    }
+
+    .welcome-description {
+        font-size: 1rem;
+        max-width: 100%;
+    }
+
+    .welcome-stats-mini {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .stat-mini {
+        min-width: 100px;
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome-banner {
+        padding: 30px 25px;
+    }
+
+    .welcome-content h1 {
+        font-size: 1.6rem;
+    }
+
+    .welcome-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .welcome-description {
+        font-size: 0.95rem;
+    }
+
+    .stat-mini {
+        padding: 18px 25px;
+    }
+
+    .stat-number {
+        font-size: 2.2rem;
+    }
+}
 

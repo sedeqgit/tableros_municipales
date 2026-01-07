@@ -1,43 +1,344 @@
 /**
  * =============================================================================
- * ESTILOS DEL SISTEMA DE NAVEGACIÓN LATERAL - SEDEQ DASHBOARD
+ * ESTILOS DEL SISTEMA DE NAVEGACIÓN - SEDEQ DASHBOARD
  * =============================================================================
- * 
- * Este archivo define todos los estilos para el sistema de navegación lateral
- * del dashboard estadístico de SEDEQ, proporcionando una experiencia de usuario
- * consistente y profesional en todas las páginas del sistema.
- * 
+ *
+ * Este archivo define todos los estilos para el sistema de navegación
+ * del dashboard estadístico de SEDEQ, basado en el diseño del portal
+ * del Gobierno de Querétaro, proporcionando una experiencia de usuario
+ * consistente y profesional.
+ *
  * CARACTERÍSTICAS PRINCIPALES:
- * - Sidebar colapsable y responsivo para dispositivos móviles
- * - Soporte para múltiples estructuras de navegación
+ * - Barra superior institucional con enlaces y redes sociales
+ * - Header principal con logo, búsqueda y menú hamburguesa
+ * - Sidebar colapsable para navegación en móviles
  * - Transiciones suaves y animaciones optimizadas
  * - Sistema de overlay para dispositivos táctiles
  * - Paleta de colores institucional de SEDEQ
  * - Iconografía consistente con Font Awesome
- * 
- * ESTRUCTURAS SOPORTADAS:
- * 
- * 1. Estructura Páginas Principales (home.php, settings.php):
- *    .sidebar > .sidebar-nav > ul > li.nav-item > a
- *    .sidebar > .sidebar-footer > .logout-btn
- *    - Navegación tipo lista con elementos jerárquicos
- *    - Footer con botón de logout integrado
- * 
- * 2. Estructura Dashboards (resumen.php, estudiantes.php, escuelas_detalle.php):
- *    .sidebar > .logo-container > img.logo
- *    .sidebar > .sidebar-links > a.sidebar-link
- *    - Logo institucional en la parte superior
- *    - Enlaces directos de navegación con iconos
- * 
+ *
+ * ESTRUCTURA DE NAVEGACIÓN:
+ *
+ * 1. Barra Superior Institucional:
+ *    .top-institutional-bar
+ *    - Enlaces importantes del sistema
+ *    - Iconos de redes sociales
+ *
+ * 2. Header Principal:
+ *    .main-header
+ *    - Logo institucional
+ *    - Botón de búsqueda
+ *    - Botón de menú hamburguesa
+ *
+ * 3. Sidebar (móviles):
+ *    .sidebar (desplegable desde la derecha)
+ *    - Navegación completa del sistema
+ *
  * BREAKPOINTS RESPONSIVOS:
- * - >= 993px: Sidebar visible permanentemente
- * - <= 992px: Sidebar colapsable con overlay
+ * - >= 993px: Navegación completa visible
+ * - <= 992px: Menú hamburguesa con sidebar colapsable
  * - <= 768px: Optimizaciones adicionales para móviles
- * 
- * @version 2.0
+ *
+ * @version 3.0
  * @requires global.css (variables y fuentes)
  * @requires Font Awesome (iconografía)
  */
+
+/* =============================================
+   BARRA SUPERIOR INSTITUCIONAL
+   ============================================= */
+
+/**
+ * Barra superior con enlaces institucionales y redes sociales
+ * Inspirada en el diseño del portal queretaro.gob.mx
+ */
+.top-institutional-bar {
+    background: linear-gradient(135deg, #004990 0%, #0066CC 100%);
+    color: white;
+    padding: 8px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    font-size: 0.85rem;
+}
+
+.institutional-bar-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.institutional-links {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.institutional-link {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: opacity 0.3s;
+    font-size: 0.8rem;
+}
+
+.institutional-link:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.social-link {
+    color: white;
+    font-size: 1rem;
+    transition: transform 0.3s, opacity 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.social-link:hover {
+    transform: scale(1.1);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* =============================================
+   HEADER PRINCIPAL CON LOGO Y NAVEGACIÓN
+   ============================================= */
+
+/**
+ * Header principal con logo, menú de navegación y búsqueda
+ */
+.main-header {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 48px; /* Altura de la barra institucional */
+    left: 0;
+    right: 0;
+    z-index: 999;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-logo {
+    flex-shrink: 0;
+}
+
+.header-logo img {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* Menú de navegación horizontal (desktop) */
+.header-nav {
+    flex: 1;
+    display: none; /* Oculto por defecto, se muestra en desktop */
+}
+
+.header-nav nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+}
+
+.header-nav-link {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    border-bottom: 3px solid transparent;
+}
+
+.header-nav-link:hover {
+    color: #00C851;
+    border-bottom-color: #00C851;
+}
+
+.header-nav-link.active {
+    color: #00C851;
+    font-weight: 600;
+    border-bottom-color: #00C851;
+}
+
+.header-search {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.search-btn {
+    background: transparent;
+    border: none;
+    color: var(--primary-blue);
+    font-size: 1.3rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.search-btn:hover {
+    background: rgba(0, 73, 144, 0.1);
+    color: var(--accent-red);
+}
+
+/* Botón de menú hamburguesa (móviles) */
+.header-menu-toggle {
+    flex-shrink: 0;
+    display: none; /* Oculto por defecto, se muestra en móviles */
+}
+
+.menu-btn {
+    background: transparent;
+    border: none;
+    color: var(--primary-blue);
+    font-size: 1.4rem;
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.menu-btn:hover {
+    background: rgba(0, 73, 144, 0.1);
+    color: var(--accent-red);
+}
+
+.menu-btn:active {
+    transform: scale(0.95);
+}
+
+/* Mostrar menú de navegación en desktop */
+@media (min-width: 993px) {
+    .header-nav {
+        display: block;
+    }
+
+    .header-menu-toggle {
+        display: none !important;
+    }
+
+    .sidebar {
+        display: none !important; /* Ocultar sidebar en desktop */
+    }
+}
+
+/* Barra de búsqueda expandible */
+.search-bar-expanded {
+    background: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+    padding: 0 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out;
+    opacity: 0;
+}
+
+.search-bar-expanded.active {
+    max-height: 120px;
+    padding: 18px 20px;
+    opacity: 1;
+}
+
+.search-bar-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    height: 50px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 14px 24px;
+    border: 2px solid #ddd;
+    border-radius: 30px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.search-input:focus {
+    border-color: #00C851;
+    box-shadow: 0 4px 12px rgba(0,200,81,0.15);
+}
+
+.search-submit-btn,
+.search-close-btn {
+    background: #00C851;
+    color: white;
+    border: none;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px rgba(0,200,81,0.25);
+}
+
+.search-close-btn {
+    background: #dc3545;
+    box-shadow: 0 2px 8px rgba(220,53,69,0.25);
+}
+
+.search-submit-btn:hover {
+    background: #00a844;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,200,81,0.35);
+}
+
+.search-close-btn:hover {
+    background: #c82333;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(220,53,69,0.35);
+}
 
 /* =============================================
    SISTEMA DE OVERLAY PARA DISPOSITIVOS MÓVILES
@@ -54,7 +355,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 99;
+    z-index: 998;
     display: none;
     opacity: 0;
     transition: opacity var(--transition-normal);
@@ -73,93 +374,63 @@
 
 /**
  * Definición del contenedor principal de navegación lateral
+ * Ahora se despliega desde el lado derecho en móviles
  * Utiliza flexbox para organización vertical del contenido
  */
 .sidebar {
     position: fixed;
     top: 0;
-    left: 0;
+    right: -280px; /* Cambiado de left a right */
     height: 100vh;
-    width: 240px;
+    width: 280px;
     background-color: #242B57;
     color: var(--white);
-    transition: all var(--transition-speed);
-    z-index: 100;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    /* Añadimos flexbox para organizar el contenido verticalmente */
+    transition: right 0.3s ease-in-out;
+    z-index: 999;
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
-    padding: 0; /* Asegura que no hay padding adicional */
-    margin: 0; /* Asegura que no hay margin adicional */
-    overflow-y: auto; /* Permite scroll si el contenido es muy largo */
-    overflow-x: hidden; /* Evita scroll horizontal */
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-.sidebar.collapsed {
-    left: -240px;
+.sidebar.active {
+    right: 0;
+}
+
+/* Logo en el sidebar */
+.sidebar-header {
+    background: white;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-logo {
+    max-width: 180px;
+    height: auto;
+}
+
+/* Ajustes para el contenido principal */
+.app-container {
+    margin-top: 132px; /* Altura de la barra institucional + header */
+    min-height: calc(100vh - 132px);
 }
 
 .main-content {
-    margin-left: 240px;
-    transition: all var(--transition-speed);
-    width: calc(100% - 240px);
-    overflow-x: hidden; /* Evita desbordamiento horizontal */
-}
-
-.main-content.expanded {
     margin-left: 0;
+    transition: all var(--transition-speed);
     width: 100%;
+    overflow-x: hidden;
 }
 
-/* Botón de toggle para el sidebar */
-.menu-toggle {
-    display: block; /* Siempre visible */
-    margin-right: 10px;
-    flex-shrink: 0; /* No se encoge en pantallas pequeñas */
+/* Botón de toggle ya no es necesario en el top-bar, se movió al header */
+.top-bar {
+    display: none; /* Ocultamos el top-bar antiguo */
 }
 
-#sidebarToggle {
-    background-color: transparent;
-    border: none;
-    color: var(--primary-blue);
-    font-size: 1.4rem;
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-    background-color: rgba(0, 73, 144, 0.05); /* Fondo sutil */
-    flex-shrink: 0; /* No se encoge */
-}
-
-#sidebarToggle:hover {
-    background-color: rgba(0, 73, 144, 0.1);
-    color: var(--accent-red);
-}
-
-#sidebarToggle:active {
-    transform: scale(0.95);
-    background-color: rgba(0, 73, 144, 0.15);
-}
-
-/* Topbar con botón de menú */
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 25px;
-    background-color: var(--white);
-    border-bottom: 1px solid var(--medium-gray);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    width: 100%;
-    box-sizing: border-box;
-}
 
 /* === ESTILOS DE NAVEGACIÓN DEL SIDEBAR === */
 
@@ -585,9 +856,169 @@
     padding: 8px 10px 8px 18px;
     font-size: 0.8rem;
   }
-  
+
   .submenu-link i {
     margin-right: 5px;
     font-size: 0.75rem;
+  }
+}
+
+/* =============================================
+   MEDIA QUERIES PARA NAVBAR HORIZONTAL
+   ============================================= */
+
+@media (max-width: 992px) {
+  /* Ajustes para tablets y móviles */
+  .top-institutional-bar {
+    padding: 6px 0;
+  }
+
+  .institutional-links {
+    gap: 12px;
+  }
+
+  .institutional-link {
+    font-size: 0.75rem;
+  }
+
+  .social-links {
+    gap: 10px;
+  }
+
+  .social-link {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+  }
+
+  .header-logo img {
+    height: 50px;
+  }
+
+  .search-btn, .menu-btn {
+    font-size: 1.2rem;
+  }
+
+  .app-container {
+    margin-top: 120px;
+  }
+
+  /* Mostrar menú hamburguesa y ocultar navegación horizontal en móviles */
+  .header-menu-toggle {
+    display: block !important;
+  }
+
+  .header-nav {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Optimizaciones para móviles */
+  .institutional-links {
+    gap: 8px;
+  }
+
+  .institutional-link {
+    font-size: 0.7rem;
+    letter-spacing: 0.3px;
+  }
+
+  .social-links {
+    gap: 8px;
+  }
+
+  .social-link {
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
+  }
+
+  .header-content {
+    padding: 10px 15px;
+  }
+
+  .header-logo img {
+    height: 45px;
+  }
+
+  .search-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+
+  .menu-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .sidebar {
+    width: 260px;
+    right: -260px;
+  }
+
+  .sidebar-logo {
+    max-width: 150px;
+  }
+
+  .app-container {
+    margin-top: 110px;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Pantallas muy pequeñas */
+  .institutional-bar-content {
+    padding: 0 10px;
+  }
+
+  .institutional-links {
+    display: none; /* Ocultar enlaces en móviles muy pequeños */
+  }
+
+  .social-links {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .header-content {
+    padding: 8px 10px;
+  }
+
+  .header-logo img {
+    height: 40px;
+  }
+
+  .search-btn, .menu-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .sidebar {
+    width: 240px;
+    right: -240px;
+  }
+
+  .sidebar-header {
+    padding: 15px;
+  }
+
+  .sidebar-logo {
+    max-width: 130px;
+  }
+
+  .app-container {
+    margin-top: 100px;
+  }
+
+  .search-bar-content {
+    padding: 0 10px;
+  }
+
+  .search-input {
+    font-size: 0.9rem;
+    padding: 10px 15px;
   }
 }

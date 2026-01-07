@@ -1,103 +1,120 @@
 /**
  * =============================================================================
- * CONTROLADOR DE NAVEGACIÓN LATERAL - SISTEMA SEDEQ
+ * CONTROLADOR DE NAVEGACIÓN - SISTEMA SEDEQ
  * =============================================================================
- * 
- * Este módulo gestiona toda la funcionalidad del menú de navegación lateral
- * en el dashboard estadístico de SEDEQ, proporcionando una experiencia de
- * usuario consistente y responsiva en todas las páginas del sistema.
- * 
+ *
+ * Este módulo gestiona toda la funcionalidad del sistema de navegación
+ * en el dashboard estadístico de SEDEQ, basado en el diseño del portal
+ * del Gobierno de Querétaro.
+ *
  * FUNCIONALIDADES PRINCIPALES:
- * - Apertura y cierre del menú lateral en dispositivos móviles
- * - Gestión de estados colapsado/expandido del sidebar
- * - Sistema de overlay para cerrar menú en dispositivos táctiles
- * - Adaptación automática según el tamaño de la ventana
- * - Preservación del icono hamburguesa para consistencia visual
- * 
- * COMPORTAMIENTOS RESPONSIVOS:
- * - <= 992px: Modo colapsado por defecto con overlay
- * - > 992px: Sidebar visible permanentemente
- * - Transiciones suaves para cambios de estado
- * - Eventos de resize para adaptación dinámica
- * 
+ * - Apertura y cierre del menú lateral desde el lado derecho
+ * - Sistema de búsqueda expandible en el header
+ * - Gestión de overlay para cerrar menú en dispositivos táctiles
+ * - Animaciones y transiciones suaves
+ *
+ * COMPORTAMIENTOS:
+ * - Sidebar se despliega desde la derecha al hacer clic en el menú hamburguesa
+ * - Barra de búsqueda se expande al hacer clic en el botón de búsqueda
+ * - Overlay se activa para cerrar el menú tocando fuera
+ *
  * ELEMENTOS DOM REQUERIDOS:
- * - #sidebarToggle: Botón para alternar estado del menú
- * - .sidebar: Contenedor principal del menú lateral
- * - .main-content: Área principal que se ajusta según el estado del sidebar
- * - .sidebar-overlay: Capa de overlay para cerrar el menú en móviles
- * 
- * @version 2.0
+ * - #sidebarToggle: Botón hamburguesa para abrir/cerrar menú
+ * - #searchToggle: Botón para expandir/colapsar búsqueda
+ * - #searchClose: Botón para cerrar barra de búsqueda
+ * - .sidebar: Contenedor del menú lateral
+ * - .sidebar-overlay: Capa de overlay
+ * - .search-bar-expanded: Barra de búsqueda expandible
+ *
+ * @version 3.0
  * @requires Font Awesome para iconos
  */
 
 // =============================================================================
-// INICIALIZACIÓN DEL CONTROLADOR DE SIDEBAR
+// INICIALIZACIÓN DEL CONTROLADOR DE NAVEGACIÓN
 // =============================================================================
 
 /**
  * Punto de entrada principal del sistema de navegación
- * 
- * Se ejecuta cuando el DOM está completamente cargado para garantizar que
- * todos los elementos estén disponibles antes de asignar event listeners.
  */
-document.addEventListener('DOMContentLoaded', function() {    
-    // Toggle para la barra lateral en dispositivos móviles
+document.addEventListener('DOMContentLoaded', function() {
+    // =============================================================================
+    // ELEMENTOS DOM
+    // =============================================================================
     const sidebarToggle = document.getElementById('sidebarToggle');
     const sidebar = document.querySelector('.sidebar');
-    const mainContent = document.querySelector('.main-content');
     const overlay = document.querySelector('.sidebar-overlay');
-    
+    const searchToggle = document.getElementById('searchToggle');
+    const searchClose = document.getElementById('searchClose');
+    const searchBarExpanded = document.getElementById('searchBarExpanded');
+
+    // =============================================================================
+    // FUNCIONALIDAD DEL SIDEBAR (MENÚ LATERAL)
+    // =============================================================================
+
     if (sidebarToggle && sidebar) {
-        sidebarToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('collapsed');
-            mainContent.classList.toggle('expanded');
-            
-            // Mostrar/ocultar overlay en dispositivos móviles
-            if (window.innerWidth <= 992) {
-                overlay.classList.toggle('active');
-            }
-              // Mantenemos el icono como hamburguesa siempre
-            const icon = this.querySelector('i');
-            if (icon) {
-                // Aseguramos que siempre sea el icono de barras (hamburguesa)
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
+        // Abrir/cerrar sidebar al hacer clic en el botón hamburguesa
+        sidebarToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
         });
-        
-        // Cerrar menú al hacer clic en el overlay
+
+        // Cerrar sidebar al hacer clic en el overlay
         if (overlay) {
             overlay.addEventListener('click', function() {
-                sidebar.classList.add('collapsed');
-                mainContent.classList.add('expanded');
+                sidebar.classList.remove('active');
                 overlay.classList.remove('active');
-                  // Aseguramos que el icono sea siempre hamburguesa
-                const icon = sidebarToggle.querySelector('i');
-                if (icon) {
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
             });
         }
-        
-        // Ajustar menú según ancho de la ventana
-        window.addEventListener('resize', function() {
-            if (window.innerWidth <= 992) {
-                sidebar.classList.add('collapsed');
-                mainContent.classList.add('expanded');
-            } else {
-                sidebar.classList.remove('collapsed');
-                mainContent.classList.remove('expanded');
-                overlay.classList.remove('active');
+
+        // Cerrar sidebar al hacer clic en un enlace (solo en móviles)
+        const sidebarLinks = sidebar.querySelectorAll('a:not(.has-submenu)');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+    }
+
+    // =============================================================================
+    // FUNCIONALIDAD DE BÚSQUEDA EXPANDIBLE
+    // =============================================================================
+
+    if (searchToggle && searchBarExpanded) {
+        // Expandir barra de búsqueda
+        searchToggle.addEventListener('click', function() {
+            searchBarExpanded.classList.add('active');
+            // Enfocar el input de búsqueda
+            const searchInput = searchBarExpanded.querySelector('.search-input');
+            if (searchInput) {
+                setTimeout(() => searchInput.focus(), 300);
             }
         });
-        
-        // Inicialmente colapsar en dispositivos móviles
-        if (window.innerWidth <= 992) {
-            sidebar.classList.add('collapsed');
-            mainContent.classList.add('expanded');
-        }
     }
+
+    if (searchClose && searchBarExpanded) {
+        // Cerrar barra de búsqueda
+        searchClose.addEventListener('click', function() {
+            searchBarExpanded.classList.remove('active');
+        });
+    }
+
+    // Cerrar búsqueda con tecla Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            if (searchBarExpanded && searchBarExpanded.classList.contains('active')) {
+                searchBarExpanded.classList.remove('active');
+            }
+            if (sidebar && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        }
+    });
 
     // =============================================================================
     // FUNCIONALIDAD DE SUBMENÚS
