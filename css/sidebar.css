@@ -53,7 +53,7 @@
  * Inspirada en el diseño del portal queretaro.gob.mx
  */
 .top-institutional-bar {
-    background: linear-gradient(135deg, #004990 0%, #0066CC 100%);
+    background: #266eb5;
     color: white;
     padding: 8px 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
