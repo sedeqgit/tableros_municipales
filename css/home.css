@@ -1305,6 +1305,27 @@ img {
 .main-footer {
     width: 100%;
     margin-top: auto;
+    padding: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.main-footer > div {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Asegurar que las clases Bootstrap no agreguen padding/margin */
+.main-footer .mb-lg-0,
+.main-footer .ml-lg-0,
+.main-footer .mr-lg-0,
+.main-footer .mt-lg-0,
+.main-footer .pb-lg-0,
+.main-footer .pl-lg-0,
+.main-footer .pr-lg-0,
+.main-footer .pt-lg-0 {
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Sección superior del footer con logos */
@@ -1315,7 +1336,9 @@ img {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding: 40px 0;
+    width: 100%;
+    margin: 0;
 }
 
 .logo-footer {
@@ -1335,12 +1358,15 @@ img {
 .top-footer2 {
     background-color:#266fb6;
     color: white;
-    padding: 50px 20px 60px;
+    padding: 50px 0 60px;
+    width: 100%;
+    font-family: 'Raleway', sans-serif;
 }
 
 .top-footer2 .container {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 20px;
 }
 
 
@@ -1361,8 +1387,8 @@ img {
 
 .link-footer {
     text-align: center;
-    padding: 20px 15px;
-        height: 100%;
+    padding: 15px 10px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1371,10 +1397,10 @@ img {
 
 .link-footer img {
     display: block;
-    margin: 0 auto 20px;
+    margin: 0 auto 10px;
     width: 80px;
     height: auto;
-    
+
 }
 
 .link-footer h3 {
@@ -1382,7 +1408,7 @@ img {
     font-size: 1rem;
     font-weight: 700;
     text-transform: uppercase;
-    margin: 0 0 15px 0;
+    margin: 0 0 8px 0;
     letter-spacing: 0.5px;
 }
 
@@ -1396,25 +1422,58 @@ img {
 
 /* Sección inferior con copyright y redes sociales */
 .bottom-footer2 {
-    background-color: #2d335a;
+    background-color: #242a57;
     color: white;
-    padding: 40px 20px;
+    padding: 40px 0;
+    width: 100%;
+    font-family: 'Raleway', sans-serif;
 }
 
 .bottom-footer2 .container {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 0 20px;
+}
+
+.bottom-footer2 .row {
+    display: flex;
+    align-items: flex-start;
+}
+
+.bottom-footer2 .col-md-8 {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.bottom-footer2 .col-md-4 {
+    display: flex;
+    align-items: flex-start;
 }
 
 .bottom-footer2 p {
     margin: 5px 0;
+    text-align: left;
+}
+
+/* Primer párrafo - Aviso de privacidad */
+.bottom-footer2 .col-md-8 p:first-child {
     font-size: 0.9rem;
+    margin-top: 0;
+}
+
+/* Segundo párrafo - Poder Ejecutivo */
+.bottom-footer2 .col-md-8 p:last-child {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 10px;
 }
 
 .aviso {
     text-decoration: none;
     color: white;
     font-weight: 600;
+    align-items: first baseline;  
 }
 
 .aviso:hover {
@@ -1426,6 +1485,8 @@ img {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    height: 100%;
+    margin-top: -5px;
 }
 
 .social-links ul {
@@ -1433,7 +1494,8 @@ img {
     list-style: none;
     margin: 0;
     padding: 0;
-    gap: 5px;
+    gap: none;
+    margin-right: -500px;
 }
 
 .social-links li {
@@ -1453,8 +1515,8 @@ img {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 35px;
-    height: 35px;
+    width: 45px;
+    height: 45px;
     transition: opacity 0.3s ease;
 }
 
@@ -1463,7 +1525,7 @@ img {
 }
 
 .social-links svg {
-    height: 1.3em;
+    height: 1.8em;
     width: auto;
 }
 
@@ -1471,7 +1533,7 @@ img {
 @media (max-width: 768px) {
     .top-top-ft2 {
         min-height: 150px;
-        padding: 30px 15px;
+        padding: 30px 0;
     }
 
     .logo-footer img {
@@ -1479,7 +1541,11 @@ img {
     }
 
     .top-footer2 {
-        padding: 40px 15px;
+        padding: 40px 0;
+    }
+
+    .top-footer2 .container {
+        padding: 0 15px;
     }
 
     .link-footer {
@@ -1501,7 +1567,11 @@ img {
     }
 
     .bottom-footer2 {
-        padding: 30px 15px;
+        padding: 30px 0;
+    }
+
+    .bottom-footer2 .container {
+        padding: 0 15px;
     }
 
     .bottom-footer2 .text-md-right {

@@ -216,6 +216,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matrícula Estudiantil | SEDEQ</title>
+    <link rel="icon" type="image/png" href="https://queretaro.gob.mx/o/queretaro-theme/images/favicon.png">
     <link rel="stylesheet" href="./css/alumnos.css">
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/sidebar.css">
@@ -767,10 +768,12 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                     <td class="text-center"><?php echo formatPercent($porcentajeDelTotal); ?>%</td>
                                     <td class="text-center alumnos-hombres"><?php echo number_format($hombres); ?></td>
                                     <td class="text-center porcentaje-hombres">
-                                        <?php echo formatPercent($porcentajeHombres); ?>%</td>
+                                        <?php echo formatPercent($porcentajeHombres); ?>%
+                                    </td>
                                     <td class="text-center alumnos-mujeres"><?php echo number_format($mujeres); ?></td>
                                     <td class="text-center porcentaje-mujeres">
-                                        <?php echo formatPercent($porcentajeMujeres); ?>%</td>
+                                        <?php echo formatPercent($porcentajeMujeres); ?>%
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

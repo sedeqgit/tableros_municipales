@@ -20,6 +20,9 @@
 /* Fuente de títulos institucionales - Novecento Sans Wide */
 @import url('https://fonts.cdnfonts.com/css/novecento-sans-wide');
 
+/* Fuente para el footer - Raleway */
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&display=swap');
+
 /* =============================================
    VARIABLES CSS - SISTEMA DE DISEÑO
    ============================================= */
@@ -394,12 +397,13 @@ h2, h3, h4, h5, h6,
 /* === PIE DE PÁGINA COMÚN === */
 .main-footer {
     background-color: var(--white);
-    padding: 15px 25px;
+    padding: 0;
     color: var(--text-secondary);
     font-size: 0.9rem;
     text-align: center;
     box-shadow: var(--shadow-sm);
     margin-top: auto;
+    width: 100%;
 }
 
 /* =============================================

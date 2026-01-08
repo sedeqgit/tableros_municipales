@@ -14,16 +14,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
     // LOG DE DEPURACIÓN
     error_log("===== INICIO ACTUALIZACIÓN CICLO =====");
     error_log("POST recibido: " . print_r($_POST, true));
-    
+
     $nuevoCiclo = isset($_POST['ciclo_escolar']) ? trim($_POST['ciclo_escolar']) : '';
     error_log("Nuevo ciclo después de trim: '$nuevoCiclo'");
 
     if (preg_match('/^\d{2}$/', $nuevoCiclo)) {
         error_log("Validación de patrón exitosa");
-        
+
         $archivoConexion = __DIR__ . '/conexion_prueba_2024.php';
         error_log("Ruta del archivo: $archivoConexion");
-        
+
         // Leer el ciclo actual del archivo directamente
         $contenidoConexion = file_get_contents($archivoConexion);
         $cicloActualEnArchivo = '24'; // Valor por defecto
@@ -31,14 +31,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
             $cicloActualEnArchivo = $matches[1];
         }
         error_log("Ciclo actual en archivo: '$cicloActualEnArchivo'");
-        
+
         if ($nuevoCiclo === $cicloActualEnArchivo) {
             error_log("El ciclo es el mismo, no se actualizará");
             $preferencesMessage = 'El ciclo escolar ya está configurado con el valor proporcionado.';
             $preferencesStatus = 'info';
         } else {
             error_log("Procediendo con actualización de '$cicloActualEnArchivo' a '$nuevoCiclo'");
-            
+
             // Verificar que el archivo existe
             if (!file_exists($archivoConexion)) {
                 error_log("ERROR: El archivo no existe");
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
                         $reemplazos = 0;
                         $patron = "/define\s*\(\s*['\"]CICLO_ESCOLAR_ACTUAL['\"]\s*,\s*['\"](\d{2})['\"]\s*\)\s*;/";
                         $nuevoContenido = preg_replace($patron, "define('CICLO_ESCOLAR_ACTUAL', '$nuevoCiclo');", $contenidoConexion, 1, $reemplazos);
-                        
+
                         error_log("Reemplazos realizados: $reemplazos");
 
                         if ($nuevoContenido === null) {
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
                             } else {
                                 error_log("Intentando escribir archivo...");
                                 $resultado = file_put_contents($archivoConexion, $nuevoContenido, LOCK_EX);
-                                
+
                                 error_log("Resultado de file_put_contents: " . ($resultado === false ? 'FALSE' : $resultado . ' bytes'));
 
                                 if ($resultado === false) {
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
         $preferencesMessage = 'Ingrese únicamente dos dígitos para el ciclo escolar (ejemplo: 24).';
         $preferencesStatus = 'error';
     }
-    
+
     error_log("===== FIN ACTUALIZACIÓN CICLO =====");
 }
 
@@ -131,6 +131,8 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuración | SEDEQ - Sistema de Estadística Educativa</title>
+    <link rel="icon" type="image/png" href="https://queretaro.gob.mx/o/queretaro-theme/images/favicon.png">
+
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/settings.css">
     <link rel="stylesheet" href="./css/sidebar.css">
@@ -140,7 +142,7 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
 <body>
     <!-- Overlay para cerrar el menú en móviles -->
     <div class="sidebar-overlay"></div>
-    
+
     <!-- ======================================== -->
     <!-- BARRA LATERAL DE NAVEGACIÓN             -->
     <!-- ======================================== -->
@@ -255,10 +257,11 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                     <h2 class="settings-title"><i class="fas fa-sliders-h"></i> Preferencias del Sistema</h2>
                     <div class="settings-content">
                         <?php if ($preferencesMessage): ?>
-                        <div class="settings-alert settings-alert-<?php echo htmlspecialchars($preferencesStatus); ?>">
-                            <i class="fas <?php echo htmlspecialchars($preferencesIcons[$preferencesStatus] ?? 'fa-info-circle'); ?>"></i>
-                            <span><?php echo htmlspecialchars($preferencesMessage); ?></span>
-                        </div>
+                            <div class="settings-alert settings-alert-<?php echo htmlspecialchars($preferencesStatus); ?>">
+                                <i
+                                    class="fas <?php echo htmlspecialchars($preferencesIcons[$preferencesStatus] ?? 'fa-info-circle'); ?>"></i>
+                                <span><?php echo htmlspecialchars($preferencesMessage); ?></span>
+                            </div>
                         <?php endif; ?>
 
                         <div class="form-group animate-fade delay-3">
@@ -277,19 +280,25 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                             </div>
                         </div>
 
-                        <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" class="preferences-form" novalidate>
+                        <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"
+                            class="preferences-form" novalidate>
                             <input type="hidden" name="accion" value="actualizar_ciclo">
                             <div class="form-group">
                                 <label for="ciclo_escolar">Ciclo escolar actual (dos dígitos)</label>
                                 <div class="cycle-input-wrapper">
-                                    <input type="text" id="ciclo_escolar" name="ciclo_escolar" class="form-control cycle-input" value="<?php echo htmlspecialchars($currentCycle); ?>" maxlength="2" pattern="\d{2}" required>
-                                    <span class="input-suffix">/<?php echo htmlspecialchars($nextCycleDisplay); ?></span>
+                                    <input type="text" id="ciclo_escolar" name="ciclo_escolar"
+                                        class="form-control cycle-input"
+                                        value="<?php echo htmlspecialchars($currentCycle); ?>" maxlength="2"
+                                        pattern="\d{2}" required>
+                                    <span
+                                        class="input-suffix">/<?php echo htmlspecialchars($nextCycleDisplay); ?></span>
                                 </div>
                                 <small class="form-text text-muted">Ejemplo: 24 representa el ciclo 2024-2025.</small>
                             </div>
 
                             <div class="form-actions form-actions-inline">
-                                <button type="submit" class="btn-update-cycle save-button-secondary" onclick="console.log('Formulario enviado:', document.querySelector('input[name=ciclo_escolar]').value);">
+                                <button type="submit" class="btn-update-cycle save-button-secondary"
+                                    onclick="console.log('Formulario enviado:', document.querySelector('input[name=ciclo_escolar]').value);">
                                     <i class="fas fa-sync-alt"></i> Actualizar ciclo escolar
                                 </button>
                             </div>

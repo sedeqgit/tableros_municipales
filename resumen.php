@@ -242,6 +242,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
     <title>Tablero <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> (Estadística Educativa)- Ciclo
         <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?> | SEDEQ
     </title>
+    <link rel="icon" type="image/png" href="https://queretaro.gob.mx/o/queretaro-theme/images/favicon.png">
 
     <!-- ========================================== -->
     <!-- HOJAS DE ESTILO MODULARIZADAS             -->

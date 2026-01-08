@@ -58,6 +58,16 @@ document.addEventListener('DOMContentLoaded', function() {
             e.stopPropagation();
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
+
+            // Cambiar icono del botón hamburguesa
+            const icon = this.querySelector('i');
+            if (sidebar.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
         });
 
         // Cerrar sidebar al hacer clic en el overlay
@@ -65,6 +75,13 @@ document.addEventListener('DOMContentLoaded', function() {
             overlay.addEventListener('click', function() {
                 sidebar.classList.remove('active');
                 overlay.classList.remove('active');
+
+                // Restaurar icono del botón hamburguesa
+                const icon = sidebarToggle.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
             });
         }
 
@@ -75,6 +92,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (window.innerWidth <= 992) {
                     sidebar.classList.remove('active');
                     overlay.classList.remove('active');
+
+                    // Restaurar icono del botón hamburguesa
+                    const icon = sidebarToggle.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
                 }
             });
         });
@@ -103,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Cerrar búsqueda con tecla Escape
+    // Cerrar búsqueda y sidebar con tecla Escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             if (searchBarExpanded && searchBarExpanded.classList.contains('active')) {
@@ -112,6 +136,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (sidebar && sidebar.classList.contains('active')) {
                 sidebar.classList.remove('active');
                 overlay.classList.remove('active');
+
+                // Restaurar icono del botón hamburguesa
+                if (sidebarToggle) {
+                    const icon = sidebarToggle.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                }
             }
         }
     });

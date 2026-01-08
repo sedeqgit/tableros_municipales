@@ -422,6 +422,7 @@ $datosEducativos = $datosCompletosMunicipio;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle de Escuelas | SEDEQ</title>
+    <link rel="icon" type="image/png" href="https://queretaro.gob.mx/o/queretaro-theme/images/favicon.png">
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/resumen.css">
     <link rel="stylesheet" href="./css/escuelas_detalle.css">

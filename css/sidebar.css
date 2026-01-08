@@ -53,9 +53,9 @@
  * Inspirada en el diseño del portal queretaro.gob.mx
  */
 .top-institutional-bar {
-    background: #266eb5;
+    background: #266fb6;
     color: white;
-    padding: 8px 0;
+    padding: 0;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: fixed;
     top: 0;
@@ -63,59 +63,78 @@
     right: 0;
     z-index: 1000;
     font-size: 0.85rem;
+    height: 40px;
 }
 
 .institutional-bar-content {
-    max-width: 1400px;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 100%;
 }
 
 .institutional-links {
     display: flex;
-    gap: 20px;
+    gap: 0;
     align-items: center;
+    height: 100%;
+    margin-left: 20px;
 }
 
 .institutional-link {
     color: white;
     text-decoration: none;
     font-weight: 500;
-    letter-spacing: 0.5px;
-    transition: opacity 0.3s;
-    font-size: 0.8rem;
+    letter-spacing: 0.3px;
+    transition: background-color 0.3s;
+    font-size: 0.75rem;
+    padding: 0 20px;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+}
+
+.institutional-link:last-child {
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .institutional-link:hover {
-    opacity: 0.8;
-    text-decoration: underline;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .social-links {
     display: flex;
-    gap: 15px;
+    gap: 0;
     align-items: center;
+    height: 100%;
+    margin-right: 20px;
 }
 
 .social-link {
     color: white;
-    font-size: 1rem;
-    transition: transform 0.3s, opacity 0.3s;
+    font-size: 0.95rem;
+    transition: background-color 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.1);
+    width: 40px;
+    height: 100%;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    position: relative;
+}
+
+.social-link:last-child {
+    border-right: none;
 }
 
 .social-link:hover {
-    transform: scale(1.1);
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 /* =============================================
@@ -129,7 +148,7 @@
     background: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     position: fixed;
-    top: 48px; /* Altura de la barra institucional */
+    top: 40px; /* Altura de la barra institucional */
     left: 0;
     right: 0;
     z-index: 999;
@@ -263,7 +282,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
+}
+
+.menu-btn i {
+    transition: transform 0.3s ease, opacity 0.2s ease;
 }
 
 .menu-btn:hover {
@@ -273,6 +296,12 @@
 
 .menu-btn:active {
     transform: scale(0.95);
+}
+
+/* Animación cuando el menú está abierto */
+.sidebar.active ~ .main-header .menu-btn i,
+body:has(.sidebar.active) .menu-btn i {
+    transform: rotate(90deg);
 }
 
 /* Mostrar menú de navegación en desktop */
@@ -287,6 +316,10 @@
 
     .sidebar {
         display: none !important; /* Ocultar sidebar en desktop */
+    }
+
+    .sidebar-overlay {
+        display: none !important; /* Ocultar overlay en desktop */
     }
 }
 
@@ -377,15 +410,15 @@
  */
 .sidebar-overlay {
     position: fixed;
-    top: 0;
+    top: 124px; /* Debajo del header */
     left: 0;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 998;
+    height: calc(100vh - 124px);
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 997;
     display: none;
     opacity: 0;
-    transition: opacity var(--transition-normal);
+    transition: opacity 0.3s ease;
     pointer-events: none;
 }
 
@@ -395,55 +428,104 @@
     pointer-events: auto;
 }
 
+/* Ajustar overlay según breakpoints */
+@media (max-width: 992px) {
+    .sidebar-overlay {
+        top: 116px;
+        height: calc(100vh - 116px);
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar-overlay {
+        top: 108px;
+        height: calc(100vh - 108px);
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar-overlay {
+        top: 96px;
+        height: calc(100vh - 96px);
+    }
+}
+
 /* =============================================
    CONTENEDOR PRINCIPAL DEL SIDEBAR
    ============================================= */
 
 /**
  * Definición del contenedor principal de navegación lateral
- * Ahora se despliega desde el lado derecho en móviles
+ * Ahora se despliega desde arriba en móviles con diseño limpio
  * Utiliza flexbox para organización vertical del contenido
  */
 .sidebar {
     position: fixed;
-    top: 0;
-    right: -280px; /* Cambiado de left a right */
-    height: 100vh;
-    width: 280px;
-    background-color: #242B57;
-    color: var(--white);
-    transition: right 0.3s ease-in-out;
-    z-index: 999;
-    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.2);
+    top: 124px; /* Debajo del header: barra institucional (40px) + header (84px) */
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-height: 0;
+    background-color: white;
+    color: #333;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                border-bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 998;
+    box-shadow: none;
     display: flex;
     flex-direction: column;
     padding: 0;
     margin: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden;
+    border-bottom: 1px solid transparent;
 }
 
 .sidebar.active {
-    right: 0;
+    max-height: calc(100vh - 124px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid #e9ecef;
 }
 
-/* Logo en el sidebar */
+/* Scroll suave en sidebar */
+.sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: #266fb6 #f8f9fa;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #f8f9fa;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #266fb6;
+    border-radius: 4px;
+    border: 2px solid #f8f9fa;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: #1e5a94;
+}
+
+/* Logo en el sidebar - oculto en el nuevo diseño */
 .sidebar-header {
-    background: white;
-    padding: 20px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: none;
 }
 
 .sidebar-logo {
-    max-width: 180px;
-    height: auto;
+    display: none;
 }
 
 /* Ajustes para el contenido principal */
 .app-container {
-    margin-top: 132px; /* Altura de la barra institucional + header */
-    min-height: calc(100vh - 132px);
+    margin-top: 124px; /* Altura de la barra institucional (40px) + header (84px) */
+    min-height: calc(100vh - 124px);
 }
 
 .main-content {
@@ -463,58 +545,78 @@
 
 /* Navegación principal */
 .sidebar-nav {
-    padding: 20px 0;
+    padding: 0;
     flex-grow: 1;
 }
 
 .sidebar-nav ul {
     list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .nav-item {
-    margin-bottom: 5px;
+    margin-bottom: 0;
+    border-bottom: 1px solid #e9ecef;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
+
+/* Animación de entrada para los items del menú */
+.sidebar.active .nav-item {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Animación escalonada para los items */
+.sidebar.active .nav-item:nth-child(1) { transition-delay: 0.05s; }
+.sidebar.active .nav-item:nth-child(2) { transition-delay: 0.1s; }
+.sidebar.active .nav-item:nth-child(3) { transition-delay: 0.15s; }
+.sidebar.active .nav-item:nth-child(4) { transition-delay: 0.2s; }
+.sidebar.active .nav-item:nth-child(5) { transition-delay: 0.25s; }
+.sidebar.active .nav-item:nth-child(6) { transition-delay: 0.3s; }
 
 .nav-item a {
     display: flex;
     align-items: center;
-    padding: 12px 20px;
-    color: var(--white);
+    padding: 18px 30px;
+    color: #333;
     text-decoration: none;
-    transition: background-color var(--transition-speed);
-    border-radius: 0 20px 20px 0;
-    margin-right: 15px;
+    transition: all 0.3s ease;
+    border-radius: 0;
+    margin-right: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
 }
 
 .nav-item a i {
-    width: 20px;
-    margin-right: 10px;
+    width: 24px;
+    margin-right: 15px;
     text-align: center;
+    font-size: 1.1rem;
+    color: #266fb6;
 }
 
 .nav-item a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #f8f9fa;
+    color: #266fb6;
+    padding-left: 35px;
 }
 
 .nav-item.active a {
-    background-color: var(--white);
-    color: var(--primary-blue);
-    font-weight: 500;
+    background-color: #f0f7ff;
+    color: #266fb6;
+    font-weight: 600;
     position: relative;
+    border-left: 4px solid #266fb6;
 }
 
 /* Línea de acento superior con animación de expansión */
 .nav-item.active a::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
-    border-radius: 0 0 2px 2px;
-    animation: expandFromCenter 0.4s ease-out forwards;
+    display: none;
 }
 
 @keyframes expandFromCenter {
@@ -528,28 +630,47 @@
 
 /* Footer del sidebar */
 .sidebar-footer {
-    padding: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    margin-top: auto; /* Empuja el footer hacia abajo */
+    padding: 0;
+    border-top: 2px solid #e9ecef;
+    margin-top: auto;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Animación de entrada para el footer */
+.sidebar.active .sidebar-footer {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.35s;
 }
 
 .logout-btn {
     display: flex;
     align-items: center;
-    color: var(--white);
+    color: #dc3545;
     text-decoration: none;
-    padding: 12px 20px;
-    border-radius: 0 20px 20px 0;
-    margin-right: 15px;
-    transition: background-color var(--transition-speed);
+    padding: 18px 30px;
+    border-radius: 0;
+    margin-right: 0;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
 }
 
 .logout-btn i {
-    margin-right: 10px;
+    margin-right: 15px;
+    width: 24px;
+    text-align: center;
+    font-size: 1.1rem;
 }
 
 .logout-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #fff5f5;
+    color: #c82333;
+    padding-left: 35px;
 }
 
 /* Ajustes para dispositivos móviles */
@@ -557,66 +678,80 @@
     .menu-toggle {
         display: block;
     }
-    
+
     .sidebar {
-        left: -240px;
-        width: 240px;
-        z-index: 1000;
+        top: 116px; /* Ajuste para tablet */
+        width: 100%;
     }
-    
-    /* Se cambia .sidebar.active por .sidebar:not(.collapsed) para consistencia */
-    .sidebar:not(.collapsed) {
-        left: 0;
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+
+    .sidebar.active {
+        max-height: calc(100vh - 116px);
     }
-    
+
     .main-content {
         margin-left: 0;
         width: 100%;
     }
-    
-    /* Mostrar overlay cuando el sidebar está abierto */
-    .sidebar:not(.collapsed) ~ .sidebar-overlay {
-        display: block;
-    }
-    
+
     /* Logo en móviles más compacto */
     .logo-container {
         margin: 15px 10px;
         padding: 10px;
     }
-    
+
     .logo {
         max-width: 100%;
+    }
+
+    .nav-item a {
+        padding: 16px 25px;
+        font-size: 0.9rem;
+    }
+
+    .nav-item a:hover {
+        padding-left: 30px;
+    }
+
+    .logout-btn {
+        padding: 16px 25px;
+        font-size: 0.9rem;
+    }
+
+    .logout-btn:hover {
+        padding-left: 30px;
     }
 }
 
 @media (max-width: 768px) {
     .sidebar {
-        width: 280px;
-        max-width: 85vw;
+        top: 108px; /* Ajuste para móvil */
+        width: 100%;
     }
-    
-    .sidebar.collapsed {
-        left: -280px;
+
+    .sidebar.active {
+        max-height: calc(100vh - 108px);
     }
-    
+
     .main-content {
         margin-left: 0;
         width: 100%;
     }
-    
+
     /* Ajustes en navegación para mejor legibilidad en móviles */
     .nav-item a {
-        padding: 14px 20px;
-        font-size: 1rem;
+        padding: 15px 20px;
+        font-size: 0.85rem;
     }
-    
+
+    .nav-item a:hover {
+        padding-left: 25px;
+    }
+
     .sidebar-link {
         padding: 14px 20px;
         font-size: 1rem;
     }
-    
+
     /* Asegurar que el texto no se corte pero se pueda envolver si es necesario */
     .nav-item a span,
     .sidebar-link span {
@@ -624,71 +759,98 @@
         white-space: normal;
         word-wrap: break-word;
     }
-    
+
     /* Logo más pequeño en tablets */
     .logo-container {
         margin: 20px 12px 15px 12px;
         padding: 12px;
     }
-    
+
     /* Contenedor de enlaces con scroll si es necesario */
     .sidebar-links {
         max-height: calc(100vh - 250px);
     }
-    
+
     /* Footer más visible en móviles */
     .sidebar-footer {
-        padding: 15px;
-        background-color: rgba(0, 0, 0, 0.1);
+        padding: 0;
         flex-shrink: 0;
     }
-    
+
     .logout-btn {
-        padding: 14px 20px;
-        font-size: 1rem;
+        padding: 15px 20px;
+        font-size: 0.85rem;
+    }
+
+    .logout-btn:hover {
+        padding-left: 25px;
     }
 }
 
 @media (max-width: 576px) {
     .sidebar {
-        width: 260px;
-        max-width: 80vw;
+        top: 96px; /* Ajuste para móvil pequeño */
+        width: 100%;
     }
-    
-    .sidebar.collapsed {
-        left: -260px;
+
+    .sidebar.active {
+        max-height: calc(100vh - 96px);
     }
-    
+
     .main-content {
         margin-left: 0;
         width: 100%;
     }
-    
+
     /* Optimización adicional para pantallas muy pequeñas */
-    .nav-item a,
+    .nav-item a {
+        padding: 14px 20px;
+        font-size: 0.8rem;
+    }
+
+    .nav-item a:hover {
+        padding-left: 24px;
+    }
+
+    .nav-item a i {
+        width: 20px;
+        margin-right: 12px;
+        font-size: 1rem;
+    }
+
     .sidebar-link {
         padding: 12px 15px;
         font-size: 0.95rem;
     }
-    
+
     /* Logo más compacto */
     .logo-container {
         margin: 15px 10px 12px 10px;
         padding: 10px;
     }
-    
+
     /* Contenedor de enlaces más compacto */
     .sidebar-links {
         max-height: calc(100vh - 220px);
     }
-    
+
     .sidebar-footer {
-        padding: 12px 15px;
+        padding: 0;
     }
-    
+
     .logout-btn {
-        padding: 12px 15px;
-        font-size: 0.95rem;
+        padding: 14px 20px;
+        font-size: 0.8rem;
+    }
+
+    .logout-btn:hover {
+        padding-left: 24px;
+    }
+
+    .logout-btn i {
+        width: 20px;
+        margin-right: 12px;
+        font-size: 1rem;
     }
 }
 
@@ -846,35 +1008,35 @@
 
 /* Responsive para submenús */
 @media (max-width: 992px) {
-  /* Cuando el sidebar está colapsado (cerrado), ocultar submenús */
-  .sidebar.collapsed .submenu {
+  /* Cuando el sidebar está cerrado (sin clase active), ocultar submenús */
+  .sidebar:not(.active) .submenu {
     display: none;
   }
 
-  .sidebar.collapsed .sidebar-link .submenu-arrow {
+  .sidebar:not(.active) .sidebar-link .submenu-arrow {
     display: none;
   }
-  
-  /* Cuando el sidebar está abierto (no colapsado), mostrar submenús */
-  .sidebar:not(.collapsed) .submenu {
+
+  /* Cuando el sidebar está abierto (con clase active), mostrar submenús */
+  .sidebar.active .submenu {
     display: block;
   }
-  
-  .sidebar:not(.collapsed) .sidebar-link .submenu-arrow {
+
+  .sidebar.active .sidebar-link .submenu-arrow {
     display: inline-block;
   }
-  
+
   /* Asegurar que los submenús activos se muestren */
-  .sidebar:not(.collapsed) .submenu.active {
+  .sidebar.active .submenu.active {
     max-height: 500px;
   }
-  
+
   /* Ajustes de espaciado en submenús para móviles */
   .submenu-link {
     padding: 10px 15px 10px 25px;
     font-size: 0.9rem;
   }
-  
+
   .submenu-link i {
     margin-right: 8px;
     font-size: 0.85rem;
@@ -921,25 +1083,25 @@
 @media (max-width: 992px) {
   /* Ajustes para tablets y móviles */
   .top-institutional-bar {
-    padding: 6px 0;
+    height: 36px;
   }
 
   .institutional-links {
-    gap: 12px;
+    margin-left: 10px;
   }
 
   .institutional-link {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+    padding: 0 12px;
   }
 
   .social-links {
-    gap: 10px;
+    margin-right: 10px;
   }
 
   .social-link {
-    width: 28px;
-    height: 28px;
-    font-size: 0.9rem;
+    width: 36px;
+    font-size: 0.85rem;
   }
 
   .header-logo img {
@@ -951,7 +1113,7 @@
   }
 
   .app-container {
-    margin-top: 120px;
+    margin-top: 116px;
   }
 
   /* Mostrar menú hamburguesa y ocultar navegación horizontal en móviles */
@@ -966,23 +1128,27 @@
 
 @media (max-width: 768px) {
   /* Optimizaciones para móviles */
+  .top-institutional-bar {
+    height: 34px;
+  }
+
   .institutional-links {
-    gap: 8px;
+    margin-left: 5px;
   }
 
   .institutional-link {
-    font-size: 0.7rem;
-    letter-spacing: 0.3px;
+    font-size: 0.65rem;
+    letter-spacing: 0.2px;
+    padding: 0 10px;
   }
 
   .social-links {
-    gap: 8px;
+    margin-right: 5px;
   }
 
   .social-link {
-    width: 26px;
-    height: 26px;
-    font-size: 0.85rem;
+    width: 34px;
+    font-size: 0.8rem;
   }
 
   .header-content {
@@ -1005,17 +1171,8 @@
     font-size: 1.2rem;
   }
 
-  .sidebar {
-    width: 260px;
-    right: -260px;
-  }
-
-  .sidebar-logo {
-    max-width: 150px;
-  }
-
   .app-container {
-    margin-top: 110px;
+    margin-top: 108px;
   }
 }
 
@@ -1047,21 +1204,8 @@
     height: 34px;
   }
 
-  .sidebar {
-    width: 240px;
-    right: -240px;
-  }
-
-  .sidebar-header {
-    padding: 15px;
-  }
-
-  .sidebar-logo {
-    max-width: 130px;
-  }
-
   .app-container {
-    margin-top: 100px;
+    margin-top: 96px;
   }
 
   .search-bar-content {

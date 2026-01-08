@@ -51,6 +51,7 @@ $datosMapaBibliotecas = obtenerMapaBibliotecas();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mapa de Bibliotecas | SEDEQ</title>
+    <link rel="icon" type="image/png" href="https://queretaro.gob.mx/o/queretaro-theme/images/favicon.png">
 
     <!-- ========================================== -->
     <!-- HOJAS DE ESTILO MODULARIZADAS             -->

@@ -170,6 +170,7 @@ function obtenerDatosMunicipio($municipio)
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Centro de Tableros | SEDEQ - Estadística Educativa</title>
+    <link rel="icon" type="image/png" href="https://queretaro.gob.mx/o/queretaro-theme/images/favicon.png">
 
     <!-- ========================================== -->
     <!-- HOJAS DE ESTILO MODULARIZADAS             -->
@@ -195,9 +196,9 @@ function obtenerDatosMunicipio($municipio)
         <div class="institutional-bar-content">
             <!-- Enlaces institucionales importantes -->
             <div class="institutional-links">
-                <a href="home.php" class="institutional-link">INICIO</a>
-                <a href="settings.php" class="institutional-link">CONFIGURACIÓN</a>
-                <a href="#" class="institutional-link">ACERCA DE</a>
+                <a href="https://www.queretaro.gob.mx/transparencia" class="institutional-link">Portal Transparencia</a>
+                <a href="https://portal.queretaro.gob.mx/prensa/" class="institutional-link">Portal Prensa</a>
+                <a href="https://www.queretaro.gob.mx/covid19" class="institutional-link">COVID19</a>
             </div>
 
             <!-- Redes sociales y contacto -->
@@ -313,11 +314,6 @@ function obtenerDatosMunicipio($municipio)
         </nav>
 
         <!-- Pie de la barra lateral con opción de logout -->
-        <div class="sidebar-footer">
-            <a href="logout.php" class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
-            </a>
-        </div>
     </aside>
 
     <!-- ============================================================================ -->
