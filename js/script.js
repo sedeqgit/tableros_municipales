@@ -254,10 +254,12 @@ function actualizarTabla() {
         }
 
         const tipoCell = document.createElement('td');
+        tipoCell.setAttribute('data-label', 'Tipo o Nivel Educativo');
         tipoCell.textContent = tipoEducativo;
         fila.appendChild(tipoCell);
 
         const escuelasCell = document.createElement('td');
+        escuelasCell.setAttribute('data-label', 'Escuelas');
         escuelasCell.textContent = Number(datosEducativos[i][1]).toLocaleString();
         fila.appendChild(escuelasCell);
 
@@ -267,6 +269,7 @@ function actualizarTabla() {
         }
 
         const alumnosCell = document.createElement('td');
+        alumnosCell.setAttribute('data-label', 'Matrícula');
         alumnosCell.textContent = Number(datosEducativos[i][2]).toLocaleString();
         fila.appendChild(alumnosCell);
 
@@ -283,14 +286,17 @@ function actualizarTabla() {
     filaTotal.className = 'total-row';
 
     const totalLabel = document.createElement('td');
+    totalLabel.setAttribute('data-label', 'Tipo o Nivel Educativo');
     totalLabel.textContent = 'Total';
     filaTotal.appendChild(totalLabel);
 
     const totalEscuelasCell = document.createElement('td');
+    totalEscuelasCell.setAttribute('data-label', 'Escuelas');
     totalEscuelasCell.textContent = totalEscuelas.toLocaleString();
     filaTotal.appendChild(totalEscuelasCell);
 
     const totalAlumnosCell = document.createElement('td');
+    totalAlumnosCell.setAttribute('data-label', 'Matrícula');
     totalAlumnosCell.textContent = totalAlumnos.toLocaleString();
     filaTotal.appendChild(totalAlumnosCell);
 

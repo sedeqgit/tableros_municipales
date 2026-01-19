@@ -206,14 +206,15 @@ function obtenerDatosMunicipio($municipio)
                 <a href="https://www.facebook.com/educacionqro" target="_blank" class="social-link" title="Facebook">
                     <i class="fab fa-facebook-f"></i>
                 </a>
-                <a href="https://twitter.com/gobqro" target="_blank" class="social-link" title="Twitter">
+                <a href="https://x.com/educacionqro" target="_blank" class="social-link" title="Twitter">
                     <i class="fab fa-twitter"></i>
                 </a>
-                <a href="https://www.instagram.com/gobiernoqueretaro/" target="_blank" class="social-link"
-                    title="Instagram">
+                <a href="https://www.instagram.com/educacionqueretaro?fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExR09OOWJid2NZT2ZTbUJvRHNydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR4yi6bwE_6iEuyyUdbWYkjRLv9zjFFWyxwABVKdZSunmMWOwOsHAv_dcFFBOw_aem_t72qtgoL72OI4Pzyj-oILw"
+                    target="_blank" class="social-link" title="Instagram">
                     <i class="fab fa-instagram"></i>
                 </a>
-                <a href="https://www.youtube.com/user/GobQro" target="_blank" class="social-link" title="YouTube">
+                <a href="https://www.youtube.com/@SecretariadeEducacionGEQ" target="_blank" class="social-link"
+                    title="YouTube">
                     <i class="fab fa-youtube"></i>
                 </a>
                 <a href="tel:4422117070" class="social-link" title="Teléfono">
@@ -613,7 +614,7 @@ function obtenerDatosMunicipio($municipio)
                                                                     d="M453.2 112L523.8 112L369.6 288.2L551 528L409 528L297.7 382.6L170.5 528L99.8 528L264.7 339.5L90.8 112L236.4 112L336.9 244.9L453.2 112zM428.4 485.8L467.5 485.8L215.1 152L173.1 152L428.4 485.8z" />
                                                             </svg></a></li>
                                                     <li class="social_"><a
-                                                            href="https://www.instagram.com/gobiernoqueretaro/"
+                                                            href="https://www.instagram.com/educacionqueretaro?fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExR09OOWJid2NZT2ZTbUJvRHNydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR4yi6bwE_6iEuyyUdbWYkjRLv9zjFFWyxwABVKdZSunmMWOwOsHAv_dcFFBOw_aem_t72qtgoL72OI4Pzyj-oILw"
                                                             target="_blank"><svg xmlns="http://www.w3.org/2000/svg"
                                                                 viewbox="0 0 640 640"><!--!Font Awesome Free v7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
                                                                 <path fill="#ffffff"
