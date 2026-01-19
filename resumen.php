@@ -265,216 +265,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
     <!-- Biblioteca para capturar elementos como imagen -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- Estilos específicos para centrar el título y footer de ancho completo -->
-    <style>
-        .page-title .section-title {
-            text-align: center !important;
-            display: block !important;
-            width: 100% !important;
-        }
 
-        /* Footer de ancho completo - ignora el padding del main-content */
-        .main-content .main-footer {
-            margin-left: -20px !important;
-            margin-right: -20px !important;
-            margin-bottom: -20px !important;
-            width: calc(100% + 40px) !important;
-        }
-
-        @media (max-width: 576px) {
-            .main-content .main-footer {
-                margin-left: -10px !important;
-                margin-right: -10px !important;
-                margin-bottom: -15px !important;
-                width: calc(100% + 20px) !important;
-            }
-        }
-
-        /* Estilos para sidebar con fondo blanco en resumen.php */
-        .sidebar {
-            background: white !important;
-        }
-
-        .sidebar .sidebar-link {
-            color: #333 !important;
-            background: transparent !important;
-        }
-
-        .sidebar .sidebar-link:hover {
-            background-color: rgba(38, 111, 182, 0.1) !important;
-        }
-
-        .sidebar .sidebar-link.active {
-            background-color: rgba(38, 111, 182, 0.15) !important;
-            color: #266fb6 !important;
-            font-weight: 600 !important;
-            border-left: 4px solid #00C851 !important;
-        }
-
-        .sidebar .sidebar-link i {
-            color: #266fb6 !important;
-        }
-
-        /* Estilos específicos para el submenú */
-        .sidebar .submenu {
-            background-color: #f8f9fa !important;
-            border-left: 2px solid #266fb6 !important;
-            margin-left: 15px !important;
-            max-height: 0 !important;
-            overflow: hidden !important;
-            transition: max-height 0.3s ease !important;
-        }
-
-        .sidebar .submenu.active {
-            max-height: 1000px !important;
-            overflow: visible !important;
-        }
-
-        .sidebar .submenu-link {
-            color: #555 !important;
-            background: transparent !important;
-            display: flex !important;
-            padding: 10px 15px 10px 25px !important;
-            text-decoration: none !important;
-        }
-
-        .sidebar .submenu-link:hover {
-            background-color: rgba(38, 111, 182, 0.15) !important;
-            color: #266fb6 !important;
-            border-left: 3px solid #00C851 !important;
-        }
-
-        .sidebar .submenu-link.active {
-            background-color: rgba(38, 111, 182, 0.2) !important;
-            color: #266fb6 !important;
-            font-weight: 600 !important;
-            border-left: 3px solid #00C851 !important;
-        }
-
-        .sidebar .submenu-link i {
-            color: #266fb6 !important;
-            margin-right: 8px !important;
-        }
-
-        .sidebar .submenu-link span {
-            color: inherit !important;
-        }
-
-        .sidebar .submenu-arrow {
-            color: #333 !important;
-        }
-
-        /* Asegurar que el submenú sea visible en desktop */
-        @media (min-width: 993px) {
-            .sidebar .submenu.active {
-                max-height: 1000px !important;
-                display: block !important;
-            }
-
-            .sidebar .has-submenu .submenu-arrow {
-                display: inline-block !important;
-            }
-        }
-
-        /* Asegurar que el submenú sea visible cuando el sidebar está abierto en móviles */
-        @media (max-width: 992px) {
-            .sidebar.active .submenu.active {
-                max-height: 600px !important;
-                display: block !important;
-            }
-
-            .sidebar.active .has-submenu .submenu-arrow {
-                display: inline-block !important;
-            }
-
-            /* Ocultar TODOS los iconos en móviles */
-            .sidebar .sidebar-link i,
-            .sidebar .submenu-link i {
-                display: none !important;
-            }
-
-            .sidebar .submenu-link {
-                padding-left: 15px !important;
-            }
-
-            .sidebar .sidebar-link {
-                padding-left: 15px !important;
-            }
-        }
-
-        /* ====================================================== */
-        /* ESTILOS PARA DROPDOWN EN NAVBAR DESKTOP               */
-        /* ====================================================== */
-        .nav-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .nav-dropdown .header-nav-link {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .nav-dropdown .dropdown-arrow {
-            font-size: 0.7rem;
-            transition: transform 0.3s ease;
-        }
-
-        .nav-dropdown:hover .dropdown-arrow {
-            transform: rotate(180deg);
-        }
-
-        .nav-dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: white;
-            min-width: 280px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-            border-radius: 8px;
-            z-index: 1000;
-            padding: 10px 0;
-            border-top: 3px solid #00C851;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .nav-dropdown:hover .nav-dropdown-content {
-            display: block;
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .nav-dropdown-link {
-            display: block;
-            padding: 12px 20px;
-            color: #333;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 400;
-            text-transform: none;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-        }
-
-        .nav-dropdown-link:hover {
-            background-color: rgba(0, 200, 81, 0.1);
-            color: #00C851;
-            border-left: 3px solid #00C851;
-            padding-left: 25px;
-        }
-
-        /* Ocultar dropdown en móviles */
-        @media (max-width: 992px) {
-            .nav-dropdown-content {
-                display: none !important;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -998,7 +789,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
             <!--  -->
             <div id="publico-privado" class="datos-section-title">
                 <h2>
-                    <i class="fas fa-chart-pie"></i> Desglose Detallado por Nivel y Tipo de Sostenimiento
+                    <i class=""></i> Desglose Detallado por Nivel y Tipo de Sostenimiento
                 </h2>
                 <div>
                     <p><?php echo formatearNombreMunicipio($municipioSeleccionado); ?></p>
@@ -1148,7 +939,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
             <!-- Sección de Desglose de Alumnos por Sexo -->
             <div class="datos-section-title" id="desglose-sexo">
                 <h2 class="desglose-sexo-title">
-                    <i class="fas fa-user-graduate"></i> Desglose de Matrícula por Sexo y Tipo de Sostenimiento
+                    <i class=""></i> Desglose de Matrícula por Sexo y Tipo de Sostenimiento
                 </h2>
                 <div>
                     <p><?php echo formatearNombreMunicipio($municipioSeleccionado); ?></p>
@@ -1282,7 +1073,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
             <!-- Sección de Totales Municipales por Nivel -->
             <div id="totales-municipales" class="datos-section-title">
                 <h2 class="totales-municipales-title">
-                    <i class="fas fa-percentage"></i> Proporción de los totales por Nivel o Tipo Educativo de los
+                    <i class=""></i> Proporción de los totales por Nivel o Tipo Educativo de los
                     Totales
                     del
                     Municipio
@@ -1405,7 +1196,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
             <?php if ($datosUSAER): ?>
                 <div id="usaer-section" class="datos-section-title">
                     <h2 class="usaer-title">
-                        <i class="fas fa-hands-helping"></i> USAER - Unidad de Servicios de Apoyo a la Educación Regular
+                        <i class=""></i> USAER - Unidad de Servicios de Apoyo a la Educación Regular
                     </h2>
                     <div>
                         <p><?php echo formatearNombreMunicipio($municipioSeleccionado); ?></p>
