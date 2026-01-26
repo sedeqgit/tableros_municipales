@@ -172,6 +172,7 @@ $infoCiclo = obtenerInfoCicloEscolar();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Directorio Estatal de Escuelas | SEDEQ</title>
+    <link rel="icon" type="image/png" href="https://queretaro.gob.mx/o/queretaro-theme/images/favicon.png">
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/home.css">
     <link rel="stylesheet" href="./css/resumen.css">
@@ -185,38 +186,131 @@ $infoCiclo = obtenerInfoCicloEscolar();
 </head>
 
 <body>
-    <!-- Overlay para cerrar el menú en móviles -->
-    <div class="sidebar-overlay"></div>
+    <!-- ============================================================================ -->
+    <!-- BARRA SUPERIOR INSTITUCIONAL                                                -->
+    <!-- ============================================================================ -->
+    <div class="top-institutional-bar">
+        <div class="institutional-bar-content">
+            <!-- Enlaces institucionales importantes -->
+            <div class="institutional-links">
+                <a href="https://www.queretaro.gob.mx/transparencia" class="institutional-link">Portal Transparencia</a>
+                <a href="https://portal.queretaro.gob.mx/prensa/" class="institutional-link">Portal Prensa</a>
+                <a href="https://www.queretaro.gob.mx/covid19" class="institutional-link">COVID19</a>
+            </div>
 
-    <div class="sidebar">
-        <div class="logo-container">
-            <img src="./img/layout_set_logo.png" alt="Logo SEDEQ" class="logo">
-        </div>
-        <div class="sidebar-links">
-            <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
-            <a href="directorio_estatal.php" class="sidebar-link active">
-                <i class="fas fa-school"></i>
-                <span>Directorio Estatal</span>
-            </a>
+            <!-- Redes sociales y contacto -->
+            <div class="social-links">
+                <a href="https://www.facebook.com/educacionqro" target="_blank" class="social-link" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://x.com/educacionqro" target="_blank" class="social-link" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://www.instagram.com/educacionqueretaro?fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExR09OOWJid2NZT2ZTbUJvRHNydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR4yi6bwE_6iEuyyUdbWYkjRLv9zjFFWyxwABVKdZSunmMWOwOsHAv_dcFFBOw_aem_t72qtgoL72OI4Pzyj-oILw"
+                    target="_blank" class="social-link" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://www.youtube.com/@SecretariadeEducacionGEQ" target="_blank" class="social-link"
+                    title="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="tel:4422117070" class="social-link" title="Teléfono">
+                    <i class="fas fa-phone"></i>
+                </a>
+            </div>
         </div>
     </div>
 
-    <div class="main-content">
-        <div class="topbar">
-            <div class="menu-toggle">
-                <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <!-- ============================================================================ -->
+    <!-- HEADER PRINCIPAL CON LOGO Y NAVEGACIÓN                                      -->
+    <!-- ============================================================================ -->
+    <header class="main-header">
+        <div class="header-content">
+            <!-- Logo institucional -->
+            <div class="header-logo">
+                <a href="home.php">
+                    <img src="./img/layout_set_logo.png" alt="SEDEQ - Secretaría de Educación de Querétaro">
+                </a>
             </div>
-            <div class="page-title top-bar-title">
-                <h1>Directorio Estatal de Escuelas - Querétaro </h1>
 
+            <!-- Menú de navegación horizontal (desktop) -->
+            <div class="header-nav">
+                <nav>
+                    <a href="home.php" class="header-nav-link">Inicio</a>
+                    <a href="directorio_estatal.php" class="header-nav-link active">Escuelas</a>
+                    <a href="bibliotecas.php" class="header-nav-link">Bibliotecas</a>
+                    <a href="https://www.google.com/maps/d/edit?mid=1LLMZpgMl4X4QSjzNlHQsHgZoNLj1kv4&usp=sharing"
+                        target="_blank" class="header-nav-link">Mapa</a>
+                    <a href="settings.php" class="header-nav-link">Configuración</a>
+                </nav>
             </div>
-            <div class="utilities">
-                <div class="date-display">
-                    <i class="far fa-calendar-alt"></i>
-                    <span id="current-date"><?php echo fechaEnEspanol('d \\d\\e F \\d\\e Y'); ?></span>
-                </div>
+
+            <!-- Botón de búsqueda -->
+            <div class="header-search">
+                <button id="searchToggle" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
+            <!-- Botón de menú hamburguesa (solo móviles) -->
+            <div class="header-menu-toggle">
+                <button id="sidebarToggle" class="menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
         </div>
+
+        <!-- Barra de búsqueda expandible -->
+        <div class="search-bar-expanded" id="searchBarExpanded">
+            <div class="search-bar-content">
+                <input type="text" placeholder="Buscar escuelas, municipios, estadísticas..." class="search-input">
+                <button class="search-submit-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="search-close-btn" id="searchClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overlay para cerrar menú en dispositivos móviles -->
+    <div class="sidebar-overlay"></div>
+
+    <!-- Sidebar desplegable (solo móviles) -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Menú</h2>
+            <button class="sidebar-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="home.php" class="sidebar-link">
+                <i class="fas fa-home"></i> <span>Inicio</span>
+            </a>
+            <a href="directorio_estatal.php" class="sidebar-link active">
+                <i class="fas fa-school"></i> <span>Escuelas</span>
+            </a>
+            <a href="bibliotecas.php" class="sidebar-link">
+                <i class="fas fa-book"></i> <span>Bibliotecas</span>
+            </a>
+            <a href="https://www.google.com/maps/d/edit?mid=1LLMZpgMl4X4QSjzNlHQsHgZoNLj1kv4&usp=sharing"
+                target="_blank" class="sidebar-link">
+                <i class="fas fa-map-marked-alt"></i> <span>Mapa</span>
+            </a>
+            <a href="settings.php" class="sidebar-link">
+                <i class="fas fa-cog"></i> <span>Configuración</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Contenedor principal de la aplicación -->
+    <div class="app-container">
+        <div class="main-content">
+            <div class="page-title top-bar-title" style="padding: 20px 20px 10px;">
+                <h1>Directorio Estatal de Escuelas - Querétaro</h1>
+            </div>
 
         <div class="container-fluid">
             <!-- Panel de resumen de escuelas -->
@@ -661,6 +755,7 @@ $infoCiclo = obtenerInfoCicloEscolar();
                 </div>
             </div>
         </footer>
+        </div>
     </div>
 
     <script src="./js/sidebar.js"></script>

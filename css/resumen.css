@@ -65,7 +65,7 @@
    ============================================= */
 
 .main-content {
-    margin-left: 240px;
+    margin-left: 0;
     padding: 20px;
     min-height: 100vh;
     transition: margin-left var(--transition-speed);
@@ -2476,76 +2476,5 @@
             }
         }
 
-        /* ====================================================== */
-        /* ESTILOS PARA DROPDOWN EN NAVBAR DESKTOP               */
-        /* ====================================================== */
-        .nav-dropdown {
-            position: relative;
-            display: inline-block;
-        }
 
-        .nav-dropdown .header-nav-link {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .nav-dropdown .dropdown-arrow {
-            font-size: 0.7rem;
-            transition: transform 0.3s ease;
-        }
-
-        .nav-dropdown:hover .dropdown-arrow {
-            transform: rotate(180deg);
-        }
-
-        .nav-dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: white;
-            min-width: 280px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-            border-radius: 8px;
-            z-index: 1000;
-            padding: 10px 0;
-            border-top: 3px solid #00C851;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .nav-dropdown:hover .nav-dropdown-content {
-            display: block;
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .nav-dropdown-link {
-            display: block;
-            padding: 12px 20px;
-            color: #333;
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 400;
-            text-transform: none;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-        }
-
-        .nav-dropdown-link:hover {
-            background-color: rgba(0, 200, 81, 0.1);
-            color: #00C851;
-            border-left: 3px solid #00C851;
-            padding-left: 25px;
-        }
-
-        /* Ocultar dropdown en móviles */
-        @media (max-width: 992px) {
-            .nav-dropdown-content {
-                display: none !important;
-            }
-        }
 

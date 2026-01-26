@@ -141,55 +141,131 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
 </head>
 
 <body>
-    <!-- Overlay para cerrar el menú en móviles -->
+    <!-- ============================================================================ -->
+    <!-- BARRA SUPERIOR INSTITUCIONAL                                                -->
+    <!-- ============================================================================ -->
+    <div class="top-institutional-bar">
+        <div class="institutional-bar-content">
+            <!-- Enlaces institucionales importantes -->
+            <div class="institutional-links">
+                <a href="https://www.queretaro.gob.mx/transparencia" class="institutional-link">Portal Transparencia</a>
+                <a href="https://portal.queretaro.gob.mx/prensa/" class="institutional-link">Portal Prensa</a>
+                <a href="https://www.queretaro.gob.mx/covid19" class="institutional-link">COVID19</a>
+            </div>
+
+            <!-- Redes sociales y contacto -->
+            <div class="social-links">
+                <a href="https://www.facebook.com/educacionqro" target="_blank" class="social-link" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://x.com/educacionqro" target="_blank" class="social-link" title="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://www.instagram.com/educacionqueretaro?fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExR09OOWJid2NZT2ZTbUJvRHNydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR4yi6bwE_6iEuyyUdbWYkjRLv9zjFFWyxwABVKdZSunmMWOwOsHAv_dcFFBOw_aem_t72qtgoL72OI4Pzyj-oILw"
+                    target="_blank" class="social-link" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://www.youtube.com/@SecretariadeEducacionGEQ" target="_blank" class="social-link"
+                    title="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+                <a href="tel:4422117070" class="social-link" title="Teléfono">
+                    <i class="fas fa-phone"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================================ -->
+    <!-- HEADER PRINCIPAL CON LOGO Y NAVEGACIÓN                                      -->
+    <!-- ============================================================================ -->
+    <header class="main-header">
+        <div class="header-content">
+            <!-- Logo institucional -->
+            <div class="header-logo">
+                <a href="home.php">
+                    <img src="./img/layout_set_logo.png" alt="SEDEQ - Secretaría de Educación de Querétaro">
+                </a>
+            </div>
+
+            <!-- Menú de navegación horizontal (desktop) -->
+            <div class="header-nav">
+                <nav>
+                    <a href="home.php" class="header-nav-link">Inicio</a>
+                    <a href="directorio_estatal.php" class="header-nav-link">Escuelas</a>
+                    <a href="bibliotecas.php" class="header-nav-link">Bibliotecas</a>
+                    <a href="https://www.google.com/maps/d/edit?mid=1LLMZpgMl4X4QSjzNlHQsHgZoNLj1kv4&usp=sharing"
+                        target="_blank" class="header-nav-link">Mapa</a>
+                    <a href="settings.php" class="header-nav-link active">Configuración</a>
+                </nav>
+            </div>
+
+            <!-- Botón de búsqueda -->
+            <div class="header-search">
+                <button id="searchToggle" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
+            <!-- Botón de menú hamburguesa (solo móviles) -->
+            <div class="header-menu-toggle">
+                <button id="sidebarToggle" class="menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Barra de búsqueda expandible -->
+        <div class="search-bar-expanded" id="searchBarExpanded">
+            <div class="search-bar-content">
+                <input type="text" placeholder="Buscar escuelas, municipios, estadísticas..." class="search-input">
+                <button class="search-submit-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+                <button class="search-close-btn" id="searchClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overlay para cerrar menú en dispositivos móviles -->
     <div class="sidebar-overlay"></div>
 
-    <!-- ======================================== -->
-    <!-- BARRA LATERAL DE NAVEGACIÓN             -->
-    <!-- ======================================== -->
+    <!-- Sidebar desplegable (solo móviles) -->
     <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Menú</h2>
+            <button class="sidebar-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
         <nav class="sidebar-nav">
-            <ul>
-                <!-- Enlace a página principal -->
-                <li class="nav-item">
-                    <a href="home.php"><i class="fas fa-home"></i> <span>Inicio</span></a>
-                </li>
-                <!-- Enlace a mapa educativo -->
-                <li class="nav-item">
-                    <a href="https://www.google.com/maps/d/edit?mid=1LLMZpgMl4X4QSjzNlHQsHgZoNLj1kv4&usp=sharing"
-                        target="_blank"><i class="fas fa-map-marked-alt"></i> <span>Mapa Educativo</span></a>
-                </li>
-                <!-- Enlace a bibliotecas -->
-                <li class="nav-item">
-                    <a href="bibliotecas.php"><i class="fas fa-book"></i> <span>Bibliotecas</span></a>
-                </li>
-                <!-- Enlace a búsqueda de escuelas -->
-                <li class="nav-item">
-                    <a href="directorio_estatal.php"><i class="fas fa-search"></i> <span>Búsqueda de Escuelas</span></a>
-                </li>
-                <!-- Enlace a configuración (ACTIVO) -->
-                <li class="nav-item active">
-                    <a href="settings.php"><i class="fas fa-cog"></i> <span>Configuración</span></a>
-                </li>
-            </ul>
+            <a href="home.php" class="sidebar-link">
+                <i class="fas fa-home"></i> <span>Inicio</span>
+            </a>
+            <a href="directorio_estatal.php" class="sidebar-link">
+                <i class="fas fa-school"></i> <span>Escuelas</span>
+            </a>
+            <a href="bibliotecas.php" class="sidebar-link">
+                <i class="fas fa-book"></i> <span>Bibliotecas</span>
+            </a>
+            <a href="https://www.google.com/maps/d/edit?mid=1LLMZpgMl4X4QSjzNlHQsHgZoNLj1kv4&usp=sharing"
+                target="_blank" class="sidebar-link">
+                <i class="fas fa-map-marked-alt"></i> <span>Mapa</span>
+            </a>
+            <a href="settings.php" class="sidebar-link active">
+                <i class="fas fa-cog"></i> <span>Configuración</span>
+            </a>
         </nav>
     </aside>
 
-    <div class="main-content">
-        <div class="topbar">
-            <div class="menu-toggle">
-                <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
-            </div>
-            <div class="page-title">
+    <!-- Contenedor principal de la aplicación -->
+    <div class="app-container">
+        <div class="main-content">
+            <div class="page-title" style="padding: 20px 20px 10px;">
                 <h1 class="section-title">Configuración del Sistema</h1>
             </div>
-            <div class="utilities">
-                <div class="date-display">
-                    <i class="far fa-calendar-alt"></i>
-                    <span id="current-date"><?php echo fechaEnEspanol('d \d\e F \d\e Y'); ?></span>
-                </div>
-            </div>
-        </div>
         <div class="container-fluid">
             <!-- Contenido de configuración -->
             <div class="settings-container animate-fade"> <!-- Sección: Mi Perfil -->
@@ -421,7 +497,7 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                                                                 d="M453.2 112L523.8 112L369.6 288.2L551 528L409 528L297.7 382.6L170.5 528L99.8 528L264.7 339.5L90.8 112L236.4 112L336.9 244.9L453.2 112zM428.4 485.8L467.5 485.8L215.1 152L173.1 152L428.4 485.8z" />
                                                         </svg></a></li>
                                                 <li class="social_"><a
-                                                        href="https://www.instagram.com/gobiernoqueretaro/"
+                                                        href="https://www.instagram.com/educacionqueretaro?fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExR09OOWJid2NZT2ZTbUJvRHNydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR4yi6bwE_6iEuyyUdbWYkjRLv9zjFFWyxwABVKdZSunmMWOwOsHAv_dcFFBOw_aem_t72qtgoL72OI4Pzyj-oILw"
                                                         target="_blank"><svg xmlns="http://www.w3.org/2000/svg"
                                                             viewbox="0 0 640 640"><!--!Font Awesome Free v7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
                                                             <path fill="#ffffff"
@@ -449,6 +525,7 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                 </div>
             </div>
         </footer>
+        </div>
     </div>
 
     <!-- Scripts -->

@@ -203,22 +203,31 @@ function obtenerDatosMunicipio($municipio)
 
             <!-- Redes sociales y contacto -->
             <div class="social-links">
+                <a href="https://wa.me/+524421443740" class="social-link" title="Chat">
+                    <img class="icon-sidebar" src="https://queretaro.gob.mx/o/queretaro-theme/images/chatboxLines.png">
+                    <span class="social-name">Chat</span>
+                </a>
                 <a href="https://www.facebook.com/educacionqro" target="_blank" class="social-link" title="Facebook">
                     <i class="fab fa-facebook-f"></i>
+                    <span class="social-name">Facebook</span>
                 </a>
                 <a href="https://x.com/educacionqro" target="_blank" class="social-link" title="Twitter">
                     <i class="fab fa-twitter"></i>
+                    <span class="social-name">Twitter</span>
                 </a>
                 <a href="https://www.instagram.com/educacionqueretaro?fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExR09OOWJid2NZT2ZTbUJvRHNydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR4yi6bwE_6iEuyyUdbWYkjRLv9zjFFWyxwABVKdZSunmMWOwOsHAv_dcFFBOw_aem_t72qtgoL72OI4Pzyj-oILw"
                     target="_blank" class="social-link" title="Instagram">
                     <i class="fab fa-instagram"></i>
+                    <span class="social-name">Instagram</span>
                 </a>
                 <a href="https://www.youtube.com/@SecretariadeEducacionGEQ" target="_blank" class="social-link"
                     title="YouTube">
                     <i class="fab fa-youtube"></i>
+                    <span class="social-name">YouTube</span>
                 </a>
                 <a href="tel:4422117070" class="social-link" title="Teléfono">
                     <i class="fas fa-phone"></i>
+                    <span class="social-name">442 211 7070</span>
                 </a>
             </div>
         </div>
