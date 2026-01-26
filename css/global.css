@@ -609,6 +609,7 @@ h2, h3, h4, h5, h6,
     margin-top: -5px;
 }
 
+/* Redes sociales (FOOTER) */
 .social-links ul {
     display: flex;
     list-style: none;
@@ -631,7 +632,8 @@ h2, h3, h4, h5, h6,
     display: none !important;
 }
 
-.social-links a {
+/* Estilos específicos para social links en el footer */
+.footer .social-links a {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -640,7 +642,7 @@ h2, h3, h4, h5, h6,
     transition: opacity 0.3s ease;
 }
 
-.social-links a:hover {
+.footer .social-links a:hover {
     opacity: 0.8;
 }
 
@@ -818,7 +820,6 @@ h2, h3, h4, h5, h6,
     z-index: 1000;
     font-size: 0.85rem;
     height: 40px;
-    overflow: visible;
 }
 
 .institutional-bar-content {
@@ -829,7 +830,6 @@ h2, h3, h4, h5, h6,
     justify-content: space-between;
     align-items: center;
     height: 100%;
-    overflow: visible;
 }
 
 .institutional-links {
@@ -869,7 +869,6 @@ h2, h3, h4, h5, h6,
     align-items: center;
     height: 100%;
     margin-right: 20px;
-    overflow: visible;
     flex-shrink: 0;
 }
 
@@ -879,16 +878,13 @@ h2, h3, h4, h5, h6,
     transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    min-width: 40px;
+    justify-content: flex-start;
     height: 100%;
     border-right: 1px solid rgba(255, 255, 255, 0.2);
     background: transparent;
     position: relative;
-    overflow: visible;
-    padding: 0 12px;
-    gap: 8px;
     white-space: nowrap;
+    text-decoration: none;
 }
 
 .social-link:last-child {
@@ -897,28 +893,37 @@ h2, h3, h4, h5, h6,
 
 .social-link i,
 .social-link img {
-    min-width: 18px;
+    width: 40px;
+    min-width: 40px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-    transition: all 0.3s ease;
+}
+
+.social-link img.icon-sidebar {
+    width: 20px;
+    min-width: 20px;
+    height: auto;
+    object-fit: contain;
 }
 
 .social-link .social-name {
-    max-width: 0;
+    display: inline-block;
+    width: 0;
     overflow: hidden;
-    opacity: 0;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
 }
 
 .social-link:hover .social-name {
-    max-width: 200px;
-    opacity: 1;
-    margin-left: 4px;
-    padding-right: 8px;
+    width: 85px;
+    padding-left: 6px;
 }
 
 /* Colores específicos para cada red social */
@@ -927,7 +932,7 @@ h2, h3, h4, h5, h6,
 }
 
 .social-link:has(.social-name:first-of-type):nth-child(1):hover {
-    background: #25D366; /* Chat/WhatsApp */
+     /* Chat/WhatsApp */
 }
 
 .social-link:has(.social-name:first-of-type):nth-child(2):hover {
@@ -947,7 +952,7 @@ h2, h3, h4, h5, h6,
 }
 
 .social-link:has(.social-name:first-of-type):nth-child(6):hover {
-    background: #28a745; /* Teléfono */
+    background: #454545; /* Teléfono */
 }
 
 /* =============================================
