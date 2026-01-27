@@ -189,61 +189,14 @@ function obtenerDatosMunicipio($municipio)
 </head>
 
 <body>
-    <!-- ============================================================================ -->
-    <!-- BARRA SUPERIOR INSTITUCIONAL                                                -->
-    <!-- ============================================================================ -->
-    <div class="top-institutional-bar">
-        <div class="institutional-bar-content">
-            <!-- Enlaces institucionales importantes -->
-            <div class="institutional-links">
-                <a href="https://www.queretaro.gob.mx/transparencia" class="institutional-link">Portal Transparencia</a>
-                <a href="https://portal.queretaro.gob.mx/prensa/" class="institutional-link">Portal Prensa</a>
-                <a href="https://www.queretaro.gob.mx/covid19" class="institutional-link">COVID19</a>
-            </div>
-
-            <!-- Redes sociales y contacto -->
-            <div class="social-links">
-                <a href="https://wa.me/+524421443740" class="social-link" title="Chat">
-                    <img class="icon-sidebar" src="https://queretaro.gob.mx/o/queretaro-theme/images/chatboxLines.png">
-                    <span class="social-name">Chat</span>
-                </a>
-                <a href="https://www.facebook.com/educacionqro" target="_blank" class="social-link" title="Facebook">
-                    <i class="fab fa-facebook-f"></i>
-                    <span class="social-name">Facebook</span>
-                </a>
-                <a href="https://x.com/educacionqro" target="_blank" class="social-link" title="Twitter">
-                    <i class="fab fa-twitter"></i>
-                    <span class="social-name">Twitter</span>
-                </a>
-                <a href="https://www.instagram.com/educacionqueretaro?fbclid=IwZXh0bgNhZW0CMTAAYnJpZBExR09OOWJid2NZT2ZTbUJvRHNydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR4yi6bwE_6iEuyyUdbWYkjRLv9zjFFWyxwABVKdZSunmMWOwOsHAv_dcFFBOw_aem_t72qtgoL72OI4Pzyj-oILw"
-                    target="_blank" class="social-link" title="Instagram">
-                    <i class="fab fa-instagram"></i>
-                    <span class="social-name">Instagram</span>
-                </a>
-                <a href="https://www.youtube.com/@SecretariadeEducacionGEQ" target="_blank" class="social-link"
-                    title="YouTube">
-                    <i class="fab fa-youtube"></i>
-                    <span class="social-name">YouTube</span>
-                </a>
-                <a href="tel:4422117070" class="social-link" title="Teléfono">
-                    <i class="fas fa-phone"></i>
-                    <span class="social-name">442 211 7070</span>
-                </a>
-            </div>
-        </div>
-    </div>
+    <?php include 'includes/institutional_bar.php'; ?>
 
     <!-- ============================================================================ -->
     <!-- HEADER PRINCIPAL CON LOGO Y NAVEGACIÓN                                      -->
     <!-- ============================================================================ -->
     <header class="main-header">
         <div class="header-content">
-            <!-- Logo institucional -->
-            <div class="header-logo">
-                <a href="home.php">
-                    <img src="./img/layout_set_logo.png" alt="SEDEQ - Secretaría de Educación de Querétaro">
-                </a>
-            </div>
+            <?php include 'includes/header_logo.php'; ?>
 
             <!-- Menú de navegación horizontal (desktop) -->
             <div class="header-nav">
@@ -257,12 +210,6 @@ function obtenerDatosMunicipio($municipio)
                 </nav>
             </div>
 
-            <!-- Botón de búsqueda -->
-            <div class="header-search">
-                <button id="searchToggle" class="search-btn">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
 
             <!-- Botón de menú hamburguesa (solo móviles) -->
             <div class="header-menu-toggle">
@@ -272,18 +219,6 @@ function obtenerDatosMunicipio($municipio)
             </div>
         </div>
 
-        <!-- Barra de búsqueda expandible -->
-        <div class="search-bar-expanded" id="searchBarExpanded">
-            <div class="search-bar-content">
-                <input type="text" placeholder="Buscar escuelas, municipios, estadísticas..." class="search-input">
-                <button class="search-submit-btn">
-                    <i class="fas fa-search"></i>
-                </button>
-                <button class="search-close-btn" id="searchClose">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
     </header>
 
     <!-- Overlay para cerrar menú en dispositivos móviles -->
@@ -378,7 +313,8 @@ function obtenerDatosMunicipio($municipio)
                                 <div class="estado-stat-label">Docentes</div>
                             </div>
                         </div>
-                        <div class="estado-note">* En el total, se cuantifican escuelas, no planteles ni instituciones</div>
+                        <div class="estado-note">* En el total, se cuantifican escuelas, no planteles ni
+                            instituciones</div>
                     </section>
                 <?php endif; ?>
 
@@ -416,7 +352,8 @@ function obtenerDatosMunicipio($municipio)
                                     <i class="fas fa-city"></i>
                                 </div>
                                 <div class="municipality-info">
-                                    <h3><?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?></h3>
+                                    <h3><?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?>
+                                    </h3>
                                     <p>Estadísticas educativas para el municipio de
                                         <?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?>.
                                     </p>
@@ -474,7 +411,8 @@ function obtenerDatosMunicipio($municipio)
                                         <i class="fas fa-city"></i>
                                     </div>
                                     <div class="municipality-info">
-                                        <h3><?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?></h3>
+                                        <h3><?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?>
+                                        </h3>
                                         <p>Estadísticas educativas para el municipio de
                                             <?php echo htmlspecialchars($municipioNormalizado, ENT_QUOTES, 'UTF-8'); ?>.
                                         </p>
@@ -574,7 +512,8 @@ function obtenerDatosMunicipio($municipio)
                                                     width="100px" height="auto">
                                                 <h3 class="tf-title">ATENCIÓN CIUDADANA</h3>
                                                 <p class="p-footer">
-                                                    Preguntas dudas, comentarios sobre el contenido del portal.</p>
+                                                    Preguntas dudas, comentarios sobre el contenido del portal.
+                                                </p>
                                             </div>
                                         </div>
                                         <div class="col-lg-3 col-md-6 col-sm-6 col-6">
@@ -583,7 +522,8 @@ function obtenerDatosMunicipio($municipio)
                                                     width="100px" height="auto">
                                                 <h3 class="tf-title">WEB MASTER</h3>
                                                 <p class="p-footer">
-                                                    Preguntas dudas, comentarios sobre el funcionamiento del portal.</p>
+                                                    Preguntas dudas, comentarios sobre el funcionamiento del
+                                                    portal.</p>
                                             </div>
                                         </div>
                                     </div>

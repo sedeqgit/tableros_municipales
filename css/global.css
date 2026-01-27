@@ -1020,7 +1020,7 @@ h2, h3, h4, h5, h6,
 .header-nav-link::before {
     content: '';
     position: absolute;
-    top: 0;
+    top: -25px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
