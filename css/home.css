@@ -955,7 +955,7 @@ img {
         /* Botón flotante de comparación */
         .compare-floating-button {
             position: fixed;
-            bottom: 30px;
+            bottom: 100px;
             right: 30px;
             background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
             color: var(--white);
@@ -965,9 +965,9 @@ img {
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(51, 153, 204, 0.4);
+            box-shadow: 0 6px 25px rgba(51, 153, 204, 0.5);
             transition: all var(--transition-speed);
-            z-index: 1000;
+            z-index: 9999;
             display: none;
             align-items: center;
             gap: 10px;
@@ -1100,11 +1100,12 @@ img {
 
             /* Botón de comparación más visible */
             .compare-floating-button {
-                bottom: 20px;
+                bottom: 80px;
                 right: 20px;
                 padding: 12px 20px;
                 font-size: 0.9rem;
                 box-shadow: 0 4px 15px rgba(51, 153, 204, 0.5);
+                z-index: 9999;
             }
 
             .selected-count {
@@ -1181,11 +1182,12 @@ img {
 
             /* Botón flotante más pequeño */
             .compare-floating-button {
-                bottom: 15px;
+                bottom: 70px;
                 right: 15px;
                 padding: 10px 15px;
                 font-size: 0.85rem;
                 border-radius: 40px;
+                z-index: 9999;
             }
 
             .compare-floating-button i {

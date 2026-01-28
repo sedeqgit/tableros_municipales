@@ -94,56 +94,59 @@ $infoCiclo = obtenerInfoCicloEscolar();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comparación de Municipios - SEDEQ | Esquema 2024</title>
+    <link rel="icon" type="image/png" href="https://queretaro.gob.mx/o/queretaro-theme/images/favicon.png">
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/home.css">
+    <link rel="stylesheet" href="./css/sidebar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* Estilos específicos para comparación */
         .comparacion-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: var(--light-gray);
-            min-height: 100vh;
+            padding: 25px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        .comparacion-header {
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-            color: var(--white);
-            border-radius: var(--card-border-radius);
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow-lg);
-            text-align: center;
+        .page-title {
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            margin-top: 15px;
+            font-size: 2rem;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
         }
 
-        .comparacion-header h1 {
-            color: var(--white);
-            margin-bottom: 10px;
-            font-size: 2.2rem;
+        .page-title i {
+            margin-right: 12px;
+            color: var(--primary-blue);
         }
 
-        .comparacion-header p {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 0;
         }
 
         .back-button {
             display: inline-flex;
             align-items: center;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
-            color: var(--white);
+            padding: 8px 0;
+            background: transparent;
+            color: var(--primary-blue);
             text-decoration: none;
-            border-radius: var(--border-radius);
             transition: all var(--transition-speed);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 0.95rem;
         }
 
         .back-button:hover {
-            background: linear-gradient(135deg, var(--secondary-blue), var(--accent-aqua));
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            color: var(--secondary-blue);
+            transform: translateX(-3px);
         }
 
         .back-button i {
@@ -154,15 +157,16 @@ $infoCiclo = obtenerInfoCicloEscolar();
         .selector-form {
             background-color: var(--white);
             border-radius: var(--card-border-radius);
-            padding: 30px;
+            padding: 25px;
             margin-bottom: 30px;
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-sm);
+            border-top: 3px solid var(--primary-blue);
         }
 
         .selector-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr auto;
-            gap: 20px;
+            gap: 15px;
             align-items: end;
         }
 
@@ -175,7 +179,7 @@ $infoCiclo = obtenerInfoCicloEscolar();
             color: var(--text-primary);
             font-weight: 600;
             margin-bottom: 8px;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
 
         .selector-group select {
@@ -183,9 +187,14 @@ $infoCiclo = obtenerInfoCicloEscolar();
             border: 2px solid var(--border-color);
             border-radius: var(--border-radius);
             background-color: var(--white);
-            font-size: 1rem;
+            font-size: 0.95rem;
             color: var(--text-primary);
             transition: all var(--transition-speed);
+            cursor: pointer;
+        }
+
+        .selector-group select:hover {
+            border-color: var(--secondary-blue);
         }
 
         .selector-group select:focus {
@@ -200,13 +209,14 @@ $infoCiclo = obtenerInfoCicloEscolar();
             border: none;
             padding: 12px 25px;
             border-radius: var(--border-radius);
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             transition: all var(--transition-speed);
             display: flex;
             align-items: center;
             gap: 8px;
+            height: fit-content;
         }
 
         .compare-button:hover {
@@ -219,7 +229,7 @@ $infoCiclo = obtenerInfoCicloEscolar();
         .comparacion-results {
             display: grid;
             grid-template-columns: repeat(var(--municipios-count, 2), 1fr);
-            gap: 30px;
+            gap: 25px;
             margin-bottom: 30px;
         }
 
@@ -231,25 +241,37 @@ $infoCiclo = obtenerInfoCicloEscolar();
             background-color: var(--white);
             border-radius: var(--card-border-radius);
             padding: 25px;
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-sm);
             transition: all var(--transition-speed);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .municipio-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         }
 
         .municipio-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
         }
 
-        .municipio-card.municipio-1 {
-            border-left: 4px solid var(--primary-blue);
+        .municipio-card.municipio-1::before {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
         }
 
-        .municipio-card.municipio-2 {
-            border-left: 4px solid var(--accent-aqua);
+        .municipio-card.municipio-2::before {
+            background: linear-gradient(135deg, var(--accent-aqua), var(--secondary-blue));
         }
 
-        .municipio-card.municipio-3 {
-            border-left: 4px solid #9b59b6;
+        .municipio-card.municipio-3::before {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
         }
 
         .municipio-header {
@@ -291,49 +313,73 @@ $infoCiclo = obtenerInfoCicloEscolar();
 
         .municipio-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
         }
 
         .stat-item {
             text-align: center;
-            padding: 15px;
-            background-color: var(--light-gray);
+            padding: 18px 12px;
+            background-color: rgba(51, 153, 204, 0.05);
             border-radius: var(--border-radius);
+            transition: all var(--transition-speed);
+            border: 1px solid transparent;
+        }
+
+        .stat-item:hover {
+            background-color: rgba(51, 153, 204, 0.1);
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
         }
 
         .stat-value {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: 700;
             color: var(--primary-blue);
             margin-bottom: 5px;
+            line-height: 1;
         }
 
         .stat-label {
             color: var(--text-secondary);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
         /* Tabla de comparación detallada */
         .comparacion-table {
             background-color: var(--white);
             border-radius: var(--card-border-radius);
-            padding: 30px;
-            box-shadow: var(--shadow-md);
+            padding: 25px;
+            box-shadow: var(--shadow-sm);
             margin-bottom: 30px;
+            border-top: 3px solid var(--primary-blue);
         }
 
         .table-header {
-            text-align: center;
             margin-bottom: 25px;
         }
 
         .table-header h3 {
             color: var(--text-primary);
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             margin-bottom: 8px;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .table-header h3 i {
+            margin-right: 8px;
+            color: var(--primary-blue);
+        }
+
+        .table-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
         }
 
         .comparison-table {
@@ -377,9 +423,10 @@ $infoCiclo = obtenerInfoCicloEscolar();
         .chart-container {
             background-color: var(--white);
             border-radius: var(--card-border-radius);
-            padding: 30px;
-            box-shadow: var(--shadow-md);
+            padding: 25px;
+            box-shadow: var(--shadow-sm);
             margin-bottom: 30px;
+            border-top: 3px solid var(--primary-blue);
         }
 
         .chart-bars {
@@ -434,26 +481,58 @@ $infoCiclo = obtenerInfoCicloEscolar();
         /* Estados vacíos */
         .estado-vacio {
             text-align: center;
-            padding: 60px 30px;
+            padding: 80px 40px;
             background-color: var(--white);
             border-radius: var(--card-border-radius);
             box-shadow: var(--shadow-sm);
             color: var(--text-secondary);
+            border-top: 3px solid var(--primary-blue);
         }
 
         .estado-vacio i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            color: var(--border-color);
+            font-size: 4.5rem;
+            margin-bottom: 25px;
+            color: var(--primary-blue);
+            opacity: 0.3;
         }
 
         .estado-vacio h3 {
             color: var(--text-primary);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .estado-vacio p {
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
+            .comparacion-container {
+                padding: 15px;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page-title i {
+                margin-bottom: 8px;
+            }
+
+            .page-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .selector-form {
+                padding: 20px;
+            }
+
             .selector-grid {
                 grid-template-columns: 1fr;
                 gap: 15px;
@@ -462,10 +541,37 @@ $infoCiclo = obtenerInfoCicloEscolar();
             .comparacion-results,
             .comparacion-results.tres-municipios {
                 grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .municipio-card {
+                padding: 20px;
             }
 
             .municipio-stats {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+
+            .stat-item {
+                padding: 15px 10px;
+            }
+
+            .stat-value {
+                font-size: 1.4rem;
+            }
+
+            .stat-label {
+                font-size: 0.75rem;
+            }
+
+            .comparacion-table,
+            .chart-container {
+                padding: 20px;
+            }
+
+            .table-header h3 {
+                font-size: 1.2rem;
             }
 
             .chart-row {
@@ -483,29 +589,98 @@ $infoCiclo = obtenerInfoCicloEscolar();
                 flex-direction: column;
                 gap: 5px;
             }
+
+            .estado-vacio {
+                padding: 60px 25px;
+            }
+
+            .estado-vacio i {
+                font-size: 3.5rem;
+            }
+
+            .estado-vacio h3 {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="comparacion-container">
-        <!-- Header -->
-        <div class="comparacion-header">
-            <h1><i class="fas fa-balance-scale"></i> Comparación de Municipios</h1>
-            <p>Análisis comparativo de estadísticas educativas - <?php echo $infoCiclo['descripcion']; ?></p>
+    <?php include 'includes/institutional_bar.php'; ?>
+
+    <!-- ============================================================================ -->
+    <!-- HEADER PRINCIPAL CON LOGO Y NAVEGACIÓN                                      -->
+    <!-- ============================================================================ -->
+    <header class="main-header">
+        <div class="header-content">
+            <?php include 'includes/header_logo.php'; ?>
+
+            <!-- Menú de navegación horizontal (desktop) -->
+            <div class="header-nav">
+                <nav>
+                    <a href="home.php" class="header-nav-link">Inicio</a>
+                    <a href="directorio_estatal.php" class="header-nav-link">Escuelas</a>
+                    <a href="bibliotecas.php" class="header-nav-link">Bibliotecas</a>
+                    <a href="https://www.google.com/maps/d/edit?mid=1LLMZpgMl4X4QSjzNlHQsHgZoNLj1kv4&usp=sharing"
+                        target="_blank" class="header-nav-link">Mapa</a>
+                    <a href="settings.php" class="header-nav-link">Configuración</a>
+                </nav>
+            </div>
+
+            <?php include 'includes/header_end.php'; ?>
+
+    <!-- ======================================== -->
+    <!-- BARRA LATERAL DE NAVEGACIÓN              -->
+    <!-- ======================================== -->
+    <aside class="sidebar">
+        <!-- Logo en el sidebar -->
+        <div class="sidebar-header">
+            <img src="./img/layout_set_logo.png" alt="SEDEQ" class="sidebar-logo">
         </div>
 
-        <!-- Botón de regreso -->
-        <a href="home.php" class="back-button">
-            <i class="fas fa-arrow-left"></i> Regresar a home
-        </a>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item">
+                    <a href="home.php"><i class="fas fa-home"></i> <span>Inicio</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="https://www.google.com/maps/d/edit?mid=1LLMZpgMl4X4QSjzNlHQsHgZoNLj1kv4&usp=sharing"
+                        target="_blank"><i class="fas fa-map-marked-alt"></i> <span>Mapa Educativo</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="bibliotecas.php"><i class="fas fa-book"></i> <span>Bibliotecas</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="directorio_estatal.php"><i class="fas fa-search"></i> <span>Búsqueda de Escuelas</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="settings.php"><i class="fas fa-cog"></i> <span>Configuración</span></a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- ============================================================================ -->
+    <!-- CONTENEDOR PRINCIPAL DE LA APLICACIÓN                                       -->
+    <!-- ============================================================================ -->
+    <div class="app-container">
+        <main class="main-content">
+            <div class="comparacion-container">
+                <!-- Título de la página -->
+                <div style="margin-bottom: 25px;">
+                    <a href="home.php" class="back-button">
+                        <i class="fas fa-arrow-left"></i> Regresar a Inicio
+                    </a>
+                    <h1 class="page-title"><i class="fas fa-balance-scale"></i> Comparación de Municipios</h1>
+                    <p class="page-subtitle">Análisis comparativo de estadísticas educativas - <?php echo $infoCiclo['descripcion']; ?></p>
+                </div>
 
         <!-- Formulario de selección -->
         <div class="selector-form">
             <form method="GET" action="">
                 <div class="selector-grid">
                     <div class="selector-group">
-                        <label for="municipio1"><i class="fas fa-city"></i> Primer Municipio:</label>
+                        <label for="municipio1">Primer Municipio</label>
                         <select name="municipio1" id="municipio1" required>
                             <option value="">Seleccionar municipio...</option>
                             <?php foreach ($todosLosMunicipios as $municipio): ?>
@@ -516,9 +691,9 @@ $infoCiclo = obtenerInfoCicloEscolar();
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    
+
                     <div class="selector-group">
-                        <label for="municipio2"><i class="fas fa-city"></i> Segundo Municipio:</label>
+                        <label for="municipio2">Segundo Municipio</label>
                         <select name="municipio2" id="municipio2" required>
                             <option value="">Seleccionar municipio...</option>
                             <?php foreach ($todosLosMunicipios as $municipio): ?>
@@ -529,9 +704,9 @@ $infoCiclo = obtenerInfoCicloEscolar();
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    
+
                     <div class="selector-group">
-                        <label for="municipio3"><i class="fas fa-city"></i> Tercer Municipio (Opcional):</label>
+                        <label for="municipio3">Tercer Municipio (Opcional)</label>
                         <select name="municipio3" id="municipio3">
                             <option value="">Seleccionar municipio...</option>
                             <?php foreach ($todosLosMunicipios as $municipio): ?>
@@ -631,8 +806,8 @@ $infoCiclo = obtenerInfoCicloEscolar();
             <!-- Tabla de comparación detallada -->
             <div class="comparacion-table">
                 <div class="table-header">
-                    <h3><i class="fas fa-table"></i> Comparación Detallada</h3>
-                    <p>Diferencias porcentuales entre los municipios seleccionados</p>
+                    <h3><i class="fas fa-table"></i>Comparación Detallada</h3>
+                    <p>Métricas principales de los municipios seleccionados</p>
                 </div>
                 
                 <table class="comparison-table">
@@ -678,7 +853,7 @@ $infoCiclo = obtenerInfoCicloEscolar();
             <!-- Gráfico de barras visual -->
             <div class="chart-container">
                 <div class="table-header">
-                    <h3><i class="fas fa-chart-bar"></i> Comparación Visual</h3>
+                    <h3><i class="fas fa-chart-bar"></i>Comparación Visual</h3>
                     <p>Representación gráfica de las métricas principales</p>
                 </div>
                 
@@ -777,22 +952,28 @@ $infoCiclo = obtenerInfoCicloEscolar();
             </div>
         <?php endif; ?>
 
-        <!-- Footer -->
-        <div style="background-color: var(--white); border-radius: var(--card-border-radius); padding: 20px; margin-top: 30px; box-shadow: var(--shadow-sm); text-align: center; color: var(--text-secondary);">
-            <p><strong>Sistema de Comparación:</strong> Análisis estadístico entre municipios de Querétaro</p>
-            <p><strong>Fecha de consulta:</strong> <?php
-            date_default_timezone_set('America/Mexico_City');
-            $meses = [1 => 'enero', 2 => 'febrero', 3 => 'marzo', 4 => 'abril', 5 => 'mayo', 6 => 'junio',
-                      7 => 'julio', 8 => 'agosto', 9 => 'septiembre', 10 => 'octubre', 11 => 'noviembre', 12 => 'diciembre'];
-            $dia = date('j');
-            $mes = $meses[date('n')];
-            $año = date('Y');
-            $hora = date('H:i:s');
-            echo "$dia de $mes de $año, $hora hrs";
-            ?></p>
-        </div>
+                <!-- Footer de información -->
+                <div style="background-color: var(--white); border-radius: var(--card-border-radius); padding: 20px; margin-top: 30px; box-shadow: var(--shadow-sm); text-align: center; color: var(--text-secondary);">
+                    <p><strong>Sistema de Comparación:</strong> Análisis estadístico entre municipios de Querétaro</p>
+                    <p><strong>Fecha de consulta:</strong> <?php
+                    date_default_timezone_set('America/Mexico_City');
+                    $meses = [1 => 'enero', 2 => 'febrero', 3 => 'marzo', 4 => 'abril', 5 => 'mayo', 6 => 'junio',
+                              7 => 'julio', 8 => 'agosto', 9 => 'septiembre', 10 => 'octubre', 11 => 'noviembre', 12 => 'diciembre'];
+                    $dia = date('j');
+                    $mes = $meses[date('n')];
+                    $año = date('Y');
+                    $hora = date('H:i:s');
+                    echo "$dia de $mes de $año, $hora hrs";
+                    ?></p>
+                </div>
+            </div>
+
+            <!-- Footer institucional -->
+            <?php include 'includes/footer.php'; ?>
+        </main>
     </div>
 
+    <script src="./js/sidebar.js"></script>
     <script>
         // Prevenir selección del mismo municipio en los 3 selects
         function actualizarOpcionesDisponibles() {
