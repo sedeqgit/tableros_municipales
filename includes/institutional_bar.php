@@ -48,9 +48,9 @@
                 <i class="fab fa-youtube"></i>
                 <span class="social-name">YouTube</span>
             </a>
-            <a href="tel:4422117070" class="social-link" title="Teléfono">
+            <a href="tel:4422385000" class="social-link" title="Teléfono">
                 <i class="fas fa-phone"></i>
-                <span class="social-name">442 211 7070</span>
+                <span class="social-name">442 238 5000</span>
             </a>
         </div>
     </div>

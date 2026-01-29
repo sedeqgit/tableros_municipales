@@ -31,11 +31,9 @@
                                 <div class="link-footer">
                                     <img src="https://queretaro.gob.mx/o/queretaro-theme/images/lugar.png" width="100px"
                                         height="auto">
-                                    <h3 class="tf-title">DIRECCIÓN PALACIO DE GOBIERNO</h3>
+                                    <h3 class="tf-title">SECRETARIA DE EDUCACIÓN DEL ESTADO DE QUERÉTARO</h3>
                                     <p class="p-footer">
-                                        5 de Mayo S/N esq. Luis Pasteur,
-                                        Col. Centro Histórico C.P. 76000,
-                                        Santiago de Querétaro, Qro.,México.</p>
+                                        Av. Luis Pasteur Sur 21, Centro, 76000 Santiago de Querétaro, Qro.,México.</p>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-6 col-sm-6 col-6">
@@ -45,7 +43,7 @@
                                     <h3 class="tf-title">TELÉFONO</h3>
                                     <p class="p-footer">
                                         800 237 2233<br>
-                                        Directorio (442) 211 7070</p>
+                                        Directorio (442) 238 5000</p>
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-6 col-sm-6 col-6">
