@@ -426,7 +426,6 @@ $datosEducativos = $datosCompletosMunicipio;
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/resumen.css">
     <link rel="stylesheet" href="./css/escuelas_detalle.css">
-    <link rel="stylesheet" href="./css/sidebar.css">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Bibliotecas para exportación -->
@@ -540,9 +539,6 @@ $datosEducativos = $datosCompletosMunicipio;
             </aside>
             <div class="main-content">
                 <div class="topbar">
-                    <div class="menu-toggle">
-                        <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
-                    </div>
                     <div class="page-title top-bar-title">
                         <h1>Detalle de Escuelas <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> - Ciclo
                             <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?>
@@ -1282,6 +1278,9 @@ $datosEducativos = $datosCompletosMunicipio;
             <script src="./js/sidebar.js"></script>
             <script src="./js/escuelas_publicas_privadas.js"></script>
             <script src="./js/directorio_escuelas.js"></script>
+
+            <!-- Botón volver al inicio -->
+            <?php include 'includes/back_to_top.php'; ?>
 </body>
 
 </html>

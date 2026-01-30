@@ -179,8 +179,6 @@ function obtenerDatosMunicipio($municipio)
     <link rel="stylesheet" href="./css/global.css">
     <!-- Estilos específicos para la página principal -->
     <link rel="stylesheet" href="./css/home.css">
-    <!-- Estilos para el menú lateral responsive -->
-    <link rel="stylesheet" href="./css/sidebar.css">
     <!-- Iconografía Font Awesome 6.0 para elementos visuales -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -210,19 +208,7 @@ function obtenerDatosMunicipio($municipio)
                 </nav>
             </div>
 
-
-            <!-- Botón de menú hamburguesa (solo móviles) -->
-            <div class="header-menu-toggle">
-                <button id="sidebarToggle" class="menu-btn">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </div>
-
-    </header>
-
-    <!-- Overlay para cerrar menú en dispositivos móviles -->
-    <div class="sidebar-overlay"></div>
+            <?php include 'includes/header_end.php'; ?>
 
     <!-- ======================================== -->
     <!-- BARRA LATERAL DE NAVEGACIÓN              -->
@@ -475,6 +461,9 @@ function obtenerDatosMunicipio($municipio)
     <script src="./js/sidebar.js"></script>
     <script src="./js/home.js"></script>
     <script src="./js/animations_global.js"></script>
+
+    <!-- Botón volver al inicio -->
+    <?php include 'includes/back_to_top.php'; ?>
 
     <!-- Script para funcionalidad de municipios mejorada -->
     <script>

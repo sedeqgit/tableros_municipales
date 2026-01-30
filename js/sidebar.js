@@ -56,6 +56,20 @@ document.addEventListener('DOMContentLoaded', function() {
         // Abrir/cerrar sidebar al hacer clic en el botón hamburguesa
         sidebarToggle.addEventListener('click', function(e) {
             e.stopPropagation();
+
+            // Calcular la posición del header para posicionar el sidebar correctamente
+            const header = document.querySelector('.main-header');
+            if (header) {
+                const headerRect = header.getBoundingClientRect();
+                const headerBottom = headerRect.bottom + window.scrollY;
+
+                // Posicionar sidebar y overlay justo debajo del header
+                sidebar.style.top = headerBottom + 'px';
+                if (overlay) {
+                    overlay.style.top = headerBottom + 'px';
+                }
+            }
+
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
 

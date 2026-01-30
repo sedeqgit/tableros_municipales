@@ -253,8 +253,6 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
     <link rel="stylesheet" href="./css/home.css">
     <!-- Estilos específicos para la página de resumen -->
     <link rel="stylesheet" href="./css/resumen.css">
-    <!-- Estilos para el menú lateral responsive -->
-    <link rel="stylesheet" href="./css/sidebar.css">
     <!-- Iconografía Font Awesome 6.0 para elementos visuales -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -1558,6 +1556,9 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
             <script src="./js/script.js"></script>
             <script src="./js/animations_global.js"></script>
             <script src="./js/sidebar.js"></script>
+
+            <!-- Botón volver al inicio -->
+            <?php include 'includes/back_to_top.php'; ?>
 </body>
 
 </html>

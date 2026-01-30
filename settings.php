@@ -135,7 +135,6 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
 
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/settings.css">
-    <link rel="stylesheet" href="./css/sidebar.css">
     <link rel="stylesheet" href="./css/home.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -350,6 +349,9 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
             <script src="./js/sidebar.js"></script>
             <script src="./js/settings.js"></script>
             <script src="./js/animations_global.js"></script>
+
+            <!-- Botón volver al inicio -->
+            <?php include 'includes/back_to_top.php'; ?>
 </body>
 
 </html>

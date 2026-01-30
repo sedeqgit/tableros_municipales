@@ -142,8 +142,6 @@ function formatearNombreMunicipio($municipio)
     <!-- ========================================== -->
     <!-- Estilos globales compartidos por todo el sistema -->
     <link rel="stylesheet" href="./css/global.css">
-    <!-- Estilos para el menú lateral responsive -->
-    <link rel="stylesheet" href="./css/sidebar.css">
     <!-- Estilos específicos para la página de resumen (reutilizados para paneles) -->
     <link rel="stylesheet" href="./css/resumen.css">
     <!-- Estilos específicos para la página de mapas -->
@@ -407,6 +405,9 @@ function formatearNombreMunicipio($municipio)
                 <script src="./js/sidebar.js"></script>
                 <!-- Script específico de mapas -->
                 <script src="./js/mapas.js"></script>
+
+                <!-- Botón volver al inicio -->
+                <?php include 'includes/back_to_top.php'; ?>
 </body>
 
 </html>

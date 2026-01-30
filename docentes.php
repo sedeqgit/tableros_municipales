@@ -232,7 +232,6 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
     <link rel="stylesheet" href="./css/resumen.css">
     <link rel="stylesheet" href="./css/escuelas_detalle.css">
     <link rel="stylesheet" href="./css/docentes.css">
-    <link rel="stylesheet" href="./css/sidebar.css">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -341,9 +340,6 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
 
             <div class="main-content">
                 <div class="topbar">
-                    <div class="menu-toggle">
-                        <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
-                    </div>
                     <div class="page-title top-bar-title">
                         <h1>Detalle de Docentes <?php echo formatearNombreMunicipio($municipioSeleccionado); ?> - Ciclo
                             <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?>
@@ -855,6 +851,9 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                     }, 200);
                 });
             </script>
+
+            <!-- Botón volver al inicio -->
+            <?php include 'includes/back_to_top.php'; ?>
 </body>
 
 </html>

@@ -101,10 +101,6 @@ if (count($años) >= 2) {
     <link rel="stylesheet" href="./css/global.css">
     <link rel="stylesheet" href="./css/resumen.css">
     <link rel="stylesheet" href="./css/estudiantes.css">
-    <link rel="stylesheet" href="./css/sidebar.css">
-    <style>
-        /* Estos estilos se han movido al archivo sidebar.css */
-    </style>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Bibliotecas para exportación -->
@@ -116,50 +112,33 @@ if (count($años) >= 2) {
 <body> <!-- Overlay para cerrar el menú en móviles -->
     <div class="sidebar-overlay"></div>
 
-    <div class="sidebar">
-        <div class="logo-container">
-            <img src="./img/layout_set_logo.png" alt="Logo SEDEQ" class="logo">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="./img/layout_set_logo.png" alt="SEDEQ" class="sidebar-logo">
         </div>
-        <div class="sidebar-links">
-            <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
-            <a href="resumen.php" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
-            <a href="alumnos.php" class="sidebar-link"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
-            <a href="#" class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
-            <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i>
-                <span>Docentes</span></a>
-            <a href="estudiantes.php" class="sidebar-link active"><i class="fas fa-history"></i>
-                <span>Históricos</span></a>
-
-            <!-- Submenú Dinámico para Navegación entre Municipios -->
-            <div class="submenu-container">
-                <div class="submenu-header">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Municipios Disponibles</span>
-                </div>
-                <div class="submenu-links">
-                    <a href="estudiantes.php?municipio=1" class="submenu-link" data-municipio="1">
-                        <i class="fas fa-circle submenu-indicator"></i>
-                        <span>El Marqués</span>
-                    </a>
-                    <a href="estudiantes.php?municipio=2" class="submenu-link" data-municipio="2">
-                        <i class="fas fa-circle submenu-indicator"></i>
-                        <span>Querétaro</span>
-                    </a>
-                    <a href="estudiantes.php?municipio=14" class="submenu-link" data-municipio="14">
-                        <i class="fas fa-circle submenu-indicator"></i>
-                        <span>Corregidora</span>
-                    </a>
-                    <a href="estudiantes.php?municipio=18" class="submenu-link" data-municipio="18">
-                        <i class="fas fa-circle submenu-indicator"></i>
-                        <span>Huimilpan</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- <a href="historicos.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Demo
-                    Históricos</span></a> -->
-        </div>
-    </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item">
+                    <a href="home.php"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="resumen.php"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="alumnos.php"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="escuelas_detalle.php"><i class="fas fa-school"></i> <span>Escuelas</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="docentes.php"><i class="fas fa-chalkboard-teacher"></i> <span>Docentes</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a href="estudiantes.php"><i class="fas fa-history"></i> <span>Históricos</span></a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
     </div>
 
     <div class="main-content">

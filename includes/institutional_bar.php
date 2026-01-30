@@ -26,7 +26,7 @@
 
         <!-- Redes sociales y contacto -->
         <div class="social-links">
-            <a href="https://wa.me/+524421443740" class="social-link" title="Chat">
+            <a href="https://wa.me/+524421443740" class="social-link social-link-chatbot" title="Chat">
                 <img class="icon-sidebar" src="https://queretaro.gob.mx/o/queretaro-theme/images/chatboxLines.png">
                 <span class="social-name">Chatbot</span>
             </a>

@@ -177,7 +177,6 @@ $infoCiclo = obtenerInfoCicloEscolar();
     <link rel="stylesheet" href="./css/home.css">
     <link rel="stylesheet" href="./css/resumen.css">
     <link rel="stylesheet" href="./css/escuelas_detalle.css">
-    <link rel="stylesheet" href="./css/sidebar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Bibliotecas para exportación -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -592,6 +591,9 @@ $infoCiclo = obtenerInfoCicloEscolar();
     <script src="./js/sidebar.js"></script>
     <script src="./js/animations_global.js"></script>
     <script src="./js/directorio_estatal.js"></script>
+
+    <!-- Botón volver al inicio -->
+    <?php include 'includes/back_to_top.php'; ?>
 </body>
 
 </html>

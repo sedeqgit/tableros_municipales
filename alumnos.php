@@ -347,9 +347,6 @@ foreach ($datosPorNivel as $nivel => $datos) {
 
             <div class="main-content">
                 <div class="topbar">
-                    <div class="menu-toggle">
-                        <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
-                    </div>
                     <div class="page-title top-bar-title">
                         <h1>Detalle de la Matrícula Estudiantil
                             <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
@@ -1040,10 +1037,12 @@ foreach ($datosPorNivel as $nivel => $datos) {
                 const datosDistribucion = <?php echo json_encode($datosDistribucion); ?>;
                 const totales = <?php echo json_encode($totales); ?>;
             </script>
-            <script src="./js/script.js"></script>
             <script src="./js/alumnos.js"></script>
             <script src="./js/animations_global.js"></script>
             <script src="./js/sidebar.js"></script>
+
+            <!-- Botón volver al inicio -->
+            <?php include 'includes/back_to_top.php'; ?>
 
 </body>
 

@@ -13,7 +13,7 @@
  */
 
 
-define('CICLO_ESCOLAR_ACTUAL', '23');
+define('CICLO_ESCOLAR_ACTUAL', '24');
 
 /**
  * Verifica si el ciclo escolar actual tiene soporte para tablas de unidades

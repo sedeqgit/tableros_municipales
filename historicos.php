@@ -189,7 +189,6 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
     <link rel="stylesheet" href="./css/resumen.css">
     <link rel="stylesheet" href="./css/estudiantes.css">
     <link rel="stylesheet" href="./css/historicos.css">
-    <link rel="stylesheet" href="./css/sidebar.css">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <!-- Bibliotecas para exportación -->
@@ -203,30 +202,36 @@ $totalesActuales = calcularTotales($datosEducativosActuales);
     <!-- Overlay para cerrar el menú en móviles -->
     <div class="sidebar-overlay"></div>
 
-    <div class="sidebar">
-        <div class="logo-container">
-            <img src="./img/layout_set_logo.png" alt="Logo SEDEQ" class="logo">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="./img/layout_set_logo.png" alt="SEDEQ" class="sidebar-logo">
         </div>
-        <div class="sidebar-links">
-            <a href="home.php" class="sidebar-link"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
-            <a href="resumen.php" class="sidebar-link"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
-            <a href="escuelas_detalle.php" class="sidebar-link"><i class="fas fa-school"></i> <span>Escuelas</span></a>
-            <a href="estudiantes.php" class="sidebar-link"><i
-                    class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
-            <a href="docentes.php" class="sidebar-link"><i class="fas fa-chalkboard-teacher"></i>
-                <span>Docentes</span></a>
-            <!--  <a href="estudiantes.php" class="sidebar-link"><i class="fas fa-history"></i> <span>Históricos</span></a>
-            <a href="historicos.php" class="sidebar-link active"><i class="fas fa-history"></i> <span>Demo
-                    Históricos</span></a> -->
-
-        </div>
-    </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item">
+                    <a href="home.php"><i class="fas fa-home"></i> <span>Regresar al Home</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="resumen.php"><i class="fas fa-chart-bar"></i><span>Resumen</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="escuelas_detalle.php"><i class="fas fa-school"></i> <span>Escuelas</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="estudiantes.php"><i class="fas fa-user-graduate"></i><span>Estudiantes</span></a>
+                </li>
+                <li class="nav-item">
+                    <a href="docentes.php"><i class="fas fa-chalkboard-teacher"></i> <span>Docentes</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a href="historicos.php"><i class="fas fa-history"></i> <span>Históricos</span></a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 
     <div class="main-content">
         <div class="topbar">
-            <div class="menu-toggle">
-                <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
-            </div>
             <div class="page-title top-bar-title">
                 <h1>Análisis Históricos del Sistema Educativo Querétaro (En proceso, demo de diferentes elementos
                     viusuales)</h1>
