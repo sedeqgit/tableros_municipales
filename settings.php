@@ -328,14 +328,6 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                                 </button>
                             </div>
 
-                            <!-- Zona de peligro -->
-                            <div class="danger-zone animate-up delay-4">
-                                <h3><i class="fas fa-exclamation-triangle"></i> Zona de Peligro</h3>
-                                <p>Las siguientes acciones son irreversibles. Por favor, proceda con precaución.</p>
-                                <button type="button" class="danger-button animate-hover">
-                                    <i class="fas fa-user-slash"></i> Desactivar Cuenta
-                                </button>
-                            </div>
                         </div>
                     </div>
 
