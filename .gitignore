@@ -64,3 +64,6 @@ package-lock.json
 # Build artifacts
 /dist/
 /build/
+
+.playwright-mcp/
+claude/
