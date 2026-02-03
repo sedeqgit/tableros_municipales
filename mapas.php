@@ -29,7 +29,7 @@ require_once 'session_helper.php';
 iniciarSesionDemo();
 
 // Incluir archivo de conexión actualizado
-require_once 'conexion_prueba_2024.php';
+require_once 'conexion.php';
 
 // =============================================================================
 // OBTENCIÓN DE PARÁMETROS Y VALIDACIÓN

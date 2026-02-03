@@ -14,7 +14,7 @@
  */
 
 // Incluir archivo de conexión de prueba
-require_once 'conexion_prueba_2024.php';
+require_once 'conexion.php';
 
 // Inicializar sesión simple para pruebas
 if (!isset($_SESSION)) {

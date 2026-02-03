@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
     if (preg_match('/^\d{2}$/', $nuevoCiclo)) {
         error_log("Validación de patrón exitosa");
 
-        $archivoConexion = __DIR__ . '/conexion_prueba_2024.php';
+        $archivoConexion = __DIR__ . '/conexion.php';
         error_log("Ruta del archivo: $archivoConexion");
 
         // Leer el ciclo actual del archivo directamente
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
 }
 
 // AHORA cargar el archivo de conexión (después de procesarlo si hubo POST)
-require_once 'conexion_prueba_2024.php';
+require_once 'conexion.php';
 
 // Obtener el ciclo escolar actual definido en el sistema
 $currentCycle = defined('CICLO_ESCOLAR_ACTUAL') ? CICLO_ESCOLAR_ACTUAL : '24';
@@ -319,6 +319,7 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                                     </form>
                                 </div>
                             </div> <!-- Acciones de formulario -->
+                            <!-- Botones deshabilitados - sin funcionalidad implementada
                             <div class="form-actions animate-fade delay-3">
                                 <button type="button" class="cancel-button animate-hover">
                                     <i class="fas fa-times"></i> Cancelar
@@ -327,6 +328,7 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                                     <i class="fas fa-save"></i> Guardar Cambios
                                 </button>
                             </div>
+                            -->
 
                         </div>
                     </div>

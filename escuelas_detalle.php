@@ -51,7 +51,7 @@ error_reporting(E_ALL);
 // =============================================================================
 
 // Incluir módulo de conexión actualizado con funciones dinámicas
-require_once 'conexion_prueba_2024.php';
+require_once 'conexion.php';
 
 // Obtener el municipio desde el parámetro GET, por defecto Querétaro
 $municipioSeleccionado = isset($_GET['municipio']) ? strtoupper(trim($_GET['municipio'])) : 'QUERÉTARO';

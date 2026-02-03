@@ -38,7 +38,7 @@ error_reporting(E_ALL);
 // =============================================================================
 
 // Incluir módulo de conexión actualizado con funciones dinámicas
-require_once 'conexion_prueba_2024.php';
+require_once 'conexion.php';
 
 // =============================================================================
 // OBTENCIÓN Y PROCESAMIENTO DE DATOS EDUCATIVOS A NIVEL ESTATAL

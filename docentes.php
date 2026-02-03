@@ -33,7 +33,7 @@ error_reporting(E_ALL);
 // =============================================================================
 
 // Incluir módulo de conexión actualizado con soporte de municipios dinámicos
-require_once 'conexion_prueba_2024.php';
+require_once 'conexion.php';
 
 // Configurar codificación UTF-8 para evitar problemas con acentos
 header('Content-Type: text/html; charset=UTF-8');
@@ -608,7 +608,8 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                                     <td><?php echo htmlspecialchars($subnivel, ENT_QUOTES, 'UTF-8'); ?></td>
                                                     <td class="text-center"><?php echo number_format($totalNivel); ?></td>
                                                     <td class="text-center">
-                                                        <?php echo formatPercent($porcentajeDelTotal); ?>%</td>
+                                                        <?php echo formatPercent($porcentajeDelTotal); ?>%
+                                                    </td>
                                                     <td class="text-center docentes-hombres">
                                                         <?php echo number_format($hombres); ?>
                                                     </td>
@@ -631,7 +632,8 @@ $porcentajeMayorConcentracion = isset($porcentajesDocentes[$nivelMayorConcentrac
                                                     <strong><?php echo number_format($totalDocentes); ?></strong>
                                                 </td>
                                                 <td class="text-center">
-                                                    <strong><?php echo formatPercent(100); ?>%</strong></td>
+                                                    <strong><?php echo formatPercent(100); ?>%</strong>
+                                                </td>
                                                 <?php
                                                 // Calcular totales de género
                                                 $totalHombres = 0;

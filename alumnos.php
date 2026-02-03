@@ -36,7 +36,7 @@ require_once 'session_helper.php';
 iniciarSesionDemo();
 
 // Incluir módulo de conexión actualizado para consultas dinámicas
-require_once 'conexion_prueba_2024.php';
+require_once 'conexion.php';
 
 // =============================================================================
 // OBTENCIÓN DE PARÁMETROS Y VALIDACIÓN

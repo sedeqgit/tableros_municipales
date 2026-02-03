@@ -6,7 +6,7 @@ require_once 'session_helper.php';
 iniciarSesionDemo();
 
 // Incluir archivo de conexión actualizado
-require_once 'conexion_prueba_2024.php';
+require_once 'conexion.php';
 
 // Obtener el municipio desde el parámetro GET, por defecto Querétaro (municipio con más datos)
 $municipioSeleccionado = isset($_GET['municipio']) ? strtoupper(trim($_GET['municipio'])) : 'QUERÉTARO';
