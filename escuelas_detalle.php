@@ -434,7 +434,7 @@ $datosEducativos = $datosCompletosMunicipio;
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 </head>
 
-<body>
+<body class="fixed-header-page">
     <?php include 'includes/institutional_bar.php'; ?>
 
 
@@ -1096,10 +1096,11 @@ $datosEducativos = $datosCompletosMunicipio;
                                                     <i class="fas fa-school"></i>
                                                 </div>
                                                 <div class="total-contenido">
-                                                    <span class="total-tipo">Total Unidades USAER</span>
+                                                    <span class="total-tipo">Total Escuelas USAER</span>
                                                     <span
                                                         class="total-valor"><?php echo number_format($totalEscUSAER, 0, '.', ','); ?></span>
-                                                    <span class="total-subtitulo">unidades</span>
+                                                    <span class="total-subtitulo">Escuelas
+                                                    </span>
                                                 </div>
                                             </div>
                                             <div class="total-municipal-card">
@@ -1132,7 +1133,7 @@ $datosEducativos = $datosCompletosMunicipio;
                                                 <div class="usaer-dato-grupo">
                                                     <div class="numero-principal">
                                                         <?php echo number_format($totalEscPubUSAER, 0, '.', ','); ?>
-                                                        unidades
+                                                        Escuelas
                                                     </div>
                                                     <div class="porcentaje">
                                                         <?php echo $totalEscUSAER > 0 ? round(($totalEscPubUSAER / $totalEscUSAER) * 100, 1) : 0; ?>%
@@ -1157,7 +1158,7 @@ $datosEducativos = $datosCompletosMunicipio;
                                                 <div class="usaer-dato-grupo">
                                                     <div class="numero-principal">
                                                         <?php echo number_format($totalEscPrivUSAER, 0, '.', ','); ?>
-                                                        unidades
+                                                        Escuelas
                                                     </div>
                                                     <div class="porcentaje">
                                                         <?php echo $totalEscUSAER > 0 ? round(($totalEscPrivUSAER / $totalEscUSAER) * 100, 1) : 0; ?>%

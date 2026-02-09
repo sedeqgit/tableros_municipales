@@ -266,7 +266,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
 
 </head>
 
-<body>
+<body class="fixed-header-page">
     <?php include 'includes/institutional_bar.php'; ?>
 
 
@@ -1164,10 +1164,10 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                                 <i class="fas fa-school"></i>
                                             </div>
                                             <div class="total-contenido">
-                                                <span class="total-tipo">Total Unidades USAER </span>
+                                                <span class="total-tipo">Total Escuelas USAER </span>
                                                 <span
                                                     class="total-valor"><?php echo number_format($datosUSAER['tot_esc'], 0, '.', ','); ?></span>
-                                                <span class="total-subtitulo">unidades </span>
+                                                <span class="total-subtitulo">Escuelas </span>
                                             </div>
                                         </div>
                                         <div class="total-municipal-card">
@@ -1211,7 +1211,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                             <div class="usaer-dato-grupo">
                                                 <div class="numero-principal">
                                                     <?php echo number_format($datosUSAER['tot_esc_pub'], 0, '.', ','); ?>
-                                                    unidades
+                                                    Escuelas
                                                 </div>
                                                 <div class="porcentaje">
                                                     <?php echo formatPercent($datosUSAER['tot_esc'] > 0 ? ($datosUSAER['tot_esc_pub'] / $datosUSAER['tot_esc']) * 100 : 0); ?>%
@@ -1245,7 +1245,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                             <div class="usaer-dato-grupo">
                                                 <div class="numero-principal">
                                                     <?php echo number_format($datosUSAER['tot_esc_priv'], 0, '.', ','); ?>
-                                                    unidades
+                                                    Escuelas
                                                 </div>
                                                 <div class="porcentaje">
                                                     <?php echo formatPercent($datosUSAER['tot_esc'] > 0 ? ($datosUSAER['tot_esc_priv'] / $datosUSAER['tot_esc']) * 100 : 0); ?>%

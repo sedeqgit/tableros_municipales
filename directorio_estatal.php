@@ -253,7 +253,7 @@ $infoCiclo = obtenerInfoCicloEscolar();
     <div class="app-container">
         <div class="main-content">
             <div class="page-title top-bar-title" style="padding: 20px 20px 10px;">
-                <h1>Directorio Estatal de Escuelas - Querétaro</h1>
+                <h1>Directorio Estatal de Escuelas</h1>
             </div>
 
             <div class="container-fluid">

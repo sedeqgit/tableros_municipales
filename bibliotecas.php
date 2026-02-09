@@ -90,55 +90,15 @@ $datosMapaBibliotecas = obtenerMapaBibliotecas();
 
             <?php include 'includes/header_end.php'; ?>
 
-            <!-- ======================================== -->
-            <!-- BARRA LATERAL DE NAVEGACIÓN              -->
-            <!-- ======================================== -->
-            <aside class="sidebar">
-                <!-- Logo en el sidebar -->
-                <div class="sidebar-header">
-                    <img src="./img/layout_set_logo.png" alt="SEDEQ" class="sidebar-logo">
-                </div>
-
-                <nav class="sidebar-nav">
-                    <ul>
-                        <!-- Enlace a página principal (estado activo) -->
-                        <li class="nav-item active">
-                            <a href="home.php"><i class="fas fa-home"></i> <span>Inicio</span></a>
-                        </li>
-                        <!-- Enlaces a funcionalidades futuras -->
-                        <li class="nav-item">
-                            <a href="https://www.google.com/maps/d/edit?mid=1LLMZpgMl4X4QSjzNlHQsHgZoNLj1kv4&usp=sharing"
-                                target="_blank"><i class="fas fa-map-marked-alt"></i> <span>Mapa Educativo</span></a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="bibliotecas.php"><i class="fas fa-book"></i> <span>Bibliotecas</span></a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="directorio_estatal.php"><i class="fas fa-search"></i> <span>Búsqueda de
-                                    Escuelas</span></a>
-                        </li>
-                        <!-- Enlace a configuraciones del sistema -->
-                        <li class="nav-item">
-                            <a href="settings.php"><i class="fas fa-cog"></i> <span>Configuración</span></a>
-                        </li>
-                    </ul>
-                </nav>
-
-                <!-- Pie de la barra lateral con opción de logout -->
-            </aside>
-
             <!-- ========================================== -->
             <!-- CONTENIDO PRINCIPAL                       -->
             <!-- ========================================== -->
             <div class="main-content">
                 <!-- Barra superior -->
                 <div class="topbar">
-                    <div class="menu-toggle">
-                        <button id="sidebarToggle"><i class="fas fa-bars"></i></button>
-                    </div>
                     <div class="page-title">
                         <h1 class="section-title">
-                            Mapa de Bibliotecas del Estado de Querétaro
+                            Mapa de Bibliotecas del Estado
                         </h1>
                     </div>
                     <div class="utilities">

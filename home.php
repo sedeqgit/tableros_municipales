@@ -42,7 +42,6 @@ iniciarSesionDemo();
 // CONEXIÓN A BASE DE DATOS Y OBTENCIÓN DE DATOS
 // =============================================================================
 
-// Incluir archivo de conexión de prueba 2024 (NUEVA FUNCIONALIDAD)
 require_once 'conexion.php';
 
 // Obtener lista de municipios usando la función de prueba - con validación

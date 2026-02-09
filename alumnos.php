@@ -229,7 +229,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
-<body>
+<body class="fixed-header-page">
     <?php include 'includes/institutional_bar.php'; ?>
 
 

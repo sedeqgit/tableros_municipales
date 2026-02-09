@@ -1,3 +1,5 @@
+
+
 # Archivos de configuración con credenciales
 
 conexion_prueba_2024.php
@@ -66,4 +68,6 @@ package-lock.json
 /build/
 
 .playwright-mcp/
-claude/
+.claude/
+
+Tableros_Municipales.zip

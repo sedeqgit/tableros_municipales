@@ -337,9 +337,29 @@ document.addEventListener('DOMContentLoaded', function() {
         google.charts.setOnLoadCallback(function() {
             const data = google.visualization.arrayToDataTable(datosGrafico);
 
+            // Mapeo de colores por nivel educativo (debe coincidir exactamente con resumen.php)
+            const coloresPorNivel = {
+                'Inicial (Escolarizado)': '#1A237E',
+                'Inicial (No Escolarizado)': '#3949AB',
+                'Especial (CAM)': '#00897B',
+                'Especial (USAER)': '#FB8C00',
+                'Preescolar': '#E53935',
+                'Primaria': '#5E35B1',
+                'Secundaria': '#43A047',
+                'Media Superior': '#0288D1',
+                'Superior': '#00ACC1'
+            };
+
+            // Construir array de colores en el orden de los datos
+            const coloresOrdenados = [];
+            for (let i = 1; i < datosGrafico.length; i++) {
+                const nivel = datosGrafico[i][0];
+                coloresOrdenados.push(coloresPorNivel[nivel] || '#6A1B9A'); // Color por defecto si no se encuentra
+            }
+
             const options = {
                 pieHole: 0.4, // 0 para pie normal, 0.4 para donut
-                colors: ['#4A90E2', '#7CB342', '#FFA726', '#AB47BC', '#26C6DA', '#EF5350', '#78909C', '#FDD835'],
+                colors: coloresOrdenados,
                 legend: {
                     position: 'right',
                     textStyle: {
@@ -381,19 +401,35 @@ document.addEventListener('DOMContentLoaded', function() {
             return null;
         }
 
-        for (const nivel in escuelasNivelSostenimiento) {
-            let cantidad = 0;
+        // Orden específico de niveles educativos (debe coincidir con resumen.php)
+        const ordenNiveles = [
+            'Inicial (Escolarizado)',
+            'Inicial (No Escolarizado)',
+            'Especial (CAM)',
+            'Especial (USAER)',
+            'Preescolar',
+            'Primaria',
+            'Secundaria',
+            'Media Superior',
+            'Superior'
+        ];
 
-            if (tipo === 'total') {
-                cantidad = escuelasNivelSostenimiento[nivel].total || 0;
-            } else if (tipo === 'publico') {
-                cantidad = escuelasNivelSostenimiento[nivel].publicas || 0;
-            } else if (tipo === 'privado') {
-                cantidad = escuelasNivelSostenimiento[nivel].privadas || 0;
-            }
+        // Agregar datos en el orden especificado
+        for (const nivel of ordenNiveles) {
+            if (escuelasNivelSostenimiento[nivel]) {
+                let cantidad = 0;
 
-            if (cantidad > 0) {
-                datos.push([nivel, cantidad]);
+                if (tipo === 'total') {
+                    cantidad = escuelasNivelSostenimiento[nivel].total || 0;
+                } else if (tipo === 'publico') {
+                    cantidad = escuelasNivelSostenimiento[nivel].publicas || 0;
+                } else if (tipo === 'privado') {
+                    cantidad = escuelasNivelSostenimiento[nivel].privadas || 0;
+                }
+
+                if (cantidad > 0) {
+                    datos.push([nivel, cantidad]);
+                }
             }
         }
 

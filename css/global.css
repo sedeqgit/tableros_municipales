@@ -822,6 +822,16 @@ h2, h3, h4, h5, h6,
     min-height: 40px;
 }
 
+/* Barra institucional fija en páginas específicas */
+body.fixed-header-page .top-institutional-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1001;
+}
+
 .institutional-bar-content {
     max-width: 1400px;
     margin: 0 auto;
@@ -1038,6 +1048,42 @@ h2, h3, h4, h5, h6,
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     position: relative;
     z-index: 999;
+}
+
+/* Header fijo solo en páginas específicas */
+body.fixed-header-page .main-header {
+    position: fixed;
+    top: 40px; /* Altura de la barra institucional */
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+/* Agregar espacio superior al contenido cuando el header es fijo */
+body.fixed-header-page .main-content {
+    padding-top: 124px; /* Altura de barra institucional (40px) + header (84px) */
+}
+
+/* Ajuste para tablets y móviles */
+@media (max-width: 992px) {
+    body.fixed-header-page .main-header {
+        top: 90px; /* La barra institucional tiene más altura en móviles (90px aprox) */
+    }
+
+    body.fixed-header-page .main-content {
+        padding-top: 160px; /* 90px (barra institucional) + 70px (header) */
+    }
+}
+
+/* Ajuste para móviles pequeños */
+@media (max-width: 576px) {
+    body.fixed-header-page .main-header {
+        top: 80px;
+    }
+
+    body.fixed-header-page .main-content {
+        padding-top: 140px;
+    }
 }
 
 .header-content {
