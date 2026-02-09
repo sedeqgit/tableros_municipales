@@ -11,6 +11,7 @@
  * @version 1.0
  * @since 2026
  */
+require_once __DIR__ . '/../headers/headers.php';
 ?>
 <!-- ============================================================================ -->
 <!-- BARRA SUPERIOR INSTITUCIONAL                                                -->
