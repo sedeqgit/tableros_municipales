@@ -436,13 +436,13 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                             ?>
                                             <tr>
                                                 <td class="nivel-nombre"><?php echo $nivel; ?></td>
-                                                <td class="total-nivel"><?php echo number_format($datos['total']); ?></td>
-                                                <td class="sector-publico"><?php echo number_format($datos['publico']); ?>
+                                                <td class="total-nivel"><?php echo number_format($datos['total'] ?? 0); ?></td>
+                                                <td class="sector-publico"><?php echo number_format($datos['publico'] ?? 0); ?>
                                                 </td>
                                                 <td class="porcentaje-publico">
                                                     <?php echo formatPercent($porcentajePublico); ?>%
                                                 </td>
-                                                <td class="sector-privado"><?php echo number_format($datos['privado']); ?>
+                                                <td class="sector-privado"><?php echo number_format($datos['privado'] ?? 0); ?>
                                                 </td>
                                                 <td class="porcentaje-privado">
                                                     <?php echo formatPercent($porcentajePrivado); ?>%

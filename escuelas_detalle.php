@@ -796,7 +796,7 @@ $datosEducativos = $datosCompletosMunicipio;
                                                     </h4>
                                                     <div class="subcontrol-stats">
                                                         <span
-                                                            class="subcontrol-count"><?php echo number_format($datos['total']); ?></span>
+                                                            class="subcontrol-count"><?php echo number_format($datos['total'] ?? 0); ?></span>
                                                         <span class="subcontrol-label">escuelas</span>
                                                         <span
                                                             class="subcontrol-percentage"><?php echo $datos['porcentaje']; ?>%</span>

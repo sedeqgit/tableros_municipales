@@ -345,15 +345,15 @@ function obtenerDatosMunicipio($municipio)
                                             <div class="municipality-stats">
                                                 <div class="stat">
                                                     <i class="fas fa-user-graduate"></i>
-                                                    <?php echo number_format($datosMunicipio['alumnos'], 0, '.', ','); ?>
+                                                    <?php echo number_format($datosMunicipio['alumnos'] ?? 0, 0, '.', ','); ?>
                                                 </div>
                                                 <div class="stat">
                                                     <i class="fas fa-school"></i>
-                                                    <?php echo number_format($datosMunicipio['escuelas'], 0, '.', ','); ?>
+                                                    <?php echo number_format($datosMunicipio['escuelas'] ?? 0, 0, '.', ','); ?>
                                                 </div>
                                                 <div class="stat">
                                                     <i class="fas fa-chalkboard-teacher"></i>
-                                                    <?php echo number_format($datosMunicipio['docentes'], 0, '.', ','); ?>
+                                                    <?php echo number_format($datosMunicipio['docentes'] ?? 0, 0, '.', ','); ?>
                                                 </div>
                                             </div>
                                         </div>
@@ -404,15 +404,15 @@ function obtenerDatosMunicipio($municipio)
                                                 <div class="municipality-stats">
                                                     <div class="stat">
                                                         <i class="fas fa-user-graduate"></i>
-                                                        <?php echo number_format($datosMunicipio['alumnos'], 0, '.', ','); ?>
+                                                        <?php echo number_format($datosMunicipio['alumnos'] ?? 0, 0, '.', ','); ?>
                                                     </div>
                                                     <div class="stat">
                                                         <i class="fas fa-school"></i>
-                                                        <?php echo number_format($datosMunicipio['escuelas'], 0, '.', ','); ?>
+                                                        <?php echo number_format($datosMunicipio['escuelas'] ?? 0, 0, '.', ','); ?>
                                                     </div>
                                                     <div class="stat">
                                                         <i class="fas fa-chalkboard-teacher"></i>
-                                                        <?php echo number_format($datosMunicipio['docentes'], 0, '.', ','); ?>
+                                                        <?php echo number_format($datosMunicipio['docentes'] ?? 0, 0, '.', ','); ?>
                                                     </div>
                                                 </div>
                                             </div>

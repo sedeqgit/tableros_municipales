@@ -447,13 +447,13 @@ $infoCiclo = obtenerInfoCicloEscolar();
                                                 <td class="municipio-nombre"><?php echo $municipioFormateado; ?></td>
                                                 <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
                                                 <td class="sector-publico">
-                                                    <?php echo number_format($escuela['total_alumnos']); ?>
+                                                    <?php echo number_format($escuela['total_alumnos'] ?? 0); ?>
                                                 </td>
                                                 <td class="alumnos-hombres">
-                                                    <?php echo number_format($escuela['alumnos_hombres']); ?>
+                                                    <?php echo number_format($escuela['alumnos_hombres'] ?? 0); ?>
                                                 </td>
                                                 <td class="alumnos-mujeres">
-                                                    <?php echo number_format($escuela['alumnos_mujeres']); ?>
+                                                    <?php echo number_format($escuela['alumnos_mujeres'] ?? 0); ?>
                                                 </td>
                                             </tr>
                                             <?php
@@ -564,13 +564,13 @@ $infoCiclo = obtenerInfoCicloEscolar();
                                                 <td class="municipio-nombre"><?php echo $municipioFormateado; ?></td>
                                                 <td class="localidad-nombre"><?php echo $escuela['localidad']; ?></td>
                                                 <td class="sector-privado">
-                                                    <?php echo number_format($escuela['total_alumnos']); ?>
+                                                    <?php echo number_format($escuela['total_alumnos'] ?? 0); ?>
                                                 </td>
                                                 <td class="alumnos-hombres">
-                                                    <?php echo number_format($escuela['alumnos_hombres']); ?>
+                                                    <?php echo number_format($escuela['alumnos_hombres'] ?? 0); ?>
                                                 </td>
                                                 <td class="alumnos-mujeres">
-                                                    <?php echo number_format($escuela['alumnos_mujeres']); ?>
+                                                    <?php echo number_format($escuela['alumnos_mujeres'] ?? 0); ?>
                                                 </td>
                                             </tr>
                                             <?php
