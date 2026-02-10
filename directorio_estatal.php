@@ -340,9 +340,8 @@ $infoCiclo = obtenerInfoCicloEscolar();
                             <div class="search-hints">
                                 <small>
                                     <i class="fas fa-lightbulb"></i>
-                                    Tip: Escribe cualquier información que tengas. La búsqueda es inteligente y
-                                    encontrará
-                                    escuelas en ambas categorías.
+                                    Tip: Escribe cualquier información que tengas. La búsqueda
+                                    encontrará escuelas en ambas categorías.
                                 </small>
                             </div>
                         </div>
@@ -359,8 +358,7 @@ $infoCiclo = obtenerInfoCicloEscolar();
                     </div>
                     <div class="matricula-body">
                         <div class="directorio-filters">
-                            <input type="text" id="search-publicas" placeholder="Buscar escuela pública..."
-                                class="search-input">
+
                             <select id="nivel-filter-publicas" class="nivel-filter">
                                 <option value="todos">Todos los niveles</option>
                                 <?php foreach ($nivelesDisponibles as $codigo => $nombre):
@@ -476,8 +474,6 @@ $infoCiclo = obtenerInfoCicloEscolar();
                     </div>
                     <div class="matricula-body">
                         <div class="directorio-filters">
-                            <input type="text" id="search-privadas" placeholder="Buscar escuela privada..."
-                                class="search-input">
                             <select id="nivel-filter-privadas" class="nivel-filter">
                                 <option value="todos">Todos los niveles</option>
                                 <?php foreach ($nivelesDisponibles as $codigo => $nombre):

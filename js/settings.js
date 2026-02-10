@@ -252,3 +252,42 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// ====================================================================
+// CYCLE STEPPER
+// ====================================================================
+(function initCycleStepper() {
+    const MIN_CYCLE = 23;
+    const MAX_CYCLE = 24;
+
+    const hiddenInput   = document.getElementById('ciclo_escolar');
+    const decrementBtn  = document.getElementById('ciclo-decrement');
+    const incrementBtn  = document.getElementById('ciclo-increment');
+    const displayYear   = document.getElementById('stepper-year');
+    const displayEnd    = document.getElementById('stepper-year-end');
+
+    if (!hiddenInput || !decrementBtn || !incrementBtn) return;
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function updateStepper(cycle) {
+        hiddenInput.value       = pad(cycle);
+        displayYear.textContent = pad(cycle);
+        displayEnd.textContent  = pad(cycle + 1);
+        decrementBtn.disabled   = cycle <= MIN_CYCLE;
+        incrementBtn.disabled   = cycle >= MAX_CYCLE;
+    }
+
+    decrementBtn.addEventListener('click', function () {
+        const current = parseInt(hiddenInput.value, 10);
+        if (current > MIN_CYCLE) updateStepper(current - 1);
+    });
+
+    incrementBtn.addEventListener('click', function () {
+        const current = parseInt(hiddenInput.value, 10);
+        if (current < MAX_CYCLE) updateStepper(current + 1);
+    });
+
+    // Estado inicial (refleja valor PHP actual)
+    updateStepper(parseInt(hiddenInput.value, 10));
+})();

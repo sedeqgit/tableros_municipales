@@ -200,69 +200,7 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                     </div>
                     <div class="container-fluid">
                         <!-- Contenido de configuración -->
-                        <div class="settings-container animate-fade"> <!-- Sección: Mi Perfil -->
-                            <div class="settings-panel animate-up">
-                                <h2 class="settings-title"><i class="fas fa-user-circle"></i> Mi Perfil</h2>
-                                <div class="settings-content">
-                                    <div class="form-group animate-fade delay-1">
-                                        <label for="fullname">Nombre Completo</label>
-                                        <input type="text" id="fullname" class="form-control"
-                                            value="<?php echo htmlspecialchars($userFullname); ?>">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="email">Correo Electrónico</label>
-                                        <input type="email" id="email" class="form-control"
-                                            value="<?php echo htmlspecialchars($userEmail); ?>">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="role">Rol en el Sistema</label>
-                                        <input type="text" id="role" class="form-control"
-                                            value="<?php echo htmlspecialchars($userRole); ?>" disabled>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="institution">Institución</label>
-                                        <input type="text" id="institution" class="form-control"
-                                            value="Secretaría de Educación del Estado de Querétaro" disabled>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Sección: Seguridad -->
-                            <div class="settings-panel animate-up delay-1">
-                                <h2 class="settings-title"><i class="fas fa-shield-alt"></i> Seguridad y Contraseña</h2>
-                                <div class="settings-content">
-                                    <div class="form-group animate-fade delay-2">
-                                        <label for="current_password">Contraseña Actual</label>
-                                        <input type="password" id="current_password" class="form-control"
-                                            placeholder="Ingrese su contraseña actual">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="new_password">Nueva Contraseña</label>
-                                        <input type="password" id="new_password" class="form-control"
-                                            placeholder="Ingrese su nueva contraseña">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="confirm_password">Confirmar Nueva Contraseña</label>
-                                        <input type="password" id="confirm_password" class="form-control"
-                                            placeholder="Confirme su nueva contraseña">
-                                    </div>
-
-                                    <div class="form-group">
-                                        <small class="form-text text-muted">
-                                            La contraseña debe tener al menos 8 caracteres, incluir mayúsculas,
-                                            minúsculas,
-                                            números
-                                            y símbolos.
-                                        </small>
-                                    </div>
-                                </div>
-                            </div>
-
+                        <div class="settings-container animate-fade">
                             <!-- Sección: Preferencias -->
                             <div class="settings-panel animate-up delay-2">
                                 <h2 class="settings-title"><i class="fas fa-sliders-h"></i> Preferencias del Sistema
@@ -277,37 +215,43 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                                         </div>
                                     <?php endif; ?>
 
-                                    <div class="form-group animate-fade delay-3">
-                                        <label for="language">Idioma del Sistema</label>
-                                        <select id="language" class="form-control">
-                                            <option value="es" selected>Español</option>
-                                            <option value="en">English</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="notifications">Notificaciones</label>
-                                        <div class="checkbox-wrapper">
-                                            <input type="checkbox" id="email_notifications" checked>
-                                            <label for="email_notifications">Recibir notificaciones por correo</label>
-                                        </div>
-                                    </div>
-
                                     <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>"
                                         class="preferences-form" novalidate>
                                         <input type="hidden" name="accion" value="actualizar_ciclo">
                                         <div class="form-group">
-                                            <label for="ciclo_escolar">Ciclo escolar actual (dos dígitos)</label>
-                                            <div class="cycle-input-wrapper">
-                                                <input type="text" id="ciclo_escolar" name="ciclo_escolar"
-                                                    class="form-control cycle-input"
-                                                    value="<?php echo htmlspecialchars($currentCycle); ?>" maxlength="2"
-                                                    pattern="\d{2}" required>
-                                                <span
-                                                    class="input-suffix">/<?php echo htmlspecialchars($nextCycleDisplay); ?></span>
+                                            <label>Ciclo escolar actual</label>
+
+                                            <div class="cycle-stepper" role="group" aria-label="Selector de ciclo escolar">
+                                                <button type="button" class="stepper-btn stepper-btn--prev"
+                                                        id="ciclo-decrement" aria-label="Ciclo anterior"
+                                                        <?php echo ($currentCycle <= '23') ? 'disabled' : ''; ?>>
+                                                    <i class="fas fa-minus"></i>
+                                                </button>
+
+                                                <div class="stepper-display" aria-live="polite">
+                                                    <span class="stepper-year" id="stepper-year">
+                                                        <?php echo htmlspecialchars($currentCycle); ?>
+                                                    </span>
+                                                    <span class="stepper-slash">/</span>
+                                                    <span class="stepper-year-end" id="stepper-year-end">
+                                                        <?php echo htmlspecialchars($nextCycleDisplay); ?>
+                                                    </span>
+                                                </div>
+
+                                                <button type="button" class="stepper-btn stepper-btn--next"
+                                                        id="ciclo-increment" aria-label="Ciclo siguiente"
+                                                        <?php echo ($currentCycle >= '24') ? 'disabled' : ''; ?>>
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
                                             </div>
-                                            <small class="form-text text-muted">Ejemplo: 24 representa el ciclo
-                                                2024-2025.</small>
+
+                                            <!-- Hidden input mantiene el valor para el POST -->
+                                            <input type="hidden" name="ciclo_escolar" id="ciclo_escolar"
+                                                   value="<?php echo htmlspecialchars($currentCycle); ?>">
+
+                                            <small class="form-text text-muted">
+                                                Solo se admiten ciclos 23 (2023-2024) y 24 (2024-2025).
+                                            </small>
                                         </div>
 
                                         <div class="form-actions form-actions-inline">

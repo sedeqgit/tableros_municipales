@@ -656,3 +656,85 @@
     border: 1px solid var(--primary-blue);
     color: var(--primary-blue);
 }
+
+/* ====================================================================
+   Ciclo STEPPER
+   ==================================================================== */
+.cycle-stepper {
+    display: inline-flex;
+    align-items: stretch;
+    background-color: var(--secondary-blue);
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+    margin: 8px 0;
+    user-select: none;
+    box-shadow: var(--shadow-md);
+}
+
+.stepper-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stepper-btn--next {
+    border-right: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stepper-btn:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.stepper-btn:active:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.stepper-btn:disabled {
+    opacity: 0.22;
+    cursor: not-allowed;
+}
+
+.stepper-display {
+    display: flex;
+    align-items: baseline;
+    padding: 14px 28px;
+    gap: 0;
+}
+
+.stepper-year {
+    font-family: 'Novecento sans wide', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.06em;
+    line-height: 1;
+}
+
+.stepper-slash {
+    font-family: 'Novecento sans wide', sans-serif;
+    font-size: 1.4rem;
+    color: var(--accent-gold);
+    margin: 0 6px;
+    line-height: 1;
+    align-self: center;
+}
+
+.stepper-year-end {
+    font-family: 'Novecento sans wide', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.40);
+    letter-spacing: 0.06em;
+    line-height: 1;
+}
