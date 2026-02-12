@@ -91,8 +91,8 @@ sort($todosLosMunicipiosOrdenados);
 // Obtener los primeros 4 municipios del estado (ordenados alfabéticamente)
 $primerosCuatroMunicipios = array_slice($todosLosMunicipiosOrdenados, 0, 10); // Cambiado a 10 para mostrar más municipios inicialmente
 
-// Filtrar municipios adicionales (excluyendo los primeros 4)
-$municipiosAdicionales = array_slice($todosLosMunicipiosOrdenados, 4);
+// Filtrar municipios adicionales (excluyendo los primeros 10)
+$municipiosAdicionales = array_slice($todosLosMunicipiosOrdenados, 10);
 
 /**
  * Formatea nombres de municipios para display en formato título
