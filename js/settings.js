@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // CYCLE STEPPER
 // ====================================================================
 (function initCycleStepper() {
-    const MIN_CYCLE = 23;
+    const MIN_CYCLE = 18;
     const MAX_CYCLE = 24;
 
     const hiddenInput   = document.getElementById('ciclo_escolar');

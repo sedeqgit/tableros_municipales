@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
     $nuevoCiclo = isset($_POST['ciclo_escolar']) ? trim($_POST['ciclo_escolar']) : '';
     error_log("Nuevo ciclo después de trim: '$nuevoCiclo'");
 
-    if (preg_match('/^\d{2}$/', $nuevoCiclo)) {
+    if (preg_match('/^\d{2}$/', $nuevoCiclo) && (int)$nuevoCiclo >= 18 && (int)$nuevoCiclo <= 24) {
         error_log("Validación de patrón exitosa");
 
         $archivoConexion = __DIR__ . '/conexion.php';
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['accion']) && $_POST['
         }
     } else {
         error_log("ERROR: El valor no cumple con el patrón de 2 dígitos");
-        $preferencesMessage = 'Ingrese únicamente dos dígitos para el ciclo escolar (ejemplo: 24).';
+        $preferencesMessage = 'El ciclo escolar debe estar entre 18 y 24 (ejemplo: 24).';
         $preferencesStatus = 'error';
     }
 
@@ -222,9 +222,11 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                                             <label>Ciclo escolar actual</label>
 
                                             <div class="cycle-stepper" role="group" aria-label="Selector de ciclo escolar">
+
+                                            
                                                 <button type="button" class="stepper-btn stepper-btn--prev"
                                                         id="ciclo-decrement" aria-label="Ciclo anterior"
-                                                        <?php echo ($currentCycle <= '23') ? 'disabled' : ''; ?>>
+                                                        <?php echo ($currentCycle <= '18') ? 'disabled' : ''; ?>>
                                                     <i class="fas fa-minus"></i>
                                                 </button>
 
@@ -250,7 +252,7 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                                                    value="<?php echo htmlspecialchars($currentCycle); ?>">
 
                                             <small class="form-text text-muted">
-                                                Solo se admiten ciclos 23 (2023-2024) y 24 (2024-2025).
+                                                
                                             </small>
                                         </div>
 
