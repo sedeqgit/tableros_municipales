@@ -69,5 +69,3 @@ package-lock.json
 
 .playwright-mcp/
 .claude/
-
-conexion.php

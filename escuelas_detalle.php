@@ -432,6 +432,8 @@ $datosEducativos = $datosCompletosMunicipio;
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 </head>
 
 <body class="fixed-header-page">
@@ -750,7 +752,7 @@ $datosEducativos = $datosCompletosMunicipio;
 
                                 <!-- Vista Gráfico (Visible por defecto) -->
                                 <div id="vista-grafico" class="visualization-container">
-                                    <div id="pie-chart-nivel" style="width: 100%; height: 550px;"></div>
+                                    <canvas id="pie-chart-nivel" style="width: 100%; height: 680px;"></canvas>
                                 </div>
                                 <!-- Fin Vista Gráfico -->
                             </div>

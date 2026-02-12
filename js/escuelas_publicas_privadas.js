@@ -314,81 +314,133 @@ document.addEventListener('DOMContentLoaded', function() {
         return null;
     }
 
-    // Función para crear el gráfico de pie por nivel educativo
+    // Instancia Chart.js (se destruye antes de redibujar)
+    let pieChartInstance = null;
+
+    // Registrar el plugin datalabels globalmente
+    if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
+        Chart.register(ChartDataLabels);
+    }
+
+    // Función para crear el gráfico de pie por nivel educativo (Chart.js)
     function crearGraficoPieNivel(tipo = 'total') {
         console.log(`Creando gráfico de pie con filtro: ${tipo}`);
 
-        // Preparar datos para el gráfico
+        const canvas = document.getElementById('pie-chart-nivel');
+        if (!canvas) {
+            console.error('Canvas pie-chart-nivel no encontrado');
+            return;
+        }
+
+        // Destruir instancia anterior si existe (siempre, antes de evaluar datos)
+        if (pieChartInstance) {
+            pieChartInstance.destroy();
+            pieChartInstance = null;
+        }
+
         const datosGrafico = prepararDatosGrafico(tipo);
 
-        if (!datosGrafico || datosGrafico.length === 0) {
-            console.error('No hay datos disponibles para el gráfico');
+        // Manejar datos vacíos: dibujar mensaje en el canvas
+        if (!datosGrafico || datosGrafico.length <= 1) {
+            console.warn('Sin datos para el filtro:', tipo);
+            const ctx2d = canvas.getContext('2d');
+            ctx2d.clearRect(0, 0, canvas.width, canvas.height);
+            ctx2d.save();
+            ctx2d.textAlign = 'center';
+            ctx2d.textBaseline = 'middle';
+            ctx2d.fillStyle = '#aaa';
+            ctx2d.font = '16px sans-serif';
+            ctx2d.fillText('Sin datos disponibles para este filtro', canvas.width / 2, canvas.height / 2);
+            ctx2d.restore();
             return;
         }
 
-        // Cargar Google Charts si no está cargado
-        if (typeof google === 'undefined' || typeof google.charts === 'undefined') {
-            console.error('Google Charts no está disponible');
-            return;
+        // Mapeo de colores por nivel educativo
+        const coloresPorNivel = {
+            'Inicial (Escolarizado)': '#1A237E',
+            'Inicial (No Escolarizado)': '#3949AB',
+            'Especial (CAM)': '#00897B',
+            'Especial (USAER)': '#FB8C00',
+            'Preescolar': '#E53935',
+            'Primaria': '#5E35B1',
+            'Secundaria': '#43A047',
+            'Media Superior': '#0288D1',
+            'Superior': '#00ACC1'
+        };
+
+        // Transformar formato Google Charts → Chart.js
+        const labels = [];
+        const data = [];
+        const backgroundColor = [];
+
+        for (let i = 1; i < datosGrafico.length; i++) {
+            const nivel = datosGrafico[i][0];
+            labels.push(nivel);
+            data.push(datosGrafico[i][1]);
+            backgroundColor.push(coloresPorNivel[nivel] || '#6A1B9A');
         }
 
-        // Dibujar el gráfico
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(function() {
-            const data = google.visualization.arrayToDataTable(datosGrafico);
-
-            // Mapeo de colores por nivel educativo (debe coincidir exactamente con resumen.php)
-            const coloresPorNivel = {
-                'Inicial (Escolarizado)': '#1A237E',
-                'Inicial (No Escolarizado)': '#3949AB',
-                'Especial (CAM)': '#00897B',
-                'Especial (USAER)': '#FB8C00',
-                'Preescolar': '#E53935',
-                'Primaria': '#5E35B1',
-                'Secundaria': '#43A047',
-                'Media Superior': '#0288D1',
-                'Superior': '#00ACC1'
-            };
-
-            // Construir array de colores en el orden de los datos
-            const coloresOrdenados = [];
-            for (let i = 1; i < datosGrafico.length; i++) {
-                const nivel = datosGrafico[i][0];
-                coloresOrdenados.push(coloresPorNivel[nivel] || '#6A1B9A'); // Color por defecto si no se encuentra
-            }
-
-            const options = {
-                pieHole: 0.4, // 0 para pie normal, 0.4 para donut
-                colors: coloresOrdenados,
-                legend: {
-                    position: 'right',
-                    textStyle: {
-                        fontSize: 14
+        const ctx = canvas.getContext('2d');
+        pieChartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: backgroundColor,
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                    clip: false  // permitir que las etiquetas se rendericen fuera del canvas
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                // Más padding arriba para que la leyenda no tape las etiquetas callout
+                layout: { padding: { top: 70, bottom: 70, left: 90, right: 90 } },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: { size: 12 }
+                        }
+                    },
+                    datalabels: {
+                        display: function(ctx) {
+                            return ctx.dataset.data[ctx.dataIndex] > 0;
+                        },
+                        anchor: 'end',
+                        align: 'end',
+                        offset: 12,
+                        formatter: function(value, ctx) {
+                            const total = ctx.dataset.data.reduce(function(a, b) { return a + b; }, 0);
+                            const pct = ((value / total) * 100).toFixed(1);
+                            return ctx.chart.data.labels[ctx.dataIndex] + '\n' + pct + '%';
+                        },
+                        backgroundColor: function(ctx) {
+                            return ctx.dataset.backgroundColor[ctx.dataIndex];
+                        },
+                        borderRadius: 4,
+                        color: '#fff',
+                        font: { weight: 'bold', size: 11 },
+                        padding: { top: 4, bottom: 4, left: 8, right: 8 },
+                        textAlign: 'center'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                const dataset = tooltipItem.dataset;
+                                const total = dataset.data.reduce(function(a, b) { return a + b; }, 0);
+                                const value = dataset.data[tooltipItem.dataIndex];
+                                const pct = ((value / total) * 100).toFixed(2);
+                                return tooltipItem.label + ': ' + value + ' (' + pct + '%)';
+                            }
+                        }
                     }
-                },
-                pieSliceText: 'percentage',
-                pieSliceTextStyle: {
-                    color: 'white',
-                    fontSize: 14,
-                    bold: true
-                },
-                tooltip: {
-                    text: 'both',
-                    showColorCode: true
-                },
-                chartArea: {
-                    width: '90%',
-                    height: '85%'
-                },
-                animation: {
-                    startup: true,
-                    duration: 1000,
-                    easing: 'out'
                 }
-            };
-
-            const chart = new google.visualization.PieChart(document.getElementById('pie-chart-nivel'));
-            chart.draw(data, options);
+            }
         });
     }
 
@@ -489,22 +541,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ejecutar diagnóstico después de cargar la página
     setTimeout(diagnosticarDatos, 2000);
     
-    // Inicializar el gráfico de pie al cargar la página (vista por defecto)
-    // Se ejecuta después de que Google Charts se haya cargado
-    if (typeof google !== 'undefined' && google.charts) {
-        google.charts.setOnLoadCallback(function() {
-            crearGraficoPieNivel(filtroActual);
-        });
-    } else {
-        // Si Google Charts no está cargado aún, esperar un momento
-        setTimeout(function() {
-            if (typeof google !== 'undefined' && google.charts) {
-                google.charts.setOnLoadCallback(function() {
-                    crearGraficoPieNivel(filtroActual);
-                });
-            }
-        }, 500);
-    }
+    // Inicializar el gráfico de pie al cargar la página (Chart.js)
+    crearGraficoPieNivel(filtroActual);
 });
 
 // Agregar una función auxiliar para formatear números

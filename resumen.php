@@ -260,8 +260,6 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    <!-- Biblioteca para capturar elementos como imagen -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 
 </head>
@@ -446,9 +444,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
 
                         <div class="card chart-card animate-fade delay-4">
                             <div class="card-header">
-                                <h2 class="panel-title"><i class="fas fa-chart-bar"></i> Estadística por Tipo o Nivel
-                                    Educativo
-                                </h2>
+                                <h2 class="panel-title"><i class="fas fa-chart-bar"></i> <span id="chart-section-title">Estadística por Tipo o Nivel Educativo - Escuelas</span></h2>
                                 <div class="export-buttons">
                                     <button id="export-chart-btn" class="export-button" title="Exportar gráfico">
                                         <i class="fas fa-download"></i> Exportar
@@ -476,7 +472,8 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                         <p class="metric-value" id="metricDecline">
                                             <?php echo number_format($totalAlumnos, 0, '.', ','); ?>
                                         </p>
-                                        <p class="metric-change" id="metricDeclineChange">Ciclo escolar 2024-2025</p>
+                                        <p class="metric-change" id="metricDeclineChange">
+                                            <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?> </p>
                                     </div>
                                 </div>
                                 <div class="metric animate-left delay-1">
@@ -494,7 +491,8 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                         <p class="metric-value" id="metricGrowth">
                                             <?php echo number_format($totalEscuelas, 0, '.', ','); ?>
                                         </p>
-                                        <p class="metric-change" id="metricGrowthChange">Ciclo escolar 2024-2025</p>
+                                        <p class="metric-change" id="metricGrowthChange">
+                                            <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?> </p>
                                     </div>
                                 </div>
                                 <div class="metric">
@@ -514,7 +512,9 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                         <p class="metric-value">
                                             <?php echo number_format($totalDocentes, 0, '.', ','); ?>
                                         </p>
-                                        <p class="metric-change">Ciclo escolar 2024-2025</p>
+                                        <p class="metric-change">
+                                            <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?>
+                                        </p>
                                     </div>
                                 </div>
 
@@ -762,8 +762,8 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                         <!-- Totales -->
                                         <div class="totales-generales">
                                             <div class="total-escuelas">
-                                                Total: <?php echo number_format($datos['tot_esc'] ?? 0, 0, '.', ','); ?> escuelas <i
-                                                    class="fas fa-info-circle info-icon"
+                                                Total: <?php echo number_format($datos['tot_esc'] ?? 0, 0, '.', ','); ?>
+                                                escuelas <i class="fas fa-info-circle info-icon"
                                                     data-tooltip="1. En el total de Escuelas de Media Superior se cuantifican planteles y en Superior se cuantifican instituciones
                                 2. El total de Escuelas de Superior en el Estado no corresponde a la suma de escuelas en los municipios, debido a que en algunos casos sólo se registra la institución en la capital del Estado y no se desglosan las unidades académicas en los municipios donde se imparten estudios
                                 3. Los datos de escuela de los servicios USAER no se suman ya que se encuentran en los niveles correspondientes"></i>
@@ -1285,7 +1285,8 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                                     <i class="fas fa-mars"></i> Hombres
                                                 </h4>
                                                 <div class="numero-principal">
-                                                    <?php echo number_format($datosUSAER['mat_h'] ?? 0, 0, '.', ','); ?> Total
+                                                    <?php echo number_format($datosUSAER['mat_h'] ?? 0, 0, '.', ','); ?>
+                                                    Total
                                                 </div>
                                                 <div class="porcentaje">
                                                     <?php echo formatPercent($datosUSAER['tot_mat'] > 0 ? ($datosUSAER['mat_h'] / $datosUSAER['tot_mat']) * 100 : 0); ?>%
@@ -1312,7 +1313,8 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                                     <i class="fas fa-venus"></i> Mujeres
                                                 </h4>
                                                 <div class="numero-principal">
-                                                    <?php echo number_format($datosUSAER['mat_m'] ?? 0, 0, '.', ','); ?> Total
+                                                    <?php echo number_format($datosUSAER['mat_m'] ?? 0, 0, '.', ','); ?>
+                                                    Total
                                                 </div>
                                                 <div class="porcentaje">
                                                     <?php echo formatPercent($datosUSAER['tot_mat'] > 0 ? ($datosUSAER['mat_m'] / $datosUSAER['tot_mat']) * 100 : 0); ?>%
@@ -1348,7 +1350,8 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                                     <i class="fas fa-mars"></i> Hombres
                                                 </h4>
                                                 <div class="numero-principal">
-                                                    <?php echo number_format($datosUSAER['doc_h'] ?? 0, 0, '.', ','); ?> Total
+                                                    <?php echo number_format($datosUSAER['doc_h'] ?? 0, 0, '.', ','); ?>
+                                                    Total
                                                 </div>
                                                 <div class="porcentaje">
                                                     <?php echo formatPercent($datosUSAER['tot_doc'] > 0 ? ($datosUSAER['doc_h'] / $datosUSAER['tot_doc']) * 100 : 0); ?>%
@@ -1375,7 +1378,8 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                                     <i class="fas fa-venus"></i> Mujeres
                                                 </h4>
                                                 <div class="numero-principal">
-                                                    <?php echo number_format($datosUSAER['doc_m'] ?? 0, 0, '.', ','); ?> Total
+                                                    <?php echo number_format($datosUSAER['doc_m'] ?? 0, 0, '.', ','); ?>
+                                                    Total
                                                 </div>
                                                 <div class="porcentaje">
                                                     <?php echo formatPercent($datosUSAER['tot_doc'] > 0 ? ($datosUSAER['doc_m'] / $datosUSAER['tot_doc']) * 100 : 0); ?>%

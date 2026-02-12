@@ -85,21 +85,33 @@ let tipoGrafico = 'column';
 function dibujarGrafico() {
     // Obtener los datos
     chartData = new google.visualization.arrayToDataTable(datosEducativos);
-    
+
     // Configurar opciones del gráfico
     const options = configurarOpciones();
-    
+
     // Crear el gráfico según el tipo seleccionado
     chart = crearGrafico(options);
-    
+
     // Actualizar la tabla con los mismos datos
     actualizarTabla();
-      // Actualizar el texto del análisis
+    // Actualizar el texto del análisis
     actualizarAnalisis();
-    
+
     // Actualizar los totales de la tarjeta de resumen
     document.getElementById('metricGrowth').textContent = totalEscuelasFormateado;
     document.getElementById('metricDecline').textContent = totalAlumnosFormateado;
+
+    // Actualizar el título de la sección del gráfico
+    actualizarTituloGrafico();
+}
+
+/**
+ * Actualiza el título de la sección del gráfico según la visualización activa
+ */
+function actualizarTituloGrafico() {
+    const etiqueta = tipoVisualizacion === 'escuelas' ? 'Escuelas' : 'Matrícula';
+    document.getElementById('chart-section-title').textContent =
+        'Estadística por Tipo o Nivel Educativo - ' + etiqueta;
 }
 
 /**
@@ -113,9 +125,11 @@ function configurarOpciones() {
 
     if (tipoVisualizacion === 'escuelas') {
         datosAjustados.addColumn('number', 'Escuelas');
+        datosAjustados.addColumn({ type: 'string', role: 'annotation' });
         datosAjustados.addColumn({ type: 'string', role: 'style' });
     } else if (tipoVisualizacion === 'alumnos') {
         datosAjustados.addColumn('number', 'Matrícula');
+        datosAjustados.addColumn({ type: 'string', role: 'annotation' });
         datosAjustados.addColumn({ type: 'string', role: 'style' });
     }
 
@@ -129,9 +143,11 @@ function configurarOpciones() {
 
         if (tipoVisualizacion === 'escuelas') {
             row.push(datosEducativos[i][1]);
+            row.push(datosEducativos[i][1].toString());
             row.push(coloresPorNivel[colorIndex]);
         } else if (tipoVisualizacion === 'alumnos') {
             row.push(datosEducativos[i][2]);
+            row.push(datosEducativos[i][2].toString());
             row.push(coloresPorNivel[colorIndex]);
         }
 
@@ -142,7 +158,7 @@ function configurarOpciones() {
     
     // Definir opciones base del gráfico
     let options = {
-        title: 'Estadística Educativa por Tipo o Nivel Educativo',
+        title: 'Estadística por Tipo o Nivel Educativo - ' + (tipoVisualizacion === 'escuelas' ? 'Escuelas' : 'Matrícula'),
         titleTextStyle: {
             color: '#004990',
             fontSize: 16,
@@ -174,10 +190,22 @@ function configurarOpciones() {
     if (tipoGrafico === 'column') {
         options.vAxis.title = 'Cantidad';
         options.bar = { groupWidth: '70%' };
+        options.annotations = {
+            alwaysOutside: true,
+            textStyle: { fontSize: 11, color: '#333', bold: true },
+            stemColor: 'transparent',
+            stemLength: 0
+        };
     } else if (tipoGrafico === 'bar') {
         options.hAxis.title = 'Cantidad';
         options.vAxis.title = 'Tipo Educativo';
         options.bar = { groupWidth: '70%' };
+        options.annotations = {
+            alwaysOutside: true,
+            textStyle: { fontSize: 11, color: '#333', bold: true },
+            stemColor: 'transparent',
+            stemLength: 0
+        };
     } else if (tipoGrafico === 'pie') {
         options.pieSliceText = 'percentage';
         options.pieSliceTextStyle = { fontSize: 12 };
@@ -449,6 +477,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tipoVisualizacion = this.value;
             const options = configurarOpciones();
             chart = crearGrafico(options);
+            actualizarTituloGrafico();
         });
     });
       // Event listeners para tipo de gráfico
@@ -540,216 +569,33 @@ function initCustomTooltips() {
 }
 
 /**
- * Exporta el gráfico actual como PNG con anotaciones
+ * Exporta el gráfico actual como PNG usando getImageURI() de Google Charts
  */
-async function exportarGraficoComoImagen() {
+function exportarGraficoComoImagen() {
     try {
-        // Verificar que html2canvas esté disponible
-        if (typeof html2canvas === 'undefined') {
-            ExportNotifications.showError('La biblioteca html2canvas no está disponible');
+        if (!chart) {
+            ExportNotifications.showError('No hay gráfico disponible para exportar');
             return;
         }
 
-        ExportNotifications.showInfo('Generando imagen PNG con anotaciones...');
+        const imgURI = chart.getImageURI();
 
-        // Crear gráfico temporal con anotaciones
-        const annotatedChart = await crearGraficoConAnotaciones();
-
-        if (!annotatedChart) {
-            throw new Error('No se pudo crear el gráfico con anotaciones');
-        }
-
-        // Capturar el gráfico con html2canvas
-        const canvas = await html2canvas(annotatedChart, {
-            backgroundColor: '#ffffff',
-            scale: 2,
-            logging: false,
-            useCORS: true,
-            allowTaint: true,
-            foreignObjectRendering: false
-        });
-
-        // Limpiar elemento temporal
-        if (annotatedChart.parentNode) {
-            annotatedChart.parentNode.removeChild(annotatedChart);
-        }
-
-        // Restaurar gráfico original
-        const options = configurarOpciones();
-        chart = crearGrafico(options);
-
-        // Descargar imagen
         const nombreArchivo = FormatUtils.generateFilenameWithDate(
             `Grafico_Educativo_${tipoVisualizacion}`
         ) + '.png';
 
-        canvas.toBlob((blob) => {
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = nombreArchivo;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
+        const link = document.createElement('a');
+        link.href = imgURI;
+        link.download = nombreArchivo;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
 
-            ExportNotifications.showSuccess('Imagen PNG descargada exitosamente');
-        }, 'image/png', 1.0);
+        ExportNotifications.showSuccess('Imagen PNG descargada exitosamente');
 
     } catch (error) {
         console.error('Error al generar PNG:', error);
         ExportNotifications.showError('Error al generar la imagen PNG: ' + error.message);
-    }
-}
-
-/**
- * Crea un gráfico temporal con anotaciones para exportación
- */
-async function crearGraficoConAnotaciones() {
-    try {
-        // Crear contenedor temporal
-        const tempContainer = document.createElement('div');
-        tempContainer.style.cssText = `
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-            width: 800px;
-            height: 500px;
-            background: white;
-            padding: 20px;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        `;
-        document.body.appendChild(tempContainer);
-
-        // Preparar datos con anotaciones
-        let datosConAnotaciones = new google.visualization.DataTable();
-        datosConAnotaciones.addColumn('string', 'Tipo Educativo');
-
-        if (tipoVisualizacion === 'escuelas') {
-            datosConAnotaciones.addColumn('number', 'Escuelas');
-            datosConAnotaciones.addColumn({type: 'string', role: 'annotation'});
-            datosConAnotaciones.addColumn({type: 'string', role: 'style'});
-        } else {
-            datosConAnotaciones.addColumn('number', 'Matrícula');
-            datosConAnotaciones.addColumn({type: 'string', role: 'annotation'});
-            datosConAnotaciones.addColumn({type: 'string', role: 'style'});
-        }
-
-        // Paleta de colores
-        const coloresPorNivel = ['#1A237E', '#3949AB', '#00897B', '#FB8C00', '#E53935', '#5E35B1', '#43A047', '#0288D1', '#00ACC1', '#6A1B9A'];
-
-        // Añadir los datos con anotaciones
-        for (let i = 1; i < datosEducativos.length; i++) {
-            const colorIndex = (i - 1) % coloresPorNivel.length;
-            const valor = tipoVisualizacion === 'escuelas' ? datosEducativos[i][1] : datosEducativos[i][2];
-
-            datosConAnotaciones.addRow([
-                datosEducativos[i][0],
-                valor,
-                valor.toString(),
-                coloresPorNivel[colorIndex]
-            ]);
-        }
-
-        // Configurar opciones con anotaciones según el tipo de gráfico
-        let options = {
-            title: tipoVisualizacion === 'escuelas' ? 'Escuelas por Tipo Educativo' : 'Matrícula por Tipo Educativo',
-            titleTextStyle: {
-                fontSize: 18,
-                bold: true,
-                color: '#333',
-                fontName: 'Arial'
-            },
-            width: 760,
-            height: 460,
-            chartArea: {
-                width: '80%',
-                height: '65%',
-                left: '10%',
-                top: '15%'
-            },
-            backgroundColor: {
-                fill: '#ffffff',
-                stroke: '#f5f5f5',
-                strokeWidth: 1
-            },
-            enableInteractivity: false
-        };
-
-        // Configurar opciones específicas según el tipo de gráfico
-        if (tipoGrafico === 'pie') {
-            options.pieSliceText = 'percentage';
-            options.pieSliceTextStyle = { fontSize: 12, bold: true };
-            options.tooltip = { text: 'both' };
-            options.legend = { position: 'right', textStyle: { fontSize: 11 } };
-            options.sliceVisibilityThreshold = 0; // Muestra todos los porcentajes sin importar el tamaño
-            options.pieResidueSliceLabel = 'Otros';
-        } else {
-            // Para columnas y barras
-            options.legend = { position: 'none' };
-            options.annotations = {
-                alwaysOutside: true,
-                textStyle: {
-                    fontSize: 11,
-                    color: '#333',
-                    fontName: 'Arial',
-                    bold: true
-                },
-                stemColor: 'transparent',
-                stemLength: 0
-            };
-            options.bar = { groupWidth: '70%' };
-
-            if (tipoGrafico === 'column') {
-                options.hAxis = {
-                    title: 'Tipo Educativo',
-                    titleTextStyle: { color: '#333', italic: false, bold: true, fontSize: 12 },
-                    textStyle: { fontSize: 11, color: '#555' }
-                };
-                options.vAxis = {
-                    title: 'Cantidad',
-                    minValue: 0,
-                    titleTextStyle: { color: '#333', italic: false, bold: true, fontSize: 12 },
-                    textStyle: { fontSize: 11, color: '#555' },
-                    format: '#,###'
-                };
-            } else if (tipoGrafico === 'bar') {
-                options.hAxis = {
-                    title: 'Cantidad',
-                    minValue: 0,
-                    titleTextStyle: { color: '#333', italic: false, bold: true, fontSize: 12 },
-                    textStyle: { fontSize: 11, color: '#555' },
-                    format: '#,###'
-                };
-                options.vAxis = {
-                    title: 'Tipo Educativo',
-                    titleTextStyle: { color: '#333', italic: false, bold: true, fontSize: 12 },
-                    textStyle: { fontSize: 11, color: '#555' }
-                };
-            }
-        }
-
-        // Crear y dibujar gráfico temporal según el tipo seleccionado
-        let tempChart;
-        if (tipoGrafico === 'column') {
-            tempChart = new google.visualization.ColumnChart(tempContainer);
-        } else if (tipoGrafico === 'bar') {
-            tempChart = new google.visualization.BarChart(tempContainer);
-        } else if (tipoGrafico === 'pie') {
-            tempChart = new google.visualization.PieChart(tempContainer);
-        }
-
-        tempChart.draw(datosConAnotaciones, options);
-
-        // Esperar a que se renderice
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        return tempContainer;
-
-    } catch (error) {
-        console.error('Error al crear gráfico con anotaciones:', error);
-        return null;
     }
 }
 
