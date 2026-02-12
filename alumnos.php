@@ -375,11 +375,9 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     <div id="resumen-general" class="matricula-panel animate-fade delay-1">
                         <div class="matricula-header">
                             <h3 class="matricula-title"><i class="fas fa-users"></i> Resumen General de Matrícula</h3>
+                            <p><?php echo formatearNombreMunicipio($municipioSeleccionado); ?></p>
                         </div>
                         <div class="matricula-body">
-                            <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
-                                <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
-                            </div>
                             <div class="stats-row">
                                 <div class="stat-box total-general">
                                     <div class="stat-value"><?php echo number_format($totales['general']); ?></div>
@@ -411,11 +409,9 @@ foreach ($datosPorNivel as $nivel => $datos) {
                         <div class="matricula-header">
                             <h3 class="matricula-title"><i class="fas fa-table"></i> Desglose por Tipo de Sostenimiento
                             </h3>
+                            <p><?php echo formatearNombreMunicipio($municipioSeleccionado); ?></p>
                         </div>
                         <div class="matricula-body">
-                            <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
-                                <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
-                            </div>
                             <div class="table-container">
                                 <table id="tabla-matricula" class="data-table">
                                     <thead>
@@ -494,16 +490,14 @@ foreach ($datosPorNivel as $nivel => $datos) {
                             </div>
                         </div>
                         <div class="matricula-body">
-                            <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
-                                <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
-                            </div>
                             <?php if ($tieneDatos && !empty($datosPublicoPrivado)): ?>
                                 <div class="totales-municipales-container">
                                     <!-- Resumen de Totales Municipales -->
                                     <div class="totales-resumen">
-                                        <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-primary);">
+                                        <h3 style="text-align: center; margin-bottom: 8px; color: var(--text-primary);">
                                             <i class="fas fa-chart-bar"></i> Resumen General del Municipio
                                         </h3>
+                                        <p style="text-align: center; margin-bottom: 16px;"><?php echo formatearNombreMunicipio($municipioSeleccionado); ?></p>
                                         <div class="totales-generales-grid">
                                             <div class="total-municipal-card">
                                                 <div class="total-icono">
@@ -594,11 +588,9 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     <div id="analisis-genero" class="matricula-panel animate-fade delay-2">
                         <div class="matricula-header">
                             <h3 class="matricula-title"><i class="fas fa-venus-mars"></i> Resumen General por Sexo</h3>
+                            <p><?php echo formatearNombreMunicipio($municipioSeleccionado); ?></p>
                         </div>
                         <div class="matricula-body">
-                            <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
-                                <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
-                            </div>
                             <div class="stats-row">
                                 <?php
                                 // Calcular totales de hombres y mujeres
@@ -641,11 +633,9 @@ foreach ($datosPorNivel as $nivel => $datos) {
                     <div class="matricula-panel animate-fade delay-4 matricula-genero">
                         <div class="matricula-header">
                             <h3 class="matricula-title"><i class="fas fa-venus-mars"></i> Matrícula por Sexo</h3>
+                            <p><?php echo formatearNombreMunicipio($municipioSeleccionado); ?></p>
                         </div>
                         <div class="matricula-body">
-                            <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
-                                <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
-                            </div>
                             <div class="table-container">
                                 <table class="data-table">
                                     <thead>
@@ -705,10 +695,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
 
                     <!-- Tabla detallada por subnivel educativo -->
                     <div id="tabla-detallada-alumnos" class="detailed-table animate-fade delay-6">
-                        <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
-                            <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
-                        </div>
                         <h4>Detalle por Servicio Educativo</h4>
+                        <p><?php echo formatearNombreMunicipio($municipioSeleccionado); ?></p>
                         <p class="note-info">
                             <i class="fas fa-info-circle"></i>
                             <strong>Nota:</strong> El servicio "General" contabiliza tanto alumnos de escuelas públicas
@@ -893,11 +881,9 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                 <i class="fas fa-hands-helping"></i> USAER - Unidad de Servicios de Apoyo a la Educación
                                 Regular
                             </h3>
+                            <p><?php echo formatearNombreMunicipio($municipioSeleccionado); ?></p>
                         </div>
                         <div class="matricula-body">
-                            <div class="municipio-acento"><i class="fas fa-map-marker-alt"></i> Municipio activo:
-                                <?php echo formatearNombreMunicipio($municipioSeleccionado); ?>
-                            </div>
                             <p class="usaer-subtitle">
                                 Datos informativos de las Unidades de Servicios de Apoyo a la Educación Regular.
                                 Estos datos no se suman en los totales municipales ya que atienden a alumnos contabilizados
