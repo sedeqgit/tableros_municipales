@@ -738,3 +738,92 @@
     letter-spacing: 0.06em;
     line-height: 1;
 }
+
+/* =============================================================================
+   TEMA: Selector de paleta de colores
+   ============================================================================= */
+
+.theme-picker {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.theme-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem 1rem;
+    border: 2px solid var(--medium-gray, #e9ecef);
+    border-radius: var(--border-radius-md, 12px);
+    background: var(--white, #fff);
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+
+.theme-card:hover {
+    border-color: var(--tertiary-gray, #707F8F);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.theme-card.active {
+    border-color: var(--secondary-blue, #4996C4);
+    box-shadow: 0 0 0 3px rgba(73, 150, 196, 0.18);
+}
+
+.theme-swatch-strip {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+}
+
+.theme-swatch-strip span {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.theme-card-info {
+    text-align: center;
+    line-height: 1.4;
+}
+
+.theme-card-info strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--text-primary, #242B57);
+}
+
+.theme-card-info small {
+    color: var(--text-secondary, #707F8F);
+    font-size: 0.8rem;
+}
+
+.theme-check {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 1.15rem;
+    color: var(--secondary-blue, #4996C4);
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.theme-card.active .theme-check {
+    opacity: 1;
+    transform: scale(1);
+}
+
+@media (max-width: 560px) {
+    .theme-picker {
+        grid-template-columns: 1fr;
+    }
+}

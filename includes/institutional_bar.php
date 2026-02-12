@@ -13,6 +13,12 @@
  */
 require_once __DIR__ . '/../headers/headers.php';
 ?>
+<script>
+(function(){
+    var t = localStorage.getItem('sedeq_theme');
+    if(t === 'veda') document.documentElement.dataset.theme = 'veda';
+})();
+</script>
 <!-- ============================================================================ -->
 <!-- BARRA SUPERIOR INSTITUCIONAL                                                -->
 <!-- ============================================================================ -->

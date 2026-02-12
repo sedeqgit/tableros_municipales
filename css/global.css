@@ -1867,3 +1867,87 @@ body:has(.sidebar.active) .menu-btn i {
         display: none !important;
     }
 }
+
+/* =============================================================================
+   CHART COLOR VARIABLES — Default (azules institucionales)
+   ============================================================================= */
+:root {
+    --chart-1: #4996C4;
+    --chart-2: #242B57;
+    --chart-3: #7CC6D8;
+    --chart-4: #9D2449;
+    --chart-5: #D4AF37;
+    --chart-6: #707F8F;
+    --chart-7: #FF3E8D;
+    --chart-8: #17a2b8;
+}
+
+/* =============================================================================
+   TEMA: PERIODO DE VEDA — PANTONE 7544 C
+   Paleta de grises neutros con acentos tierra
+   ============================================================================= */
+
+html {
+    transition: filter 0.3s ease;
+}
+
+body,
+.main-header,
+.top-institutional-bar {
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+[data-theme="veda"] {
+    /* COLORS — Overrides principales */
+    --primary-blue: #384050;
+    --secondary-blue: #718594;
+    --tertiary-gray: #8D9EAB;
+    --accent-aqua: #48B89A;
+    --accent-magenta: #E87878;
+    --accent-red: #8C96B5;
+    --accent-gold: #E8BE60;
+
+    /* TEXT COLORS */
+    --text-primary: #384050;
+    --text-secondary: #718594;
+    --text-accent: #8C96B5;
+
+    /* LIGHT VARIANTS */
+    --light-blue: rgba(113, 133, 148, 0.10);
+    --light-aqua: rgba(72, 184, 154, 0.12);
+    --light-magenta: rgba(232, 120, 120, 0.10);
+
+    /* SHADOWS — Adjusted for neutral tone */
+    --shadow-sm: 0 2px 4px rgba(56, 64, 80, 0.08);
+    --shadow-md: 0 4px 8px rgba(56, 64, 80, 0.12);
+    --shadow-lg: 0 8px 16px rgba(56, 64, 80, 0.15);
+    --shadow-xl: 0 12px 24px rgba(56, 64, 80, 0.20);
+
+    /* CHART COLORS — Tierras y neutros */
+    --chart-1: #D4A679;
+    --chart-2: #9C9080;
+    --chart-3: #C4B08C;
+    --chart-4: #D4A8B0;
+    --chart-5: #B8C54E;
+    --chart-6: #718594;
+    --chart-7: #48B89A;
+    --chart-8: #E8BE60;
+}
+
+/* Overrides de componentes fijos para tema Veda */
+[data-theme="veda"] .top-institutional-bar {
+    background: #718594;
+}
+
+[data-theme="veda"] .top-top-ft2 {
+    background: #8D9EAB;
+    background-image: none;
+}
+
+[data-theme="veda"] .top-footer2 {
+    background-color: #718594;
+}
+
+[data-theme="veda"] .bottom-footer2 {
+    background-color: #384050;
+}

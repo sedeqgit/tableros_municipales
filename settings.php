@@ -201,6 +201,50 @@ $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
                     <div class="container-fluid">
                         <!-- Contenido de configuración -->
                         <div class="settings-container animate-fade">
+
+                            <!-- Sección: Apariencia del Sistema -->
+                            <div class="settings-panel animate-up delay-1">
+                                <h2 class="settings-title"><i class="fas fa-palette"></i> Apariencia del Sistema</h2>
+                                <div class="settings-content">
+                                    <p class="form-text text-muted">Selecciona la paleta de colores del sistema.</p>
+                                    <div class="theme-picker">
+
+                                        <!-- Tarjeta: Institucional (default) -->
+                                        <div class="theme-card active" data-theme="default">
+                                            <div class="theme-swatch-strip">
+                                                <span style="background:#242B57"></span>
+                                                <span style="background:#4996C4"></span>
+                                                <span style="background:#7CC6D8"></span>
+                                                <span style="background:#9D2449"></span>
+                                                <span style="background:#D4AF37"></span>
+                                            </div>
+                                            <div class="theme-card-info">
+                                                <strong>Institucional</strong>
+                                                <small>Paleta oficial SEDEQ</small>
+                                            </div>
+                                            <span class="theme-check"><i class="fas fa-check-circle"></i></span>
+                                        </div>
+
+                                        <!-- Tarjeta: Periodo de Veda -->
+                                        <div class="theme-card" data-theme="veda">
+                                            <div class="theme-swatch-strip">
+                                                <span style="background:#384050"></span>
+                                                <span style="background:#718594"></span>
+                                                <span style="background:#A9B8C2"></span>
+                                                <span style="background:#48B89A"></span>
+                                                <span style="background:#E8BE60"></span>
+                                            </div>
+                                            <div class="theme-card-info">
+                                                <strong>Periodo de Veda</strong>
+                                                <small>Paleta PANTONE 7544 C</small>
+                                            </div>
+                                            <span class="theme-check"><i class="fas fa-check-circle"></i></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Sección: Preferencias -->
                             <div class="settings-panel animate-up delay-2">
                                 <h2 class="settings-title"><i class="fas fa-sliders-h"></i> Preferencias del Sistema

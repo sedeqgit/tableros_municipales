@@ -291,3 +291,38 @@ document.addEventListener('DOMContentLoaded', function() {
     // Estado inicial (refleja valor PHP actual)
     updateStepper(parseInt(hiddenInput.value, 10));
 })();
+
+/* =============================================================================
+   THEME SWITCHER — Cambio de paleta con localStorage
+   ============================================================================= */
+
+const ThemeSwitcher = {
+    STORAGE_KEY: 'sedeq_theme',
+    DEFAULT: 'default',
+
+    apply(theme) {
+        document.documentElement.dataset.theme = (theme === 'veda') ? 'veda' : '';
+        localStorage.setItem(this.STORAGE_KEY, theme);
+        this.updateUI(theme);
+    },
+
+    load() {
+        const saved = localStorage.getItem(this.STORAGE_KEY) || this.DEFAULT;
+        this.apply(saved);
+    },
+
+    updateUI(theme) {
+        document.querySelectorAll('.theme-card').forEach(card => {
+            card.classList.toggle('active', card.dataset.theme === theme);
+        });
+    },
+
+    init() {
+        this.load();
+        document.querySelectorAll('.theme-card').forEach(card => {
+            card.addEventListener('click', () => this.apply(card.dataset.theme));
+        });
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => ThemeSwitcher.init());
