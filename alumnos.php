@@ -243,6 +243,7 @@ foreach ($datosPorNivel as $nivel => $datos) {
             <!-- Menú de navegación horizontal (desktop) -->
             <div class="header-nav">
                 <nav>
+                    <a href="home.php" class="header-nav-link ">Inicio</a>
                     <a href="resumen.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>"
                         class="header-nav-link">Resumen</a>
                     <a href="escuelas_detalle.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>"
@@ -432,13 +433,16 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                             ?>
                                             <tr>
                                                 <td class="nivel-nombre"><?php echo $nivel; ?></td>
-                                                <td class="total-nivel"><?php echo number_format($datos['total'] ?? 0); ?></td>
-                                                <td class="sector-publico"><?php echo number_format($datos['publico'] ?? 0); ?>
+                                                <td class="total-nivel"><?php echo number_format($datos['total'] ?? 0); ?>
+                                                </td>
+                                                <td class="sector-publico">
+                                                    <?php echo number_format($datos['publico'] ?? 0); ?>
                                                 </td>
                                                 <td class="porcentaje-publico">
                                                     <?php echo formatPercent($porcentajePublico); ?>%
                                                 </td>
-                                                <td class="sector-privado"><?php echo number_format($datos['privado'] ?? 0); ?>
+                                                <td class="sector-privado">
+                                                    <?php echo number_format($datos['privado'] ?? 0); ?>
                                                 </td>
                                                 <td class="porcentaje-privado">
                                                     <?php echo formatPercent($porcentajePrivado); ?>%
@@ -497,7 +501,8 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                         <h3 style="text-align: center; margin-bottom: 8px; color: var(--text-primary);">
                                             <i class="fas fa-chart-bar"></i> Resumen General del Municipio
                                         </h3>
-                                        <p style="text-align: center; margin-bottom: 16px;"><?php echo formatearNombreMunicipio($municipioSeleccionado); ?></p>
+                                        <p style="text-align: center; margin-bottom: 16px;">
+                                            <?php echo formatearNombreMunicipio($municipioSeleccionado); ?></p>
                                         <div class="totales-generales-grid">
                                             <div class="total-municipal-card">
                                                 <div class="total-icono">

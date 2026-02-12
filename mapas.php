@@ -163,6 +163,7 @@ function formatearNombreMunicipio($municipio)
             <!-- Menú de navegación horizontal (desktop) -->
             <div class="header-nav">
                 <nav>
+                    <a href="home.php" class="header-nav-link ">Inicio</a>
                     <a href="resumen.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>"
                         class="header-nav-link">Resumen</a>
                     <a href="escuelas_detalle.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>"

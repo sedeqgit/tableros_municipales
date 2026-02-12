@@ -469,7 +469,7 @@ $infoCiclo = obtenerInfoCicloEscolar();
                     <div class="matricula-header">
                         <h3 class="matricula-title">
                             <i class="fas fa-building"></i>
-                            Directorio de Escuelas Privadas - Estado de Querétaroooooooooooo
+                            Directorio de Escuelas Privadas - Estado de Querétaro
                         </h3>
                     </div>
                     <div class="matricula-body">

@@ -433,7 +433,8 @@ $datosEducativos = $datosCompletosMunicipio;
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 </head>
 
 <body class="fixed-header-page">
@@ -450,6 +451,7 @@ $datosEducativos = $datosCompletosMunicipio;
             <!-- Menú de navegación horizontal (desktop) -->
             <div class="header-nav">
                 <nav>
+                    <a href="home.php" class="header-nav-link ">Inicio</a>
                     <a href="resumen.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>"
                         class="header-nav-link">Resumen</a>
                     <!-- Escuelas con dropdown -->
@@ -603,7 +605,8 @@ $datosEducativos = $datosCompletosMunicipio;
 
                             <div class="level-bars animate-sequence">
                                 <div class="nivel-header">
-                                    <h4>Distribución por Tipo o Nivel Educativo</h4>
+                                    <h4>Distribución por Tipo o Nivel Educativo (Orden Incorrecto en código de colores,
+                                        en reparación)</h4>
 
 
                                     <div class="view-toggle-buttons">

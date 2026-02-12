@@ -279,6 +279,7 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
             <!-- Menú de navegación horizontal (desktop) -->
             <div class="header-nav">
                 <nav>
+                    <a href="home.php" class="header-nav-link ">Inicio</a>
                     <!-- Resumen con dropdown -->
                     <div class="nav-dropdown">
                         <a href="resumen.php?municipio=<?php echo urlencode($municipioSeleccionado); ?>"
@@ -444,7 +445,9 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
 
                         <div class="card chart-card animate-fade delay-4">
                             <div class="card-header">
-                                <h2 class="panel-title"><i class="fas fa-chart-bar"></i> <span id="chart-section-title">Estadística por Tipo o Nivel Educativo - Escuelas</span></h2>
+                                <h2 class="panel-title"><i class="fas fa-chart-bar"></i> <span
+                                        id="chart-section-title">Estadística por Tipo o Nivel Educativo -
+                                        Escuelas</span></h2>
                                 <div class="export-buttons">
                                     <button id="export-chart-btn" class="export-button" title="Exportar gráfico">
                                         <i class="fas fa-download"></i> Exportar
@@ -473,7 +476,8 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                             <?php echo number_format($totalAlumnos, 0, '.', ','); ?>
                                         </p>
                                         <p class="metric-change" id="metricDeclineChange">
-                                            <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?> </p>
+                                            <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?>
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="metric animate-left delay-1">
@@ -492,7 +496,8 @@ $totalesDocentes = calcularTotalesDocentes($datosDocentes);
                                             <?php echo number_format($totalEscuelas, 0, '.', ','); ?>
                                         </p>
                                         <p class="metric-change" id="metricGrowthChange">
-                                            <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?> </p>
+                                            <?php echo obtenerInfoCicloEscolar()['ciclo_completo']; ?>
+                                        </p>
                                     </div>
                                 </div>
                                 <div class="metric">
