@@ -22,16 +22,8 @@
 // CONFIGURACIÓN E INICIALIZACIÓN DEL SISTEMA
 // =============================================================================
 
-// Incluir el helper de sesiones para manejo de autenticación
-require_once 'session_helper.php';
-
-// Inicializar sesión y configurar usuario de demostración si es necesario
-iniciarSesionDemo();
-
-// CONFIGURACIÓN DE DEPURACIÓN (remover en producción)
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// Incluir módulo de conexión
+require_once 'conexion.php';
 
 // =============================================================================
 // OBTENCIÓN DE PARÁMETROS Y VALIDACIÓN

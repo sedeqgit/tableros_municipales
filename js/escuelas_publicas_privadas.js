@@ -317,10 +317,152 @@ document.addEventListener('DOMContentLoaded', function() {
     // Instancia Chart.js (se destruye antes de redibujar)
     let pieChartInstance = null;
 
-    // Registrar el plugin datalabels globalmente
-    if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
-        Chart.register(ChartDataLabels);
-    }
+    // Plugin personalizado para etiquetas con líneas guía y anti-superposición
+    const outsideLabelsPlugin = {
+        id: 'outsideLabels',
+        afterDraw: function(chart) {
+            var ctx = chart.ctx;
+            var meta = chart.getDatasetMeta(0);
+            if (!meta || !meta.data || meta.data.length === 0) return;
+
+            var dataset = chart.data.datasets[0];
+            var total = dataset.data.reduce(function(a, b) { return a + b; }, 0);
+            if (total === 0) return;
+
+            var chartArea = chart.chartArea;
+            var centerX = (chartArea.left + chartArea.right) / 2;
+            var centerY = (chartArea.top + chartArea.bottom) / 2;
+            var radius = Math.min(chartArea.right - chartArea.left, chartArea.bottom - chartArea.top) / 2;
+
+            // Recopilar info de cada porción
+            var items = [];
+            for (var i = 0; i < meta.data.length; i++) {
+                var arc = meta.data[i];
+                var value = dataset.data[i];
+                if (value <= 0) continue;
+                var pct = ((value / total) * 100).toFixed(2);
+                var midAngle = (arc.startAngle + arc.endAngle) / 2;
+                var label = chart.data.labels[i] + ': ' + pct + '%';
+                var color = dataset.backgroundColor[i];
+                var isRight = Math.cos(midAngle) >= 0;
+
+                // Medir texto
+                ctx.font = 'bold 11px sans-serif';
+                var textW = ctx.measureText(label).width;
+                var boxW = textW + 16;
+                var boxH = 22;
+
+                // Punto en el borde del arco
+                var edgeX = centerX + Math.cos(midAngle) * radius;
+                var edgeY = centerY + Math.sin(midAngle) * radius;
+
+                // Punto de la etiqueta (extendido)
+                var lineLen = 30;
+                var labelX = centerX + Math.cos(midAngle) * (radius + lineLen);
+                var labelY = centerY + Math.sin(midAngle) * (radius + lineLen);
+
+                items.push({
+                    midAngle: midAngle,
+                    edgeX: edgeX,
+                    edgeY: edgeY,
+                    labelX: labelX,
+                    labelY: labelY,
+                    label: label,
+                    color: color,
+                    isRight: isRight,
+                    boxW: boxW,
+                    boxH: boxH
+                });
+            }
+
+            // Separar en dos columnas: izquierda y derecha
+            var leftItems = items.filter(function(it) { return !it.isRight; });
+            var rightItems = items.filter(function(it) { return it.isRight; });
+
+            // Ordenar por posición Y
+            leftItems.sort(function(a, b) { return a.labelY - b.labelY; });
+            rightItems.sort(function(a, b) { return a.labelY - b.labelY; });
+
+            // Resolver superposición vertical
+            function resolveOverlap(arr, minGap) {
+                for (var pass = 0; pass < 10; pass++) {
+                    var changed = false;
+                    for (var j = 1; j < arr.length; j++) {
+                        var prev = arr[j - 1];
+                        var curr = arr[j];
+                        var overlap = (prev.labelY + prev.boxH / 2 + minGap) - (curr.labelY - curr.boxH / 2);
+                        if (overlap > 0) {
+                            prev.labelY -= overlap / 2;
+                            curr.labelY += overlap / 2;
+                            changed = true;
+                        }
+                    }
+                    if (!changed) break;
+                }
+            }
+
+            resolveOverlap(leftItems, 4);
+            resolveOverlap(rightItems, 4);
+
+            // Dibujar etiquetas y líneas
+            var allItems = leftItems.concat(rightItems);
+            for (var k = 0; k < allItems.length; k++) {
+                var it = allItems[k];
+
+                // Posición X final de la etiqueta (alineada al borde del canvas)
+                var finalX;
+                if (it.isRight) {
+                    finalX = chartArea.right + 15;
+                } else {
+                    finalX = chartArea.left - 15 - it.boxW;
+                }
+                var finalY = it.labelY;
+
+                // Punto de quiebre de la línea (codo)
+                var elbowX = it.isRight ? finalX - 5 : finalX + it.boxW + 5;
+                var elbowY = finalY;
+
+                // Dibujar línea guía (del borde del arco al codo y al label)
+                ctx.save();
+                ctx.strokeStyle = it.color;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(it.edgeX, it.edgeY);
+                ctx.lineTo(elbowX, elbowY);
+                ctx.stroke();
+                ctx.restore();
+
+                // Dibujar caja con fondo de color
+                ctx.save();
+                ctx.fillStyle = it.color;
+                var bx = finalX;
+                var by = finalY - it.boxH / 2;
+                var br = 4;
+                ctx.beginPath();
+                ctx.moveTo(bx + br, by);
+                ctx.lineTo(bx + it.boxW - br, by);
+                ctx.quadraticCurveTo(bx + it.boxW, by, bx + it.boxW, by + br);
+                ctx.lineTo(bx + it.boxW, by + it.boxH - br);
+                ctx.quadraticCurveTo(bx + it.boxW, by + it.boxH, bx + it.boxW - br, by + it.boxH);
+                ctx.lineTo(bx + br, by + it.boxH);
+                ctx.quadraticCurveTo(bx, by + it.boxH, bx, by + it.boxH - br);
+                ctx.lineTo(bx, by + br);
+                ctx.quadraticCurveTo(bx, by, bx + br, by);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+
+                // Dibujar texto
+                ctx.save();
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(it.label, bx + it.boxW / 2, finalY);
+                ctx.restore();
+            }
+        }
+    };
 
     // Función para crear el gráfico de pie por nivel educativo (Chart.js)
     function crearGraficoPieNivel(tipo = 'total') {
@@ -355,12 +497,14 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Mapeo de colores por nivel educativo
+        // Mapeo de colores por nivel educativo (mismo orden y colores que resumen.php / script.js)
         const coloresPorNivel = {
             'Inicial (Escolarizado)': '#1A237E',
             'Inicial (No Escolarizado)': '#3949AB',
             'Especial (CAM)': '#00897B',
+            'Especial CAM': '#00897B',
             'Especial (USAER)': '#FB8C00',
+            'Especial USAER': '#FB8C00',
             'Preescolar': '#E53935',
             'Primaria': '#5E35B1',
             'Secundaria': '#43A047',
@@ -381,6 +525,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const ctx = canvas.getContext('2d');
+
         pieChartInstance = new Chart(ctx, {
             type: 'pie',
             data: {
@@ -389,52 +534,33 @@ document.addEventListener('DOMContentLoaded', function() {
                     data: data,
                     backgroundColor: backgroundColor,
                     borderWidth: 2,
-                    borderColor: '#fff',
-                    clip: false  // permitir que las etiquetas se rendericen fuera del canvas
+                    borderColor: '#fff'
                 }]
             },
+            plugins: [outsideLabelsPlugin],
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
-                // Más padding arriba para que la leyenda no tape las etiquetas callout
-                layout: { padding: { top: 70, bottom: 70, left: 90, right: 90 } },
+                layout: { padding: { top: 30, bottom: 30, left: 200, right: 200 } },
                 plugins: {
                     legend: {
-                        position: 'bottom',
+                        position: 'top',
                         labels: {
                             usePointStyle: true,
-                            padding: 20,
+                            padding: 16,
                             font: { size: 12 }
                         }
                     },
                     datalabels: {
-                        display: function(ctx) {
-                            return ctx.dataset.data[ctx.dataIndex] > 0;
-                        },
-                        anchor: 'end',
-                        align: 'end',
-                        offset: 12,
-                        formatter: function(value, ctx) {
-                            const total = ctx.dataset.data.reduce(function(a, b) { return a + b; }, 0);
-                            const pct = ((value / total) * 100).toFixed(1);
-                            return ctx.chart.data.labels[ctx.dataIndex] + '\n' + pct + '%';
-                        },
-                        backgroundColor: function(ctx) {
-                            return ctx.dataset.backgroundColor[ctx.dataIndex];
-                        },
-                        borderRadius: 4,
-                        color: '#fff',
-                        font: { weight: 'bold', size: 11 },
-                        padding: { top: 4, bottom: 4, left: 8, right: 8 },
-                        textAlign: 'center'
+                        display: false
                     },
                     tooltip: {
                         callbacks: {
                             label: function(tooltipItem) {
-                                const dataset = tooltipItem.dataset;
-                                const total = dataset.data.reduce(function(a, b) { return a + b; }, 0);
-                                const value = dataset.data[tooltipItem.dataIndex];
-                                const pct = ((value / total) * 100).toFixed(2);
+                                var dataset = tooltipItem.dataset;
+                                var total = dataset.data.reduce(function(a, b) { return a + b; }, 0);
+                                var value = dataset.data[tooltipItem.dataIndex];
+                                var pct = ((value / total) * 100).toFixed(2);
                                 return tooltipItem.label + ': ' + value + ' (' + pct + '%)';
                             }
                         }

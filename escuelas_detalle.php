@@ -35,11 +35,8 @@
 // CONFIGURACIÓN E INICIALIZACIÓN DEL SISTEMA
 // =============================================================================
 
-// Incluir el helper de sesiones para manejo de autenticación
-require_once 'session_helper.php';
-
-// Inicializar sesión y configurar usuario de demostración si es necesario
-iniciarSesionDemo();
+// Incluir módulo de conexión
+require_once 'conexion.php';
 
 // CONFIGURACIÓN DE DEPURACIÓN (remover en producción)
 ini_set('display_errors', 1);
@@ -62,19 +59,7 @@ if (!in_array($municipioSeleccionado, $municipiosValidos)) {
     $municipioSeleccionado = 'QUERÉTARO'; // Fallback a Querétaro si el municipio no es válido
 }
 
-/**
- * Formatea nombres de municipios para display en formato título
- */
-function formatearNombreMunicipio($municipio)
-{
-    // Convertir de mayúsculas a formato título
-    $formatted = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
-
-    // Correcciones específicas para preposiciones y artículos
-    $formatted = str_replace([' De ', ' Del ', ' El '], [' de ', ' del ', ' El '], $formatted);
-
-    return $formatted;
-}
+require_once 'includes/helpers.php';
 
 // =============================================================================
 // OBTENCIÓN Y PROCESAMIENTO DE DATOS EDUCATIVOS
@@ -605,8 +590,7 @@ $datosEducativos = $datosCompletosMunicipio;
 
                             <div class="level-bars animate-sequence">
                                 <div class="nivel-header">
-                                    <h4>Distribución por Tipo o Nivel Educativo (Orden Incorrecto en código de colores,
-                                        en reparación)</h4>
+                                    <h4>Distribución por Tipo o Nivel Educativo</h4>
 
 
                                     <div class="view-toggle-buttons">
@@ -755,7 +739,7 @@ $datosEducativos = $datosCompletosMunicipio;
 
                                 <!-- Vista Gráfico (Visible por defecto) -->
                                 <div id="vista-grafico" class="visualization-container">
-                                    <canvas id="pie-chart-nivel" style="width: 100%; height: 680px;"></canvas>
+                                    <canvas id="pie-chart-nivel" style="width: 100%; height: 750px;"></canvas>
                                 </div>
                                 <!-- Fin Vista Gráfico -->
                             </div>

@@ -16,11 +16,6 @@
 // Incluir archivo de conexión de prueba
 require_once 'conexion.php';
 
-// Inicializar sesión simple para pruebas
-if (!isset($_SESSION)) {
-    session_start();
-}
-
 // Obtener lista de municipios
 $todosLosMunicipios = obtenerMunicipiosPrueba2024();
 sort($todosLosMunicipios);
@@ -63,15 +58,7 @@ if ($numMunicipios >= 2) {
     }
 }
 
-/**
- * Formatea nombres de municipios para display
- */
-function formatearNombreMunicipio($municipio)
-{
-    $formatted = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
-    $formatted = str_replace([' De ', ' Del ', ' El '], [' de ', ' del ', ' El '], $formatted);
-    return $formatted;
-}
+require_once 'includes/helpers.php';
 
 /**
  * Calcula porcentaje de diferencia entre dos valores

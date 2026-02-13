@@ -895,18 +895,6 @@ function str_consulta_segura($str_consulta, $ini_ciclo, $filtro)
             // No se puede resolver con una consulta SQL directa
             return 'SPECIAL_PROCESSING_REQUIRED';
 
-        case 'especial_tot':
-            // PRUEBA TEMPORAL: Forzar valor para verificar cache
-            return "SELECT 'ESPECIAL (CAM)' AS titulo_fila,
-                        999 AS total_matricula,
-                        500 AS mat_hombres,
-                        499 AS mat_mujeres,
-                        50 AS total_docentes,
-                        25 AS doc_hombres,
-                        25 AS doc_mujeres,
-                        10 AS escuelas,
-                        100 AS grupos";
-
         // ===== CONSULTAS PARA DIRECTORIO DE ESCUELAS INDIVIDUALES =====
         case 'gral_ini_directorio':
             return "SELECT cv_cct,
@@ -3558,47 +3546,6 @@ function convertirParaConsultaDB($nombreMunicipio)
 }
 
 /**
- * Función principal de arreglos_datos replicando exactamente bolsillo
- * @param string $ini_ciclo 
- * @param string $str_consulta
- * @param string $muni
- * @return array|false
- */
-function arreglos_datos_segura($ini_ciclo, $str_consulta, $muni)
-{
-    global $sin_filtro_extra, $filtro_pub, $filtro_priv;
-
-    // Generar filtro de municipio como bolsillo
-    $num_muni = nombre_a_numero_municipio($muni);
-    $filtro = ($num_muni !== false) ? " AND cv_mun='$num_muni' " : "";
-
-    // Obtener conexión
-    $link = ConectarsePrueba();
-    if (!$link)
-        return false;
-
-    // Base de datos - usar función rs_consulta_segura con argumentos correctos
-    $c = rs_consulta_segura($link, $str_consulta, $ini_ciclo, $filtro);
-    if (!$c) {
-        pg_close($link);
-        return false;
-    }
-
-    // Aplica subniveles como bolsillo con argumentos correctos  
-    $resultado = array();
-    $c_pub = subnivel_seguro($link, $str_consulta, $ini_ciclo, $filtro . $filtro_pub, "", "", "");
-    $c_priv = subnivel_seguro($link, $str_consulta, $ini_ciclo, $filtro . $filtro_priv, "", "", "");
-
-    // Estructura de resultado igual que bolsillo
-    $resultado['total'] = $c;
-    $resultado['publico'] = $c_pub;
-    $resultado['privado'] = $c_priv;
-
-    pg_close($link);
-    return $resultado;
-}
-
-/**
  * Obtiene el resumen completo de todos los municipios del estado (totales estatales)
  * Para calcular porcentajes municipio vs estado
  * 
@@ -3902,14 +3849,6 @@ function obtenerDirectorioEscuelas($municipio, $nivel_educativo, $ini_ciclo = nu
         }
 
 
-        // Es hora de hacerse pendejo
-
-        /*
-        Salias de un templo un día,
-        Llorona
-
-
-        */
         pg_free_result($result);
         pg_close($link);
 

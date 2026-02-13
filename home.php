@@ -31,13 +31,6 @@
 // CONFIGURACIÓN DE SESIÓN Y AUTENTICACIÓN
 // =============================================================================
 
-// Incluir helper de gestión de sesiones con modo demo
-require_once 'session_helper.php';
-
-// Inicializar sesión y configurar usuario demo si es necesario
-// Esta función maneja tanto sesiones reales como modo demostración
-iniciarSesionDemo();
-
 // =============================================================================
 // CONEXIÓN A BASE DE DATOS Y OBTENCIÓN DE DATOS
 // =============================================================================
@@ -94,20 +87,7 @@ $primerosCuatroMunicipios = array_slice($todosLosMunicipiosOrdenados, 0, 10); //
 // Filtrar municipios adicionales (excluyendo los primeros 10)
 $municipiosAdicionales = array_slice($todosLosMunicipiosOrdenados, 10);
 
-/**
- * Formatea nombres de municipios para display en formato título
- * Convierte de MAYÚSCULAS (nuestro formato interno) a Formato Título para mostrar
- */
-function formatearNombreMunicipio($municipio)
-{
-    // Convertir de mayúsculas a formato título
-    $formatted = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
-
-    // Correcciones específicas para preposiciones y artículos
-    $formatted = str_replace([' De ', ' Del ', ' El '], [' de ', ' del ', ' El '], $formatted);
-
-    return $formatted;
-}
+require_once 'includes/helpers.php';
 
 /**
  * Obtiene datos básicos de un municipio usando la nueva estructura de conexión

@@ -22,12 +22,6 @@
 // CONFIGURACIÓN E INICIALIZACIÓN DEL SISTEMA
 // =============================================================================
 
-// Incluir el helper de sesiones para manejo de autenticación
-require_once 'session_helper.php';
-
-// Inicializar sesión y configurar usuario de demostración si es necesario
-iniciarSesionDemo();
-
 // Incluir archivo de conexión actualizado
 require_once 'conexion.php';
 
@@ -114,19 +108,7 @@ $mapaActual = obtenerMapaMunicipio($municipioSeleccionado);
 $urlMapaIframe = $mapaActual ? $mapaActual['url'] : '';
 $tieneMapaDisponible = !empty($urlMapaIframe);
 
-/**
- * Formatea nombres de municipios para display en formato título
- */
-function formatearNombreMunicipio($municipio)
-{
-    // Convertir de mayúsculas a formato título
-    $formatted = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
-
-    // Correcciones específicas para preposiciones y artículos
-    $formatted = str_replace([' De ', ' Del ', ' El '], [' de ', ' del ', ' El '], $formatted);
-
-    return $formatted;
-}
+require_once 'includes/helpers.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">

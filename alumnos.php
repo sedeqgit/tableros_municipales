@@ -29,12 +29,6 @@
 // CONFIGURACIÓN E INICIALIZACIÓN DEL SISTEMA
 // =============================================================================
 
-// Incluir el helper de sesiones para manejo de autenticación
-require_once 'session_helper.php';
-
-// Inicializar sesión y configurar usuario de demostración si es necesario
-iniciarSesionDemo();
-
 // Incluir módulo de conexión actualizado para consultas dinámicas
 require_once 'conexion.php';
 
@@ -51,24 +45,7 @@ if (!in_array($municipioSeleccionado, $municipiosValidos)) {
     $municipioSeleccionado = 'CORREGIDORA'; // Fallback a Corregidora si el municipio no es válido
 }
 
-/**
- * Formatea nombres de municipios para display en formato título
- */
-function formatearNombreMunicipio($municipio)
-{
-    // Convertir de mayúsculas a formato título
-    $formatted = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
-
-    // Correcciones específicas para preposiciones y artículos
-    $formatted = str_replace([' De ', ' Del ', ' El '], [' de ', ' del ', ' El '], $formatted);
-
-    return $formatted;
-}
-
-function formatPercent($value, $decimals = 2)
-{
-    return number_format((float) $value, $decimals, '.', ',');
-}
+require_once 'includes/helpers.php';
 
 // =============================================================================
 // PROCESAMIENTO DE DATOS DE MATRÍCULA
@@ -730,67 +707,6 @@ foreach ($datosPorNivel as $nivel => $datos) {
                                 </thead>
                                 <tbody>
                                     <?php
-                                    // Reutilizar función de ordenamiento de docentes.php
-                                    function obtenerOrdenSubnivel($nivel, $subnivel)
-                                    {
-                                        $nivel = strtolower($nivel);
-                                        $subnivel = strtolower($subnivel);
-
-                                        // INICIAL ESCOLARIZADA
-                                        if (strpos($nivel, 'inicial') !== false && strpos($nivel, 'escolarizada') !== false)
-                                            return 1;
-
-                                        // INICIAL NO ESCOLARIZADA
-                                        if (strpos($nivel, 'inicial') !== false && strpos($nivel, 'no') !== false)
-                                            return 2;
-
-                                        // ESPECIAL / CAM
-                                        if (strpos($nivel, 'especial') !== false || strpos($nivel, 'cam') !== false)
-                                            return 3;
-
-                                        // PREESCOLAR - Verificar primero General, luego Comunitario, luego Indígena
-                                        if (strpos($nivel, 'preescolar') !== false) {
-                                            if (strpos($subnivel, 'general') !== false)
-                                                return 4;
-                                            if (strpos($subnivel, 'comunitario') !== false)
-                                                return 5;
-                                            if (strpos($subnivel, 'indígena') !== false || strpos($subnivel, 'indigena') !== false)
-                                                return 6;
-                                        }
-
-                                        // PRIMARIA - Verificar primero General, luego Comunitario, luego Indígena
-                                        if (strpos($nivel, 'primaria') !== false) {
-                                            if (strpos($subnivel, 'general') !== false)
-                                                return 7;
-                                            if (strpos($subnivel, 'comunitario') !== false)
-                                                return 8;
-                                            if (strpos($subnivel, 'indígena') !== false || strpos($subnivel, 'indigena') !== false)
-                                                return 9;
-                                        }
-
-                                        // SECUNDARIA - Verificar subniveles específicos
-                                        if (strpos($nivel, 'secundaria') !== false) {
-                                            if (strpos($subnivel, 'comunitario') !== false)
-                                                return 10;
-                                            if (strpos($subnivel, 'general') !== false)
-                                                return 11;
-                                            if (strpos($subnivel, 'técnica') !== false || strpos($subnivel, 'tecnica') !== false)
-                                                return 12;
-                                            if (strpos($subnivel, 'telesecundaria') !== false)
-                                                return 13;
-                                        }
-
-                                        // MEDIA SUPERIOR
-                                        if (strpos($nivel, 'media') !== false || strpos($nivel, 'medio') !== false)
-                                            return 14;
-
-                                        // SUPERIOR
-                                        if (strpos($nivel, 'superior') !== false)
-                                            return 15;
-
-                                        return 16; // Para niveles no reconocidos
-                                    }
-
                                     // Crear array temporal para ordenar
                                     $datosOrdenados = array();
                                     for ($i = 1; $i < count($datosAlumnosGenero); $i++) {

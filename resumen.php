@@ -1,9 +1,4 @@
 <?php
-// Incluir el helper de sesiones
-require_once 'session_helper.php';
-
-// Iniciar sesión y configurar usuario de demo si es necesario
-iniciarSesionDemo();
 
 // Incluir archivo de conexión actualizado
 require_once 'conexion.php';
@@ -207,27 +202,7 @@ function calcularTotalesDocentes($datosDocentes)
     ];
 }
 
-/**
- * Formatea nombres de municipios para display en formato título
- */
-function formatearNombreMunicipio($municipio)
-{
-    // Convertir de mayúsculas a formato título
-    $formatted = mb_convert_case(strtolower($municipio), MB_CASE_TITLE, 'UTF-8');
-
-    // Correcciones específicas para preposiciones y artículos
-    $formatted = str_replace([' De ', ' Del ', ' El '], [' de ', ' del ', ' El '], $formatted);
-
-    return $formatted;
-}
-
-/**
- * Formatea porcentajes con un número fijo de decimales.
- */
-function formatPercent($value, $decimals = 2)
-{
-    return number_format((float) $value, $decimals, '.', '');
-}
+require_once 'includes/helpers.php';
 
 // Variables de compatibilidad
 $totales = calcularTotales($datosEducativos);

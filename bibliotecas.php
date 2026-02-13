@@ -17,9 +17,7 @@
  * @since 2025
  */
 
-// Cargar configuración de sesión
-require_once 'session_helper.php';
-iniciarSesionDemo();
+require_once 'includes/helpers.php';
 
 // Función para obtener datos del mapa de bibliotecas
 function obtenerMapaBibliotecas()

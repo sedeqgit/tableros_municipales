@@ -1,9 +1,4 @@
 <?php
-// Incluir el helper de sesiones
-require_once 'session_helper.php';
-
-// Iniciar sesión y configurar usuario de demo si es necesario
-iniciarSesionDemo();
 
 // Variables para mostrar retroalimentación al usuario
 $preferencesMessage = null;
@@ -119,10 +114,10 @@ $preferencesIcons = [
     'info' => 'fa-info-circle'
 ];
 
-// Obtener información del usuario de la sesión
-$userFullname = isset($_SESSION['fullname']) ? $_SESSION['fullname'] : 'Usuario SEDEQ';
-$userEmail = isset($_SESSION['username']) ? $_SESSION['username'] : 'usuario@sedeq.gob.mx';
-$userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'Analista de Datos';
+// Obtener información del usuario
+$userFullname = 'Usuario SEDEQ';
+$userEmail = 'usuario@sedeq.gob.mx';
+$userRole = 'Analista de Datos';
 ?>
 <!DOCTYPE html>
 <html lang="es">
