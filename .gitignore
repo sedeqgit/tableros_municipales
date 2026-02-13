@@ -19,7 +19,7 @@ bolsillo (1) (1).php
 # Capturas de pantalla y recursos temporales
 image.png
 image-*.png
-*.png
+
 
 # PDFs generados (mantener en local, no versionar)
 *.pdf
